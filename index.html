@@ -190,9 +190,6 @@
     overflow:hidden;height:2.8em}
   /* uniform row height so Top 20 / Bottom 20 columns line up */
   #moversTop td,#moversBot td{vertical-align:middle}
-  .mv-tf{display:flex;align-items:center;gap:10px;margin-top:18px;padding-top:14px;
-    border-top:1px solid var(--line-soft);font-size:12px;color:var(--text-mute)}
-  .mv-tf label{letter-spacing:.04em;text-transform:uppercase;font-size:10.5px}
 
   /* news modal */
   .nm-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;
@@ -416,7 +413,19 @@
 
       <!-- 4 · Top 20 & Bottom 20 (Nifty 500) -->
       <div class="card reveal" style="animation-delay:.24s">
-        <div class="card-h"><div><h3>Top 20 &amp; Bottom 20</h3><p id="mvSub">Nifty 500 constituents · today's % move</p></div></div>
+        <div class="card-h">
+          <div><h3>Top 20 &amp; Bottom 20</h3><p id="mvSub">Nifty 500 constituents · today's % move</p></div>
+          <div class="sec-ctrls">
+            <select id="mvTf" class="dd" aria-label="Movers timeframe">
+              <option value="1D">1D (Today)</option>
+              <option value="1W">1W</option>
+              <option value="1M">1M</option>
+              <option value="6M">6M</option>
+              <option value="YTD">YTD</option>
+              <option value="1Y">1Y</option>
+            </select>
+          </div>
+        </div>
         <div class="mv-note" id="mvSummary">Loading Nifty 500 movers…</div>
         <div class="mv-cols">
           <div>
@@ -427,17 +436,6 @@
             <div class="sd-h down">Bottom 20 Detractors</div>
             <table><tbody id="moversBot"></tbody></table>
           </div>
-        </div>
-        <div class="mv-tf">
-          <label for="mvTf">Timeframe</label>
-          <select id="mvTf" class="dd" aria-label="Movers timeframe">
-            <option value="1D">1D (Today)</option>
-            <option value="1W">1W</option>
-            <option value="1M">1M</option>
-            <option value="6M">6M</option>
-            <option value="YTD">YTD</option>
-            <option value="1Y">1Y</option>
-          </select>
         </div>
       </div>
 
