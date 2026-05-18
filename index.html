@@ -182,6 +182,9 @@
   #secDetail{display:none}
   .sd-chart{height:152px;margin:2px 0 18px;position:relative}
   .sd-lists{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .mv-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .mv-cols .sd-h{margin-bottom:2px}
+  @media(max-width:680px){.mv-cols{grid-template-columns:1fr;gap:6px}}
   .sd-h{font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;font-weight:600;margin-bottom:6px}
   .sd-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line-soft);font-size:12.5px}
   .sd-row:last-child{border:none}
@@ -324,81 +327,88 @@
         </div>
       </section>
 
-      <!-- Chart + breadth -->
-      <section class="grid-2">
-        <div class="card reveal" style="animation-delay:.18s">
-          <div class="card-h">
-            <div>
-              <h3>Nifty 500 — Index Performance</h3>
-              <p>Intraday composite · indexed to open</p>
-            </div>
-            <div class="seg" id="rangeSeg">
-              <button data-r="1D" class="on">1D</button>
-              <button data-r="1W">1W</button>
-              <button data-r="1M">1M</button>
-              <button data-r="1Y">1Y</button>
-            </div>
-          </div>
-          <div class="chart-box"><canvas id="mainChart"></canvas></div>
-        </div>
+      <!-- Single vertical column · separate boxes -->
 
-        <div class="card reveal" style="animation-delay:.24s">
-          <div class="card-h"><div><h3>Desk Snapshot</h3><p>Key risk & flow metrics</p></div></div>
-          <div class="stat-row"><span>Sensex</span><b class="up" id="sSensex">81,420.31 &nbsp;+0.74%</b></div>
-          <div class="stat-row"><span>Bank Nifty</span><b class="up" id="sBank">51,866.05 &nbsp;+1.12%</b></div>
-          <div class="stat-row"><span>Nifty Midcap 100</span><b class="up" id="sMid">58,210.40 &nbsp;+0.41%</b></div>
-          <div class="stat-row"><span>USD / INR</span><b class="down" id="sFx">83.41 &nbsp;+0.09%</b></div>
-          <div class="stat-row"><span>Brent Crude</span><b class="down" id="sBrent">$78.12 &nbsp;−1.30%</b></div>
-          <div class="stat-row"><span>India 10Y G-Sec <em style="font-style:normal;color:var(--text-mute);font-size:9px">SAMPLE</em></span><b>6.78%</b></div>
-          <div class="stat-row"><span>Gold (MCX, 10g) <em style="font-style:normal;color:var(--text-mute);font-size:9px">SAMPLE</em></span><b class="up">₹72,910 &nbsp;+0.38%</b></div>
-        </div>
-      </section>
-
-      <!-- Sectors + movers -->
-      <section class="grid-2">
-        <div class="card reveal" style="animation-delay:.2s">
-          <div class="card-h">
-            <div><h3>Sector Performance</h3><p id="secCaption">NSE sectoral indices · 1D return</p></div>
-            <div class="sec-ctrls">
-              <select id="tfSel" class="dd" aria-label="Timeframe">
-                <option>1D</option><option>1W</option><option>1M</option>
-                <option>6M</option><option>YTD</option><option>1Y</option>
-              </select>
-            </div>
+      <!-- 1 · Index performance -->
+      <div class="card reveal" style="animation-delay:.16s">
+        <div class="card-h">
+          <div>
+            <h3>Nifty 500 — Index Performance</h3>
+            <p>Intraday composite · indexed to open</p>
           </div>
-          <div id="sectors"></div>
-          <div id="secDetail">
-            <button id="secBack" class="back" type="button">‹ All sectors</button>
-            <div class="sd-chart"><canvas id="secChart"></canvas></div>
-            <div class="sd-lists">
-              <div><div class="sd-h up">Top 5</div><div id="secTop"></div></div>
-              <div><div class="sd-h down">Bottom 5</div><div id="secBot"></div></div>
-            </div>
+          <div class="seg" id="rangeSeg">
+            <button data-r="1D" class="on">1D</button>
+            <button data-r="1W">1W</button>
+            <button data-r="1M">1M</button>
+            <button data-r="1Y">1Y</button>
           </div>
         </div>
-        <div class="card reveal" style="animation-delay:.26s">
-          <div class="card-h"><div><h3>Top Movers</h3><p>Nifty 500 constituents</p></div></div>
-          <table>
-            <thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">Chg %</th><th class="r">Trend</th></tr></thead>
-            <tbody id="moversBody"></tbody>
-          </table>
-        </div>
-      </section>
+        <div class="chart-box"><canvas id="mainChart"></canvas></div>
+      </div>
 
-      <!-- Coverage + research -->
-      <section class="grid-2">
-        <div class="card reveal" style="animation-delay:.22s">
-          <div class="card-h"><div><h3>Coverage Watchlist</h3><p>Active analyst coverage · target vs. LTP</p></div></div>
-          <table>
-            <thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">Target</th><th class="r">Upside</th><th class="r">Call</th></tr></thead>
-            <tbody id="coverageBody"></tbody>
-          </table>
+      <!-- 2 · Desk Snapshot -->
+      <div class="card reveal" style="animation-delay:.2s">
+        <div class="card-h"><div><h3>Desk Snapshot</h3><p>Key risk & flow metrics</p></div></div>
+        <div class="stat-row"><span>Sensex</span><b class="up" id="sSensex">81,420.31 &nbsp;+0.74%</b></div>
+        <div class="stat-row"><span>Bank Nifty</span><b class="up" id="sBank">51,866.05 &nbsp;+1.12%</b></div>
+        <div class="stat-row"><span>Nifty Midcap 100</span><b class="up" id="sMid">58,210.40 &nbsp;+0.41%</b></div>
+        <div class="stat-row"><span>USD / INR</span><b class="down" id="sFx">83.41 &nbsp;+0.09%</b></div>
+        <div class="stat-row"><span>Brent Crude</span><b class="down" id="sBrent">$78.12 &nbsp;−1.30%</b></div>
+        <div class="stat-row"><span>India 10Y G-Sec <em style="font-style:normal;color:var(--text-mute);font-size:9px">SAMPLE</em></span><b>6.78%</b></div>
+        <div class="stat-row"><span>Gold (MCX, 10g) <em style="font-style:normal;color:var(--text-mute);font-size:9px">SAMPLE</em></span><b class="up">₹72,910 &nbsp;+0.38%</b></div>
+      </div>
+
+      <!-- 3 · Sector Performance -->
+      <div class="card reveal" style="animation-delay:.22s">
+        <div class="card-h">
+          <div><h3>Sector Performance</h3><p id="secCaption">NSE sectoral indices · 1D return</p></div>
+          <div class="sec-ctrls">
+            <select id="tfSel" class="dd" aria-label="Timeframe">
+              <option>1D</option><option>1W</option><option>1M</option>
+              <option>6M</option><option>YTD</option><option>1Y</option>
+            </select>
+          </div>
         </div>
-        <div class="card reveal" style="animation-delay:.28s">
-          <div class="card-h"><div><h3>Latest Research Notes</h3><p>Published by the India desk</p></div></div>
-          <div id="notes"></div>
+        <div id="sectors"></div>
+        <div id="secDetail">
+          <button id="secBack" class="back" type="button">‹ All sectors</button>
+          <div class="sd-chart"><canvas id="secChart"></canvas></div>
+          <div class="sd-lists">
+            <div><div class="sd-h up">Top 5</div><div id="secTop"></div></div>
+            <div><div class="sd-h down">Bottom 5</div><div id="secBot"></div></div>
+          </div>
         </div>
-      </section>
+      </div>
+
+      <!-- 4 · Top 10 & Bottom 10 -->
+      <div class="card reveal" style="animation-delay:.24s">
+        <div class="card-h"><div><h3>Top 10 &amp; Bottom 10</h3><p>Nifty large/mid-cap movers · today</p></div></div>
+        <div class="mv-cols">
+          <div>
+            <div class="sd-h up">Top 10 Gainers</div>
+            <table><tbody id="moversTop"></tbody></table>
+          </div>
+          <div>
+            <div class="sd-h down">Bottom 10 Detractors</div>
+            <table><tbody id="moversBot"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 · Coverage Watchlist -->
+      <div class="card reveal" style="animation-delay:.26s">
+        <div class="card-h"><div><h3>Coverage Watchlist</h3><p>Active analyst coverage · target vs. LTP</p></div></div>
+        <table>
+          <thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">Target</th><th class="r">Upside</th><th class="r">Call</th></tr></thead>
+          <tbody id="coverageBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Latest Research Notes -->
+      <div class="card reveal" style="animation-delay:.28s">
+        <div class="card-h"><div><h3>Latest Research Notes</h3><p>Published by the India desk</p></div></div>
+        <div id="notes"></div>
+      </div>
 
     </div>
 
@@ -501,11 +511,16 @@ function spark(up){
 }
 
 /* ---------- Movers ---------- */
-document.getElementById('moversBody').innerHTML = movers.map(([s,c,p,ch,d])=>`
-  <tr><td><div class="sym">${s}</div><div class="co">${c}</div></td>
-  <td class="r px">₹${p}</td>
-  <td class="r"><span class="pill ${d>0?'u':'d'}">${d>0?'+':''}${ch}%</span></td>
-  <td class="r">${spark(d>0)}</td></tr>`).join('');
+function moverRow(sym,co,pxStr,pctStr,up){
+  return `<tr><td><div class="sym">${sym}</div><div class="co">${co}</div></td>
+    <td class="r px">${pxStr}</td>
+    <td class="r"><span class="pill ${up?'u':'d'}">${pctStr}%</span></td>
+    <td class="r">${spark(up)}</td></tr>`;
+}
+document.getElementById('moversTop').innerHTML =
+  movers.filter(m=>m[4]>0).map(([s,c,p,ch])=>moverRow(s,c,'₹'+p,ch,true)).join('');
+document.getElementById('moversBot').innerHTML =
+  movers.filter(m=>m[4]<0).map(([s,c,p,ch])=>moverRow(s,c,'₹'+p,ch,false)).join('');
 
 /* ---------- Coverage ---------- */
 document.getElementById('coverageBody').innerHTML = coverage.map(([s,c,l,t,u,call])=>`
@@ -621,7 +636,13 @@ const BASKET={
   'SBIN.NS':'State Bank','AXISBANK.NS':'Axis Bank','LT.NS':'Larsen & Toubro',
   'ITC.NS':'ITC Ltd.','BHARTIARTL.NS':'Bharti Airtel','MARUTI.NS':'Maruti Suzuki',
   'HINDALCO.NS':'Hindalco Inds.','SUNPHARMA.NS':'Sun Pharma','DLF.NS':'DLF Ltd.',
-  'ASIANPAINT.NS':'Asian Paints'
+  'ASIANPAINT.NS':'Asian Paints','KOTAKBANK.NS':'Kotak Mahindra','BAJFINANCE.NS':'Bajaj Finance',
+  'HCLTECH.NS':'HCL Tech','WIPRO.NS':'Wipro','TECHM.NS':'Tech Mahindra',
+  'TATASTEEL.NS':'Tata Steel','JSWSTEEL.NS':'JSW Steel','M&M.NS':'Mahindra & Mahindra',
+  'TITAN.NS':'Titan Co.','NESTLEIND.NS':'Nestlé India','POWERGRID.NS':'Power Grid',
+  'NTPC.NS':'NTPC','ONGC.NS':'ONGC','COALINDIA.NS':'Coal India',
+  'ADANIENT.NS':'Adani Ent.','ADANIPORTS.NS':'Adani Ports','BAJAJ-AUTO.NS':'Bajaj Auto',
+  'EICHERMOT.NS':'Eicher Motors','GRASIM.NS':'Grasim','HEROMOTOCO.NS':'Hero MotoCorp'
 };
 const COV=[
   ['RELIANCE.NS','RELIANCE','Reliance Inds.',3420,'buy'],
@@ -676,19 +697,17 @@ async function loadQuotes(){
   snap('sSensex','^BSESN'); snap('sBank','^NSEBANK'); snap('sMid','^NSEMDCP50');
   snap('sFx','INR=X','',''); snap('sBrent','BZ=F','$','');
 
-  // Movers (top 3 up / 3 down from live basket)
+  // Movers: top 10 gainers / bottom 10 detractors from live basket
   const mv=Object.entries(BASKET).map(([s,nm])=>{
     const d=pick(j,s),p=last(d),pc=prevC(d);
     if(p==null||pc==null) return null;
     return {s:s.replace('.NS',''),nm,p,ch:(p-pc)/pc*100};
   }).filter(Boolean).sort((a,b)=>b.ch-a.ch);
-  if(mv.length>=4){
-    const top=[...mv.slice(0,3),...mv.slice(-3)];
-    document.getElementById('moversBody').innerHTML=top.map(m=>`
-      <tr><td><div class="sym">${m.s}</div><div class="co">${m.nm}</div></td>
-      <td class="r px">₹${inr(m.p)}</td>
-      <td class="r"><span class="pill ${m.ch>=0?'u':'d'}">${m.ch>=0?'+':''}${m.ch.toFixed(2)}%</span></td>
-      <td class="r">${spark(m.ch>=0)}</td></tr>`).join('');
+  if(mv.length>=6){
+    const fmt=arr=>arr.map(m=>
+      moverRow(m.s,m.nm,'₹'+inr(m.p),(m.ch>=0?'+':'')+m.ch.toFixed(2),m.ch>=0)).join('');
+    document.getElementById('moversTop').innerHTML=fmt(mv.slice(0,10));
+    document.getElementById('moversBot').innerHTML=fmt(mv.slice(-10).reverse());
   }
 
   // Coverage (live LTP, recompute upside vs static target)
