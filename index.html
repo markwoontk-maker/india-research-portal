@@ -186,7 +186,33 @@
     border:1px solid var(--line-soft);border-left:3px solid var(--saffron);
     padding:11px 14px;border-radius:8px;margin-bottom:18px}
   .mv-note b{color:var(--text);font-weight:600}
+  .mv-name{cursor:pointer;transition:color .15s;display:inline-block;
+    border-bottom:1px dotted transparent}
+  .mv-name:hover,.mv-name:focus-visible{color:var(--saffron);border-bottom-color:var(--saffron);outline:none}
   .mv-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+
+  /* news modal */
+  .nm-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;
+    justify-content:center;background:rgba(6,8,12,.72);backdrop-filter:blur(3px);padding:24px}
+  .nm-overlay[hidden]{display:none}
+  .nm-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    width:min(620px,100%);max-height:82vh;overflow:auto;padding:24px;position:relative;
+    box-shadow:0 30px 80px -30px rgba(0,0,0,.8)}
+  .nm-close{position:absolute;top:14px;right:14px;background:var(--ink-2);border:1px solid var(--line);
+    color:var(--text-dim);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:13px}
+  .nm-close:hover{color:var(--text);border-color:var(--saffron)}
+  .nm-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding-right:34px}
+  .nm-head h3{font-family:'Fraunces',serif;font-size:20px;font-weight:600}
+  .nm-move{font-family:'IBM Plex Mono';font-size:13px;font-weight:600}
+  .nm-disc{font-size:11.5px;color:var(--text-mute);margin:10px 0 16px;line-height:1.6;
+    border-left:3px solid var(--saffron);background:var(--ink-2);padding:9px 12px;border-radius:7px}
+  .nm-disc b{color:var(--text-dim)}
+  .nm-item{display:block;padding:13px 0;border-bottom:1px solid var(--line-soft);text-decoration:none}
+  .nm-item:last-child{border:none}
+  .nm-item h4{font-size:13.5px;font-weight:600;color:var(--text);line-height:1.45}
+  .nm-item:hover h4{color:var(--saffron)}
+  .nm-item .meta{font-size:11px;color:var(--text-mute);margin-top:5px}
+  .nm-empty{font-size:12.5px;color:var(--text-dim);padding:14px 0;line-height:1.6}
   .mv-cols .sd-h{margin-bottom:2px}
   @media(max-width:680px){.mv-cols{grid-template-columns:1fr;gap:6px}}
   .sd-h{font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;font-weight:600;margin-bottom:6px}
@@ -424,6 +450,18 @@
   </main>
 </div>
 
+<div id="newsModal" class="nm-overlay" hidden>
+  <div class="nm-box" role="dialog" aria-modal="true" aria-labelledby="nmTitle">
+    <button class="nm-close" id="nmClose" aria-label="Close">✕</button>
+    <div class="nm-head">
+      <h3 id="nmTitle">—</h3>
+      <div id="nmMove" class="nm-move"></div>
+    </div>
+    <div class="nm-disc">Latest headlines for context — markets move for many reasons; treat these as <b>possible drivers</b>, not a confirmed cause.</div>
+    <div id="nmBody" class="nm-body"></div>
+  </div>
+</div>
+
 <script>
 /* ---------- Data ---------- */
 const indices = [
@@ -516,16 +554,19 @@ function spark(up){
 }
 
 /* ---------- Movers ---------- */
-function moverRow(sym,co,pxStr,pctStr,up){
-  return `<tr><td><div class="sym">${sym}</div><div class="co">${co}</div></td>
+function moverRow(name,ticker,pxStr,pctStr,up){
+  const safe=String(name).replace(/"/g,'&quot;');
+  return `<tr><td>
+    <div class="sym mv-name" role="button" tabindex="0" data-tk="${ticker}" data-co="${safe}">${name}</div>
+    <div class="co">${ticker}</div></td>
     <td class="r px">${pxStr}</td>
     <td class="r"><span class="pill ${up?'u':'d'}">${pctStr}%</span></td>
     <td class="r">${spark(up)}</td></tr>`;
 }
 document.getElementById('moversTop').innerHTML =
-  movers.filter(m=>m[4]>0).map(([s,c,p,ch])=>moverRow(s,c,'₹'+p,ch,true)).join('');
+  movers.filter(m=>m[4]>0).map(([s,c,p,ch])=>moverRow(c,s,'₹'+p,ch,true)).join('');
 document.getElementById('moversBot').innerHTML =
-  movers.filter(m=>m[4]<0).map(([s,c,p,ch])=>moverRow(s,c,'₹'+p,ch,false)).join('');
+  movers.filter(m=>m[4]<0).map(([s,c,p,ch])=>moverRow(c,s,'₹'+p,ch,false)).join('');
 
 /* ---------- Coverage ---------- */
 document.getElementById('coverageBody').innerHTML = coverage.map(([s,c,l,t,u,call])=>`
@@ -849,6 +890,111 @@ function refreshSector(){
   document.getElementById('secBack').onclick=()=>{ curSec=''; refreshSector(); };
 })();
 
+/* ---------- Ticker -> company name (best-effort, falls back to ticker) ---------- */
+const NAMES={
+RELIANCE:"Reliance Industries",TCS:"Tata Consultancy",HDFCBANK:"HDFC Bank",ICICIBANK:"ICICI Bank",
+INFY:"Infosys",SBIN:"State Bank of India",BHARTIARTL:"Bharti Airtel",LICI:"Life Insurance Corp",
+ITC:"ITC",LT:"Larsen & Toubro",HINDUNILVR:"Hindustan Unilever",KOTAKBANK:"Kotak Mahindra Bank",
+BAJFINANCE:"Bajaj Finance",AXISBANK:"Axis Bank",MARUTI:"Maruti Suzuki",SUNPHARMA:"Sun Pharma",
+HCLTECH:"HCL Technologies",NTPC:"NTPC",TATAMOTORS:"Tata Motors",ONGC:"Oil & Natural Gas",
+ADANIENT:"Adani Enterprises","M&M":"Mahindra & Mahindra",WIPRO:"Wipro",ADANIPORTS:"Adani Ports",
+POWERGRID:"Power Grid Corp",ULTRACEMCO:"UltraTech Cement",TITAN:"Titan Company",ASIANPAINT:"Asian Paints",
+COALINDIA:"Coal India",BAJAJFINSV:"Bajaj Finserv",NESTLEIND:"Nestlé India",JSWSTEEL:"JSW Steel",
+TATASTEEL:"Tata Steel",DMART:"Avenue Supermarts","BAJAJ-AUTO":"Bajaj Auto",HDFCLIFE:"HDFC Life",
+SBILIFE:"SBI Life Insurance",GRASIM:"Grasim Industries",HINDALCO:"Hindalco Industries",TECHM:"Tech Mahindra",
+INDUSINDBK:"IndusInd Bank",DIVISLAB:"Divi's Laboratories",DRREDDY:"Dr Reddy's Labs",CIPLA:"Cipla",
+EICHERMOT:"Eicher Motors",BPCL:"Bharat Petroleum",BRITANNIA:"Britannia Industries",APOLLOHOSP:"Apollo Hospitals",
+HEROMOTOCO:"Hero MotoCorp",TATACONSUM:"Tata Consumer",PIDILITIND:"Pidilite Industries",SHRIRAMFIN:"Shriram Finance",
+DABUR:"Dabur India",GODREJCP:"Godrej Consumer",VEDL:"Vedanta",IOC:"Indian Oil",SIEMENS:"Siemens",
+BANKBARODA:"Bank of Baroda",PNB:"Punjab National Bank",GAIL:"GAIL India",AMBUJACEM:"Ambuja Cements",
+DLF:"DLF",VBL:"Varun Beverages",HAVELLS:"Havells India",ZYDUSLIFE:"Zydus Lifesciences",
+TVSMOTOR:"TVS Motor",ICICIPRULI:"ICICI Prudential",ICICIGI:"ICICI Lombard",TRENT:"Trent",BEL:"Bharat Electronics",
+ADANIGREEN:"Adani Green Energy",ADANIPOWER:"Adani Power",CHOLAFIN:"Cholamandalam Fin",MARICO:"Marico",
+BOSCHLTD:"Bosch",SRF:"SRF",BAJAJHLDNG:"Bajaj Holdings",TORNTPHARM:"Torrent Pharma",COLPAL:"Colgate-Palmolive",
+INDIGO:"InterGlobe Aviation",NAUKRI:"Info Edge",JINDALSTEL:"Jindal Steel & Power",LTIM:"LTIMindtree",
+CANBK:"Canara Bank",HDFCAMC:"HDFC AMC",ABB:"ABB India",UNIONBANK:"Union Bank",IDBI:"IDBI Bank",
+BERGEPAINT:"Berger Paints",PEL:"Piramal Enterprises",AUROPHARMA:"Aurobindo Pharma",LUPIN:"Lupin",
+MOTHERSON:"Samvardhana Motherson",ASHOKLEY:"Ashok Leyland",MFSL:"Max Financial",PGHH:"P&G Hygiene",
+UBL:"United Breweries",MUTHOOTFIN:"Muthoot Finance",PIIND:"PI Industries",SAIL:"Steel Authority",
+NMDC:"NMDC",PFC:"Power Finance Corp",RECLTD:"REC",HINDPETRO:"Hindustan Petroleum",TATAPOWER:"Tata Power",
+INDUSTOWER:"Indus Towers",IRCTC:"IRCTC",NHPC:"NHPC",ZOMATO:"Zomato",POLYCAB:"Polycab India",
+PAYTM:"One97 (Paytm)",GMRINFRA:"GMR Airports",IGL:"Indraprastha Gas",PETRONET:"Petronet LNG",
+OFSS:"Oracle Fin Services",PAGEIND:"Page Industries",ALKEM:"Alkem Laboratories",GLAND:"Gland Pharma",
+BIOCON:"Biocon",IPCALAB:"Ipca Laboratories",GLENMARK:"Glenmark Pharma",LAURUSLABS:"Laurus Labs",
+ABBOTINDIA:"Abbott India",SANOFI:"Sanofi India",FORTIS:"Fortis Healthcare",MAXHEALTH:"Max Healthcare",
+METROPOLIS:"Metropolis Health",LALPATHLAB:"Dr Lal PathLabs",SYNGENE:"Syngene Intl",JUBLFOOD:"Jubilant FoodWorks",
+DEVYANI:"Devyani International",WESTLIFE:"Westlife Foodworld",VOLTAS:"Voltas",BLUESTARCO:"Blue Star",
+WHIRLPOOL:"Whirlpool India",CROMPTON:"Crompton Greaves",DIXON:"Dixon Technologies",AMBER:"Amber Enterprises",
+VGUARD:"V-Guard Industries",KAJARIACER:"Kajaria Ceramics",CERA:"Cera Sanitaryware",FINPIPE:"Finolex Inds",
+SUPREMEIND:"Supreme Industries",ASTRAL:"Astral",APLAPOLLO:"APL Apollo Tubes",RATNAMANI:"Ratnamani Metals",
+JKCEMENT:"JK Cement",SHREECEM:"Shree Cement",RAMCOCEM:"Ramco Cements",DALBHARAT:"Dalmia Bharat",
+ACC:"ACC",NUVOCO:"Nuvoco Vistas",BIRLACORPN:"Birla Corporation",STARCEMENT:"Star Cement",
+HEIDELBERG:"HeidelbergCement",JSWENERGY:"JSW Energy",TORNTPOWER:"Torrent Power",CESC:"CESC",
+SJVN:"SJVN",IEX:"Indian Energy Exch",PTC:"PTC India",KEC:"KEC International",KALPATPOWR:"Kalpataru Projects",
+THERMAX:"Thermax",CUMMINSIND:"Cummins India",AIAENG:"AIA Engineering",GRINDWELL:"Grindwell Norton",
+SKFINDIA:"SKF India",SCHAEFFLER:"Schaeffler India",TIMKEN:"Timken India",BHARATFORG:"Bharat Forge",
+SUNDRMFAST:"Sundram Fasteners",ENDURANCE:"Endurance Tech",BALKRISIND:"Balkrishna Inds",APOLLOTYRE:"Apollo Tyres",
+MRF:"MRF",CEATLTD:"CEAT",JKTYRE:"JK Tyre",EXIDEIND:"Exide Industries",AMARAJABAT:"Amara Raja Energy",
+HAL:"Hindustan Aeronautics",BDL:"Bharat Dynamics",MAZDOCK:"Mazagon Dock",COCHINSHIP:"Cochin Shipyard",
+GRSE:"Garden Reach Ship",IRFC:"Indian Railway Fin",RVNL:"Rail Vikas Nigam",RAILTEL:"RailTel",
+IRCON:"Ircon Intl",NBCC:"NBCC India",NCC:"NCC",PNCINFRA:"PNC Infratech",KNRCON:"KNR Constructions",
+CONCOR:"Container Corp",BLUEDART:"Blue Dart Express",TCIEXP:"TCI Express",DELHIVERY:"Delhivery",
+MAHLOG:"Mahindra Logistics",GUJGASLTD:"Gujarat Gas",MGL:"Mahanagar Gas",AEGISCHEM:"Aegis Logistics",
+CASTROLIND:"Castrol India",GULFOILLUB:"Gulf Oil Lubricants",DEEPAKNTR:"Deepak Nitrite",AARTIIND:"Aarti Industries",
+NAVINFLUOR:"Navin Fluorine",FLUOROCHEM:"Gujarat Fluorochem",VINATIORGA:"Vinati Organics",ATUL:"Atul",
+CLEAN:"Clean Science",ALKYLAMINE:"Alkyl Amines",BALAMINES:"Balaji Amines",TATACHEM:"Tata Chemicals",
+GNFC:"GNFC",CHAMBLFERT:"Chambal Fertilisers",COROMANDEL:"Coromandel Intl",UPL:"UPL",RALLIS:"Rallis India",
+SUMICHEM:"Sumitomo Chemical",BAYERCROP:"Bayer CropScience",SUDARSCHEM:"Sudarshan Chemical",
+JUBLINGREA:"Jubilant Ingrevia",FINEORG:"Fine Organic",GALAXYSURF:"Galaxy Surfactants",EIDPARRY:"EID Parry",
+BALRAMCHIN:"Balrampur Chini",TRIVENI:"Triveni Engineering",DCMSHRIRAM:"DCM Shriram",KANSAINER:"Kansai Nerolac",
+AKZOINDIA:"Akzo Nobel India",INDIGOPNTS:"Indigo Paints",SHEELAFOAM:"Sheela Foam",CENTURYPLY:"Century Plyboards",
+GREENPLY:"Greenply Industries",GREENPANEL:"Greenpanel Inds",JYOTHYLAB:"Jyothy Labs",EMAMILTD:"Emami",
+GILLETTE:"Gillette India",HONAUT:"Honeywell Automation","3MINDIA":"3M India",RAYMOND:"Raymond",
+ARVIND:"Arvind",KPRMILL:"KPR Mill",TRIDENT:"Trident",WELSPUNLIV:"Welspun Living",WELCORP:"Welspun Corp",
+RHIM:"RHI Magnesita",JINDALSAW:"Jindal Saw",APARINDS:"Apar Industries",FINOLEXIND:"Finolex Industries",
+POLYPLEX:"Polyplex Corp",UFLEX:"UFlex",EPL:"EPL",TIMETECHNO:"Time Technoplast",VIPIND:"VIP Industries",
+SAFARI:"Safari Industries",RELAXO:"Relaxo Footwears",BATAINDIA:"Bata India",METROBRAND:"Metro Brands",
+CAMPUS:"Campus Activewear",KALYANKJIL:"Kalyan Jewellers",TITAGARH:"Titagarh Rail",JWL:"Jupiter Wagons",
+STARHEALTH:"Star Health",NIACL:"New India Assurance",GICRE:"GIC Re",POLICYBZR:"PB Fintech",
+CDSL:"CDSL",CAMS:"CAMS",BSE:"BSE",MCX:"Multi Commodity Exch",ANGELONE:"Angel One",IIFL:"IIFL Finance",
+"360ONE":"360 ONE WAM","NAM-INDIA":"Nippon Life AMC",UTIAMC:"UTI AMC",ABCAPITAL:"Aditya Birla Capital",
+"L&TFH":"L&T Finance",SUNDARMFIN:"Sundaram Finance","M&MFIN":"M&M Financial",MANAPPURAM:"Manappuram Finance",
+CREDITACC:"CreditAccess Gram",FIVESTAR:"Five-Star Business",AAVAS:"Aavas Financiers",APTUS:"Aptus Value Hsg",
+HOMEFIRST:"Home First Finance",CANFINHOME:"Can Fin Homes",PNBHOUSING:"PNB Housing",LICHSGFIN:"LIC Housing Fin",
+REPCO:"Repco Home Fin",JMFINANCIL:"JM Financial",MOTILALOFS:"Motilal Oswal",ANANDRATHI:"Anand Rathi",
+PRUDENT:"Prudent Corp",FEDERALBNK:"Federal Bank",BANDHANBNK:"Bandhan Bank",IDFCFIRSTB:"IDFC First Bank",
+RBLBANK:"RBL Bank",AUBANK:"AU Small Fin Bank",CITYUNIONBANK:"City Union Bank",KARURVYSYA:"Karur Vysya Bank",
+SOUTHBANK:"South Indian Bank","J&KBANK":"J&K Bank",DCBBANK:"DCB Bank",INDIANB:"Indian Bank",
+IOB:"Indian Overseas Bank",CENTRALBK:"Central Bank",MAHABANK:"Bank of Maharashtra",UCOBANK:"UCO Bank",
+PSB:"Punjab & Sind Bank",EQUITASBNK:"Equitas Small Fin",UJJIVANSFB:"Ujjivan Small Fin",SURYODAY:"Suryoday SFB",
+TATAELXSI:"Tata Elxsi",COFORGE:"Coforge",PERSISTENT:"Persistent Systems",LTTS:"L&T Technology",
+MPHASIS:"Mphasis",KPITTECH:"KPIT Technologies",CYIENT:"Cyient",SONACOMS:"Sona BLW Precision",
+ZENSARTECH:"Zensar Tech",BIRLASOFT:"Birlasoft",INTELLECT:"Intellect Design",NEWGEN:"Newgen Software",
+MASTEK:"Mastek",HAPPSTMNDS:"Happiest Minds",LATENTVIEW:"LatentView",TANLA:"Tanla Platforms",
+ROUTE:"Route Mobile",FSL:"Firstsource",RATEGAIN:"RateGain Travel",MAPMYINDIA:"C.E. Info (MapmyIndia)",
+SBICARD:"SBI Cards",POONAWALLA:"Poonawalla Fincorp",ABFRL:"Aditya Birla Fashion",VMART:"V-Mart Retail",
+SHOPERSTOP:"Shoppers Stop",GOCOLORS:"Go Fashion",VEDANT:"Vedant Fashions",PVRINOX:"PVR INOX",
+SUNTV:"Sun TV Network",ZEEL:"Zee Entertainment",NETWORK18:"Network18 Media",TV18BRDCST:"TV18 Broadcast",
+SAREGAMA:"Saregama India",NAZARA:"Nazara Technologies",DBCORP:"D.B. Corp",JAGRAN:"Jagran Prakashan",
+HATHWAY:"Hathway Cable",DISHTV:"Dish TV",GTPL:"GTPL Hathway",TIPSINDLTD:"Tips Music",ENIL:"Entertainment Network",
+OBEROIRLTY:"Oberoi Realty",GODREJPROP:"Godrej Properties",LODHA:"Macrotech (Lodha)",PRESTIGE:"Prestige Estates",
+BRIGADE:"Brigade Enterprises",SOBHA:"Sobha",PHOENIXLTD:"Phoenix Mills",MAHLIFE:"Mahindra Lifespace",
+SUNTECK:"Sunteck Realty",KOLTEPATIL:"Kolte-Patil",ANANTRAJ:"Anant Raj",IBREALEST:"Indiabulls Real Est",
+SIGNATURE:"Signatureglobal",PURVA:"Puravankara",ASHIANA:"Ashiana Housing",GESHIP:"Great Eastern Ship",
+SCI:"Shipping Corp",RITES:"RITES",ENGINERSIN:"Engineers India",HUDCO:"HUDCO",SOLARINDS:"Solar Industries",
+GHCL:"GHCL",TATACOMM:"Tata Communications","3IINFOTECH":"3i Infotech",KFINTECH:"KFin Technologies",
+INDIAMART:"IndiaMART",JUSTDIAL:"Just Dial",AFFLE:"Affle India",EASEMYTRIP:"Easy Trip Planners",
+IXIGO:"Le Travenues (ixigo)",TBOTEK:"TBO Tek",DREAMFOLKS:"Dreamfolks Services",GODREJIND:"Godrej Industries",
+GODREJAGRO:"Godrej Agrovet",AVANTIFEED:"Avanti Feeds",CCL:"CCL Products",HERITGFOOD:"Heritage Foods",
+DODLA:"Dodla Dairy",HATSUN:"Hatsun Agro",KRBL:"KRBL",LTFOODS:"LT Foods",USHAMART:"Usha Martin",
+SHYAMMETL:"Shyam Metalics",GPIL:"Godawari Power",SARDAEN:"Sarda Energy",MAITHANALL:"Maithan Alloys",
+KIRLOSENG:"Kirloskar Oil",KIRLOSBROS:"Kirloskar Brothers",ELGIEQUIP:"Elgi Equipments",TIINDIA:"Tube Investments",
+GREAVESCOT:"Greaves Cotton",VSTTILLERS:"VST Tillers",ESCORTS:"Escorts Kubota",FORCEMOT:"Force Motors",
+WABAG:"VA Tech Wabag",EMUDHRA:"eMudhra",DATAPATTNS:"Data Patterns",ZENTEC:"Zen Technologies",
+PARAS:"Paras Defence",ASTRAMICRO:"Astra Microwave",MTARTECH:"MTAR Technologies",IDEAFORGE:"ideaForge",
+JTLIND:"JTL Industries",SANSERA:"Sansera Engineering",UNOMINDA:"Uno Minda",DALMIASUG:"Dalmia Bharat Sugar"
+};
+
 /* ---------- Nifty 500 movers (top/bottom 20) ---------- */
 // Best-effort static Nifty 500 constituent list (no free API for exact
 // index membership). Symbols Yahoo lacks data for are filtered out.
@@ -920,7 +1066,7 @@ function moversSummary(o){
 
 function renderMovers(o){
   const fmt=arr=>arr.map(m=>
-    moverRow(m.s,'',' ₹'+inr(m.p),(m.ch>=0?'+':'')+(+m.ch).toFixed(2),m.ch>=0)).join('');
+    moverRow(NAMES[m.s]||m.s, m.s, ' ₹'+inr(m.p),(m.ch>=0?'+':'')+(+m.ch).toFixed(2),m.ch>=0)).join('');
   document.getElementById('moversTop').innerHTML=fmt(o.top);
   document.getElementById('moversBot').innerHTML=fmt(o.bottom);
   document.getElementById('mvSummary').innerHTML=moversSummary(o);
@@ -956,6 +1102,99 @@ async function loadMovers(){
     'Nifty 500 movers unavailable — retrying next cycle.';
   return false;
 }
+
+/* ---------- Why did it move? (latest news for the stock) ---------- */
+const nm=document.getElementById('newsModal');
+function closeNews(){ nm.hidden=true; }
+document.getElementById('nmClose').onclick=closeNews;
+nm.addEventListener('click',e=>{ if(e.target===nm) closeNews(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!nm.hidden) closeNews(); });
+
+function relTime(sec){
+  if(!sec) return '';
+  const d=Math.max(0,(Date.now()/1000)-sec);
+  if(d<3600) return Math.round(d/60)+'m ago';
+  if(d<86400) return Math.round(d/3600)+'h ago';
+  return Math.round(d/86400)+'d ago';
+}
+async function fetchText(url){
+  const ps=[
+    u=>'https://corsproxy.io/?url='+encodeURIComponent(u),
+    u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u)
+  ];
+  for(const p of ps){
+    try{ const r=await fetch(p(url),{cache:'no-store'}); if(r.ok){ const t=await r.text(); if(t&&t.length>40) return t; } }
+    catch(e){}
+  }
+  throw new Error('news proxy failed');
+}
+async function openNews(ticker,name){
+  document.getElementById('nmTitle').textContent=name;
+  // carry the stock's current move into the dialog
+  const row=document.querySelector(`.mv-name[data-tk="${ticker}"]`);
+  const pill=row&&row.closest('tr')&&row.closest('tr').querySelector('.pill');
+  const mv=document.getElementById('nmMove');
+  if(pill){ mv.textContent=pill.textContent; mv.className='nm-move '+(pill.classList.contains('u')?'up':'down'); }
+  else mv.textContent='';
+  const body=document.getElementById('nmBody');
+  body.innerHTML='<div class="nm-empty">Fetching latest headlines…</div>';
+  nm.hidden=false;
+  try{
+    const query=`"${name}" (share OR stock OR results) when:4d`;
+    let items=await newsViaFunction(query);
+    if(!items) items=await newsViaProxy(query);
+    if(!items||!items.length){
+      // widen: drop time window, try once more via proxy
+      const wide=`"${name}" (share OR stock OR results)`;
+      items=(await newsViaFunction(wide))||(await newsViaProxy(wide))||[];
+    }
+    if(!items.length){
+      body.innerHTML='<div class="nm-empty">No recent stock-specific headlines. The move may be driven by sector rotation, index/derivatives flows, block deals or broad market sentiment rather than company news.</div>';
+      return;
+    }
+    body.innerHTML=items.slice(0,7).map(it=>{
+      const title=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').replace(/</g,'&lt;');
+      const tm=it.pubDate?relTime(Date.parse(it.pubDate)/1000):'';
+      const src=it.source?(' · '+it.source):'';
+      return `<a class="nm-item" href="${it.link||'#'}" target="_blank" rel="noopener">
+        <h4>${title}</h4><div class="meta">${tm}${src}</div></a>`;
+    }).join('');
+  }catch(e){
+    body.innerHTML='<div class="nm-empty">Couldn’t load headlines (free news feed unreachable). Try again shortly.</div>';
+  }
+}
+async function newsViaFunction(q){
+  try{
+    const r=await fetch('/api/news?q='+encodeURIComponent(q),{cache:'no-store'});
+    if(!r.ok) return null;
+    const j=await r.json();
+    return (j&&j.items)||null;
+  }catch(e){ return null; }
+}
+async function newsViaProxy(q){
+  try{
+    const url=`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-IN&gl=IN&ceid=IN:en`;
+    const xml=await fetchText(url);
+    const doc=new DOMParser().parseFromString(xml,'text/xml');
+    return [...doc.querySelectorAll('item')].map(it=>({
+      title:(it.querySelector('title')||{}).textContent||'',
+      link:(it.querySelector('link')||{}).textContent||'#',
+      pubDate:(it.querySelector('pubDate')||{}).textContent||'',
+      source:(it.getElementsByTagName('source')[0]||{}).textContent||''
+    }));
+  }catch(e){ return null; }
+}
+function onMoverActivate(e){
+  const el=e.target.closest('.mv-name'); if(!el) return;
+  if(e.type==='keydown' && e.key!=='Enter' && e.key!==' ') return;
+  e.preventDefault();
+  openNews(el.dataset.tk, el.dataset.co||el.dataset.tk);
+}
+['moversTop','moversBot'].forEach(id=>{
+  const el=document.getElementById(id);
+  el.addEventListener('click',onMoverActivate);
+  el.addEventListener('keydown',onMoverActivate);
+});
 
 (async function init(){
   try{ const ok=await loadQuotes(); if(ok){ try{ await liveChart('1D'); }catch(e){} } else setStatus(false); }
