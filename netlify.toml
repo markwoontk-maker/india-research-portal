@@ -2,7 +2,10 @@
   publish = "."
   functions = "netlify/functions"
 
+# Top-level directory key so `netlify deploy --dir=.` (no build step,
+# as run in CI) still bundles and ships the functions.
 [functions]
+  directory = "netlify/functions"
   node_bundler = "esbuild"
 
 # Friendly paths -> functions
