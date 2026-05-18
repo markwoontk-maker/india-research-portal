@@ -62,12 +62,12 @@ exports.handler = async (event) => {
         pts = y;
       }
       if (!pts.length) return;
-      const last12 = pts.slice(-12);
-      byKey[s.key] = last12;
+      const last = pts.slice(-10);
+      byKey[s.key] = last;
       items.push({
         key: s.key, label: s.label, unit: s.unit,
-        points: last12,
-        latest: last12[last12.length - 1],
+        points: last,
+        latest: last[last.length - 1],
       });
     });
     // Derived monthly trade balance = exports − imports (aligned periods).
@@ -76,7 +76,7 @@ exports.handler = async (event) => {
       const tb = byKey.exports
         .filter(p => imp[p.period] != null)
         .map(p => ({ period: p.period, value: p.value - imp[p.period] }))
-        .slice(-12);
+        .slice(-10);
       if (tb.length) {
         const last = tb[tb.length - 1];
         items.splice(3, 0, {

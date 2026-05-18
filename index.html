@@ -503,7 +503,7 @@
         <ol id="polList" class="pol-list"><li class="pol-empty">Loading political news…</li></ol>
       </div>
       <div class="card reveal">
-        <div class="card-h"><div><h3>India Macro Snapshot</h3><p id="macroSub">Monthly indicators · last 12 months (latest at right)</p></div></div>
+        <div class="card-h"><div><h3>India Macro Snapshot</h3><p id="macroSub">Monthly indicators · last 10 months (latest at right)</p></div></div>
         <div class="macro-wrap"><table class="macro-tbl" id="macroTbl"><tbody><tr><td class="macro-empty">Loading monthly macro data…</td></tr></tbody></table></div>
       </div>
     </div>
@@ -1385,7 +1385,7 @@ async function loadMacro(){
       }).join('');
       document.querySelector('#macroTbl').innerHTML=`<thead>${head}</thead><tbody>${rows}</tbody>`;
       document.getElementById('macroSub').textContent=
-        `Monthly · ${j.source} · last 12 months (latest at right; data lags a few months)`;
+        `Monthly · ${j.source} · last 10 months (latest at right; data lags a few months)`;
       return;
     }}
   }catch(e){}
