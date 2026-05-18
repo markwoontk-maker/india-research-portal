@@ -23,3 +23,8 @@
   from = "/api/news"
   to = "/.netlify/functions/news"
   status = 200
+
+[[redirects]]
+  from = "/api/macro"
+  to = "/.netlify/functions/macro"
+  status = 200
