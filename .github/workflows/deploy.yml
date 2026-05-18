@@ -21,4 +21,4 @@ jobs:
       - env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: netlify deploy --prod --dir=. --message "CI deploy ${{ github.sha }}"
+        run: netlify deploy --prod --dir=. --functions=netlify/functions --message "CI deploy ${{ github.sha }}"
