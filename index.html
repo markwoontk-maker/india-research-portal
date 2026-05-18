@@ -182,6 +182,10 @@
   #secDetail{display:none}
   .sd-chart{height:152px;margin:2px 0 18px;position:relative}
   .sd-lists{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .mv-note{font-size:12.5px;line-height:1.65;color:var(--text-dim);background:var(--ink-2);
+    border:1px solid var(--line-soft);border-left:3px solid var(--saffron);
+    padding:11px 14px;border-radius:8px;margin-bottom:18px}
+  .mv-note b{color:var(--text);font-weight:600}
   .mv-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
   .mv-cols .sd-h{margin-bottom:2px}
   @media(max-width:680px){.mv-cols{grid-template-columns:1fr;gap:6px}}
@@ -380,16 +384,17 @@
         </div>
       </div>
 
-      <!-- 4 · Top 10 & Bottom 10 -->
+      <!-- 4 · Top 20 & Bottom 20 (Nifty 500) -->
       <div class="card reveal" style="animation-delay:.24s">
-        <div class="card-h"><div><h3>Top 10 &amp; Bottom 10</h3><p>Nifty large/mid-cap movers · today</p></div></div>
+        <div class="card-h"><div><h3>Top 20 &amp; Bottom 20</h3><p>Nifty 500 constituents · today's % move</p></div></div>
+        <div class="mv-note" id="mvSummary">Loading Nifty 500 movers…</div>
         <div class="mv-cols">
           <div>
-            <div class="sd-h up">Top 10 Gainers</div>
+            <div class="sd-h up">Top 20 Gainers</div>
             <table><tbody id="moversTop"></tbody></table>
           </div>
           <div>
-            <div class="sd-h down">Bottom 10 Detractors</div>
+            <div class="sd-h down">Bottom 20 Detractors</div>
             <table><tbody id="moversBot"></tbody></table>
           </div>
         </div>
@@ -630,20 +635,6 @@ const IDX=[
   ['^NSEBANK','BANK NIFTY'],['^CNXIT','NIFTY IT'],['^CNXAUTO','NIFTY AUTO'],
   ['^CNXPHARMA','NIFTY PHARMA'],['^CNXFMCG','NIFTY FMCG'],['^INDIAVIX','INDIA VIX']
 ];
-const BASKET={
-  'RELIANCE.NS':'Reliance Inds.','HDFCBANK.NS':'HDFC Bank','ICICIBANK.NS':'ICICI Bank',
-  'INFY.NS':'Infosys','TCS.NS':'Tata Consultancy','TATAMOTORS.NS':'Tata Motors',
-  'SBIN.NS':'State Bank','AXISBANK.NS':'Axis Bank','LT.NS':'Larsen & Toubro',
-  'ITC.NS':'ITC Ltd.','BHARTIARTL.NS':'Bharti Airtel','MARUTI.NS':'Maruti Suzuki',
-  'HINDALCO.NS':'Hindalco Inds.','SUNPHARMA.NS':'Sun Pharma','DLF.NS':'DLF Ltd.',
-  'ASIANPAINT.NS':'Asian Paints','KOTAKBANK.NS':'Kotak Mahindra','BAJFINANCE.NS':'Bajaj Finance',
-  'HCLTECH.NS':'HCL Tech','WIPRO.NS':'Wipro','TECHM.NS':'Tech Mahindra',
-  'TATASTEEL.NS':'Tata Steel','JSWSTEEL.NS':'JSW Steel','M&M.NS':'Mahindra & Mahindra',
-  'TITAN.NS':'Titan Co.','NESTLEIND.NS':'Nestlé India','POWERGRID.NS':'Power Grid',
-  'NTPC.NS':'NTPC','ONGC.NS':'ONGC','COALINDIA.NS':'Coal India',
-  'ADANIENT.NS':'Adani Ent.','ADANIPORTS.NS':'Adani Ports','BAJAJ-AUTO.NS':'Bajaj Auto',
-  'EICHERMOT.NS':'Eicher Motors','GRASIM.NS':'Grasim','HEROMOTOCO.NS':'Hero MotoCorp'
-};
 const COV=[
   ['RELIANCE.NS','RELIANCE','Reliance Inds.',3420,'buy'],
   ['HDFCBANK.NS','HDFCBANK','HDFC Bank',1950,'buy'],
@@ -662,7 +653,7 @@ function setStatus(live){
 function fmtChg(pct){ return `${pct>=0?'▲':'▼'} ${pct>=0?'+':''}${pct.toFixed(2)}%`; }
 
 async function loadQuotes(){
-  const j=await sparkApi([...IDX.map(x=>x[0]),'^NSEMDCP50','INR=X','BZ=F',...Object.keys(BASKET)]);
+  const j=await sparkApi([...IDX.map(x=>x[0]),'^NSEMDCP50','INR=X','BZ=F']);
   let any=false;
 
   // Ticker
@@ -696,19 +687,6 @@ async function loadQuotes(){
   };
   snap('sSensex','^BSESN'); snap('sBank','^NSEBANK'); snap('sMid','^NSEMDCP50');
   snap('sFx','INR=X','',''); snap('sBrent','BZ=F','$','');
-
-  // Movers: top 10 gainers / bottom 10 detractors from live basket
-  const mv=Object.entries(BASKET).map(([s,nm])=>{
-    const d=pick(j,s),p=last(d),pc=prevC(d);
-    if(p==null||pc==null) return null;
-    return {s:s.replace('.NS',''),nm,p,ch:(p-pc)/pc*100};
-  }).filter(Boolean).sort((a,b)=>b.ch-a.ch);
-  if(mv.length>=6){
-    const fmt=arr=>arr.map(m=>
-      moverRow(m.s,m.nm,'₹'+inr(m.p),(m.ch>=0?'+':'')+m.ch.toFixed(2),m.ch>=0)).join('');
-    document.getElementById('moversTop').innerHTML=fmt(mv.slice(0,10));
-    document.getElementById('moversBot').innerHTML=fmt(mv.slice(-10).reverse());
-  }
 
   // Coverage (live LTP, recompute upside vs static target)
   const cov=COV.map(([s,sym,nm,tgt,call])=>{
@@ -871,12 +849,107 @@ function refreshSector(){
   document.getElementById('secBack').onclick=()=>{ curSec=''; refreshSector(); };
 })();
 
+/* ---------- Nifty 500 movers (top/bottom 20) ---------- */
+// Best-effort static Nifty 500 constituent list (no free API for exact
+// index membership). Symbols Yahoo lacks data for are filtered out.
+const NIFTY500=("RELIANCE,TCS,HDFCBANK,ICICIBANK,INFY,SBIN,BHARTIARTL,LICI,ITC,LT,"+
+"HINDUNILVR,KOTAKBANK,BAJFINANCE,AXISBANK,MARUTI,SUNPHARMA,HCLTECH,NTPC,TATAMOTORS,ONGC,"+
+"ADANIENT,M&M,WIPRO,ADANIPORTS,POWERGRID,ULTRACEMCO,TITAN,ASIANPAINT,COALINDIA,BAJAJFINSV,"+
+"NESTLEIND,JSWSTEEL,TATASTEEL,DMART,BAJAJ-AUTO,HDFCLIFE,SBILIFE,GRASIM,HINDALCO,TECHM,"+
+"INDUSINDBK,DIVISLAB,DRREDDY,CIPLA,EICHERMOT,BPCL,BRITANNIA,APOLLOHOSP,HEROMOTOCO,TATACONSUM,"+
+"PIDILITIND,SHRIRAMFIN,DABUR,GODREJCP,VEDL,IOC,SIEMENS,BANKBARODA,PNB,GAIL,"+
+"AMBUJACEM,DLF,VBL,HAVELLS,ZYDUSLIFE,TVSMOTOR,ICICIPRULI,ICICIGI,TRENT,BEL,"+
+"ADANIGREEN,ADANIPOWER,CHOLAFIN,MARICO,BOSCHLTD,SRF,BAJAJHLDNG,TORNTPHARM,COLPAL,INDIGO,"+
+"NAUKRI,JINDALSTEL,LTIM,CANBK,HDFCAMC,ABB,UNIONBANK,IDBI,BERGEPAINT,PEL,"+
+"AUROPHARMA,LUPIN,MOTHERSON,ASHOKLEY,MFSL,PGHH,UBL, MUTHOOTFIN,PIIND,SAIL,"+
+"NMDC,PFC,RECLTD,HINDPETRO,TATAPOWER,INDUSTOWER,IRCTC,NHPC,ZOMATO,POLYCAB,"+
+"PAYTM,GMRINFRA,IGL,PETRONET,OFSS,PAGEIND,ALKEM,GLAND,BIOCON,IPCALAB,"+
+"GLENMARK,LAURUSLABS,ABBOTINDIA,SANOFI,FORTIS,MAXHEALTH,METROPOLIS,LALPATHLAB,SYNGENE,JUBLFOOD,"+
+"DEVYANI,WESTLIFE,VOLTAS,BLUESTARCO,WHIRLPOOL,CROMPTON,DIXON,AMBER,VGUARD,KAJARIACER,"+
+"CERA,FINPIPE,SUPREMEIND,ASTRAL,APLAPOLLO,RATNAMANI,JKCEMENT,SHREECEM,RAMCOCEM,DALBHARAT,"+
+"ACC,NUVOCO,BIRLACORPN,STARCEMENT,HEIDELBERG,JSWENERGY,TORNTPOWER,CESC,SJVN,IEX,"+
+"PTC,KEC,KALPATPOWR,THERMAX,CUMMINSIND,AIAENG,GRINDWELL,SKFINDIA,SCHAEFFLER,TIMKEN,"+
+"BHARATFORG,SUNDRMFAST,ENDURANCE,BALKRISIND,APOLLOTYRE,MRF,CEATLTD,JKTYRE,EXIDEIND,AMARAJABAT,"+
+"BHARATELE,HAL,BDL,MAZDOCK,COCHINSHIP,GRSE,IRFC,RVNL,RAILTEL,IRCON,"+
+"NBCC,NCC,PNCINFRA,KNRCON,GPPL,CONCOR,BLUEDART,TCIEXP,DELHIVERY,MAHLOG,"+
+"GUJGASLTD,MGL,AEGISCHEM,CASTROLIND,GULFOILLUB,DEEPAKNTR,AARTIIND,NAVINFLUOR,FLUOROCHEM,VINATIORGA,"+
+"ATUL,CLEAN,ALKYLAMINE,BALAMINES,TATACHEM,GNFC,CHAMBLFERT,COROMANDEL,UPL,RALLIS,"+
+"PIDILITE,SUMICHEM,BAYERCROP,SUDARSCHEM,LXCHEM,JUBLINGREA,FINEORG,ROSSARI,GALAXYSURF,EIDPARRY,"+
+"BALRAMCHIN,DHAMPURSUG,TRIVENI,BANCOINDIA,DCMSHRIRAM,KANSAINER,AKZOINDIA,INDIGOPNTS,SHEELAFOAM,CENTURYPLY,"+
+"GREENPLY,GREENPANEL,TITANBIO,JYOTHYLAB,EMAMILTD,GILLETTE,HONAUT,3MINDIA,KCP,RAYMOND,"+
+"ARVIND,KPRMILL,TRIDENT,WELSPUNLIV,VARDHACRLC,WELCORP,RHIM,JINDALSAW,APARINDS,FINOLEXIND,"+
+"POLYPLEX,UFLEX,EPL,COSMOFIRST,TIMETECHNO,VIPIND,SAFARI,RELAXO,BATAINDIA,METROBRAND,"+
+"CAMPUS,KALYANKJIL,TITAGARH,JWL,TEXRAIL,STARHEALTH,NIACL,GICRE,MAXFINANCIAL,POLICYBZR,"+
+"CDSL,CAMS,BSE,MCX,ANGELONE,IIFL,360ONE,NAM-INDIA,UTIAMC,ABCAPITAL,"+
+"L&TFH,CHOLAHLDNG,SUNDARMFIN,M&MFIN,MANAPPURAM,CREDITACC,FIVESTAR,AAVAS,APTUS,HOMEFIRST,"+
+"CANFINHOME,PNBHOUSING,LICHSGFIN,IBULHSGFIN,REPCO,JMFINANCIL,EDELWEISS,MOTILALOFS,ANANDRATHI,PRUDENT,"+
+"FEDERALBNK,BANDHANBNK,IDFCFIRSTB,RBLBANK,AUBANK,CITYUNIONBANK,KARURVYSYA,SOUTHBANK,J&KBANK,DCBBANK,"+
+"INDIANB,IOB,CENTRALBK,MAHABANK,UCOBANK,PSB,EQUITASBNK,UJJIVANSFB,SURYODAY,ESAFSFB,"+
+"TATAELXSI,COFORGE,PERSISTENT,LTTS,MPHASIS,KPITTECH,CYIENT,SONACOMS,ZENSARTECH,BIRLASOFT,"+
+"INTELLECT,NEWGEN,MASTEK,HAPPSTMNDS,LATENTVIEW,TANLA,ROUTE,FSL,RATEGAIN,MAPMYINDIA,"+
+"INDUSIND,SBICARD,POONAWALLA,ABFRL,VMART,SHOPERSTOP,ADITYADIRBL,RAYMONDLSL,GOCOLORS,VEDANT,"+
+"PVRINOX,SUNTV,ZEEL,NETWORK18,TV18BRDCST,SAREGAMA,NAZARA,DBCORP,JAGRAN,HATHWAY,"+
+"DISHTV,GTPL,NXTDIGITAL,TIPSINDLTD,EROS,BALAJITELE,NDTV,HMVL,ENIL,MUKANDLTD,"+
+"OBEROIRLTY,GODREJPROP,LODHA,PRESTIGE,BRIGADE,SOBHA,PHOENIXLTD,MAHLIFE,SUNTECK,KOLTEPATIL,"+
+"ANANTRAJ,IBREALEST,SIGNATURE,PURVA,ARVSMART,ASHIANA,NBCC,GESHIP,COCHINSHIP,SCI,"+
+"ADANITRANS,JSWINFRA,RITES,ENGINERSIN,HUDCO,SOLARINDS,GHCL,TATACOMM,STARTV,SUNDARMHLD,"+
+"3IINFOTECH,KFINTECH,INDIAMART,JUSTDIAL,AFFLE,EASEMYTRIP,IXIGO,YATRA,TBOTEK,DREAMFOLKS,"+
+"GODREJIND,GODREJAGRO,KAVERITELE,AVANTIFEED,APEX,CCL,HERITGFOOD,DODLA,HATSUN,KRBL,"+
+"LTFOODS,USHAMART,JINDALSTEL,SHYAMMETL,GPIL,SARDAEN,MAITHANALL,KIRLOSENG,KIRLOSBROS,ELGIEQUIP,"+
+"TIINDIA,GREAVESCOT,VSTTILLERS,ESCORTS,FORCEMOT,SMLISUZU,WABAG,ION,EMUDHRA,DATAPATTNS,"+
+"ZENTEC,PARAS,ASTRAMICRO,MTARTECH,IDEAFORGE,UNIMECH,AZAD,JTLIND,SANSERA,UNOMINDA").split(",").map(s=>s.trim());
+
+function chunk(a,n){ const o=[]; for(let i=0;i<a.length;i+=n) o.push(a.slice(i,i+n)); return o; }
+const N500_SYMS=[...new Set(NIFTY500.filter(Boolean))].map(s=>s+'.NS');
+
+function moversSummary(mv){
+  const adv=mv.filter(m=>m.ch>0).length, dec=mv.filter(m=>m.ch<0).length;
+  const ss=[...sectors].filter(s=>typeof s[2]==='number').sort((a,b)=>b[2]-a[2]);
+  const cut=n=>n.replace(/^Nifty\s+/,'');
+  let secTxt='';
+  if(ss.length>=2){
+    const L=ss[0], G=ss[ss.length-1];
+    secTxt=` <b>${cut(L[0])}</b> (${L[2]>=0?'+':''}${L[2].toFixed(2)}%) led; <b>${cut(G[0])}</b> (${G[2]>=0?'+':''}${G[2].toFixed(2)}%) lagged.`;
+  }
+  const tone = adv>dec ? 'Breadth positive' : adv<dec ? 'Breadth negative' : 'Breadth flat';
+  const top=mv[0], bot=mv[mv.length-1];
+  const ext = top&&bot
+    ? ` Biggest move <b>${top.s}</b> ${top.ch>=0?'+':''}${top.ch.toFixed(2)}%, weakest <b>${bot.s}</b> ${bot.ch.toFixed(2)}%.`
+    : '';
+  return `<b>${tone}</b> — ${adv} up / ${dec} down across ${mv.length} Nifty 500 names.${secTxt}${ext}`;
+}
+
+async function loadMovers(){
+  const chunks=chunk(N500_SYMS,50);
+  let all=[];
+  for(const c of chunks){
+    try{
+      const j=await sparkApi(c);
+      c.forEach(sy=>{
+        const d=pick(j,sy),p=last(d),pc=prevC(d);
+        if(p!=null&&pc!=null&&pc>0) all.push({s:sy.replace('.NS',''),p,ch:(p-pc)/pc*100});
+      });
+    }catch(e){}
+    await new Promise(r=>setTimeout(r,130));
+  }
+  if(all.length<10) return false;
+  all.sort((a,b)=>b.ch-a.ch);
+  const fmt=arr=>arr.map(m=>
+    moverRow(m.s,'',' ₹'+inr(m.p),(m.ch>=0?'+':'')+m.ch.toFixed(2),m.ch>=0)).join('');
+  document.getElementById('moversTop').innerHTML=fmt(all.slice(0,20));
+  document.getElementById('moversBot').innerHTML=fmt(all.slice(-20).reverse());
+  document.getElementById('mvSummary').innerHTML=moversSummary(all);
+  return true;
+}
+
 (async function init(){
   try{ const ok=await loadQuotes(); if(ok){ try{ await liveChart('1D'); }catch(e){} } else setStatus(false); }
   catch(e){ setStatus(false); }
   refreshSector();
+  loadMovers().catch(()=>{ document.getElementById('mvSummary').textContent='Nifty 500 movers unavailable — free feed unreachable.'; });
 })();
 setInterval(()=>{ loadQuotes().catch(()=>{}); refreshSector(); }, 60000);
+setInterval(()=>{ loadMovers().catch(()=>{}); }, 300000);
 </script>
 </body>
 </html>
