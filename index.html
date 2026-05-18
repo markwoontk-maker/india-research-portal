@@ -161,7 +161,7 @@
 
   /* sector bars */
   .sector{display:flex;align-items:center;gap:14px;padding:11px 0}
-  .sector .nm{width:124px;font-size:12.5px;color:var(--text-dim);flex:none}
+  .sector .nm{width:178px;font-size:12px;color:var(--text-dim);flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .bar{flex:1;height:9px;background:var(--ink-2);border-radius:6px;overflow:hidden;position:relative}
   .bar i{position:absolute;top:0;bottom:0;left:50%;border-radius:6px;transition:width 1s cubic-bezier(.2,.7,.2,1)}
   .sector .pct{width:64px;text-align:right;font-family:'IBM Plex Mono';font-size:12.5px;font-weight:500;flex:none}
@@ -385,9 +385,23 @@ const indices = [
   ["INDIA VIX","13.24","−4.89%",-1],
 ];
 
-const sectors = [
-  ["Auto",2.10],["Realty",1.74],["Metal",1.38],["PSU Bank",1.21],["Bank",0.96],
-  ["Energy",0.62],["Pharma",0.22],["FMCG",-0.31],["IT",-0.54],["Media",-0.88]
+// NSE sectoral indices (official list). [name, Yahoo symbol, sample %].
+// Live % overwrites the sample where Yahoo has the symbol.
+let sectors = [
+  ["Nifty Auto","^CNXAUTO",1.46],
+  ["Nifty Bank","^NSEBANK",0.96],
+  ["Nifty Financial Services","^CNXFIN",0.78],
+  ["Nifty FMCG","^CNXFMCG",-0.31],
+  ["Nifty Healthcare","^CNXHEALTH",0.34],
+  ["Nifty IT","^CNXIT",-0.54],
+  ["Nifty Media","^CNXMEDIA",-0.88],
+  ["Nifty Metal","^CNXMETAL",1.38],
+  ["Nifty Pharma","^CNXPHARMA",0.22],
+  ["Nifty Private Bank","^NIFTYPVTBANK",0.69],
+  ["Nifty PSU Bank","^CNXPSUBANK",1.21],
+  ["Nifty Realty","^CNXREALTY",1.74],
+  ["Nifty Consumer Durables","^CNXCONSUMER",0.51],
+  ["Nifty Oil & Gas","^CNXENERGY",0.62]
 ];
 
 const movers = [
@@ -423,15 +437,20 @@ const tkHtml = indices.map(([n,v,c,d])=>
 tt.innerHTML = tkHtml + tkHtml;
 
 /* ---------- Sectors ---------- */
-document.getElementById('sectors').innerHTML = sectors.map(([n,p])=>{
-  const up=p>=0, w=Math.min(Math.abs(p)/2.2*50,50);
-  return `<div class="sector">
-    <div class="nm">${n}</div>
-    <div class="bar"><i style="${up?'left:50%':'right:50%'};width:0;background:${up?'var(--up)':'var(--down)'}" data-w="${w}"></i></div>
-    <div class="pct ${up?'up':'down'}">${up?'+':''}${p.toFixed(2)}%</div>
-  </div>`;
-}).join('');
-setTimeout(()=>document.querySelectorAll('.bar i').forEach(b=>b.style.width=b.dataset.w+'%'),300);
+function renderSectors(){
+  const list=[...sectors].sort((a,b)=>b[2]-a[2]);
+  const max=Math.max(1,...list.map(s=>Math.abs(s[2])));
+  document.getElementById('sectors').innerHTML=list.map(([n,,p])=>{
+    const up=p>=0, w=Math.min(Math.abs(p)/max*50,50);
+    return `<div class="sector">
+      <div class="nm" title="${n}">${n}</div>
+      <div class="bar"><i style="${up?'left:50%':'right:50%'};width:0;background:${up?'var(--up)':'var(--down)'}" data-w="${w.toFixed(1)}"></i></div>
+      <div class="pct ${up?'up':'down'}">${up?'+':''}${p.toFixed(2)}%</div>
+    </div>`;
+  }).join('');
+  setTimeout(()=>document.querySelectorAll('#sectors .bar i').forEach(b=>b.style.width=b.dataset.w+'%'),120);
+}
+renderSectors();
 
 /* ---------- Sparkline generator ---------- */
 function spark(up){
@@ -583,7 +602,7 @@ function setStatus(live){
 function fmtChg(pct){ return `${pct>=0?'▲':'▼'} ${pct>=0?'+':''}${pct.toFixed(2)}%`; }
 
 async function loadQuotes(){
-  const j=await sparkApi([...IDX.map(x=>x[0]),'^NSEMDCP50','INR=X','BZ=F',...Object.keys(BASKET)]);
+  const j=await sparkApi([...IDX.map(x=>x[0]),'^NSEMDCP50','INR=X','BZ=F',...Object.keys(BASKET),...sectors.map(s=>s[1])]);
   let any=false;
 
   // Ticker
@@ -643,6 +662,14 @@ async function loadQuotes(){
       <td class="r"><span class="rtag ${call}">${call.toUpperCase()}</span></td></tr>`;
   }).filter(Boolean);
   if(cov.length) document.getElementById('coverageBody').innerHTML=cov.join('');
+
+  // Sectors (live where Yahoo has the symbol; sample kept otherwise)
+  let secLive=false;
+  sectors.forEach(s=>{
+    const d=pick(j,s[1]),p=last(d),pc=prevC(d);
+    if(p!=null&&pc!=null){ s[2]=(p-pc)/pc*100; secLive=true; }
+  });
+  if(secLive) renderSectors();
 
   setStatus(any);
   return any;
