@@ -207,14 +207,20 @@
   .pol-item .src{font-size:11px;color:var(--text-mute);margin-top:6px}
   .pol-empty,.macro-empty{color:var(--text-mute);font-size:13px;padding:12px 0}
 
-  /* macro grid */
-  .macro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
-    background:var(--line-soft);border:1px solid var(--line-soft);border-radius:10px;overflow:hidden}
-  .macro-cell{background:var(--panel);padding:16px}
-  .macro-cell .ml{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-mute)}
-  .macro-cell .mv{font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin:8px 0 4px}
-  .macro-cell .my{font-size:10.5px;color:var(--text-mute);font-family:'IBM Plex Mono'}
-  @media(max-width:780px){.macro-grid{grid-template-columns:repeat(2,1fr)}}
+  /* macro monthly table */
+  .macro-wrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:10px}
+  .macro-tbl{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono';font-size:12px}
+  .macro-tbl th,.macro-tbl td{padding:10px 12px;text-align:right;white-space:nowrap;
+    border-top:1px solid var(--line-soft)}
+  .macro-tbl thead th{border-top:none;color:var(--text-mute);font-size:10px;
+    text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+  .macro-tbl .mi{text-align:left;position:sticky;left:0;background:var(--panel);min-width:170px}
+  .macro-tbl .mi .ml{display:block;font-family:'Manrope';font-size:13px;font-weight:600;color:var(--text)}
+  .macro-tbl .mi .mas{display:block;font-size:10px;color:var(--text-mute);margin-top:3px}
+  .macro-tbl tbody td{color:var(--text-dim)}
+  .macro-tbl td.lat{color:var(--text);font-weight:600;background:var(--saffron-soft);
+    border-left:1px solid rgba(233,162,59,.3)}
+  .macro-tbl td.neg{color:var(--down)} .macro-tbl td.lat.neg{color:var(--down)}
 
   /* news modal */
   .nm-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;
@@ -274,6 +280,14 @@
   .note p{font-size:12.5px;color:var(--text-dim);line-height:1.6}
   .note .by{font-size:11px;color:var(--text-mute);margin-top:8px}
   .note .by b{color:var(--text-dim);font-weight:600}
+  .broker-grp{margin-bottom:22px}
+  .broker-grp:last-child{margin-bottom:0}
+  .broker-h{display:flex;align-items:baseline;justify-content:space-between;
+    font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--saffron);
+    padding-bottom:8px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+  .broker-h span{font-family:'IBM Plex Mono';font-size:10.5px;font-weight:500;
+    color:var(--text-mute);letter-spacing:.04em}
+  .broker-grp .note{padding-left:2px}
 
   .footer{padding:18px 26px;border-top:1px solid var(--line);color:var(--text-mute);
     font-size:11px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
@@ -485,12 +499,12 @@
 
     <div id="viewMarkets" hidden>
       <div class="card reveal">
-        <div class="card-h"><div><h3>India — Latest Political News</h3><p id="polSub">Top 10 headlines · click to read · summary shown when the source provides one</p></div></div>
+        <div class="card-h"><div><h3>India — Latest Political News</h3><p id="polSub">Market-relevant headlines · social/sports/entertainment excluded · click to read</p></div></div>
         <ol id="polList" class="pol-list"><li class="pol-empty">Loading political news…</li></ol>
       </div>
       <div class="card reveal">
-        <div class="card-h"><div><h3>India Macro Snapshot</h3><p id="macroSub">Key indicators · World Bank (annual, latest available)</p></div></div>
-        <div id="macroGrid" class="macro-grid"><div class="macro-empty">Loading macro data…</div></div>
+        <div class="card-h"><div><h3>India Macro Snapshot</h3><p id="macroSub">Monthly indicators · last 12 months (latest at right)</p></div></div>
+        <div class="macro-wrap"><table class="macro-tbl" id="macroTbl"><tbody><tr><td class="macro-empty">Loading monthly macro data…</td></tr></tbody></table></div>
       </div>
     </div>
 
@@ -574,11 +588,16 @@ const coverage = [
   ["LT","Larsen & Toubro","3,640","4,150","+14.0","buy"],
 ];
 
+// [broker, call, headline, body, analyst, time] — illustrative
 const notes = [
-  ["buy","Reliance Industries — Retail & Jio re-rating intact","Q4 EBITDA beat on telecom ARPU uptick; new energy capex on track. Raising target to ₹3,420 (16% upside).","A. Mehta","2h ago"],
-  ["hold","IT Services — Tier-1 demand still soft","FY27 deal pipeline stabilising but discretionary spend muted. Stay selective; prefer largecaps on dips.","R. Iyer","5h ago"],
-  ["buy","Tata Motors — JLR margin tailwind","Volume mix + EV order book support FY27 estimates. Reiterate Buy after 5.8% intraday move.","S. Kapoor","Yesterday"],
-  ["sell","Asian Paints — Margin & competition risk","Grasim entry pressures pricing; downgrade to Sell, target ₹2,650.","A. Mehta","Yesterday"],
+  ["Motilal Oswal","buy","Reliance Industries — Retail & Jio re-rating intact","Q4 EBITDA beat on telecom ARPU uptick; new energy capex on track. Target ₹3,420 (16% upside).","A. Mehta","2h ago"],
+  ["Motilal Oswal","buy","Tata Motors — JLR margin tailwind","Volume mix + EV order book support FY27 estimates. Reiterate Buy after the move.","A. Mehta","Yesterday"],
+  ["ICICI Securities","hold","IT Services — Tier-1 demand still soft","FY27 deal pipeline stabilising but discretionary spend muted. Stay selective; prefer largecaps.","R. Iyer","5h ago"],
+  ["ICICI Securities","sell","Asian Paints — Margin & competition risk","Grasim entry pressures pricing; downgrade to Sell, target ₹2,650.","R. Iyer","Yesterday"],
+  ["Kotak Institutional","buy","HDFC Bank — NIM trough behind","Deposit repricing + LDR normalisation aid FY27 RoA. Preferred large-cap financial.","S. Kapoor","3h ago"],
+  ["Kotak Institutional","hold","FMCG — rural recovery uneven","Volume green shoots but margin upside largely priced in. Neutral on the pack.","S. Kapoor","1d ago"],
+  ["Nuvama","buy","Larsen & Toubro — order book at record","Strong ordering momentum and margin discipline; raise estimates and target.","P. Shah","6h ago"],
+  ["Jefferies India","sell","Cement — pricing discipline fragile","Demand healthy but price hikes not sticking; cautious near term on the sector.","D. Rao","Yesterday"],
 ];
 
 /* ---------- Render ticker ---------- */
@@ -638,13 +657,23 @@ document.getElementById('coverageBody').innerHTML = coverage.map(([s,c,l,t,u,cal
   <td class="r px ${u.startsWith('-')?'down':'up'}">${u.startsWith('-')?'':'+'}${u}%</td>
   <td class="r"><span class="rtag ${call}">${call.toUpperCase()}</span></td></tr>`).join('');
 
-/* ---------- Notes ---------- */
-document.getElementById('notes').innerHTML = notes.map(([t,h,p,a,tm])=>`
-  <div class="note">
-    <div class="rtag ${t}">${t.toUpperCase()}</div>
-    <div><h4>${h}</h4><p>${p}</p>
-    <div class="by"><b>${a}</b> · ${tm}</div></div>
-  </div>`).join('');
+/* ---------- Notes (grouped by broker) ---------- */
+(function(){
+  const byBroker={};
+  notes.forEach(n=>{ (byBroker[n[0]]=byBroker[n[0]]||[]).push(n); });
+  document.getElementById('notes').innerHTML=Object.keys(byBroker).map(broker=>{
+    const arr=byBroker[broker];
+    return `<div class="broker-grp">
+      <div class="broker-h">${broker}<span>${arr.length} note${arr.length>1?'s':''}</span></div>
+      ${arr.map(([b,t,h,p,a,tm])=>`
+        <div class="note">
+          <div class="rtag ${t}">${t.toUpperCase()}</div>
+          <div><h4>${h}</h4><p>${p}</p>
+          <div class="by"><b>${a}</b> · ${tm}</div></div>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+})();
 
 /* ---------- Chart ---------- */
 function series(n,vol,trend){
@@ -1298,51 +1327,69 @@ function fmtPolItems(items){
       ${sum}<div class="src">${src}</div></div></li>`;
   }).join('');
 }
+const MKT_RE=/(econom|market|sensex|nifty|stock|share|equit|rbi|sebi|budget|gst|tariff|\btax\b|fiscal|\bfii\b|\bfpi\b|\bfdi\b|rupee|inflation|repo|bond|monetary|disinvest|divest|\bpsu\b|\bipo\b|reform|trade (deal|pact|deficit)|export|import|\bgdp\b|industrial|earnings|capex|subsid|\bpli\b|infrastructure|deficit|borrow|bank|rate (cut|hike)|sector|investor|tariff|crude|sensex)/i;
+const SOC_RE=/(cricket|\bipl\b|sport|football|hockey|kabaddi|bollywood|\bfilm\b|movie|actor|actress|celebrit|singer|\bott\b|web series|murder|rape|assault|\bcrime\b|accident|road mishap|weather|rainfall|\bflood\b|cyclone|heatwave|festival|temple|mosque|church|religio|wedding|marriage|divorce|viral video|gossip|astrolog|horoscope|entertainment|fashion|recipe|lifestyle|obituary|tribute|birthday|box office)/i;
+function marketRelevant(items){
+  return (items||[]).filter(it=>{
+    const t=String(it.title||'');
+    if(SOC_RE.test(t)) return false;
+    return MKT_RE.test(t);
+  });
+}
 async function loadPolitics(){
-  const q='India (politics OR government OR parliament OR "Lok Sabha" OR election OR policy OR Cabinet) when:3d';
+  const q='India (economy OR markets OR Sensex OR Nifty OR RBI OR SEBI OR budget OR GST OR tariff OR fiscal OR FII OR FDI OR rupee OR inflation OR "interest rate" OR reforms OR disinvestment OR "trade deal" OR policy) when:4d';
   const el=document.getElementById('polList');
+  const done=items=>{ const f=marketRelevant(items);
+    if(f.length){ el.innerHTML=fmtPolItems(f); return true; } return false; };
   try{
-    const r=await fetch('/api/news?q='+encodeURIComponent(q)+'&n=10',{cache:'no-store'});
-    if(r.ok){ const j=await r.json(); if(j&&j.items&&j.items.length){ el.innerHTML=fmtPolItems(j.items); return; } }
+    const r=await fetch('/api/news?q='+encodeURIComponent(q)+'&n=12',{cache:'no-store'});
+    if(r.ok){ const j=await r.json(); if(j&&j.items&&done(j.items)) return; }
   }catch(e){}
   try{
     const items=await newsViaProxy(q);
-    if(items&&items.length){ el.innerHTML=fmtPolItems(items); return; }
+    if(items&&done(items)) return;
   }catch(e){}
-  el.innerHTML='<li class="pol-empty">Couldn’t load political news (free feed unreachable). Try again shortly.</li>';
+  el.innerHTML='<li class="pol-empty">No market-relevant political news right now (free feed). Try again shortly.</li>';
 }
 
-function fmtUSD(v){
-  const a=Math.abs(v);
-  if(a>=1e12) return (v/1e12).toFixed(2)+' T';
-  if(a>=1e9) return (v/1e9).toFixed(1)+' B';
-  if(a>=1e6) return (v/1e6).toFixed(1)+' M';
-  return v.toFixed(0);
+function fmtPeriod(p){
+  // "2026-03" -> "Mar ’26"
+  const m=String(p||'').match(/^(\d{4})-(\d{2})/);
+  if(!m) return String(p||'');
+  const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return mon[(+m[2])-1]+' ’'+m[1].slice(2);
 }
-function macroVal(it){
-  if(it.unit==='pct') return it.value.toFixed(1)+'%';
-  if(it.unit==='usd') return (it.value<0?'−$':'$')+fmtUSD(Math.abs(it.value));
-  if(it.unit==='usd0') return '$'+Math.round(it.value).toLocaleString('en-IN');
-  return String(it.value);
+function macroNum(v,unit){
+  if(unit==='pct') return v.toFixed(2)+'%';
+  // IMF IFS USD series are reported in US$ millions -> show US$ billions
+  const b=v/1000, s=b<0?'−':'';
+  return s+'$'+Math.abs(b).toFixed(1)+'B';
 }
 async function loadMacro(){
-  const g=document.getElementById('macroGrid');
+  const tb=document.querySelector('#macroTbl tbody');
   try{
     const r=await fetch('/api/macro',{cache:'no-store'});
     if(r.ok){ const j=await r.json(); if(j&&j.items&&j.items.length){
-      g.innerHTML=j.items.map(it=>{
-        const neg=it.unit!=='usd0'&&it.value<0;
-        return `<div class="macro-cell">
-          <div class="ml">${it.label}</div>
-          <div class="mv ${neg?'down':''}">${macroVal(it)}</div>
-          <div class="my">${it.year}</div></div>`;
+      const cols=Math.max(...j.items.map(it=>it.points.length),1);
+      const head=`<tr><th class="mi">Indicator</th>`+
+        Array.from({length:cols},(_,i)=>`<th>${i===cols-1?'Latest':('M-'+(cols-1-i))}</th>`).join('')+`</tr>`;
+      const rows=j.items.map(it=>{
+        const pad=cols-it.points.length;
+        const cells=Array.from({length:pad},()=>`<td>·</td>`).join('')+
+          it.points.map((p,i)=>{
+            const last=i===it.points.length-1, neg=p.value<0;
+            return `<td class="${last?'lat':''} ${neg?'neg':''}" title="${fmtPeriod(p.period)}">${macroNum(p.value,it.unit)}</td>`;
+          }).join('');
+        return `<tr><th class="mi"><span class="ml">${it.label}</span>`+
+          `<span class="mas">as of ${fmtPeriod(it.latest.period)}</span></th>${cells}</tr>`;
       }).join('');
+      document.querySelector('#macroTbl').innerHTML=`<thead>${head}</thead><tbody>${rows}</tbody>`;
       document.getElementById('macroSub').textContent=
-        `Key indicators · ${j.source} (annual, latest available)`;
+        `Monthly · ${j.source} · last 12 months (latest at right; data lags a few months)`;
       return;
     }}
   }catch(e){}
-  g.innerHTML='<div class="macro-empty">Macro data unavailable (free feed unreachable). Try again shortly.</div>';
+  tb.innerHTML='<tr><td class="macro-empty">Monthly macro data unavailable (free feed unreachable). Try again shortly.</td></tr>';
 }
 
 /* ---------- Sidebar tab routing ---------- */
