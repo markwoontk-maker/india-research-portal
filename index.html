@@ -1264,11 +1264,29 @@ function onMoverActivate(e){
 });
 
 /* ---------- Markets: political news + macro ---------- */
+// Google News descriptions are just "headline + publisher" (no real
+// summary). Only show a summary line if genuine extra prose remains.
+function cleanSnippet(s,title,source){
+  if(!s) return '';
+  let t=String(s)
+    .replace(/&amp;nbsp;|&nbsp;|&#160;/g,' ')
+    .replace(/&lt;/g,'<').replace(/&gt;/g,'>')
+    .replace(/<[^>]+>/g,' ')
+    .replace(/&amp;/g,'&').replace(/&#39;|&apos;/g,"'").replace(/&quot;/g,'"')
+    .replace(/\s+/g,' ').trim();
+  if(!t) return '';
+  const norm=x=>x.toLowerCase().replace(/[^a-z0-9]+/g,'');
+  let rest=norm(t).replace(norm(title),'').replace(norm(source||''),'');
+  if(rest.length<45) return '';
+  if(t.length>220) t=t.slice(0,217).replace(/\s+\S*$/,'')+'…';
+  return t;
+}
 function fmtPolItems(items){
   return items.slice(0,10).map(it=>{
     const title=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').replace(/</g,'&lt;');
     const tm=it.pubDate?relTime(Date.parse(it.pubDate)/1000):'';
-    const sum=it.snippet?`<div class="sum">${String(it.snippet).replace(/</g,'&lt;')}</div>`:'';
+    const cs=cleanSnippet(it.snippet,it.title,it.source);
+    const sum=cs?`<div class="sum">${cs.replace(/</g,'&lt;')}</div>`:'';
     const src=[it.source,tm].filter(Boolean).join(' · ');
     return `<li><div class="pol-item">
       <a href="${it.link||'#'}" target="_blank" rel="noopener">${title}</a>
