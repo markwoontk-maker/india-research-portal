@@ -190,6 +190,11 @@
     border-bottom:1px dotted transparent}
   .mv-name:hover,.mv-name:focus-visible{color:var(--saffron);border-bottom-color:var(--saffron);outline:none}
   .mv-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .mv-why{font-size:11px;color:var(--text-mute);line-height:1.45;margin-top:4px;
+    max-width:340px;font-style:italic}
+  .mv-tf{display:flex;align-items:center;gap:10px;margin-top:18px;padding-top:14px;
+    border-top:1px solid var(--line-soft);font-size:12px;color:var(--text-mute)}
+  .mv-tf label{letter-spacing:.04em;text-transform:uppercase;font-size:10.5px}
 
   /* news modal */
   .nm-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;
@@ -271,32 +276,32 @@
     </div>
     <nav>
       <div class="nav-label">Desk</div>
-      <div class="nav-item active">
+      <div class="nav-item active" data-view="overview" data-title="Market Overview">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
         Overview
       </div>
-      <div class="nav-item">
+      <div class="nav-item" data-view="soon" data-title="Markets">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg>
         Markets
       </div>
-      <div class="nav-item">
+      <div class="nav-item" data-view="soon" data-title="Screener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         Screener
       </div>
-      <div class="nav-item">
+      <div class="nav-item" data-view="soon" data-title="Research">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5a2 2 0 0 1 2-2h10l4 4v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M9 9h6M9 13h6"/></svg>
         Research
       </div>
-      <div class="nav-item">
+      <div class="nav-item" data-view="coverage" data-title="Coverage Watchlist">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 4v6c0 5-3.5 7.5-8 8-4.5-.5-8-3-8-8V7z"/></svg>
         Coverage
       </div>
       <div class="nav-label" style="margin-top:22px">Tools</div>
-      <div class="nav-item">
+      <div class="nav-item" data-view="soon" data-title="Watchlist">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M4 10h16M10 10v10"/></svg>
         Watchlist
       </div>
-      <div class="nav-item">
+      <div class="nav-item" data-view="soon" data-title="Settings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.3l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2.2-1.3L16 3H8l-.3 2.4A7 7 0 0 0 5.5 6.7l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 3 12c0 .4 0 .9.1 1.3l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2.2 1.3L8 21h8l.3-2.4a7 7 0 0 0 2.2-1.3l2.4 1 2-3.4-2-1.6c.1-.4.1-.9.1-1.3z"/></svg>
         Settings
       </div>
@@ -328,6 +333,8 @@
     </div>
 
     <div class="wrap">
+
+    <div id="viewOverview">
 
       <!-- KPIs -->
       <section class="kpis">
@@ -412,7 +419,7 @@
 
       <!-- 4 · Top 20 & Bottom 20 (Nifty 500) -->
       <div class="card reveal" style="animation-delay:.24s">
-        <div class="card-h"><div><h3>Top 20 &amp; Bottom 20</h3><p>Nifty 500 constituents · today's % move</p></div></div>
+        <div class="card-h"><div><h3>Top 20 &amp; Bottom 20</h3><p id="mvSub">Nifty 500 constituents · today's % move</p></div></div>
         <div class="mv-note" id="mvSummary">Loading Nifty 500 movers…</div>
         <div class="mv-cols">
           <div>
@@ -424,15 +431,17 @@
             <table><tbody id="moversBot"></tbody></table>
           </div>
         </div>
-      </div>
-
-      <!-- 5 · Coverage Watchlist -->
-      <div class="card reveal" style="animation-delay:.26s">
-        <div class="card-h"><div><h3>Coverage Watchlist</h3><p>Active analyst coverage · target vs. LTP</p></div></div>
-        <table>
-          <thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">Target</th><th class="r">Upside</th><th class="r">Call</th></tr></thead>
-          <tbody id="coverageBody"></tbody>
-        </table>
+        <div class="mv-tf">
+          <label for="mvTf">Timeframe</label>
+          <select id="mvTf" class="dd" aria-label="Movers timeframe">
+            <option value="1D">1D (Today)</option>
+            <option value="1W">1W</option>
+            <option value="1M">1M</option>
+            <option value="6M">6M</option>
+            <option value="YTD">YTD</option>
+            <option value="1Y">1Y</option>
+          </select>
+        </div>
       </div>
 
       <!-- Latest Research Notes -->
@@ -440,6 +449,25 @@
         <div class="card-h"><div><h3>Latest Research Notes</h3><p>Published by the India desk</p></div></div>
         <div id="notes"></div>
       </div>
+
+    </div><!-- /viewOverview -->
+
+    <div id="viewCoverage" hidden>
+      <div class="card reveal">
+        <div class="card-h"><div><h3>Coverage Watchlist</h3><p>Active analyst coverage · target vs. LTP</p></div></div>
+        <table>
+          <thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">Target</th><th class="r">Upside</th><th class="r">Call</th></tr></thead>
+          <tbody id="coverageBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="viewSoon" hidden>
+      <div class="card reveal">
+        <div class="card-h"><div><h3 id="soonTitle">Section</h3><p>On the roadmap</p></div></div>
+        <p style="color:var(--text-mute);font-size:13px;line-height:1.7">This module isn’t built yet. Use <b style="color:var(--text-dim)">Overview</b> for the live market dashboard or <b style="color:var(--text-dim)">Coverage</b> for the analyst watchlist.</p>
+      </div>
+    </div>
 
     </div>
 
@@ -554,11 +582,12 @@ function spark(up){
 }
 
 /* ---------- Movers ---------- */
-function moverRow(name,ticker,pxStr,pctStr,up){
+function moverRow(name,ticker,pxStr,pctStr,up,why){
   const safe=String(name).replace(/"/g,'&quot;');
+  const w=why?`<div class="mv-why">${String(why).replace(/</g,'&lt;')}</div>`:'';
   return `<tr><td>
     <div class="sym mv-name" role="button" tabindex="0" data-tk="${ticker}" data-co="${safe}">${name}</div>
-    <div class="co">${ticker}</div></td>
+    <div class="co">${ticker}</div>${w}</td>
     <td class="r px">${pxStr}</td>
     <td class="r"><span class="pill ${up?'u':'d'}">${pctStr}%</span></td>
     <td class="r">${spark(up)}</td></tr>`;
@@ -1048,11 +1077,15 @@ const NIFTY500=("RELIANCE,TCS,HDFCBANK,ICICIBANK,INFY,SBIN,BHARTIARTL,LICI,ITC,L
 function chunk(a,n){ const o=[]; for(let i=0;i<a.length;i+=n) o.push(a.slice(i,i+n)); return o; }
 const N500_SYMS=[...new Set(NIFTY500.filter(Boolean))].map(s=>s+'.NS');
 
+let moversTF='1D';
+const TF_LABEL={'1D':"today's % move",'1W':'1-week return','1M':'1-month return',
+  '6M':'6-month return','YTD':'YTD return','1Y':'1-year return'};
+
 function moversSummary(o){
   const ss=[...sectors].filter(s=>typeof s[2]==='number').sort((a,b)=>b[2]-a[2]);
   const cut=n=>n.replace(/^Nifty\s+/,'');
   let secTxt='';
-  if(ss.length>=2){
+  if((o.tf||'1D')==='1D' && ss.length>=2){
     const L=ss[0], G=ss[ss.length-1];
     secTxt=` <b>${cut(L[0])}</b> (${L[2]>=0?'+':''}${L[2].toFixed(2)}%) led; <b>${cut(G[0])}</b> (${G[2]>=0?'+':''}${G[2].toFixed(2)}%) lagged.`;
   }
@@ -1061,40 +1094,43 @@ function moversSummary(o){
   const ext = (t&&b)
     ? ` Biggest move <b>${t.s}</b> ${t.ch>=0?'+':''}${t.ch.toFixed(2)}%, weakest <b>${b.s}</b> ${b.ch.toFixed(2)}%.`
     : '';
-  return `<b>${tone}</b> — ${o.adv} up / ${o.dec} down across ${o.count} Nifty 500 names.${secTxt}${ext}`;
+  const tf=o.tf||'1D';
+  return `<b>${tone}</b> — ${o.adv} up / ${o.dec} down across ${o.count} Nifty 500 names (${tf}).${secTxt}${ext}`;
 }
 
 function renderMovers(o){
   const fmt=arr=>arr.map(m=>
-    moverRow(NAMES[m.s]||m.s, m.s, ' ₹'+inr(m.p),(m.ch>=0?'+':'')+(+m.ch).toFixed(2),m.ch>=0)).join('');
+    moverRow(NAMES[m.s]||m.s, m.s, ' ₹'+inr(m.p),(m.ch>=0?'+':'')+(+m.ch).toFixed(2),m.ch>=0,m.why)).join('');
   document.getElementById('moversTop').innerHTML=fmt(o.top);
   document.getElementById('moversBot').innerHTML=fmt(o.bottom);
   document.getElementById('mvSummary').innerHTML=moversSummary(o);
+  document.getElementById('mvSub').textContent=
+    `Nifty 500 constituents · ${TF_LABEL[o.tf||moversTF]||"today's % move"}`;
 }
 function statsOf(all){
   all.sort((a,b)=>b.ch-a.ch);
-  return { count:all.length,
+  return { tf:moversTF, count:all.length,
     adv:all.filter(x=>x.ch>0).length, dec:all.filter(x=>x.ch<0).length,
     top:all.slice(0,20), bottom:all.slice(-20).reverse() };
 }
 async function loadMovers(){
-  // Primary: serverless aggregator (one request, server fetches whole
-  // Nifty 500 in chunks and caches). Free tier friendly.
+  // Primary: serverless aggregator (one cached request — server fetches
+  // the whole Nifty 500 + per-stock news reason). Free-tier friendly.
   try{
-    const r=await fetch('/api/movers',{cache:'no-store'});
+    const r=await fetch('/api/movers?tf='+encodeURIComponent(moversTF),{cache:'no-store'});
     if(r.ok){ const j=await r.json(); if(j&&j.count>=10){ renderMovers(j); return true; } }
   }catch(e){}
-  // Fallback (no backend / function down): capped client subset.
-  // Yahoo spark caps at 20 symbols per request.
+  // Fallback (no backend): capped client subset, no per-stock news.
   try{
+    const [rng,iv]=TF[moversTF]||['1d','5m'];
     const chunks=chunk(N500_SYMS.slice(0,200),20);
-    const settled=await Promise.allSettled(chunks.map(c=>sparkApi(c).then(j=>({c,j}))));
+    const settled=await Promise.allSettled(chunks.map(c=>sparkR(c,rng,iv).then(j=>({c,j}))));
     let all=[];
     settled.forEach(x=>{
       if(x.status!=='fulfilled'||!x.value||!x.value.j) return;
       const {c,j}=x.value;
-      c.forEach(sy=>{ const d=pick(j,sy),p=last(d),pc=prevC(d);
-        if(p!=null&&pc!=null&&pc>0) all.push({s:sy.replace('.NS',''),p,ch:(p-pc)/pc*100}); });
+      c.forEach(sy=>{ const d=pick(j,sy); const v=pctOver(d,moversTF);
+        if(v!=null) all.push({s:sy.replace('.NS',''),p:last(d)||0,ch:v}); });
     });
     if(all.length>=10){ renderMovers(statsOf(all)); return true; }
   }catch(e){}
@@ -1195,6 +1231,36 @@ function onMoverActivate(e){
   el.addEventListener('click',onMoverActivate);
   el.addEventListener('keydown',onMoverActivate);
 });
+
+/* ---------- Sidebar tab routing ---------- */
+(function(){
+  const vO=document.getElementById('viewOverview'),
+        vC=document.getElementById('viewCoverage'),
+        vS=document.getElementById('viewSoon'),
+        title=document.querySelector('.topbar .title');
+  function showView(v,label){
+    vO.hidden=v!=='overview';
+    vC.hidden=v!=='coverage';
+    vS.hidden=v!=='soon';
+    if(v==='soon') document.getElementById('soonTitle').textContent=label;
+    title.textContent=label||'Market Overview';
+    window.scrollTo(0,0);
+  }
+  document.querySelectorAll('.nav-item').forEach(it=>{
+    it.addEventListener('click',()=>{
+      document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+      it.classList.add('active');
+      showView(it.dataset.view, it.dataset.title);
+    });
+  });
+})();
+
+/* ---------- Movers timeframe dropdown ---------- */
+document.getElementById('mvTf').onchange=e=>{
+  moversTF=e.target.value;
+  document.getElementById('mvSummary').textContent=`Loading ${moversTF} movers…`;
+  loadMovers().catch(()=>{});
+};
 
 (async function init(){
   try{ const ok=await loadQuotes(); if(ok){ try{ await liveChart('1D'); }catch(e){} } else setStatus(false); }

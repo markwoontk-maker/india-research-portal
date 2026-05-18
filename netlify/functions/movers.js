@@ -51,11 +51,22 @@ const SYMS = [...new Set(NIFTY500)].map(s => s + ".NS");
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
   "(KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 
+// Ticker -> company name (used to query stock-specific news).
+const NAMES = require("./_names.js");
+
+// Timeframe -> Yahoo spark range/interval + return basis.
+// 1D: last vs previous close; others: last vs first close in window.
+const TF = {
+  "1D": ["1d", "5m", "prev"], "1W": ["5d", "15m", "first"],
+  "1M": ["1mo", "1d", "first"], "6M": ["6mo", "1d", "first"],
+  "YTD": ["ytd", "1d", "first"], "1Y": ["1y", "1wk", "first"],
+};
+
 function chunk(a, n) { const o = []; for (let i = 0; i < a.length; i += n) o.push(a.slice(i, i + n)); return o; }
 
-async function fetchChunk(syms) {
+async function fetchChunk(syms, range, interval, mode) {
   const url = "https://query1.finance.yahoo.com/v8/finance/spark?symbols=" +
-    encodeURIComponent(syms.join(",")) + "&range=1d&interval=5m";
+    encodeURIComponent(syms.join(",")) + "&range=" + range + "&interval=" + interval;
   try {
     const r = await fetch(url, { headers: { "User-Agent": UA, Accept: "application/json" } });
     if (!r.ok) return [];
@@ -66,8 +77,10 @@ async function fetchChunk(syms) {
       if (!d || !d.close) continue;
       let lp = null;
       for (let k = d.close.length - 1; k >= 0; k--) { if (d.close[k] != null) { lp = d.close[k]; break; } }
-      const prev = d.chartPreviousClose != null ? d.chartPreviousClose : d.previousClose;
-      if (lp != null && prev) out.push({ s: sy.replace(".NS", ""), p: lp, ch: (lp - prev) / prev * 100 });
+      let base;
+      if (mode === "prev") base = d.chartPreviousClose != null ? d.chartPreviousClose : d.previousClose;
+      else { for (let k = 0; k < d.close.length; k++) { if (d.close[k] != null) { base = d.close[k]; break; } } }
+      if (lp != null && base) out.push({ s: sy.replace(".NS", ""), p: lp, ch: (lp - base) / base * 100 });
     }
     return out;
   } catch (e) { return []; }
@@ -80,6 +93,30 @@ async function pool(tasks, size) {
   return results;
 }
 
+function cleanTitle(t) {
+  return String(t || "").replace(/<!\[CDATA\[|\]\]>/g, "").replace(/\s+-\s+[^-]+$/, "").trim();
+}
+
+async function whyFor(name, deadline) {
+  if (Date.now() > deadline) return "";
+  const q = `"${name}" (share OR stock OR results OR Q4 OR order OR deal)`;
+  const url = "https://news.google.com/rss/search?q=" +
+    encodeURIComponent(q) + "&hl=en-IN&gl=IN&ceid=IN:en";
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), Math.min(3000, Math.max(400, deadline - Date.now())));
+  try {
+    const r = await fetch(url, { headers: { "User-Agent": UA }, signal: ctl.signal });
+    const xml = await r.text();
+    const m = xml.match(/<item>([\s\S]*?)<\/item>/);
+    if (!m) return "";
+    const tm = m[1].match(/<title[^>]*>([\s\S]*?)<\/title>/);
+    let title = cleanTitle(tm && tm[1]);
+    if (title.length > 120) title = title.slice(0, 117).replace(/\s+\S*$/, "") + "…";
+    return title;
+  } catch (e) { return ""; }
+  finally { clearTimeout(t); }
+}
+
 exports.handler = async (event) => {
   const cors = {
     "Access-Control-Allow-Origin": "*",
@@ -88,16 +125,29 @@ exports.handler = async (event) => {
   };
   if (event.httpMethod === "OPTIONS") return { statusCode: 204, headers: cors, body: "" };
   try {
+    const qp = event.queryStringParameters || {};
+    const tfKey = TF[qp.tf] ? qp.tf : "1D";
+    const [range, interval, mode] = TF[tfKey];
+
     const chunks = chunk(SYMS, 20);
-    const parts = await pool(chunks.map(c => () => fetchChunk(c)), 6);
+    const parts = await pool(chunks.map(c => () => fetchChunk(c, range, interval, mode)), 6);
     const all = parts.flat();
     all.sort((a, b) => b.ch - a.ch);
+    const top = all.slice(0, 20);
+    const bottom = all.slice(-20).reverse();
+
+    // Per-stock news reason (best-effort, bounded so we never time out).
+    const picks = [...top, ...bottom];
+    const deadline = Date.now() + 5000;
+    await pool(picks.map(it => () =>
+      whyFor(NAMES[it.s] || it.s, deadline).then(w => { it.why = w; })), 16);
+
     const body = JSON.stringify({
+      tf: tfKey,
       count: all.length,
       adv: all.filter(x => x.ch > 0).length,
       dec: all.filter(x => x.ch < 0).length,
-      top: all.slice(0, 20),
-      bottom: all.slice(-20).reverse(),
+      top, bottom,
       asOf: new Date().toISOString(),
     });
     return { statusCode: 200, headers: cors, body };
