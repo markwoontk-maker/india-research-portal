@@ -97,9 +97,20 @@ function cleanTitle(t) {
   return String(t || "").replace(/<!\[CDATA\[|\]\]>/g, "").replace(/\s+-\s+[^-]+$/, "").trim();
 }
 
+const GENERIC = new Set(("india,bank,finance,financial,industries,limited,ltd,corporation,corp," +
+  "motors,power,steel,energy,services,company,the,and,group,enterprises,international," +
+  "intl,life,insurance,paints,pharma,labs,laboratories,cement,cements,chemicals,foods," +
+  "gas,oil,auto,electric,electronics,technologies,technology,tech,housing,products," +
+  "consumer,natural,national").split(","));
+function nameTokens(name) {
+  return String(name).toLowerCase().replace(/\(.*?\)/g, " ")
+    .split(/[^a-z0-9&]+/).filter(w => w.length >= 4 && !GENERIC.has(w));
+}
+const MOVE_RE = /(share|stock|jump|surg|rall|ris(e|es|ing)|gain|fall|drop|slump|plunge|tank|soar|crash|\d{1,3}\s?%|q[1-4]\b|quarter|results|profit|loss|order|deal|acquir|merger|buyback|dividend|stake|block deal|upgrade|downgrade|target price|earnings|revenue|ipo|listing|fundrais|fund-rais|guidance|bonus|split|approval|contract|wins?\b)/i;
+
 async function whyFor(name, deadline) {
   if (Date.now() > deadline) return "";
-  const q = `"${name}" (share OR stock OR results OR Q4 OR order OR deal)`;
+  const q = `"${name}" (share OR stock OR results OR Q4 OR order OR deal OR profit)`;
   const url = "https://news.google.com/rss/search?q=" +
     encodeURIComponent(q) + "&hl=en-IN&gl=IN&ceid=IN:en";
   const ctl = new AbortController();
@@ -107,12 +118,28 @@ async function whyFor(name, deadline) {
   try {
     const r = await fetch(url, { headers: { "User-Agent": UA }, signal: ctl.signal });
     const xml = await r.text();
-    const m = xml.match(/<item>([\s\S]*?)<\/item>/);
-    if (!m) return "";
-    const tm = m[1].match(/<title[^>]*>([\s\S]*?)<\/title>/);
-    let title = cleanTitle(tm && tm[1]);
-    if (title.length > 120) title = title.slice(0, 117).replace(/\s+\S*$/, "") + "…";
-    return title;
+    const toks = nameTokens(name);
+    const lname = String(name).toLowerCase();
+    let best = "", bestScore = 0, idx = 0;
+    const re = /<item>([\s\S]*?)<\/item>/g; let m;
+    while ((m = re.exec(xml)) && idx < 8) {
+      idx++;
+      const tm = m[1].match(/<title[^>]*>([\s\S]*?)<\/title>/);
+      const title = cleanTitle(tm && tm[1]);
+      if (!title) continue;
+      const lt = title.toLowerCase();
+      const nameHit = lname && lt.includes(lname) || toks.some(w => lt.includes(w));
+      if (!nameHit) continue;                       // must be about THIS company
+      let score = 2;
+      if (lname && lt.includes(lname)) score += 1.5; // exact company name
+      if (MOVE_RE.test(lt)) score += 2;              // explains a move
+      score += Math.max(0, 3 - idx) * 0.2;           // mild recency preference
+      if (score > bestScore) { bestScore = score; best = title; }
+    }
+    // Require the chosen item to actually be move-relevant, not just a mention.
+    if (!best || bestScore < 4) return "";
+    if (best.length > 130) best = best.slice(0, 127).replace(/\s+\S*$/, "") + "…";
+    return best;
   } catch (e) { return ""; }
   finally { clearTimeout(t); }
 }
