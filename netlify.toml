@@ -5,8 +5,13 @@
 [functions]
   node_bundler = "esbuild"
 
-# Friendly path: /api/yahoo?u=... -> the function
+# Friendly paths -> functions
 [[redirects]]
   from = "/api/yahoo"
   to = "/.netlify/functions/yahoo"
+  status = 200
+
+[[redirects]]
+  from = "/api/movers"
+  to = "/.netlify/functions/movers"
   status = 200

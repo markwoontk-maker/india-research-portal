@@ -89,7 +89,7 @@
   .side-foot b{color:var(--text-dim);font-weight:600}
 
   /* ---------- Main ---------- */
-  main{padding:0 0 60px}
+  main{padding:0 0 60px;min-width:0;overflow-x:hidden}
   .topbar{
     display:flex;align-items:center;gap:18px;padding:15px 26px;
     border-bottom:1px solid var(--line);
@@ -902,8 +902,7 @@ const NIFTY500=("RELIANCE,TCS,HDFCBANK,ICICIBANK,INFY,SBIN,BHARTIARTL,LICI,ITC,L
 function chunk(a,n){ const o=[]; for(let i=0;i<a.length;i+=n) o.push(a.slice(i,i+n)); return o; }
 const N500_SYMS=[...new Set(NIFTY500.filter(Boolean))].map(s=>s+'.NS');
 
-function moversSummary(mv){
-  const adv=mv.filter(m=>m.ch>0).length, dec=mv.filter(m=>m.ch<0).length;
+function moversSummary(o){
   const ss=[...sectors].filter(s=>typeof s[2]==='number').sort((a,b)=>b[2]-a[2]);
   const cut=n=>n.replace(/^Nifty\s+/,'');
   let secTxt='';
@@ -911,35 +910,51 @@ function moversSummary(mv){
     const L=ss[0], G=ss[ss.length-1];
     secTxt=` <b>${cut(L[0])}</b> (${L[2]>=0?'+':''}${L[2].toFixed(2)}%) led; <b>${cut(G[0])}</b> (${G[2]>=0?'+':''}${G[2].toFixed(2)}%) lagged.`;
   }
-  const tone = adv>dec ? 'Breadth positive' : adv<dec ? 'Breadth negative' : 'Breadth flat';
-  const top=mv[0], bot=mv[mv.length-1];
-  const ext = top&&bot
-    ? ` Biggest move <b>${top.s}</b> ${top.ch>=0?'+':''}${top.ch.toFixed(2)}%, weakest <b>${bot.s}</b> ${bot.ch.toFixed(2)}%.`
+  const tone = o.adv>o.dec ? 'Breadth positive' : o.adv<o.dec ? 'Breadth negative' : 'Breadth flat';
+  const t=o.top&&o.top[0], b=o.bottom&&o.bottom[0];
+  const ext = (t&&b)
+    ? ` Biggest move <b>${t.s}</b> ${t.ch>=0?'+':''}${t.ch.toFixed(2)}%, weakest <b>${b.s}</b> ${b.ch.toFixed(2)}%.`
     : '';
-  return `<b>${tone}</b> — ${adv} up / ${dec} down across ${mv.length} Nifty 500 names.${secTxt}${ext}`;
+  return `<b>${tone}</b> — ${o.adv} up / ${o.dec} down across ${o.count} Nifty 500 names.${secTxt}${ext}`;
 }
 
-async function loadMovers(){
-  const chunks=chunk(N500_SYMS,50);
-  let all=[];
-  for(const c of chunks){
-    try{
-      const j=await sparkApi(c);
-      c.forEach(sy=>{
-        const d=pick(j,sy),p=last(d),pc=prevC(d);
-        if(p!=null&&pc!=null&&pc>0) all.push({s:sy.replace('.NS',''),p,ch:(p-pc)/pc*100});
-      });
-    }catch(e){}
-    await new Promise(r=>setTimeout(r,130));
-  }
-  if(all.length<10) return false;
-  all.sort((a,b)=>b.ch-a.ch);
+function renderMovers(o){
   const fmt=arr=>arr.map(m=>
-    moverRow(m.s,'',' ₹'+inr(m.p),(m.ch>=0?'+':'')+m.ch.toFixed(2),m.ch>=0)).join('');
-  document.getElementById('moversTop').innerHTML=fmt(all.slice(0,20));
-  document.getElementById('moversBot').innerHTML=fmt(all.slice(-20).reverse());
-  document.getElementById('mvSummary').innerHTML=moversSummary(all);
-  return true;
+    moverRow(m.s,'',' ₹'+inr(m.p),(m.ch>=0?'+':'')+(+m.ch).toFixed(2),m.ch>=0)).join('');
+  document.getElementById('moversTop').innerHTML=fmt(o.top);
+  document.getElementById('moversBot').innerHTML=fmt(o.bottom);
+  document.getElementById('mvSummary').innerHTML=moversSummary(o);
+}
+function statsOf(all){
+  all.sort((a,b)=>b.ch-a.ch);
+  return { count:all.length,
+    adv:all.filter(x=>x.ch>0).length, dec:all.filter(x=>x.ch<0).length,
+    top:all.slice(0,20), bottom:all.slice(-20).reverse() };
+}
+async function loadMovers(){
+  // Primary: serverless aggregator (one request, server fetches whole
+  // Nifty 500 in chunks and caches). Free tier friendly.
+  try{
+    const r=await fetch('/api/movers',{cache:'no-store'});
+    if(r.ok){ const j=await r.json(); if(j&&j.count>=10){ renderMovers(j); return true; } }
+  }catch(e){}
+  // Fallback (no backend / function down): capped client subset.
+  // Yahoo spark caps at 20 symbols per request.
+  try{
+    const chunks=chunk(N500_SYMS.slice(0,200),20);
+    const settled=await Promise.allSettled(chunks.map(c=>sparkApi(c).then(j=>({c,j}))));
+    let all=[];
+    settled.forEach(x=>{
+      if(x.status!=='fulfilled'||!x.value||!x.value.j) return;
+      const {c,j}=x.value;
+      c.forEach(sy=>{ const d=pick(j,sy),p=last(d),pc=prevC(d);
+        if(p!=null&&pc!=null&&pc>0) all.push({s:sy.replace('.NS',''),p,ch:(p-pc)/pc*100}); });
+    });
+    if(all.length>=10){ renderMovers(statsOf(all)); return true; }
+  }catch(e){}
+  document.getElementById('mvSummary').textContent=
+    'Nifty 500 movers unavailable — retrying next cycle.';
+  return false;
 }
 
 (async function init(){
