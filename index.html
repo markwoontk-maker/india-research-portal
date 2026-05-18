@@ -200,11 +200,13 @@
   .pol-list li::before{content:counter(pol,decimal-leading-zero);
     font-family:'IBM Plex Mono';font-size:12px;font-weight:600;color:var(--saffron);
     flex:none;width:26px;padding-top:1px}
-  .pol-item a{color:var(--text);font-size:14px;font-weight:600;line-height:1.45;
-    text-decoration:none}
-  .pol-item a:hover{color:var(--saffron);text-decoration:underline}
+  .pol-item{flex:1;min-width:0}
+  .pol-top{display:flex;align-items:baseline;gap:16px}
+  .pol-h{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    color:var(--text);font-size:14px;font-weight:600;line-height:1.45;text-decoration:none}
+  .pol-h:hover{color:var(--saffron);text-decoration:underline}
   .pol-item .sum{font-size:12px;color:var(--text-dim);line-height:1.55;margin-top:5px}
-  .pol-item .src{font-size:11px;color:var(--text-mute);margin-top:6px}
+  .pol-item .src{flex:none;white-space:nowrap;font-size:11px;color:var(--text-mute)}
   .pol-empty,.macro-empty{color:var(--text-mute);font-size:13px;padding:12px 0}
 
   /* macro monthly table */
@@ -1323,8 +1325,10 @@ function fmtPolItems(items){
     const sum=cs?`<div class="sum">${cs.replace(/</g,'&lt;')}</div>`:'';
     const src=[it.source,tm].filter(Boolean).join(' · ');
     return `<li><div class="pol-item">
-      <a href="${it.link||'#'}" target="_blank" rel="noopener">${title}</a>
-      ${sum}<div class="src">${src}</div></div></li>`;
+      <div class="pol-top">
+        <a class="pol-h" href="${it.link||'#'}" target="_blank" rel="noopener" title="${title}">${title}</a>
+        <span class="src">${src}</span>
+      </div>${sum}</div></li>`;
   }).join('');
 }
 const MKT_RE=/(econom|market|sensex|nifty|stock|share|equit|rbi|sebi|budget|gst|tariff|\btax\b|fiscal|\bfii\b|\bfpi\b|\bfdi\b|rupee|inflation|repo|bond|monetary|disinvest|divest|\bpsu\b|\bipo\b|reform|trade (deal|pact|deficit)|export|import|\bgdp\b|industrial|earnings|capex|subsid|\bpli\b|infrastructure|deficit|borrow|bank|rate (cut|hike)|sector|investor|tariff|crude|sensex)/i;
