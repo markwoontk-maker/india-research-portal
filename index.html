@@ -170,7 +170,7 @@
   /* sector controls + detail */
   .sec-ctrls{display:flex;gap:8px;flex:none}
   .dd{background:var(--ink-2);border:1px solid var(--line);color:var(--text-dim);
-    font-family:'IBM Plex Mono';font-size:11.5px;padding:6px 8px;border-radius:8px;cursor:pointer;outline:none}
+    font-family:'IBM Plex Mono';font-size:14px;padding:8px 12px;border-radius:8px;cursor:pointer;outline:none}
   .dd:hover{color:var(--text);border-color:var(--saffron)}
   #secDetail{display:none}
   .sd-chart{height:152px;margin:2px 0 18px;position:relative}
@@ -663,10 +663,11 @@ grad.addColorStop(1,'rgba(233,162,59,0)');
 const chart=new Chart(ctx,{
   type:'line',
   data:{labels:datasets['1D'].map((_,i)=>i),
-    datasets:[{data:datasets['1D'],borderColor:'#e9a23b',borderWidth:2,
-      fill:true,backgroundColor:grad,tension:.35,pointRadius:0,pointHoverRadius:5,
-      pointHoverBackgroundColor:'#e9a23b'}]},
+    datasets:[{data:datasets['1D'],borderColor:'#e9a23b',borderWidth:1.5,
+      fill:true,backgroundColor:grad,tension:.18,pointRadius:0,pointHoverRadius:5,
+      pointHoverBackgroundColor:'#e9a23b',borderJoinStyle:'round'}]},
   options:{responsive:true,maintainAspectRatio:false,
+    devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
     plugins:{legend:{display:false},
       tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,
         titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:11,displayColors:false,
@@ -887,9 +888,10 @@ function drawSecChart(data){
     const g=c.getContext('2d').createLinearGradient(0,0,0,152);
     g.addColorStop(0,'rgba(233,162,59,.30)'); g.addColorStop(1,'rgba(233,162,59,0)');
     secChartObj=new Chart(c,{type:'line',
-      data:{labels:[],datasets:[{data:[],borderColor:'#e9a23b',borderWidth:2,fill:true,
-        backgroundColor:g,tension:.35,pointRadius:0,pointHoverRadius:4}]},
+      data:{labels:[],datasets:[{data:[],borderColor:'#e9a23b',borderWidth:1.5,fill:true,
+        backgroundColor:g,tension:.18,pointRadius:0,pointHoverRadius:4,borderJoinStyle:'round'}]},
       options:{responsive:true,maintainAspectRatio:false,
+        devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
         plugins:{legend:{display:false},tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',
           borderWidth:1,titleColor:'#646c7c',bodyColor:'#e9e6dd',displayColors:false,
           callbacks:{title:()=>'',label:t=>'  '+t.parsed.y.toFixed(2)}}},
