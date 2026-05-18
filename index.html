@@ -179,12 +179,17 @@
     border:1px solid var(--line-soft);border-left:3px solid var(--saffron);
     padding:11px 14px;border-radius:8px;margin-bottom:18px}
   .mv-note b{color:var(--text);font-weight:600}
-  .mv-name{cursor:pointer;transition:color .15s;display:inline-block;
-    border-bottom:1px dotted transparent}
+  .mv-name{cursor:pointer;transition:color .15s;display:block;
+    border-bottom:1px dotted transparent;white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis;max-width:220px}
   .mv-name:hover,.mv-name:focus-visible{color:var(--saffron);border-bottom-color:var(--saffron);outline:none}
   .mv-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-  .mv-why{font-size:11px;color:var(--text-mute);line-height:1.45;margin-top:4px;
-    max-width:340px;font-style:italic}
+  /* fixed 2-line reason so every row is the same height */
+  .mv-why{font-size:11px;color:var(--text-mute);line-height:1.4;margin-top:4px;
+    font-style:italic;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+    overflow:hidden;height:2.8em}
+  /* uniform row height so Top 20 / Bottom 20 columns line up */
+  #moversTop td,#moversBot td{vertical-align:middle}
   .mv-tf{display:flex;align-items:center;gap:10px;margin-top:18px;padding-top:14px;
     border-top:1px solid var(--line-soft);font-size:12px;color:var(--text-mute)}
   .mv-tf label{letter-spacing:.04em;text-transform:uppercase;font-size:10.5px}
@@ -577,7 +582,7 @@ function spark(up){
 /* ---------- Movers ---------- */
 function moverRow(name,ticker,pxStr,pctStr,up,why){
   const safe=String(name).replace(/"/g,'&quot;');
-  const w=why?`<div class="mv-why">${String(why).replace(/</g,'&lt;')}</div>`:'';
+  const w=`<div class="mv-why">${why?String(why).replace(/</g,'&lt;'):''}</div>`;
   return `<tr><td>
     <div class="sym mv-name" role="button" tabindex="0" data-tk="${ticker}" data-co="${safe}">${name}</div>
     <div class="co">${ticker}</div>${w}</td>
