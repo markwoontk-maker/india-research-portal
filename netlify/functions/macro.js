@@ -10,7 +10,7 @@ const SERIES = [
   { key: "exports", label: "Exports (goods, FOB)", unit: "usdb", id: "IMF/IFS/M.IN.TXG_FOB_USD" },
   { key: "imports", label: "Imports (goods, CIF)", unit: "usdb", id: "IMF/IFS/M.IN.TMG_CIF_USD" },
   { key: "reserves", label: "FX reserves (total)", unit: "usdb", id: "IMF/IFS/M.IN.RAFA_USD" },
-  { key: "repo", label: "Policy rate", unit: "pct", id: "BIS/cbpol/M.IN" },
+  { key: "repo", label: "Policy rate (RBI)", unit: "pct", id: "BIS/WS_CBPOL/M.IN" },
 ];
 
 async function pool(tasks, size) {
