@@ -1857,6 +1857,8 @@ const NOTEBOOKS = [
   {name:"Uno Minda", url:"https://notebooklm.google.com/notebook/e6b1be10-5154-4ea2-813d-ee0cf4e43c5e"},
   {name:"Vodafone Idea", url:"https://notebooklm.google.com/notebook/133b58ce-f599-40a6-bd77-46c2717a1c00"}
 ];
+const NB_AUTHUSER='markworktk@gmail.com';
+function nbHref(n){ return n.url ? n.url+(n.url.includes('?')?'&':'?')+'authuser='+encodeURIComponent(NB_AUTHUSER) : ''; }
 let screenerLoaded=false;
 function loadScreener(){
   const sel=document.getElementById('nbSelect'),
@@ -1871,7 +1873,7 @@ function loadScreener(){
   });
   function refresh(){
     const i=sel.value, n=i===''?null:NOTEBOOKS[+i];
-    if(n && n.url){ openBtn.href=n.url; openBtn.style.display='inline-block'; }
+    if(n && n.url){ openBtn.href=nbHref(n); openBtn.style.display='inline-block'; }
     else { openBtn.style.display='none'; openBtn.removeAttribute('href'); }
   }
   sel.addEventListener('change',refresh);
@@ -1885,7 +1887,7 @@ function renderNotebookResList(){
     const li=document.createElement('li');
     li.className='pol-item';
     li.innerHTML = n.url
-      ? `<a href="${n.url}" target="_blank" rel="noopener">${n.name} ↗</a>`
+      ? `<a href="${nbHref(n)}" target="_blank" rel="noopener">${n.name} ↗</a>`
       : `<span style="color:var(--text-mute)">${n.name} · notebook pending</span>`;
     ol.appendChild(li);
   });
