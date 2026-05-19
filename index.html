@@ -1682,12 +1682,20 @@ function summariseEarning(raw){
   return c.length>150?c.slice(0,147).replace(/\s+\S*$/,'')+'…':c;
 }
 function fmtEarnFeed(items,mode){
-  return items.slice(0,20).map(it=>{
+  const seen=new Set(), rows=[];
+  for(const it of items){
+    if(rows.length>=20) break;
     const title=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').trim();
     const safeT=title.replace(/</g,'&lt;');
     const lead=leadCompany(safeT);
     const tk=pickTicker(safeT);
     const label=tk||lead||'—';
+    if(mode==='earn'){
+      // exclude repeated company names (keep first occurrence)
+      const key=(tk?(NAMES[tk]||tk):String(lead)).toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,16);
+      if(!key || seen.has(key)) continue;
+      seen.add(key);
+    }
     let sum;
     if(mode==='earn'){
       sum=summariseEarning(title).replace(/</g,'&lt;');
@@ -1699,9 +1707,10 @@ function fmtEarnFeed(items,mode){
     }
     const cls=mode==='earn'?sentiment(title):'flat';
     const dt=mode==='corp'?`<span class="ec-dt">${relDate(it.pubDate)}</span>`:'';
-    return `<li><div class="pol-item ec-row"><div class="ec-main">`+
-      `<span class="ec-tk ${cls}">${label}</span><span class="ec-sum">${sum}</span></div>${dt}</div></li>`;
-  }).join('');
+    rows.push(`<li><div class="pol-item ec-row"><div class="ec-main">`+
+      `<span class="ec-tk ${cls}">${label}</span><span class="ec-sum">${sum}</span></div>${dt}</div></li>`);
+  }
+  return rows.join('');
 }
 async function feedInto(elId,q,n,re,mode,excl){
   const el=document.getElementById(elId);
