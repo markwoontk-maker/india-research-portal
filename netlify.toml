@@ -28,3 +28,8 @@
   from = "/api/macro"
   to = "/.netlify/functions/macro"
   status = 200
+
+[[redirects]]
+  from = "/api/earncal"
+  to = "/.netlify/functions/earncal"
+  status = 200

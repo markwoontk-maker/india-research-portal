@@ -50,7 +50,7 @@ exports.handler = async (event) => {
     const r = await fetch(rss, { headers: { "User-Agent": UA } });
     if (!r.ok) return { statusCode: 502, headers: cors, body: '{"error":"rss fetch failed"}' };
     const xml = await r.text();
-    const cap = Math.min(Math.max(parseInt((event.queryStringParameters || {}).n, 10) || 8, 1), 12);
+    const cap = Math.min(Math.max(parseInt((event.queryStringParameters || {}).n, 10) || 8, 1), 20);
     const items = [];
     const re = /<item>([\s\S]*?)<\/item>/g;
     let m;

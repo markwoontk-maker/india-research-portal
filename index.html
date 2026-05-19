@@ -212,6 +212,17 @@
   #wlHold td,#wlCov td,#wlWatch td{padding:6px 0}
   #wlHold .sym,#wlCov .sym,#wlWatch .sym{display:inline}
   .wl-tk{font-family:'IBM Plex Mono';font-size:11px;color:var(--text-mute);margin-left:8px}
+  /* earnings calendar */
+  .earn-cal{display:flex;flex-direction:column}
+  .ec-day{padding:12px 0;border-bottom:1px solid var(--line-soft)}
+  .earn-cal .ec-day:last-child{border:none;padding-bottom:0}
+  .ec-date{font-family:'IBM Plex Mono';font-size:12px;font-weight:600;color:var(--saffron);
+    margin-bottom:8px;display:flex;align-items:baseline;gap:10px}
+  .ec-date span{font-family:'Manrope';font-size:11px;color:var(--text-mute);font-weight:500}
+  .ec-co{display:flex;flex-wrap:wrap;gap:6px}
+  .ec-co b{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:6px;
+    font-size:11.5px;font-weight:500;color:var(--text-dim);padding:4px 9px}
+  .ec-none{font-size:12px;color:var(--text-mute);font-style:italic}
 
   /* macro monthly table */
   .macro-wrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:10px}
@@ -322,6 +333,10 @@
       <div class="nav-item" data-view="markets" data-title="India Markets">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg>
         Markets
+      </div>
+      <div class="nav-item" data-view="companies" data-title="Companies">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-3"/><path d="M9 9h0M9 13h0M9 17h0"/></svg>
+        Companies
       </div>
       <div class="nav-item" data-view="soon" data-title="Screener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -497,6 +512,21 @@
       <div class="card reveal">
         <div class="card-h"><div><h3>India Macro Snapshot</h3><p id="macroSub">Monthly indicators · last 10 months (latest at right)</p></div></div>
         <div class="macro-wrap"><table class="macro-tbl" id="macroTbl"><tbody><tr><td class="macro-empty">Loading monthly macro data…</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <div id="viewCompanies" hidden>
+      <div class="card reveal">
+        <div class="card-h"><div><h3>Earnings Updates — Today</h3><p>Latest Indian results coverage · up to 20 · click to read</p></div></div>
+        <ol id="earnList" class="pol-list"><li class="pol-empty">Loading earnings updates…</li></ol>
+      </div>
+      <div class="card reveal">
+        <div class="card-h"><div><h3>Corporate Events</h3><p>M&amp;A, board changes, fund-raising, restructuring · click to read</p></div></div>
+        <ol id="corpList" class="pol-list"><li class="pol-empty">Loading corporate events…</li></ol>
+      </div>
+      <div class="card reveal">
+        <div class="card-h"><div><h3>Earnings Calendar — Next 7 Business Days</h3><p id="calSub">Forthcoming results · BSE</p></div></div>
+        <div id="earnCal" class="earn-cal"><div class="pol-empty">Loading earnings calendar…</div></div>
       </div>
     </div>
 
@@ -1376,7 +1406,7 @@ function renderMacro(j){
   }).join('');
   document.querySelector('#macroTbl').innerHTML=`<thead>${head}</thead><tbody>${rows}</tbody>`;
   document.getElementById('macroSub').textContent=
-    `Monthly · ${j.source} · last 10 months (latest at right; data lags a few months)`;
+    `Monthly · ${j.source} · last 10 months · IMF/IFS publishes with a lag, so the latest reported month may be in the prior year (shown per row)`;
 }
 
 // Client fallback for the macro function (DBnomics is CORS-enabled;
@@ -1503,24 +1533,97 @@ async function loadWatchlist(){
   document.getElementById('wlWatch').innerHTML=wlRows(WL_WATCH,map);
 }
 
+/* ---------- Companies tab ---------- */
+const EARN_RE=/(\bq[1-4]\b|quarter|results|earnings|\bpat\b|net profit|profit after tax|revenue|ebitda|topline|bottom\s?line|posts|reports|beats|misses|profit (jump|rise|fall|drop|surge|decline)|loss)/i;
+const CORP_RE=/(merger|acquisition|acquire|to buy|stake (sale|buy)|divest|demerger|amalgamat|open offer|buyback|board (approves|approval)|resign|steps? down|appointed|elevat|new (ceo|md|cfo|chair)|managing director|restructur|joint venture|\bjv\b|fund[- ]?rais|\bqip\b|preferential|rights issue|delisting|insolvency|order win|bags? .*order|contract win)/i;
+function newsFilter(items,re){
+  return (items||[]).filter(it=>{ const t=String(it.title||'');
+    return !SOC_RE.test(t) && re.test(t); });
+}
+async function feedInto(elId,q,n,re){
+  const el=document.getElementById(elId);
+  const done=items=>{ const f=newsFilter(items,re);
+    if(f.length){ el.innerHTML=fmtPolItems(f); return true; } return false; };
+  try{
+    const r=await fetch('/api/news?q='+encodeURIComponent(q)+'&n='+n,{cache:'no-store'});
+    if(r.ok){ const j=await r.json(); if(j&&j.items&&done(j.items)) return; }
+  }catch(e){}
+  try{ const items=await newsViaProxy(q); if(items&&done(items)) return; }catch(e){}
+  el.innerHTML='<li class="pol-empty">No items right now (free feed). Try again shortly.</li>';
+}
+function loadEarnNews(){
+  return feedInto('earnList',
+    'India (Q4 results OR Q1 results OR quarterly results OR earnings OR "net profit" OR "profit after tax" OR PAT OR revenue OR EBITDA) when:2d',
+    20, EARN_RE);
+}
+function loadCorpEvents(){
+  return feedInto('corpList',
+    'India (merger OR acquisition OR "stake sale" OR demerger OR "open offer" OR buyback OR "board approves" OR resigns OR "steps down" OR "appointed as" OR "new CEO" OR "new MD" OR restructuring OR "joint venture" OR QIP OR "fund raise") when:4d',
+    14, CORP_RE);
+}
+function bizDays(n){
+  const out=[], d=new Date(); d.setHours(0,0,0,0);
+  while(out.length<n){
+    const dow=d.getDay();
+    if(dow!==0 && dow!==6) out.push(new Date(d));
+    d.setDate(d.getDate()+1);
+  }
+  return out;
+}
+function calKey(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function calLabel(d){
+  const wk=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+  return {dow:wk, date:mo+' '+d.getDate()};
+}
+function renderEarnCal(items,sourceLabel){
+  const days=bizDays(7);
+  const map={};
+  (items||[]).forEach(it=>{ (map[it.date]=map[it.date]||[]).push(it.name); });
+  document.getElementById('earnCal').innerHTML=days.map(d=>{
+    const k=calKey(d), L=calLabel(d);
+    const cos=[...new Set(map[k]||[])];
+    const body=cos.length
+      ? `<div class="ec-co">${cos.slice(0,40).map(c=>`<b>${String(c).replace(/</g,'&lt;')}</b>`).join('')}</div>`
+      : `<div class="ec-none">No results scheduled / not yet announced</div>`;
+    return `<div class="ec-day"><div class="ec-date">${L.dow} · ${L.date}
+      <span>${cos.length?cos.length+' co.':''}</span></div>${body}</div>`;
+  }).join('');
+  if(sourceLabel) document.getElementById('calSub').textContent='Forthcoming results · '+sourceLabel;
+}
+async function loadEarnCal(){
+  try{
+    const r=await fetch('/api/earncal',{cache:'no-store'});
+    if(r.ok){ const j=await r.json(); if(j&&Array.isArray(j.items)){ renderEarnCal(j.items,j.source); return; } }
+  }catch(e){}
+  // No reliable free no-key client fallback for the forward calendar.
+  renderEarnCal([], null);
+  document.getElementById('calSub').textContent=
+    'Forthcoming results · live calendar needs the deployed backend (BSE)';
+}
+function loadCompanies(){ loadEarnNews(); loadCorpEvents(); loadEarnCal(); }
+
 /* ---------- Sidebar tab routing ---------- */
 (function(){
   const vO=document.getElementById('viewOverview'),
         vR=document.getElementById('viewResearch'),
         vM=document.getElementById('viewMarkets'),
         vW=document.getElementById('viewWatchlist'),
+        vCo=document.getElementById('viewCompanies'),
         vS=document.getElementById('viewSoon'),
         title=document.querySelector('.topbar .title');
-  let marketsLoaded=false, watchlistLoaded=false;
+  let marketsLoaded=false, watchlistLoaded=false, companiesLoaded=false;
   function showView(v,label){
     vO.hidden=v!=='overview';
     vR.hidden=v!=='research';
     vM.hidden=v!=='markets';
     vW.hidden=v!=='watchlist';
+    vCo.hidden=v!=='companies';
     vS.hidden=v!=='soon';
     if(v==='soon') document.getElementById('soonTitle').textContent=label;
     if(v==='markets' && !marketsLoaded){ marketsLoaded=true; loadPolitics(); loadMacro(); }
     if(v==='watchlist' && !watchlistLoaded){ watchlistLoaded=true; loadWatchlist(); }
+    if(v==='companies' && !companiesLoaded){ companiesLoaded=true; loadCompanies(); }
     title.textContent=label||'Market Overview';
     window.scrollTo(0,0);
   }
