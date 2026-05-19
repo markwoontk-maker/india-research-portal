@@ -1565,7 +1565,7 @@ function bizDays(n){
   const out=[], d=new Date(); d.setHours(0,0,0,0);
   while(out.length<n){
     const dow=d.getDay();
-    if(dow!==0 && dow!==6) out.push(new Date(d));
+    if(dow!==0) out.push(new Date(d)); // Mon–Sat (Sundays excluded)
     d.setDate(d.getDate()+1);
   }
   return out;
