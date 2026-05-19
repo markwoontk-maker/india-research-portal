@@ -194,7 +194,7 @@
 
   /* political news list */
   .pol-list{list-style:none;counter-reset:pol;margin:0;padding:0}
-  .pol-list li{counter-increment:pol;display:flex;gap:14px;padding:15px 0;
+  .pol-list li{counter-increment:pol;display:flex;gap:12px;padding:8px 0;
     border-bottom:1px solid var(--line-soft)}
   .pol-list li:last-child{border:none;padding-bottom:0}
   .pol-list li::before{content:counter(pol,decimal-leading-zero);
@@ -208,6 +208,10 @@
   .pol-item .sum{font-size:12px;color:var(--text-dim);line-height:1.55;margin-top:5px}
   .pol-item .src{flex:none;white-space:nowrap;font-size:11px;color:var(--text-mute)}
   .pol-empty,.macro-empty{color:var(--text-mute);font-size:13px;padding:12px 0}
+  /* watchlist tables: ticker beside name, tighter rows */
+  #wlHold td,#wlCov td,#wlWatch td{padding:6px 0}
+  #wlHold .sym,#wlCov .sym,#wlWatch .sym{display:inline}
+  .wl-tk{font-family:'IBM Plex Mono';font-size:11px;color:var(--text-mute);margin-left:8px}
 
   /* macro monthly table */
   .macro-wrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:10px}
@@ -327,11 +331,6 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5a2 2 0 0 1 2-2h10l4 4v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M9 9h6M9 13h6"/></svg>
         Research
       </div>
-      <div class="nav-item" data-view="coverage" data-title="Coverage Watchlist">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 4v6c0 5-3.5 7.5-8 8-4.5-.5-8-3-8-8V7z"/></svg>
-        Coverage
-      </div>
-      <div class="nav-label" style="margin-top:22px">Tools</div>
       <div class="nav-item" data-view="watchlist" data-title="Watchlist">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M4 10h16M10 10v10"/></svg>
         Watchlist
@@ -482,15 +481,6 @@
 
     </div><!-- /viewOverview -->
 
-    <div id="viewCoverage" hidden>
-      <div class="card reveal">
-        <div class="card-h"><div><h3>Coverage Watchlist</h3><p>Active analyst coverage · target vs. LTP</p></div></div>
-        <table>
-          <thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">Target</th><th class="r">Upside</th><th class="r">Call</th></tr></thead>
-          <tbody id="coverageBody"></tbody>
-        </table>
-      </div>
-    </div>
 
     <div id="viewResearch" hidden>
       <div class="card reveal">
@@ -670,13 +660,6 @@ document.getElementById('moversTop').innerHTML =
 document.getElementById('moversBot').innerHTML =
   movers.filter(m=>m[4]<0).map(([s,c,p,ch])=>moverRow(c,s,'₹'+p,ch,false)).join('');
 
-/* ---------- Coverage ---------- */
-document.getElementById('coverageBody').innerHTML = coverage.map(([s,c,l,t,u,call])=>`
-  <tr><td><div class="sym">${s}</div><div class="co">${c}</div></td>
-  <td class="r px">₹${l}</td><td class="r px">₹${t}</td>
-  <td class="r px ${u.startsWith('-')?'down':'up'}">${u.startsWith('-')?'':'+'}${u}%</td>
-  <td class="r"><span class="rtag ${call}">${call.toUpperCase()}</span></td></tr>`).join('');
-
 /* ---------- Notes (grouped by broker) ---------- */
 (function(){
   const byBroker={};
@@ -842,16 +825,6 @@ async function loadQuotes(){
   snap('sSensex','^BSESN'); snap('sBank','^NSEBANK'); snap('sMid','^NSEMDCP50');
   snap('sFx','INR=X','',''); snap('sBrent','BZ=F','$','');
 
-  // Coverage (live LTP, recompute upside vs static target)
-  const cov=COV.map(([s,sym,nm,tgt,call])=>{
-    const d=pick(j,s),p=last(d); if(p==null) return null;
-    const up=(tgt-p)/p*100;
-    return `<tr><td><div class="sym">${sym}</div><div class="co">${nm}</div></td>
-      <td class="r px">₹${inr(p)}</td><td class="r px">₹${inr(tgt)}</td>
-      <td class="r px ${up>=0?'up':'down'}">${up>=0?'+':''}${up.toFixed(1)}%</td>
-      <td class="r"><span class="rtag ${call}">${call.toUpperCase()}</span></td></tr>`;
-  }).filter(Boolean);
-  if(cov.length) document.getElementById('coverageBody').innerHTML=cov.join('');
 
   setStatus(any);
   return any;
@@ -1387,29 +1360,82 @@ function macroNum(v,unit){
   const b=v/1000, s=b<0?'−':'';
   return s+'$'+Math.abs(b).toFixed(1)+'B';
 }
+function renderMacro(j){
+  const cols=Math.max(...j.items.map(it=>it.points.length),1);
+  const head=`<tr><th class="mi">Indicator</th>`+
+    Array.from({length:cols},(_,i)=>`<th>${i===cols-1?'Latest':('M-'+(cols-1-i))}</th>`).join('')+`</tr>`;
+  const rows=j.items.map(it=>{
+    const pad=cols-it.points.length;
+    const cells=Array.from({length:pad},()=>`<td>·</td>`).join('')+
+      it.points.map((p,i)=>{
+        const last=i===it.points.length-1, neg=p.value<0;
+        return `<td class="${last?'lat':''} ${neg?'neg':''}" title="${fmtPeriod(p.period)}">${macroNum(p.value,it.unit)}</td>`;
+      }).join('');
+    return `<tr><th class="mi"><span class="ml">${it.label}</span>`+
+      `<span class="mas">as of ${fmtPeriod(it.latest.period)}</span></th>${cells}</tr>`;
+  }).join('');
+  document.querySelector('#macroTbl').innerHTML=`<thead>${head}</thead><tbody>${rows}</tbody>`;
+  document.getElementById('macroSub').textContent=
+    `Monthly · ${j.source} · last 10 months (latest at right; data lags a few months)`;
+}
+
+// Client fallback for the macro function (DBnomics is CORS-enabled;
+// also try the public proxy if a direct call is blocked).
+const MACRO_SERIES=[
+  {key:'cpi',label:'CPI inflation (YoY)',unit:'pct',id:'IMF/IFS/M.IN.PCPI_IX',yoy:true},
+  {key:'exports',label:'Exports (goods, FOB)',unit:'usdb',id:'IMF/IFS/M.IN.TXG_FOB_USD'},
+  {key:'imports',label:'Imports (goods, CIF)',unit:'usdb',id:'IMF/IFS/M.IN.TMG_CIF_USD'},
+  {key:'reserves',label:'FX reserves (total)',unit:'usdb',id:'IMF/IFS/M.IN.RAFA_USD'},
+  {key:'repo',label:'Policy rate',unit:'pct',id:'BIS/cbpol/M.IN'}
+];
+async function dbSeries(id){
+  const url=`https://api.db.nomics.world/v22/series/${id}?observations=1`;
+  let txt=null;
+  try{ const r=await fetch(url,{cache:'no-store'}); if(r.ok) txt=await r.text(); }catch(e){}
+  if(!txt){ try{ txt=await fetchText(url); }catch(e){} }
+  if(!txt) return null;
+  let j; try{ j=JSON.parse(txt); }catch(e){ return null; }
+  const d=j&&j.series&&j.series.docs&&j.series.docs[0];
+  if(!d||!d.period||!d.value) return null;
+  const pts=[];
+  for(let i=0;i<d.period.length;i++){
+    const v=d.value[i];
+    if(v==null||v==='NA'||!isFinite(Number(v))) continue;
+    pts.push({period:d.period[i],value:Number(v)});
+  }
+  pts.sort((a,b)=>a.period<b.period?-1:1);
+  return pts;
+}
+async function buildMacroClient(){
+  const raw=await Promise.all(MACRO_SERIES.map(s=>dbSeries(s.id)));
+  const byKey={}, items=[];
+  MACRO_SERIES.forEach((s,idx)=>{
+    let pts=raw[idx]; if(!pts||!pts.length) return;
+    if(s.yoy){ const y=[]; for(let i=12;i<pts.length;i++){ const pv=pts[i-12];
+      if(pv&&pv.value) y.push({period:pts[i].period,value:(pts[i].value/pv.value-1)*100}); } pts=y; }
+    if(!pts.length) return;
+    const last=pts.slice(-10); byKey[s.key]=last;
+    items.push({key:s.key,label:s.label,unit:s.unit,points:last,latest:last[last.length-1]});
+  });
+  if(byKey.exports&&byKey.imports){
+    const imp={}; byKey.imports.forEach(p=>imp[p.period]=p.value);
+    const tb=byKey.exports.filter(p=>imp[p.period]!=null)
+      .map(p=>({period:p.period,value:p.value-imp[p.period]})).slice(-10);
+    if(tb.length){ const lt=tb[tb.length-1];
+      items.splice(3,0,{key:'tradeBal',label:lt.value<0?'Trade deficit (goods)':'Trade surplus (goods)',
+        unit:'usdb',points:tb,latest:lt}); }
+  }
+  return items.length?{source:'DBnomics · IMF IFS / BIS (client)',items}:null;
+}
 async function loadMacro(){
   const tb=document.querySelector('#macroTbl tbody');
   try{
     const r=await fetch('/api/macro',{cache:'no-store'});
-    if(r.ok){ const j=await r.json(); if(j&&j.items&&j.items.length){
-      const cols=Math.max(...j.items.map(it=>it.points.length),1);
-      const head=`<tr><th class="mi">Indicator</th>`+
-        Array.from({length:cols},(_,i)=>`<th>${i===cols-1?'Latest':('M-'+(cols-1-i))}</th>`).join('')+`</tr>`;
-      const rows=j.items.map(it=>{
-        const pad=cols-it.points.length;
-        const cells=Array.from({length:pad},()=>`<td>·</td>`).join('')+
-          it.points.map((p,i)=>{
-            const last=i===it.points.length-1, neg=p.value<0;
-            return `<td class="${last?'lat':''} ${neg?'neg':''}" title="${fmtPeriod(p.period)}">${macroNum(p.value,it.unit)}</td>`;
-          }).join('');
-        return `<tr><th class="mi"><span class="ml">${it.label}</span>`+
-          `<span class="mas">as of ${fmtPeriod(it.latest.period)}</span></th>${cells}</tr>`;
-      }).join('');
-      document.querySelector('#macroTbl').innerHTML=`<thead>${head}</thead><tbody>${rows}</tbody>`;
-      document.getElementById('macroSub').textContent=
-        `Monthly · ${j.source} · last 10 months (latest at right; data lags a few months)`;
-      return;
-    }}
+    if(r.ok){ const j=await r.json(); if(j&&j.items&&j.items.length){ renderMacro(j); return; } }
+  }catch(e){}
+  try{
+    const j=await buildMacroClient();
+    if(j){ renderMacro(j); return; }
   }catch(e){}
   tb.innerHTML='<tr><td class="macro-empty">Monthly macro data unavailable (free feed unreachable). Try again shortly.</td></tr>';
 }
@@ -1454,7 +1480,7 @@ function wlRows(list,map){
     const dash='<span style="color:var(--text-mute)">—</span>';
     const px=d?'₹'+inr(d.p):dash;
     const ch=d?`<span class="pill ${d.ch>=0?'u':'d'}">${d.ch>=0?'+':''}${d.ch.toFixed(2)}%</span>`:dash;
-    return `<tr><td><div class="sym">${nm}</div><div class="co">${tk}</div></td>
+    return `<tr><td><span class="sym">${nm}</span><span class="wl-tk">${tk}</span></td>
       <td class="r px">${px}</td><td class="r">${ch}</td></tr>`;
   }).join('');
 }
@@ -1480,7 +1506,6 @@ async function loadWatchlist(){
 /* ---------- Sidebar tab routing ---------- */
 (function(){
   const vO=document.getElementById('viewOverview'),
-        vC=document.getElementById('viewCoverage'),
         vR=document.getElementById('viewResearch'),
         vM=document.getElementById('viewMarkets'),
         vW=document.getElementById('viewWatchlist'),
@@ -1489,7 +1514,6 @@ async function loadWatchlist(){
   let marketsLoaded=false, watchlistLoaded=false;
   function showView(v,label){
     vO.hidden=v!=='overview';
-    vC.hidden=v!=='coverage';
     vR.hidden=v!=='research';
     vM.hidden=v!=='markets';
     vW.hidden=v!=='watchlist';
