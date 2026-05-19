@@ -217,6 +217,9 @@
     white-space:nowrap}
   .ec-tk.up{color:var(--up)} .ec-tk.down{color:var(--down)} .ec-tk.flat{color:var(--saffron)}
   .ec-sum{color:var(--text-dim);font-size:13px;line-height:1.5}
+  .pol-item.ec-row{display:flex;align-items:baseline;gap:14px}
+  .ec-main{flex:1;min-width:0}
+  .ec-dt{flex:none;white-space:nowrap;font-family:'IBM Plex Mono';font-size:11px;color:var(--text-mute)}
   /* earnings calendar */
   .earn-cal{display:flex;flex-direction:column}
   .ec-day{padding:12px 0;border-bottom:1px solid var(--line-soft)}
@@ -538,17 +541,17 @@
     <div id="viewWatchlist" hidden>
       <div class="card reveal">
         <div class="card-h"><div><h3>Current Holdings</h3><p>Live prices · NSE</p></div></div>
-        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">Chg %</th></tr></thead>
+        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th></tr></thead>
           <tbody id="wlHold"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
       <div class="card reveal">
         <div class="card-h"><div><h3>Coverage</h3><p>Live prices · NSE</p></div></div>
-        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">Chg %</th></tr></thead>
+        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th></tr></thead>
           <tbody id="wlCov"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
       <div class="card reveal">
         <div class="card-h"><div><h3>Watchlist</h3><p>Live prices · NSE</p></div></div>
-        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">Chg %</th></tr></thead>
+        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th></tr></thead>
           <tbody id="wlWatch"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
     </div>
@@ -1557,32 +1560,43 @@ const WL_WATCH=[
   ["National Aluminium","NATIONALUM.NS"],["Narayana Hrudayalaya","NH.NS"],
   ["Schneider Electric","SCHNEIDER.NS"]
 ];
+function wlPct(v){
+  if(v==null||isNaN(v)) return '<td class="r"><span style="color:var(--text-mute)">—</span></td>';
+  const up=v>=0;
+  return `<td class="r"><span class="${up?'up':'down'}">${up?'+':''}${v.toFixed(2)}%</span></td>`;
+}
 function wlRows(list,map){
   return list.map(([nm,sy])=>{
     const cands=sy.split('|');
-    const hit=cands.find(c=>map[c]);
+    const hit=cands.find(c=>map[c]&&map[c].p!=null)||cands.find(c=>map[c]);
     const d=hit?map[hit]:null;
     const tk=(hit||cands[0]).replace('.NS','');
-    const dash='<span style="color:var(--text-mute)">—</span>';
-    const px=d?'₹'+inr(d.p):dash;
-    const ch=d?`<span class="pill ${d.ch>=0?'u':'d'}">${d.ch>=0?'+':''}${d.ch.toFixed(2)}%</span>`:dash;
+    const px=d&&d.p!=null?'₹'+inr(d.p):'<span style="color:var(--text-mute)">—</span>';
     return `<tr><td><span class="sym">${nm}</span><span class="wl-tk">${tk}</span></td>
-      <td class="r px">${px}</td><td class="r">${ch}</td></tr>`;
+      <td class="r px">${px}</td>
+      ${wlPct(d&&d.d1)}${wlPct(d&&d.w1)}${wlPct(d&&d.m1)}${wlPct(d&&d.ytd)}</tr>`;
   }).join('');
 }
 async function loadWatchlist(){
   const all=[...WL_HOLD,...WL_COV,...WL_WATCH];
   const syms=[...new Set(all.flatMap(x=>x[1].split('|')))];
   const map={};
-  try{
-    const chunks=chunk(syms,20);
-    const res=await Promise.allSettled(chunks.map(c=>sparkApi(c).then(j=>({c,j}))));
+  async function pull(tfKey,field,withPrice){
+    const [rng,iv]=TF[tfKey]||['1d','5m'];
+    const res=await Promise.allSettled(chunk(syms,20).map(c=>sparkR(c,rng,iv).then(j=>({c,j}))));
     res.forEach(x=>{
       if(x.status!=='fulfilled'||!x.value||!x.value.j) return;
       const {c,j}=x.value;
-      c.forEach(sy=>{ const d=pick(j,sy),p=last(d),pc=prevC(d);
-        if(p!=null&&pc!=null&&pc>0) map[sy]={p,ch:(p-pc)/pc*100}; });
+      c.forEach(sy=>{ const d=pick(j,sy); if(!d) return;
+        const o=map[sy]||(map[sy]={});
+        const v=pctOver(d,tfKey); if(v!=null) o[field]=v;
+        if(withPrice){ const p=last(d); if(p!=null) o.p=p; }
+      });
     });
+  }
+  try{
+    await pull('1D','d1',true);
+    await Promise.all([pull('1W','w1'),pull('1M','m1'),pull('YTD','ytd')]);
   }catch(e){}
   document.getElementById('wlHold').innerHTML=wlRows(WL_HOLD,map);
   document.getElementById('wlCov').innerHTML=wlRows(WL_COV,map);
@@ -1619,18 +1633,74 @@ function sentiment(t){
   const p=SENT_POS.test(t), n=SENT_NEG.test(t);
   return (p&&!n)?'up':(n&&!p)?'down':'flat';
 }
+function relDate(pd){
+  const ms=Date.parse(pd); if(isNaN(ms)) return '';
+  const d=new Date(ms);
+  return d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+}
+function dirSign(w){ return /jump|surg|soar|ris|rose|grew|grow|gain|\bup\b|doubl|tripl|multipl|beat|higher/i.test(w)?'+':'−'; }
+// Rule-based normalisation of a numeric earnings headline into a
+// daily-report-style line (NOT a verbatim copy). No free runtime
+// summariser/LLM exists; this reconstructs from the figures, and
+// otherwise returns a de-fluffed paraphrase.
+function summariseEarning(raw){
+  const t=String(raw).replace(/\s+/g,' ').trim();
+  const per=(t.match(/\bQ[1-4]\b/i)||t.match(/\bH[12]\b/i)||t.match(/\bFY ?\d{2,4}\b/i)||[])[0];
+  const period=per?per.toUpperCase().replace(/\s+/,''):'';
+  const parts=[];
+  const lossHit=/\bnet loss\b|posts? (?:a )?loss|slips? into (?:the )?red|swung? to (?:a )?loss/i.test(t);
+  const profHit=/(net profit|profit after tax|\bPAT\b|net income|standalone (?:net )?profit|cons(?:olidated)? (?:net )?profit)/i.test(t);
+  if(lossHit && !profHit){
+    const a=t.match(/loss[^%]*?(?:of|at|to)\s?(?:Rs|₹|INR)?\s?([\d,]+(?:\.\d+)?)\s?(crore|cr|bn|billion|lakh)/i);
+    parts.push('net loss'+(a?` of ₹${a[1]} ${/cr|crore/i.test(a[2])?'cr':a[2]}`:''));
+  } else {
+    const MET='(?:net profit|profit after tax|profit before tax|\\bPAT\\b|\\bPBT\\b|net income|standalone (?:net )?profit|cons(?:olidated)? (?:net )?profit|\\bprofit\\b)';
+    const DIR='(jump\\w*|surg\\w*|soar\\w*|ris\\w*|rose|grew|grow\\w*|gain\\w*|up|fall\\w*|fell|drop\\w*|declin\\w*|slump\\w*|plunge\\w*|slip\\w*|down|doubl\\w*|tripl\\w*|beat\\w*|jump|halv\\w*)';
+    const AMT='(?:(?:Rs|₹|INR)\\s?)?([\\d,]+(?:\\.\\d+)?)\\s?(crore|cr|bn|billion|\\bb\\b|lakh|trillion|tn)(?:\\s?rupees)?';
+    const abs=t.match(new RegExp('(?:net profit|pat|profit|income)[^.]*?(?:to|at|of)\\s?'+AMT,'i'));
+    const absTxt=abs?` to ₹${abs[1]} ${/cr|crore/i.test(abs[2])?'cr':abs[2].toLowerCase()}`:'';
+    const pm=t.match(new RegExp(MET+'[^%]*?\\b'+DIR+'\\b[^%]*?(\\d+(?:\\.\\d+)?)\\s?%','i'));
+    if(pm){
+      parts.push(`net profit ${dirSign(pm[1])}${pm[2]}% YoY`+absTxt);
+    } else {
+      const pa=t.match(new RegExp(MET+'[^.]*?\\b'+DIR+'\\b[^.]*?(?:to|at)\\s?'+AMT,'i'));
+      if(pa) parts.push(`net profit ${dirSign(pa[1])} to ₹${pa[2]} ${/cr|crore/i.test(pa[3])?'cr':pa[3].toLowerCase()}`);
+    }
+  }
+  const rm=t.match(/(?:revenue|sales|topline|total income)[^%]*?\b(jump\w*|surg\w*|soar\w*|ris\w*|rose|grew|grow\w*|gain\w*|up|fall\w*|fell|drop\w*|declin\w*|down)\b[^%]*?(\d+(?:\.\d+)?)\s?%/i);
+  if(rm) parts.push(`revenue ${dirSign(rm[1])}${rm[2]}%`);
+  if(parts.length) return (period?period+': ':'')+parts.join('; ');
+  // No parseable figures -> condensed paraphrase (de-fluffed, not verbatim)
+  let c=t
+    .replace(/\bhere'?s (what|why|how)[^.;|]*/ig,'')
+    .replace(/\bshould you (buy|sell|invest|hold)[^.?;|]*\??/ig,'')
+    .replace(/\b(key (takeaways|highlights)|live updates?|results live|in focus|stock in focus|what to expect|explained|deep dive|key things to know|all you need to know)\b/ig,'')
+    .replace(/\b(brokerages?|analysts?) (say|said|view|on|remain|are)[^.;|]*/ig,'')
+    .replace(/[|•]+/g,' ').replace(/[—–-]\s*$/,'').replace(/\s*[:;,]\s*$/,'')
+    .replace(/\s{2,}/g,' ').trim();
+  if(period && !new RegExp('\\b'+period+'\\b','i').test(c)) c=period+': '+c;
+  return c.length>150?c.slice(0,147).replace(/\s+\S*$/,'')+'…':c;
+}
 function fmtEarnFeed(items,mode){
   return items.slice(0,20).map(it=>{
-    const title=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').replace(/</g,'&lt;');
-    const lead=leadCompany(title);
-    const tk=pickTicker(title);
+    const title=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').trim();
+    const safeT=title.replace(/</g,'&lt;');
+    const lead=leadCompany(safeT);
+    const tk=pickTicker(safeT);
     const label=tk||lead||'—';
-    let sum=title;
-    if(lead && title.toLowerCase().startsWith(lead.toLowerCase()))
-      sum=title.slice(lead.length).replace(/^[\s:–—,-]+/,'').trim()||title;
-    if(sum.length>200) sum=sum.slice(0,197).replace(/\s+\S*$/,'')+'…';
+    let sum;
+    if(mode==='earn'){
+      sum=summariseEarning(title).replace(/</g,'&lt;');
+    } else {
+      sum=safeT;
+      if(lead && safeT.toLowerCase().startsWith(lead.toLowerCase()))
+        sum=safeT.slice(lead.length).replace(/^[\s:–—,-]+/,'').trim()||safeT;
+      if(sum.length>200) sum=sum.slice(0,197).replace(/\s+\S*$/,'')+'…';
+    }
     const cls=mode==='earn'?sentiment(title):'flat';
-    return `<li><div class="pol-item"><span class="ec-tk ${cls}">${label}</span><span class="ec-sum">${sum}</span></div></li>`;
+    const dt=mode==='corp'?`<span class="ec-dt">${relDate(it.pubDate)}</span>`:'';
+    return `<li><div class="pol-item ec-row"><div class="ec-main">`+
+      `<span class="ec-tk ${cls}">${label}</span><span class="ec-sum">${sum}</span></div>${dt}</div></li>`;
   }).join('');
 }
 async function feedInto(elId,q,n,re,mode,excl){
@@ -1644,10 +1714,11 @@ async function feedInto(elId,q,n,re,mode,excl){
   try{ const items=await newsViaProxy(q); if(items&&done(items)) return; }catch(e){}
   el.innerHTML='<li class="pol-empty">No items right now (free feed). Try again shortly.</li>';
 }
+const EARN_EXCL=/(among (?:\d+\s*\+?\s*)?(?:companies|firms)|companies to (?:declare|post|watch|report)|firms to post|to (?:post|declare|announce|report) (?:q[1-4]|its q[1-4]|earnings|results)|results (?:today|preview|calendar|live|date|expectations?|to watch)|stocks? to watch|buzzing stocks|top (?:buzzing|gainers|losers)|ahead of (?:q[1-4]|results|earnings)|what to expect|check (?:full |the )?list|earnings (?:calendar|preview)|q[1-4][^.]*\b(?:preview|expectations|to watch)\b|live updates?|here'?s the (?:full )?list|schedules? .*earnings call|earnings call on|to host .*(?:earnings|investor) call|board meeting (?:on|date)|to consider .*results on)/i;
 function loadEarnNews(){
   return feedInto('earnList',
     'India (Q4 results OR Q1 results OR quarterly results OR earnings OR "net profit" OR "profit after tax" OR PAT OR revenue OR EBITDA) when:2d',
-    20, EARN_RE, 'earn');
+    20, EARN_RE, 'earn', EARN_EXCL);
 }
 function loadCorpEvents(){
   return feedInto('corpList',
