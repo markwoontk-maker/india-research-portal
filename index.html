@@ -1206,14 +1206,65 @@ function statsOf(all){
     adv:all.filter(x=>x.ch>0).length, dec:all.filter(x=>x.ch<0).length,
     top:all.slice(0,20), bottom:all.slice(-20).reverse() };
 }
+/* Client fallback for the per-stock "why" (used when the /api/movers
+   function isn't deployed, so the 1-liner still appears). */
+const WHY_MOVE=/(share|stock|jump|surg|rall|ris(e|es|ing)|gain|fall|drop|slump|plunge|tank|soar|crash|\d{1,3}\s?%|q[1-4]\b|quarter|results|profit|loss|order|deal|acquir|merger|buyback|dividend|stake|block deal|upgrade|downgrade|target price|earnings|revenue|ipo|fundrais|guidance|bonus|split|approval|contract|wins?\b)/i;
+const WHY_GEN=/^(india|bank|finance|financial|industries|limited|ltd|corporation|corp|motors|power|steel|energy|services|company|the|and|group|enterprises|international|intl|life|insurance|paints|pharma|labs|laboratories|cement|cements|chemicals|foods|gas|oil|auto|electric|electronics|technologies|technology|tech|housing|products|consumer|natural|national)$/;
+function whyTokens(name){
+  return String(name).toLowerCase().replace(/\(.*?\)/g,' ').split(/[^a-z0-9&]+/)
+    .filter(w=>w.length>=4 && !WHY_GEN.test(w));
+}
+async function newsItemsFor(q){
+  try{ const r=await fetch('/api/news?q='+encodeURIComponent(q)+'&n=8',{cache:'no-store'});
+    if(r.ok){ const j=await r.json(); if(j&&j.items&&j.items.length) return j.items; } }catch(e){}
+  try{ const it=await newsViaProxy(q); if(it&&it.length) return it; }catch(e){}
+  return [];
+}
+async function whyForClient(name){
+  const items=await newsItemsFor('"'+name+'" (share OR stock OR results OR Q4 OR order OR deal OR profit)');
+  if(!items.length) return '';
+  const toks=whyTokens(name), lname=name.toLowerCase();
+  let best='',bestScore=0,idx=0;
+  for(const it of items){ idx++;
+    const t=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').trim();
+    if(!t) continue;
+    const lt=t.toLowerCase();
+    if(!(lt.includes(lname)||toks.some(w=>lt.includes(w)))) continue;
+    let sc=2;
+    if(lt.includes(lname)) sc+=1.5;
+    if(WHY_MOVE.test(lt)) sc+=2;
+    sc+=Math.max(0,3-idx)*0.2;
+    if(sc>bestScore){ bestScore=sc; best=t; }
+  }
+  if(!best||bestScore<4) return '';
+  return best.length>130 ? best.slice(0,127).replace(/\s+\S*$/,'')+'…' : best;
+}
+async function whyPool(tasks,size){
+  let i=0; async function w(){ while(i<tasks.length){ const k=i++; await tasks[k](); } }
+  await Promise.all(Array.from({length:Math.min(size,tasks.length)},w));
+}
+function setRowWhy(ticker,why){
+  let nameEl; try{ nameEl=document.querySelector('.mv-name[data-tk="'+CSS.escape(ticker)+'"]'); }catch(e){}
+  const tr=nameEl&&nameEl.closest('tr'); const cell=tr&&tr.querySelector('.mv-why');
+  if(!cell) return;
+  if(why){ cell.className='mv-why'; cell.textContent=why; }
+  else{ cell.className='mv-why none'; cell.textContent='-'; }
+}
+async function enrichWhy(o){
+  const list=[...(o.top||[]),...(o.bottom||[])].filter(m=>!m.why);
+  if(!list.length) return;
+  await whyPool(list.map(m=>async()=>{
+    try{ const w=await whyForClient(NAMES[m.s]||m.s); m.why=w; setRowWhy(m.s,w); }catch(e){}
+  }),5);
+}
 async function loadMovers(){
   // Primary: serverless aggregator (one cached request — server fetches
   // the whole Nifty 500 + per-stock news reason). Free-tier friendly.
   try{
     const r=await fetch('/api/movers?tf='+encodeURIComponent(moversTF),{cache:'no-store'});
-    if(r.ok){ const j=await r.json(); if(j&&j.count>=10){ renderMovers(j); return true; } }
+    if(r.ok){ const j=await r.json(); if(j&&j.count>=10){ renderMovers(j); enrichWhy(j); return true; } }
   }catch(e){}
-  // Fallback (no backend): capped client subset, no per-stock news.
+  // Fallback (no backend): capped client subset; "why" filled client-side.
   try{
     const [rng,iv]=TF[moversTF]||['1d','5m'];
     const chunks=chunk(N500_SYMS.slice(0,200),20);
@@ -1225,7 +1276,7 @@ async function loadMovers(){
       c.forEach(sy=>{ const d=pick(j,sy); const v=pctOver(d,moversTF);
         if(v!=null) all.push({s:sy.replace('.NS',''),p:last(d)||0,ch:v}); });
     });
-    if(all.length>=10){ renderMovers(statsOf(all)); return true; }
+    if(all.length>=10){ const o=statsOf(all); renderMovers(o); enrichWhy(o); return true; }
   }catch(e){}
   document.getElementById('mvSummary').textContent=
     'Nifty 500 movers unavailable — retrying next cycle.';
