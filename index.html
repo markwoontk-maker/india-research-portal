@@ -1683,8 +1683,18 @@ function summariseEarning(raw){
 }
 function fmtEarnFeed(items,mode){
   const seen=new Set(), rows=[];
+  // For corp: keep only the last 1 week, measured from the newest item
+  // in the feed (robust to clock/source date skew).
+  let newest=0;
+  if(mode==='corp'){
+    for(const it of items){ const ms=Date.parse(it.pubDate); if(!isNaN(ms)&&ms>newest) newest=ms; }
+  }
   for(const it of items){
     if(rows.length>=20) break;
+    if(mode==='corp' && newest){
+      const ms=Date.parse(it.pubDate);
+      if(!isNaN(ms) && (newest-ms) > 7*864e5) continue; // within 1 week of latest
+    }
     const title=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').trim();
     const safeT=title.replace(/</g,'&lt;');
     const lead=leadCompany(safeT);
@@ -1731,7 +1741,7 @@ function loadEarnNews(){
 }
 function loadCorpEvents(){
   return feedInto('corpList',
-    'India (merger OR acquisition OR "stake sale" OR demerger OR "open offer" OR buyback OR "board approves" OR resigns OR "steps down" OR "appointed as" OR "new CEO" OR "new MD" OR restructuring OR "joint venture" OR QIP OR "fund raise") when:2d',
+    'India (merger OR acquisition OR "stake sale" OR demerger OR "open offer" OR buyback OR "board approves" OR resigns OR "steps down" OR "appointed as" OR "new CEO" OR "new MD" OR restructuring OR "joint venture" OR QIP OR "fund raise") when:7d',
     20, CORP_RE, 'corp', GOVT_RE);
 }
 function bizDays(n){
