@@ -107,10 +107,11 @@ function nameTokens(name) {
     .split(/[^a-z0-9&]+/).filter(w => w.length >= 4 && !GENERIC.has(w));
 }
 const MOVE_RE = /(share|stock|jump|surg|rall|ris(e|es|ing)|gain|fall|drop|slump|plunge|tank|soar|crash|\d{1,3}\s?%|q[1-4]\b|quarter|results|profit|loss|order|deal|acquir|merger|buyback|dividend|stake|block deal|upgrade|downgrade|target price|earnings|revenue|ipo|listing|fundrais|fund-rais|guidance|bonus|split|approval|contract|wins?\b)/i;
+const WHY_EXCL_RE = /(among (?:\d+\s*\+?\s*)?(?:companies|firms|stocks)|companies to (?:declare|post|watch|report)|firms to post|to (?:post|declare|announce|report) (?:its )?(?:q[1-4]|earnings|results)|results (?:today|preview|calendar|live|date|expectations?|to watch)|q[1-4] results today|stocks? to watch|buzzing stocks|top (?:buzzing|gainers|losers)|ahead of (?:q[1-4]|results|earnings)|what to expect|check (?:full |the )?list|earnings (?:calendar|preview)|live updates?|here's the (?:full )?list|schedules? .*earnings call|board meeting (?:on|date)|stocks in focus|stocks to buy)/i;
 
 async function whyFor(name, deadline) {
   if (Date.now() > deadline) return "";
-  const q = `"${name}" (share OR stock OR results OR Q4 OR order OR deal OR profit)`;
+  const q = `"${name}" (share OR stock OR results OR Q4 OR order OR deal OR profit) when:2d`;
   const url = "https://news.google.com/rss/search?q=" +
     encodeURIComponent(q) + "&hl=en-IN&gl=IN&ceid=IN:en";
   const ctl = new AbortController();
@@ -126,7 +127,7 @@ async function whyFor(name, deadline) {
       idx++;
       const tm = m[1].match(/<title[^>]*>([\s\S]*?)<\/title>/);
       const title = cleanTitle(tm && tm[1]);
-      if (!title) continue;
+      if (!title || WHY_EXCL_RE.test(title)) continue;  // no list/preview headlines
       const lt = title.toLowerCase();
       const nameHit = lname && lt.includes(lname) || toks.some(w => lt.includes(w));
       if (!nameHit) continue;                       // must be about THIS company
