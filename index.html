@@ -798,14 +798,20 @@ document.getElementById('moversBot').innerHTML =
     const yy=d.slice(0,2), mm=+d.slice(2,4), dd=+d.slice(4,6);
     return `${dd} ${MON[mm-1]||''}`;
   };
-  // Sentiment from the analyst's wording: negatives win ties (a "beat
-  // but miss" headline reads as the miss for the stock).
+  // Sentiment from the analyst's wording. On a contrastive headline
+  // ("soft P&L BUT guidance exceeded") the clause after the pivot is
+  // the analyst's net takeaway, so it wins. Otherwise negatives win
+  // ties (a comma-joined "beat ... and miss" reads as the miss).
   const NEG=/\b(miss|misses|missed|weak|weakening|headwinds?|lacklustre|lackluster|soft(?:er)?|concerns?|pressure|hazy|delays?|cautious|defensive|impacted|pares)\b|not out of the woods|may not last/i;
   const POS=/\b(beat|beats|upgrade|outperform|strong|robust|relief|blockbuster|exemplary|positive|improving|improved|improvement|accelerate|accelerating|tailwind|momentum|ahead|exceeded|retained)\b|stay ow|turn positive|higher than/i;
+  const clause=s=> NEG.test(s) ? 'sell' : POS.test(s) ? 'buy' : 'hold';
   function tag(title){
-    if(NEG.test(title)) return 'sell';
-    if(POS.test(title)) return 'buy';
-    return 'hold';
+    const parts=title.split(/\b(?:but|however|although|though|despite)\b/i);
+    if(parts.length>1){
+      const t=clause(parts[parts.length-1]); // post-pivot takeaway wins
+      if(t!=='hold') return t;
+    }
+    return clause(title);
   }
   const byHouse={};
   notes.forEach(n=>{ (byHouse[n[0]]=byHouse[n[0]]||[]).push(n); });
