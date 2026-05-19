@@ -212,6 +212,11 @@
   #wlHold td,#wlCov td,#wlWatch td{padding:6px 0}
   #wlHold .sym,#wlCov .sym,#wlWatch .sym{display:inline}
   .wl-tk{font-family:'IBM Plex Mono';font-size:11px;color:var(--text-mute);margin-left:8px}
+  /* earnings / corporate feed (email-style, no links) */
+  .ec-tk{font-family:'IBM Plex Mono';font-weight:700;font-size:12.5px;margin-right:9px;
+    white-space:nowrap}
+  .ec-tk.up{color:var(--up)} .ec-tk.down{color:var(--down)} .ec-tk.flat{color:var(--saffron)}
+  .ec-sum{color:var(--text-dim);font-size:13px;line-height:1.5}
   /* earnings calendar */
   .earn-cal{display:flex;flex-direction:column}
   .ec-day{padding:12px 0;border-bottom:1px solid var(--line-soft)}
@@ -1536,14 +1541,51 @@ async function loadWatchlist(){
 /* ---------- Companies tab ---------- */
 const EARN_RE=/(\bq[1-4]\b|quarter|results|earnings|\bpat\b|net profit|profit after tax|revenue|ebitda|topline|bottom\s?line|posts|reports|beats|misses|profit (jump|rise|fall|drop|surge|decline)|loss)/i;
 const CORP_RE=/(merger|acquisition|acquire|to buy|stake (sale|buy)|divest|demerger|amalgamat|open offer|buyback|board (approves|approval)|resign|steps? down|appointed|elevat|new (ceo|md|cfo|chair)|managing director|restructur|joint venture|\bjv\b|fund[- ]?rais|\bqip\b|preferential|rights issue|delisting|insolvency|order win|bags? .*order|contract win)/i;
-function newsFilter(items,re){
+const GOVT_RE=/(joint secretar|government of india|cabinet secretar|\bIAS\b|\bIPS\b|\bIFS officer|ministry of|bureaucrat|govt (officer|reshuffle)|civil servant|district magistrate|collector appointed)/i;
+function newsFilter(items,re,excl){
   return (items||[]).filter(it=>{ const t=String(it.title||'');
-    return !SOC_RE.test(t) && re.test(t); });
+    if(SOC_RE.test(t)) return false;
+    if(excl && excl.test(t)) return false;
+    return re.test(t); });
 }
-async function feedInto(elId,q,n,re){
+// ticker <- company name (reverse of NAMES), longest match wins
+const NREV=Object.keys(NAMES).map(tk=>[tk,String(NAMES[tk]).toLowerCase()])
+  .sort((a,b)=>b[1].length-a[1].length);
+function pickTicker(title){
+  const lt=title.toLowerCase();
+  for(const [tk,nm] of NREV){ if(nm.length>=4 && lt.includes(nm)) return tk; }
+  for(const [tk] of NREV){ if(new RegExp('(^|[^A-Za-z])'+tk.replace(/[.&-]/g,'\\$&')+'([^A-Za-z]|$)').test(title)) return tk; }
+  return null;
+}
+function leadCompany(title){
+  const head=title.split(/\s+(?=Q[1-4]\b|H[12]\b|FY\d|results?\b|net profit|PAT\b|posts?\b|reports?\b|shares?\b|stock\b|announces?\b|declares?\b|standalone\b|consolidated\b|net loss|profit\b|revenue\b|earnings\b|to (acquire|buy|merge)|acquires?\b|merges?\b|board\b|appoints?\b|:|—|–)/i)[0]||title;
+  const w=head.replace(/[\s:–—-]+$/,'').trim().split(/\s+/);
+  return w.slice(0,5).join(' ');
+}
+const SENT_POS=/(surge|jump|soar|ris(e|es|ing)|rose|grew|grow(s|th)?|gain|beat|doubl|tripl|record|strong|turns? profit|narrows? loss|multibagger|rally|rallies|zoom|spike|robust|\bup\b|higher|outperform|upgrade)/i;
+const SENT_NEG=/(fall|fell|drop|declin|slump|plunge|tank|\bloss\b|losses|miss(es|ed)?|weak|de-?grow|slip|sink|disappoint|widen|\bdown\b|lower|\bcut\b|warn|downgrade|hit hard|drag)/i;
+function sentiment(t){
+  const p=SENT_POS.test(t), n=SENT_NEG.test(t);
+  return (p&&!n)?'up':(n&&!p)?'down':'flat';
+}
+function fmtEarnFeed(items,mode){
+  return items.slice(0,20).map(it=>{
+    const title=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').replace(/</g,'&lt;');
+    const lead=leadCompany(title);
+    const tk=pickTicker(title);
+    const label=tk||lead||'—';
+    let sum=title;
+    if(lead && title.toLowerCase().startsWith(lead.toLowerCase()))
+      sum=title.slice(lead.length).replace(/^[\s:–—,-]+/,'').trim()||title;
+    if(sum.length>200) sum=sum.slice(0,197).replace(/\s+\S*$/,'')+'…';
+    const cls=mode==='earn'?sentiment(title):'flat';
+    return `<li><div class="pol-item"><span class="ec-tk ${cls}">${label}</span><span class="ec-sum">${sum}</span></div></li>`;
+  }).join('');
+}
+async function feedInto(elId,q,n,re,mode,excl){
   const el=document.getElementById(elId);
-  const done=items=>{ const f=newsFilter(items,re);
-    if(f.length){ el.innerHTML=fmtPolItems(f); return true; } return false; };
+  const done=items=>{ const f=newsFilter(items,re,excl);
+    if(f.length){ el.innerHTML=fmtEarnFeed(f,mode); return true; } return false; };
   try{
     const r=await fetch('/api/news?q='+encodeURIComponent(q)+'&n='+n,{cache:'no-store'});
     if(r.ok){ const j=await r.json(); if(j&&j.items&&done(j.items)) return; }
@@ -1554,12 +1596,12 @@ async function feedInto(elId,q,n,re){
 function loadEarnNews(){
   return feedInto('earnList',
     'India (Q4 results OR Q1 results OR quarterly results OR earnings OR "net profit" OR "profit after tax" OR PAT OR revenue OR EBITDA) when:2d',
-    20, EARN_RE);
+    20, EARN_RE, 'earn');
 }
 function loadCorpEvents(){
   return feedInto('corpList',
-    'India (merger OR acquisition OR "stake sale" OR demerger OR "open offer" OR buyback OR "board approves" OR resigns OR "steps down" OR "appointed as" OR "new CEO" OR "new MD" OR restructuring OR "joint venture" OR QIP OR "fund raise") when:4d',
-    14, CORP_RE);
+    'India (merger OR acquisition OR "stake sale" OR demerger OR "open offer" OR buyback OR "board approves" OR resigns OR "steps down" OR "appointed as" OR "new CEO" OR "new MD" OR restructuring OR "joint venture" OR QIP OR "fund raise") when:2d',
+    20, CORP_RE, 'corp', GOVT_RE);
 }
 function bizDays(n){
   const out=[], d=new Date(); d.setHours(0,0,0,0);
