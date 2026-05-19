@@ -220,6 +220,12 @@
   .pol-item.ec-row{display:flex;align-items:baseline;gap:14px}
   .ec-main{flex:1;min-width:0}
   .ec-dt{flex:none;white-space:nowrap;font-family:'IBM Plex Mono';font-size:11px;color:var(--text-mute)}
+  /* earnings update: company name + tighter rows */
+  .ec-co{font-family:'Manrope',sans-serif;font-weight:700;font-size:12.5px;margin-right:9px}
+  .ec-co.up{color:var(--up)} .ec-co.down{color:var(--down)} .ec-co.flat{color:var(--saffron)}
+  #earnList li{padding:3px 0}
+  #earnList li::before{padding-top:0}
+  #earnList .ec-sum{line-height:1.4}
   /* earnings calendar */
   .earn-cal{display:flex;flex-direction:column}
   .ec-day{padding:12px 0;border-bottom:1px solid var(--line-soft)}
@@ -1793,7 +1799,48 @@ function summariseEarning(raw){
   const rm=t.match(/(?:revenue|sales|topline|total income)[^%]*?\b(jump\w*|surg\w*|soar\w*|ris\w*|rose|grew|grow\w*|gain\w*|up|fall\w*|fell|drop\w*|declin\w*|down)\b[^%]*?(\d+(?:\.\d+)?)\s?%/i);
   if(rm) parts.push(`revenue ${dirSign(rm[1])}${rm[2]}%`);
   if(parts.length) return (period?period+': ':'')+parts.join('; ');
-  // No parseable figures -> condensed paraphrase (de-fluffed, not verbatim)
+  // No parseable figures -> build a normalised summary from detected
+  // signals (deliberately NOT the headline wording).
+  const pos=SENT_POS.test(t)&&!SENT_NEG.test(t);
+  const neg=SENT_NEG.test(t)&&!SENT_POS.test(t);
+  const seg=[];
+  if(/turns? to profit|return(?:s|ed)? to profit|back (?:in|to) (?:the )?black/i.test(t))
+    seg.push('returned to profit');
+  else if(/slips? into (?:the )?red|sw(?:ing|ings|ung|inging) to (?:a )?loss|posts? (?:a )?loss|widens? .*loss|net loss|loss in Q[1-4]\b|loss (?:for|in) the (?:quarter|year)/i.test(t))
+    seg.push(/widen/i.test(t)?'loss widened':'posted a loss');
+  else if(/\b(net profit|profit after tax|\bPAT\b|profit|earnings)\b/i.test(t)){
+    if(pos) seg.push('profit higher YoY');
+    else if(neg) seg.push('profit lower YoY');
+  }
+  if(/\b(revenue|sales|topline|total income)\b/i.test(t)){
+    if(pos) seg.push('revenue grew');
+    else if(neg) seg.push('revenue declined');
+  }
+  if(/beat(?:s|en)?\s+(?:the\s+)?(?:street|analyst|consensus|estimate)/i.test(t)) seg.push('beat estimates');
+  else if(/miss(?:es|ed)?\s+(?:the\s+)?(?:street|analyst|consensus|estimate)/i.test(t)) seg.push('missed estimates');
+  const dm=t.match(/dividend(?:\s+of)?\s*(?:Rs\.?|₹|INR)?\s*([\d.]+)/i);
+  if(dm) seg.push(`declared ₹${dm[1]} dividend`);
+  else if(/\bdividend\b/i.test(t)) seg.push('declared a dividend');
+  if(/bonus\s+(?:issue|share)/i.test(t)) seg.push('announced a bonus issue');
+  if(/stock split|share split|sub-?division of (?:equity )?shares/i.test(t)) seg.push('announced a stock split');
+  if(/\bbuy\s?back\b/i.test(t)) seg.push('announced a buyback');
+  if(/(?:bags?|wins?|secures?|receives?)\b[^.]*\border\b|order win|new order|order inflow/i.test(t)) seg.push('won a new order');
+  if(!seg.length && /shares?\b|stock\b/i.test(t)){
+    if(pos) seg.push('shares rose after results');
+    else if(neg) seg.push('shares fell after results');
+  }
+  if(seg.length){
+    const uniq=[...new Set(seg)].slice(0,2).join('; ');
+    return (period?period+' ':'')+uniq;
+  }
+  // No financial signal: normalise common "results" headlines instead
+  // of echoing them.
+  if(/\bin focus\b|to watch\b|eyes on\b|ahead of (?:the )?(?:q[1-4]\b|results|earnings)|results (?:preview|expected|due)/i.test(t))
+    return (period?period+' ':'')+'results in focus';
+  if(/\b(results|earnings)\b|\bQ[1-4]\b|posts?\b|reports?\b/i.test(t))
+    return (period?period+' ':'')+'results reported';
+  // Last resort: compact de-fluffed paraphrase with the company name
+  // stripped (the name is already shown as the row label).
   let c=t
     .replace(/\bhere'?s (what|why|how)[^.;|]*/ig,'')
     .replace(/\bshould you (buy|sell|invest|hold)[^.?;|]*\??/ig,'')
@@ -1801,8 +1848,12 @@ function summariseEarning(raw){
     .replace(/\b(brokerages?|analysts?) (say|said|view|on|remain|are)[^.;|]*/ig,'')
     .replace(/[|•]+/g,' ').replace(/[—–-]\s*$/,'').replace(/\s*[:;,]\s*$/,'')
     .replace(/\s{2,}/g,' ').trim();
+  const lead=leadCompany(t);
+  if(lead && c.toLowerCase().startsWith(lead.toLowerCase()))
+    c=c.slice(lead.length).replace(/^[\s:–—,'-]+/,'').trim()||c;
   if(period && !new RegExp('\\b'+period+'\\b','i').test(c)) c=period+': '+c;
-  return c.length>150?c.slice(0,147).replace(/\s+\S*$/,'')+'…':c;
+  c=c.charAt(0).toUpperCase()+c.slice(1);
+  return c.length>120?c.slice(0,117).replace(/\s+\S*$/,'')+'…':c;
 }
 function fmtEarnFeed(items,mode){
   const seen=new Set(), rows=[];
@@ -1822,7 +1873,11 @@ function fmtEarnFeed(items,mode){
     const safeT=title.replace(/</g,'&lt;');
     const lead=leadCompany(safeT);
     const tk=pickTicker(safeT);
-    const label=tk||lead||'—';
+    // earnings feed shows the company name (not the ticker)
+    const coName=tk?(NAMES[tk]||lead||tk):(lead||tk||'—');
+    const dispName=String(coName)
+      .replace(/\s+(?:Ltd\.?|Limited|Corporation|Industries)$/i,'').trim()||coName;
+    const label=mode==='earn'?dispName:(tk||lead||'—');
     if(mode==='earn'){
       // exclude repeated company names (keep first occurrence)
       const key=(tk?(NAMES[tk]||tk):String(lead)).toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,16);
@@ -1839,9 +1894,10 @@ function fmtEarnFeed(items,mode){
       if(sum.length>200) sum=sum.slice(0,197).replace(/\s+\S*$/,'')+'…';
     }
     const cls=mode==='earn'?sentiment(title):'flat';
+    const nmeCls=mode==='earn'?`ec-co ${cls}`:`ec-tk ${cls}`;
     const dt=mode==='corp'?`<span class="ec-dt">${relDate(it.pubDate)}</span>`:'';
     rows.push(`<li><div class="pol-item ec-row"><div class="ec-main">`+
-      `<span class="ec-tk ${cls}">${label}</span><span class="ec-sum">${sum}</span></div>${dt}</div></li>`);
+      `<span class="${nmeCls}">${label}</span><span class="ec-sum">${sum}</span></div>${dt}</div></li>`);
   }
   return rows.join('');
 }
