@@ -346,7 +346,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-3"/><path d="M9 9h0M9 13h0M9 17h0"/></svg>
         Companies
       </div>
-      <div class="nav-item" data-view="soon" data-title="Screener">
+      <div class="nav-item" data-view="screener" data-title="Screener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         Screener
       </div>
@@ -510,6 +510,10 @@
         <div class="card-h"><div><h3>Latest Research Notes</h3><p>Published by the India desk</p></div></div>
         <div id="notes"></div>
       </div>
+      <div class="card reveal">
+        <div class="card-h"><div><h3>Company NotebookLM Notebooks</h3><p id="nbResSub">Per-company NotebookLM workspaces · click to open</p></div></div>
+        <ol id="nbResList" class="pol-list"></ol>
+      </div>
     </div>
 
     <div id="viewMarkets" hidden>
@@ -553,6 +557,19 @@
         <div class="card-h"><div><h3>Watchlist</h3><p>Live prices · NSE</p></div></div>
         <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th></tr></thead>
           <tbody id="wlWatch"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <div id="viewScreener" hidden>
+      <div class="card reveal">
+        <div class="card-h"><div><h3>Company NotebookLM Notebooks</h3><p id="nbSub">Select a company to open its NotebookLM notebook</p></div></div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:4px">
+          <select id="nbSelect" style="flex:1;min-width:260px;background:var(--panel);color:var(--text);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit">
+            <option value="">Select a company…</option>
+          </select>
+          <a id="nbOpen" href="#" target="_blank" rel="noopener" style="display:none;background:var(--saffron-soft);color:var(--saffron);border:1px solid rgba(233,162,59,.22);border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;text-decoration:none">Open notebook ↗</a>
+        </div>
+        <p id="nbStatus" style="color:var(--text-mute);font-size:12px;line-height:1.7;margin-top:14px"></p>
       </div>
     </div>
 
@@ -1786,6 +1803,94 @@ async function loadEarnCal(){
 }
 function loadCompanies(){ loadEarnNews(); loadCorpEvents(); loadEarnCal(); }
 
+/* ---------- Company NotebookLM notebooks ----------
+   name = India Related Reports folder · url = NotebookLM notebook URL
+   Leave url empty ('') until the notebook has been created; the UI
+   shows it as "pending" until a URL is filled in here. */
+const NOTEBOOKS = [
+  {name:"Adani Power", url:"https://notebooklm.google.com/notebook/2052a512-3b1a-4dd6-8ff4-f31a1250dbb3"},
+  {name:"Afcons Infrastructure", url:"https://notebooklm.google.com/notebook/eb9e1834-c094-466b-91ce-b41aa07cbb03"},
+  {name:"Amber Enterprises", url:"https://notebooklm.google.com/notebook/80c2673b-5dfd-4290-87b1-26e0bfa3dacb"},
+  {name:"Astral", url:"https://notebooklm.google.com/notebook/9bdb8911-b0f1-4580-b1c3-70c8e10f692a"},
+  {name:"Bajaj Finserv", url:"https://notebooklm.google.com/notebook/1f3bf443-b4ff-4aa3-bf1f-849ef412ea6d"},
+  {name:"CMS Info Systems", url:"https://notebooklm.google.com/notebook/d74b454f-0839-4dcb-b186-5efa33f0663f"},
+  {name:"Carborundum Universal", url:"https://notebooklm.google.com/notebook/52b97895-4f0f-43d9-96a5-afd82eff71f8"},
+  {name:"Chalet Hotels", url:"https://notebooklm.google.com/notebook/245d3505-5b16-41b0-99ab-8968c2fb532c"},
+  {name:"Coforge", url:"https://notebooklm.google.com/notebook/90165e49-c5c9-4263-8895-5fb2f81920f3"},
+  {name:"Deepak Nitrite", url:"https://notebooklm.google.com/notebook/0a076081-e434-4282-8946-3a44043255bb"},
+  {name:"Delhivery", url:"https://notebooklm.google.com/notebook/e60ebf13-75fa-4493-b6b5-02035dea2ad9"},
+  {name:"Devyani International", url:"https://notebooklm.google.com/notebook/68912360-0235-4e81-816d-f8092348e1f5"},
+  {name:"Fusion Finance", url:"https://notebooklm.google.com/notebook/f7ee8db4-668b-46bc-a17f-e65553273672"},
+  {name:"GE Vernova T&D India", url:"https://notebooklm.google.com/notebook/6f7d5bac-64bb-4e6d-a996-e680c3cca0b1"},
+  {name:"Gland Pharma", url:"https://notebooklm.google.com/notebook/0e89a0df-9f63-4d46-81cc-c914e2d026c3"},
+  {name:"Global Health (Medanta)", url:"https://notebooklm.google.com/notebook/dfd48ba2-b8d5-4f1e-965d-4fa34505b77b"},
+  {name:"Hindustan Aeronautics", url:"https://notebooklm.google.com/notebook/447614d6-7bb0-46e0-a65f-95eff1c21e90"},
+  {name:"ICICI Prudential Life Insurance", url:"https://notebooklm.google.com/notebook/e92628f7-2615-4be0-aa51-81466a391649"},
+  {name:"ITC Hotels", url:"https://notebooklm.google.com/notebook/a5d97009-2df5-4ca3-aef5-e7f7869a6a92"},
+  {name:"India Macro", url:"https://notebooklm.google.com/notebook/079cc13f-a419-4ebf-92fc-74d14db11412"},
+  {name:"India Strategy", url:"https://notebooklm.google.com/notebook/b2c638b3-4343-4034-9c16-703a1e5fe330"},
+  {name:"Indian Banks", url:"https://notebooklm.google.com/notebook/6e8b0e50-86f4-4799-9fa4-d202f1276d3a"},
+  {name:"Indian Cement", url:"https://notebooklm.google.com/notebook/9ea63f15-7de4-4476-ba8b-e13c3a98c359"},
+  {name:"Indian Financials", url:"https://notebooklm.google.com/notebook/3a0fd753-ab82-4a92-85cc-0fd17ead2ced"},
+  {name:"Indian Jewellery", url:"https://notebooklm.google.com/notebook/a38b5243-f25e-4101-9c9e-a5849565580e"},
+  {name:"Indian Oil Corporation", url:"https://notebooklm.google.com/notebook/0eb6e718-3107-41d2-a43a-3826213233c7"},
+  {name:"Indian Pharmaceuticals", url:"https://notebooklm.google.com/notebook/add8b569-e624-4e1f-956f-4792826dc6d1"},
+  {name:"Indian Steel", url:"https://notebooklm.google.com/notebook/c0637308-bb27-4851-aca4-ae9f11a5c079"},
+  {name:"Indraprastha Gas", url:"https://notebooklm.google.com/notebook/bf67a59b-9fa6-4308-b7a3-8c8f7a34b2f9"},
+  {name:"JSW Energy", url:"https://notebooklm.google.com/notebook/c5764258-cce8-40b2-bea6-a20cd9965ced"},
+  {name:"KEC International", url:"https://notebooklm.google.com/notebook/97a5a006-71f0-4521-84f1-81547e3dd273"},
+  {name:"KIMS", url:"https://notebooklm.google.com/notebook/db6d4a68-ad3d-4db0-9f32-bb3a2e54d920"},
+  {name:"NHPC", url:"https://notebooklm.google.com/notebook/1c692695-ba5b-4c6c-9110-5477a7b1648b"},
+  {name:"Nagarjuna", url:"https://notebooklm.google.com/notebook/fe920d47-4dea-4131-913c-8e1714a5e407"},
+  {name:"Neogen Chemicals", url:"https://notebooklm.google.com/notebook/8080d1de-8478-4868-87b7-47dd17bdd7dc"},
+  {name:"Power Grid", url:"https://notebooklm.google.com/notebook/2b78ce77-c267-42ef-9bd2-8154388bcf2d"},
+  {name:"Premier Energies", url:"https://notebooklm.google.com/notebook/c0d655ab-6767-4b33-b9e4-889e97c50007"},
+  {name:"ReNew", url:"https://notebooklm.google.com/notebook/dc3e673b-5135-4ab0-a5d7-fd76c532e060"},
+  {name:"Restaurant Brands Asia", url:"https://notebooklm.google.com/notebook/d7688241-1a0a-45ed-992e-add37268cbf6"},
+  {name:"S H Kelkar and Company", url:"https://notebooklm.google.com/notebook/2ba2f7e9-34c6-4876-b047-6303936a7eb2"},
+  {name:"SJVN", url:"https://notebooklm.google.com/notebook/fec9a9fa-d697-4e09-b5b3-3bd063881340"},
+  {name:"Siemens Energy India", url:"https://notebooklm.google.com/notebook/3169355f-89c2-46da-b671-3472301783a1"},
+  {name:"Steel Authority of India", url:"https://notebooklm.google.com/notebook/c3882fa6-7b74-4890-91ad-c99b376fb372"},
+  {name:"TCS", url:"https://notebooklm.google.com/notebook/f4f797f3-6232-44d0-a6c6-ed2c438084cb"},
+  {name:"Tata Steel", url:"https://notebooklm.google.com/notebook/0b071d8d-fe4b-48ad-8de1-872641c958f6"},
+  {name:"United Spirits", url:"https://notebooklm.google.com/notebook/5f8ec16a-55d3-4c0d-8442-8c1a17f56b4c"},
+  {name:"Uno Minda", url:"https://notebooklm.google.com/notebook/e6b1be10-5154-4ea2-813d-ee0cf4e43c5e"},
+  {name:"Vodafone Idea", url:"https://notebooklm.google.com/notebook/133b58ce-f599-40a6-bd77-46c2717a1c00"}
+];
+let screenerLoaded=false;
+function loadScreener(){
+  const sel=document.getElementById('nbSelect'),
+        openBtn=document.getElementById('nbOpen'),
+        status=document.getElementById('nbStatus');
+  const live=NOTEBOOKS.filter(n=>n.url).length;
+  NOTEBOOKS.forEach((n,i)=>{
+    const o=document.createElement('option');
+    o.value=String(i);
+    o.textContent=n.url?n.name:n.name+'  · notebook pending';
+    sel.appendChild(o);
+  });
+  function refresh(){
+    const i=sel.value, n=i===''?null:NOTEBOOKS[+i];
+    if(n && n.url){ openBtn.href=n.url; openBtn.style.display='inline-block'; }
+    else { openBtn.style.display='none'; openBtn.removeAttribute('href'); }
+  }
+  sel.addEventListener('change',refresh);
+  status.textContent=`${live} of ${NOTEBOOKS.length} notebooks live · ${NOTEBOOKS.length-live} pending creation`;
+}
+function renderNotebookResList(){
+  const ol=document.getElementById('nbResList');
+  if(!ol) return;
+  ol.innerHTML='';
+  NOTEBOOKS.forEach(n=>{
+    const li=document.createElement('li');
+    li.className='pol-item';
+    li.innerHTML = n.url
+      ? `<a href="${n.url}" target="_blank" rel="noopener">${n.name} ↗</a>`
+      : `<span style="color:var(--text-mute)">${n.name} · notebook pending</span>`;
+    ol.appendChild(li);
+  });
+}
+
 /* ---------- Sidebar tab routing ---------- */
 (function(){
   const vO=document.getElementById('viewOverview'),
@@ -1793,17 +1898,21 @@ function loadCompanies(){ loadEarnNews(); loadCorpEvents(); loadEarnCal(); }
         vM=document.getElementById('viewMarkets'),
         vW=document.getElementById('viewWatchlist'),
         vCo=document.getElementById('viewCompanies'),
+        vScr=document.getElementById('viewScreener'),
         vS=document.getElementById('viewSoon'),
         title=document.querySelector('.topbar .title');
-  let marketsLoaded=false, watchlistLoaded=false, companiesLoaded=false;
+  let marketsLoaded=false, watchlistLoaded=false, companiesLoaded=false, researchNbLoaded=false;
   function showView(v,label){
     vO.hidden=v!=='overview';
     vR.hidden=v!=='research';
     vM.hidden=v!=='markets';
     vW.hidden=v!=='watchlist';
     vCo.hidden=v!=='companies';
+    vScr.hidden=v!=='screener';
     vS.hidden=v!=='soon';
     if(v==='soon') document.getElementById('soonTitle').textContent=label;
+    if(v==='screener' && !screenerLoaded){ screenerLoaded=true; loadScreener(); }
+    if(v==='research' && !researchNbLoaded){ researchNbLoaded=true; renderNotebookResList(); }
     if(v==='markets' && !marketsLoaded){ marketsLoaded=true; loadPolitics(); loadMacro(); }
     if(v==='watchlist' && !watchlistLoaded){ watchlistLoaded=true; loadWatchlist(); }
     if(v==='companies' && !companiesLoaded){ companiesLoaded=true; loadCompanies(); }
