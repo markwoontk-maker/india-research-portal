@@ -332,7 +332,7 @@
         Coverage
       </div>
       <div class="nav-label" style="margin-top:22px">Tools</div>
-      <div class="nav-item" data-view="soon" data-title="Watchlist">
+      <div class="nav-item" data-view="watchlist" data-title="Watchlist">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M4 10h16M10 10v10"/></svg>
         Watchlist
       </div>
@@ -507,6 +507,24 @@
       <div class="card reveal">
         <div class="card-h"><div><h3>India Macro Snapshot</h3><p id="macroSub">Monthly indicators · last 10 months (latest at right)</p></div></div>
         <div class="macro-wrap"><table class="macro-tbl" id="macroTbl"><tbody><tr><td class="macro-empty">Loading monthly macro data…</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <div id="viewWatchlist" hidden>
+      <div class="card reveal">
+        <div class="card-h"><div><h3>Current Holdings</h3><p>Live prices · NSE</p></div></div>
+        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">Chg %</th></tr></thead>
+          <tbody id="wlHold"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
+      </div>
+      <div class="card reveal">
+        <div class="card-h"><div><h3>Coverage</h3><p>Live prices · NSE</p></div></div>
+        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">Chg %</th></tr></thead>
+          <tbody id="wlCov"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
+      </div>
+      <div class="card reveal">
+        <div class="card-h"><div><h3>Watchlist</h3><p>Live prices · NSE</p></div></div>
+        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">Chg %</th></tr></thead>
+          <tbody id="wlWatch"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
     </div>
 
@@ -1396,23 +1414,89 @@ async function loadMacro(){
   tb.innerHTML='<tr><td class="macro-empty">Monthly macro data unavailable (free feed unreachable). Try again shortly.</td></tr>';
 }
 
+/* ---------- Watchlist tab (holdings / coverage / watchlist) ---------- */
+const WL_HOLD=[
+  ["Reliance Industries","RELIANCE.NS"],["Bharti Airtel","BHARTIARTL.NS"],
+  ["Adani Ports","ADANIPORTS.NS"],["Hindustan Unilever","HINDUNILVR.NS"],
+  ["Sun Pharma","SUNPHARMA.NS"],["Emcure Pharma","EMCURE.NS"],
+  ["Lupin","LUPIN.NS"],["Lincoln Pharma","LINCOLN.NS"],
+  ["Torrent Pharma","TORNTPHARM.NS"],["Apollo Hospitals","APOLLOHOSP.NS"],
+  ["GE Vernova T&D","GVT&D.NS"],["KEI Industries","KEI.NS"],
+  ["Hero MotoCorp","HEROMOTOCO.NS"]
+];
+const WL_COV=[
+  ["SBI","SBIN.NS"],["HDFC Bank","HDFCBANK.NS"],["ICICI Bank","ICICIBANK.NS"],
+  ["Kotak Mahindra Bank","KOTAKBANK.NS"],["Shriram Finance","SHRIRAMFIN.NS"],
+  ["Larsen & Toubro","LT.NS"],["Polycab","POLYCAB.NS"],
+  ["Lloyds Metals & Energy","LLOYDSME.NS"],["Mahindra & Mahindra","M&M.NS"],
+  ["Maruti Suzuki","MARUTI.NS"],
+  ["Tata Motors (PV)","TATAMOTORS.NS|TMPV.NS|TATAMTRPV.NS"],
+  ["Tata Motors (CV)","TMLCV.NS|TATAMTRCV.NS|TMCV.NS|TATAMOTORS.NS"],
+  ["TVS Motor","TVSMOTOR.NS"],
+  ["Eicher Motors","EICHERMOT.NS"],["Bajaj Auto","BAJAJ-AUTO.NS"],
+  ["InterGlobe Aviation","INDIGO.NS"],["Dixon Technologies","DIXON.NS"],
+  ["Syrma SGS","SYRMA.NS"],["Amber Enterprises","AMBER.NS"],
+  ["Kaynes Technology","KAYNES.NS"],["UltraTech Cement","ULTRACEMCO.NS"],
+  ["Avenue Supermarts","DMART.NS"],["Suzlon Energy","SUZLON.NS"]
+];
+const WL_WATCH=[
+  ["Laurus Labs","LAURUSLABS.NS"],["Sai Life Sciences","SAILIFE.NS"],
+  ["Divi's Labs","DIVISLAB.NS"],["Cummins India","CUMMINSIND.NS"],
+  ["National Aluminium","NATIONALUM.NS"],["Narayana Hrudayalaya","NH.NS"],
+  ["Schneider Electric","SCHNEIDER.NS"]
+];
+function wlRows(list,map){
+  return list.map(([nm,sy])=>{
+    const cands=sy.split('|');
+    const hit=cands.find(c=>map[c]);
+    const d=hit?map[hit]:null;
+    const tk=(hit||cands[0]).replace('.NS','');
+    const dash='<span style="color:var(--text-mute)">—</span>';
+    const px=d?'₹'+inr(d.p):dash;
+    const ch=d?`<span class="pill ${d.ch>=0?'u':'d'}">${d.ch>=0?'+':''}${d.ch.toFixed(2)}%</span>`:dash;
+    return `<tr><td><div class="sym">${nm}</div><div class="co">${tk}</div></td>
+      <td class="r px">${px}</td><td class="r">${ch}</td></tr>`;
+  }).join('');
+}
+async function loadWatchlist(){
+  const all=[...WL_HOLD,...WL_COV,...WL_WATCH];
+  const syms=[...new Set(all.flatMap(x=>x[1].split('|')))];
+  const map={};
+  try{
+    const chunks=chunk(syms,20);
+    const res=await Promise.allSettled(chunks.map(c=>sparkApi(c).then(j=>({c,j}))));
+    res.forEach(x=>{
+      if(x.status!=='fulfilled'||!x.value||!x.value.j) return;
+      const {c,j}=x.value;
+      c.forEach(sy=>{ const d=pick(j,sy),p=last(d),pc=prevC(d);
+        if(p!=null&&pc!=null&&pc>0) map[sy]={p,ch:(p-pc)/pc*100}; });
+    });
+  }catch(e){}
+  document.getElementById('wlHold').innerHTML=wlRows(WL_HOLD,map);
+  document.getElementById('wlCov').innerHTML=wlRows(WL_COV,map);
+  document.getElementById('wlWatch').innerHTML=wlRows(WL_WATCH,map);
+}
+
 /* ---------- Sidebar tab routing ---------- */
 (function(){
   const vO=document.getElementById('viewOverview'),
         vC=document.getElementById('viewCoverage'),
         vR=document.getElementById('viewResearch'),
         vM=document.getElementById('viewMarkets'),
+        vW=document.getElementById('viewWatchlist'),
         vS=document.getElementById('viewSoon'),
         title=document.querySelector('.topbar .title');
-  let marketsLoaded=false;
+  let marketsLoaded=false, watchlistLoaded=false;
   function showView(v,label){
     vO.hidden=v!=='overview';
     vC.hidden=v!=='coverage';
     vR.hidden=v!=='research';
     vM.hidden=v!=='markets';
+    vW.hidden=v!=='watchlist';
     vS.hidden=v!=='soon';
     if(v==='soon') document.getElementById('soonTitle').textContent=label;
     if(v==='markets' && !marketsLoaded){ marketsLoaded=true; loadPolitics(); loadMacro(); }
+    if(v==='watchlist' && !watchlistLoaded){ watchlistLoaded=true; loadWatchlist(); }
     title.textContent=label||'Market Overview';
     window.scrollTo(0,0);
   }
