@@ -507,12 +507,8 @@
 
     <div id="viewResearch" hidden>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Latest Research Notes</h3><p>Published by the India desk</p></div></div>
+        <div class="card-h"><div><h3>Latest Research Notes</h3><p id="notesSub">Broker reports added in the last 2 days · grouped by research house</p></div></div>
         <div id="notes"></div>
-      </div>
-      <div class="card reveal">
-        <div class="card-h"><div><h3>Company NotebookLM Notebooks</h3><p id="nbResSub">Per-company NotebookLM workspaces · click to open</p></div></div>
-        <ol id="nbResList" class="pol-list"></ol>
       </div>
     </div>
 
@@ -653,16 +649,95 @@ const coverage = [
   ["LT","Larsen & Toubro","3,640","4,150","+14.0","buy"],
 ];
 
-// [broker, call, headline, body, analyst, time] — illustrative
+// Broker reports added to the research library in the last 2 days.
+// [house, dateYYMMDD, company, analyst one-line thesis] — taken from the
+// report title; sentiment chip is inferred from the thesis wording.
 const notes = [
-  ["Motilal Oswal","buy","Reliance Industries — Retail & Jio re-rating intact","Q4 EBITDA beat on telecom ARPU uptick; new energy capex on track. Target ₹3,420 (16% upside).","A. Mehta","2h ago"],
-  ["Motilal Oswal","buy","Tata Motors — JLR margin tailwind","Volume mix + EV order book support FY27 estimates. Reiterate Buy after the move.","A. Mehta","Yesterday"],
-  ["ICICI Securities","hold","IT Services — Tier-1 demand still soft","FY27 deal pipeline stabilising but discretionary spend muted. Stay selective; prefer largecaps.","R. Iyer","5h ago"],
-  ["ICICI Securities","sell","Asian Paints — Margin & competition risk","Grasim entry pressures pricing; downgrade to Sell, target ₹2,650.","R. Iyer","Yesterday"],
-  ["Kotak Institutional","buy","HDFC Bank — NIM trough behind","Deposit repricing + LDR normalisation aid FY27 RoA. Preferred large-cap financial.","S. Kapoor","3h ago"],
-  ["Kotak Institutional","hold","FMCG — rural recovery uneven","Volume green shoots but margin upside largely priced in. Neutral on the pack.","S. Kapoor","1d ago"],
-  ["Nuvama","buy","Larsen & Toubro — order book at record","Strong ordering momentum and margin discipline; raise estimates and target.","P. Shah","6h ago"],
-  ["Jefferies India","sell","Cement — pricing discipline fragile","Demand healthy but price hikes not sticking; cautious near term on the sector.","D. Rao","Yesterday"],
+  ["Bernstein","260518","ICICI Prudential Life Insurance","Parent stake sale confirmed, expect stock under pressure"],
+  ["Bernstein","260518","Power Grid","Q4FY26 same old, capex beat and earnings miss"],
+  ["Bernstein","260518","ReNew","Q4FY26 execution strong, but earnings impacted by curtailment"],
+  ["CLSA","260518","Fusion Finance","Some improvement"],
+  ["CLSA","260518","Hindustan Aeronautics","Backlog built, execution next"],
+  ["CLSA","260518","India Economics","Full impact of the war yet to come"],
+  ["CLSA","260518","India Economics","Quantifying impact of high oil prices"],
+  ["CLSA","260518","Nagarjuna","Still hazy or defensive"],
+  ["CLSA","260518","NHPC","Worth the wait"],
+  ["CLSA","260518","Restaurant Brands Asia","Consistent SSSG growth"],
+  ["CLSA","260518","Tata Steel","Operationally in line"],
+  ["CLSA","260518","United Spirits","Margin headwinds ahead"],
+  ["CLSA","260518","Uno Minda","Another steady quarter"],
+  ["CLSA","260519","Amber Enterprises","Near-term margin pressure priced in"],
+  ["CLSA","260519","Astral","Operationally in line"],
+  ["CLSA","260519","Coforge","Bold bets and execution"],
+  ["CLSA","260519","Indraprastha Gas","Margin led beat"],
+  ["CLSA","260519","Power Grid","Beat beat beat"],
+  ["CLSA","260519","SJVN","Not out of the woods yet"],
+  ["CLSA","260519","Vodafone Idea","AGR gain & promoter equity infusion"],
+  ["Jefferies","260516","Tata Steel","Mar-Q beat, more margin expansion ahead"],
+  ["Jefferies","260516","Uno Minda","Mar-Q first cut, in-line quarter"],
+  ["Jefferies","260517","CMS Info Systems","Mar Qtr, improving business momentum & FSS acquisition support FY27 growth"],
+  ["Jefferies","260517","Gland Pharma","Mar-Q, improving outlook, execution key to monitor"],
+  ["Jefferies","260517","ITC Hotels","FTA impact drives weak qtr"],
+  ["Jefferies","260517","Premier Energies","Mar-26 review, marginally ahead, strong FY27 outlook"],
+  ["Jefferies","260518","Adani Power","FCF to turn positive by FY30E"],
+  ["Jefferies","260518","Astral","Mar26-Q first cut, plumbing volume strong at +24%, adhesives pares margin"],
+  ["Jefferies","260518","Bajaj Finserv","Roadshow feedback, core growing well, new ventures near breakeven"],
+  ["Jefferies","260518","India BFSI","India BFSI Monthly — April 2026"],
+  ["Jefferies","260518","India Financials","India Financial Daily, 18 May 2026"],
+  ["Jefferies","260518","India Pharmaceuticals","GxMeter, Zydus and Lupin hold steady, Cipla mixed"],
+  ["Jefferies","260518","JSW Energy","Moving in the right direction"],
+  ["Jefferies","260518","Power Grid","Capex-capitalisation guidance retained"],
+  ["Jefferies","260518","Uno Minda","Growing well, but near-term margin pressure"],
+  ["Jefferies","260519","India Jewellery","Expert call with Mr Ketan Kothari (Augmont) on gold policy shift"],
+  ["JPMorgan","260518","Amber Enterprises","Margin pressure and PCB execution delays"],
+  ["JPMorgan","260518","Astral","First take, marginal EBITDA miss but strong operational metrics, stay OW"],
+  ["JPMorgan","260518","Delhivery","Here comes the FCF"],
+  ["JPMorgan","260518","GE Vernova T&D India","First take, margin driven beat, stay OW"],
+  ["JPMorgan","260518","Global Health (Medanta)","Entering growth acceleration phase, upgrade to OW"],
+  ["JPMorgan","260518","India Cement","Limited pricing momentum, demand weakening into monsoon"],
+  ["JPMorgan","260518","India Equity Strategy","4QFY26 Earnings Dissector, better-than-expected prints, upgrade Industrials to OW"],
+  ["JPMorgan","260518","Indraprastha Gas","First take 4QFY26, miss on higher gas costs"],
+  ["JPMorgan","260518","Power Grid","Soft P&L but FY26 capex-capitalization guidance exceeded"],
+  ["JPMorgan","260518","Premier Energies","Margins hold up, improved solar outlook positive for stock"],
+  ["JPMorgan","260518","Siemens Energy India","Export growth key positive but turbine and HVDC concerns remain, stay Neutral"],
+  ["JPMorgan","260518","Steel Authority of India","Earnings beat and debt reduction positive, volume growth soft until FY31"],
+  ["JPMorgan","260518","United Spirits","Mixing it right for FY27, premiumization + 3 Indias playbook underpin DD growth"],
+  ["JPMorgan","260519","Indian Oil Corporation","First take 4QFY26, inventory gains drive the beat"],
+  ["JPMorgan","260519","Vodafone Idea","Not out of the woods yet"],
+  ["Kotak","260517","Devyani International","A welcome relief"],
+  ["Kotak","260518","Amber Enterprises","Near-term margin pressure, timely PCB commissioning is key"],
+  ["Kotak","260518","Carborundum Universal","Growth accelerating, loss-making subs on their way out"],
+  ["Kotak","260518","Chalet Hotels","Rickety close to the year, capacity addition remains strong"],
+  ["Kotak","260518","Deepak Nitrite","Windfall profits may not last beyond a couple of quarters"],
+  ["Kotak","260518","Delhivery","Blockbuster end to a strong year"],
+  ["Kotak","260518","ESG","E25 ethanol blending, opportunities abound, risks remain"],
+  ["Kotak","260518","India Rates & FX","Fortnightly rates and FX view"],
+  ["Kotak","260518","India Strategy","KS-Ownership Navigator, sequential changes in March 2026 quarter"],
+  ["Kotak","260518","KEC International","Weak performance, recovery to be gradual"],
+  ["Kotak","260518","KIMS","Still not there yet"],
+  ["Kotak","260518","Neogen Chemicals","Everything comes to him who hustles while he waits"],
+  ["Kotak","260518","Power Grid","Strong capitalization sets base for improved earnings growth"],
+  ["Kotak","260518","Restaurant Brands Asia","Steady show in India"],
+  ["Kotak","260518","S H Kelkar and Company","Margins remain under pressure, an FY2028 story"],
+  ["Kotak","260518","TCS","CFO meeting notes"],
+  ["Kotak","260518","United Spirits","Premiumization set to accelerate further"],
+  ["Kotak","260518","Uno Minda","Lackluster quarter"],
+  ["Kotak","260519","NHPC","Earnings growth driven by one-offs"],
+  ["Nomura","260517","Gland Pharma","4QFY26 significantly higher than our estimates"],
+  ["Nomura","260518","Hindustan Aeronautics","Robust sales growth visibility given mfg book-bill ratio of 25x"],
+  ["Nomura","260518","ICICI Prudential Life Insurance","Prudential to reduce stake"],
+  ["Nomura","260518","India Banks","Asia marketing feedback, cautious flows, clear preferences"],
+  ["Nomura","260518","India Steel","Steel weekly trends (week ended 15 May 2026)"],
+  ["Nomura","260518","Indraprastha Gas","4Q beats on volumes, but margins miss"],
+  ["Nomura","260518","KEC International","4Q operating performance misses estimates on all fronts"],
+  ["Nomura","260518","Premier Energies","Operating performance beats estimates in 4Q"],
+  ["Nomura","260518","Tata Steel","Price recovery drives the performance"],
+  ["Nomura","260518","United Spirits","1H27F volumes/margins to see impact, medium-term story intact"],
+  ["Nomura","260518","Uno Minda","EV order wins keep growth visibility high"],
+  ["Nomura","260518","Vodafone Idea","In-line results, capital raise awaited"],
+  ["Nomura","260519","Afcons Infrastructure","Muted operating performance in 4QFY26"],
+  ["Nomura","260519","GE Vernova T&D India","Exemplary performance in 4Q, beats estimates"],
+  ["Nomura","260519","India Economics","El Nino may not scorch the economy"],
 ];
 
 /* ---------- Render ticker ---------- */
@@ -715,20 +790,39 @@ document.getElementById('moversTop').innerHTML =
 document.getElementById('moversBot').innerHTML =
   movers.filter(m=>m[4]<0).map(([s,c,p,ch])=>moverRow(c,s,'₹'+p,ch,false)).join('');
 
-/* ---------- Notes (grouped by broker) ---------- */
+/* ---------- Research notes (grouped by research house) ---------- */
 (function(){
-  const byBroker={};
-  notes.forEach(n=>{ (byBroker[n[0]]=byBroker[n[0]]||[]).push(n); });
-  document.getElementById('notes').innerHTML=Object.keys(byBroker).map(broker=>{
-    const arr=byBroker[broker];
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const fmtD=d=>{ // "260518" -> "18 May"
+    const yy=d.slice(0,2), mm=+d.slice(2,4), dd=+d.slice(4,6);
+    return `${dd} ${MON[mm-1]||''}`;
+  };
+  // Sentiment from the analyst's wording: negatives win ties (a "beat
+  // but miss" headline reads as the miss for the stock).
+  const NEG=/\b(miss|misses|missed|weak|weakening|headwinds?|lacklustre|lackluster|soft(?:er)?|concerns?|pressure|hazy|delays?|cautious|defensive|impacted|pares)\b|not out of the woods|may not last/i;
+  const POS=/\b(beat|beats|upgrade|outperform|strong|robust|relief|blockbuster|exemplary|positive|improving|improved|improvement|accelerate|accelerating|tailwind|momentum|ahead|exceeded|retained)\b|stay ow|turn positive|higher than/i;
+  function tag(title){
+    if(NEG.test(title)) return 'sell';
+    if(POS.test(title)) return 'buy';
+    return 'hold';
+  }
+  const byHouse={};
+  notes.forEach(n=>{ (byHouse[n[0]]=byHouse[n[0]]||[]).push(n); });
+  const houses=Object.keys(byHouse).sort((a,b)=>
+    byHouse[b].length-byHouse[a].length || a.localeCompare(b));
+  document.getElementById('notes').innerHTML=houses.map(house=>{
+    const arr=byHouse[house].slice().sort((a,b)=>
+      b[1]!==a[1] ? (b[1]<a[1]?-1:1) : a[2].localeCompare(b[2]));
     return `<div class="broker-grp">
-      <div class="broker-h">${broker}<span>${arr.length} note${arr.length>1?'s':''}</span></div>
-      ${arr.map(([b,t,h,p,a,tm])=>`
-        <div class="note">
-          <div class="rtag ${t}">${t.toUpperCase()}</div>
-          <div><h4>${h}</h4><p>${p}</p>
-          <div class="by"><b>${a}</b> · ${tm}</div></div>
-        </div>`).join('')}
+      <div class="broker-h">${esc(house)}<span>${arr.length} report${arr.length>1?'s':''}</span></div>
+      ${arr.map(([h,d,co,ti])=>{
+        const t=tag(ti);
+        return `<div class="note">
+          <div class="rtag ${t}">${fmtD(d)}</div>
+          <div><h4>${esc(co)}</h4><p>${esc(ti)}</p></div>
+        </div>`;
+      }).join('')}
     </div>`;
   }).join('');
 })();
@@ -1885,20 +1979,6 @@ function loadScreener(){
   sel.addEventListener('change',refresh);
   status.textContent=`${live} of ${NOTEBOOKS.length} notebooks live · ${NOTEBOOKS.length-live} pending creation`;
 }
-function renderNotebookResList(){
-  const ol=document.getElementById('nbResList');
-  if(!ol) return;
-  ol.innerHTML='';
-  NOTEBOOKS.forEach(n=>{
-    const li=document.createElement('li');
-    li.className='pol-item';
-    li.innerHTML = n.url
-      ? `<a href="${nbHref(n)}" target="_blank" rel="noopener">${n.name} ↗</a>`
-      : `<span style="color:var(--text-mute)">${n.name} · notebook pending</span>`;
-    ol.appendChild(li);
-  });
-}
-
 /* ---------- Sidebar tab routing ---------- */
 (function(){
   const vO=document.getElementById('viewOverview'),
@@ -1909,7 +1989,7 @@ function renderNotebookResList(){
         vScr=document.getElementById('viewScreener'),
         vS=document.getElementById('viewSoon'),
         title=document.querySelector('.topbar .title');
-  let marketsLoaded=false, watchlistLoaded=false, companiesLoaded=false, researchNbLoaded=false;
+  let marketsLoaded=false, watchlistLoaded=false, companiesLoaded=false;
   function showView(v,label){
     vO.hidden=v!=='overview';
     vR.hidden=v!=='research';
@@ -1920,7 +2000,6 @@ function renderNotebookResList(){
     vS.hidden=v!=='soon';
     if(v==='soon') document.getElementById('soonTitle').textContent=label;
     if(v==='screener' && !screenerLoaded){ screenerLoaded=true; loadScreener(); }
-    if(v==='research' && !researchNbLoaded){ researchNbLoaded=true; renderNotebookResList(); }
     if(v==='markets' && !marketsLoaded){ marketsLoaded=true; loadPolitics(); loadMacro(); }
     if(v==='watchlist' && !watchlistLoaded){ watchlistLoaded=true; loadWatchlist(); }
     if(v==='companies' && !companiesLoaded){ companiesLoaded=true; loadCompanies(); }
