@@ -216,6 +216,32 @@ function extractPrevCall(text, currCall) {
   return null;
 }
 
+// First ~400 chars of body prose for the hover tooltip. Skips header
+// (broker name, ticker, contact info) by finding the first long prose
+// chunk after position ~200.
+function extractSummary(flat, headlineHint) {
+  let t = String(flat).replace(//g, ' ').replace(/\s+/g, ' ').trim();
+  // If the headline (title from filename) appears in the text, jump
+  // just past its first occurrence — body usually starts there.
+  let start = 200;
+  if (headlineHint) {
+    const idx = t.toLowerCase().indexOf(String(headlineHint).slice(0, 30).toLowerCase());
+    if (idx > 50) start = Math.max(start, idx + 30);
+  }
+  // Scan forward for the start of a sensible prose sentence.
+  for (let i = start; i < Math.min(t.length, start + 600); i++) {
+    if (/[A-Z]/.test(t[i]) && (i === 0 || /[\s.]/.test(t[i - 1]))) {
+      const probe = t.slice(i, i + 300);
+      if ((probe.match(/[a-z]/g) || []).length > 100) { start = i; break; }
+    }
+  }
+  let body = t.slice(start, start + 520);
+  // Trim to last full sentence before ~450 chars.
+  const cut = body.lastIndexOf('. ', 450);
+  if (cut > 180) body = body.slice(0, cut + 1);
+  return body.trim();
+}
+
 function cleanNum(s) {
   // "1,400.00" → "1,400" ; "5050" → "5,050"
   let n = String(s).replace(/[,\s]/g, "");
@@ -278,6 +304,17 @@ function extractPage1(p) {
     return "";
   }
 }
+// Non-layout pass for the hover-summary: pdftotext without -layout
+// gives natural prose flow (no column interleaving), which makes the
+// "first paragraph of body" much cleaner.
+function extractFlow(p) {
+  try {
+    const buf = execFileSync(PDFTOTEXT, ["-f", "1", "-l", "2", "--", p, "-"], { maxBuffer: 8 * 1024 * 1024 });
+    return buf.toString("utf8");
+  } catch (e) {
+    return "";
+  }
+}
 
 const pdfs = listPdfs();
 console.log("PDFs in window (>=" + cutoff + "):", pdfs.length);
@@ -293,11 +330,15 @@ for (const p of pdfs) {
   const flat = text.replace(/\s+/g, " ");
   const currTP = extractCurrTP(flat);
   const currCall = extractCurrCall(flat);
+  // Second pass without -layout for summary — gives natural prose
+  // flow instead of column interleaving.
+  const flowText = extractFlow(p.path).replace(/\s+/g, " ").trim();
   const entry = {
     currTP,
     prevTP: extractPrevTP(flat, currTP),
     currCall,
     prevCall: extractPrevCall(flat, currCall),
+    summary: extractSummary(flowText || flat, p.title),
   };
   if (entry.currTP) withCurrTP++;
   if (entry.prevTP) withPrevTP++;

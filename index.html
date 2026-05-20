@@ -390,6 +390,17 @@
   .n-header .n-tp,.n-header .n-call-h{flex:none;font-size:10px;color:var(--text-mute);text-align:center}
   .n-header .n-tp{text-align:right}
   .n-call-h{width:74px;box-sizing:border-box}
+  /* Hover popup with PDF body summary (research-notes headline) */
+  .n-pop{position:fixed;z-index:200;max-width:560px;
+    background:var(--panel);color:var(--text);
+    border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px;font-size:12.5px;line-height:1.6;
+    box-shadow:0 10px 32px rgba(0,0,0,.5);
+    pointer-events:none;opacity:0;transform:translateY(-4px);
+    transition:opacity .12s,transform .12s}
+  .n-pop.show{opacity:1;transform:translateY(0)}
+  .n-pop .pop-h{font-family:'IBM Plex Mono';font-size:10px;color:var(--text-mute);
+    text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
   .notes-group{background:var(--panel);color:var(--text-dim);
     border:1px solid rgba(255,255,255,.14);border-radius:8px;
     padding:7px 10px;font-size:12px;font-family:inherit;cursor:pointer;
@@ -1243,7 +1254,7 @@ function renderResearchNotes(groupBy){
   //   by-date     → key=date,    secondary="house · company"
   let keyOf, secondCol;
   if (grp==='company') { keyOf=r=>r[2]; secondCol=r=>r[0]; }
-  else if (grp==='date') { keyOf=r=>r[1]; secondCol=r=>r[0]+' · '+r[2]; }
+  else if (grp==='date') { keyOf=r=>r[1]; secondCol=r=>r[2]+' · '+r[0]; }
   else { keyOf=r=>r[0]; secondCol=r=>r[2]; }
   const groupMap={};
   rows.forEach(r=>{ const k=keyOf(r); (groupMap[k]=groupMap[k]||[]).push(r); });
@@ -1256,7 +1267,7 @@ function renderResearchNotes(groupBy){
   const el=document.getElementById('notes');
   if(!el) return;
   const secondHdr = grp==='company' ? 'Research house'
-    : grp==='date' ? 'House · Company'
+    : grp==='date' ? 'Company · House'
     : 'Company';
   const header =
     `<div class="n-header">`+
@@ -1330,7 +1341,9 @@ function renderResearchNotes(groupBy){
         return `<div class="note">`+
           `<span class="n-date">${fmtD(d)}</span>`+
           `<span class="n-co" title="${second}">${second}</span>`+
-          `<a class="n-ti" href="${esc(href)}" target="_blank" rel="noopener" title="${esc(ti)}">${esc(ti)}</a>`+
+          `<a class="n-ti" href="${esc(href)}" target="_blank" rel="noopener"`+
+            (pd && pd.summary ? ` data-summary="${esc(pd.summary)}"` : '')+
+            ` title="${esc(ti)}">${esc(ti)}</a>`+
           tpCurrCell+callCurrCell+tpPrevCell+callPrevCell+
         `</div>`;
       }).join('')}
@@ -1339,6 +1352,39 @@ function renderResearchNotes(groupBy){
     `<div class="n-foot">Synced to NotebookLM + Trendlyne — last 2 days. Curr TP / Curr Call are pulled from the report PDF body where parseable, else from the headline; Prev TP / Prev Call come from the broker's stated previous TP/rating in the same PDF, else the most recent prior report on the same name in the dataset. "—" = no parseable signal.</div>`;
 }
 // Called once NOTEBOOKS + nbHref are defined later in the file.
+
+/* ---------- Hover popup: PDF body summary on research headlines ----- */
+(function(){
+  const pop=document.createElement('div'); pop.className='n-pop';
+  document.body.appendChild(pop);
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  function show(el){
+    const text=el.getAttribute('data-summary')||'';
+    if(!text) return;
+    pop.innerHTML='<div class="pop-h">Report preview</div>'+esc(text);
+    // Pre-position to measure, then snap into the viewport.
+    pop.style.left='0px'; pop.style.top='0px';
+    pop.classList.add('show');
+    requestAnimationFrame(()=>{
+      const r=el.getBoundingClientRect();
+      const pr=pop.getBoundingClientRect();
+      let left=Math.max(12, Math.min(window.innerWidth - pr.width - 12, r.left));
+      let top=r.bottom + 8;
+      if (top + pr.height > window.innerHeight - 12) top=Math.max(12, r.top - pr.height - 8);
+      pop.style.left=left+'px';
+      pop.style.top=top+'px';
+    });
+  }
+  function hide(){ pop.classList.remove('show'); }
+  document.addEventListener('mouseover', e=>{
+    const t=e.target.closest && e.target.closest('a.n-ti[data-summary]');
+    if(t) show(t);
+  });
+  document.addEventListener('mouseout', e=>{
+    const t=e.target.closest && e.target.closest('a.n-ti[data-summary]');
+    if(t) hide();
+  });
+})();
 
 /* ---------- Chart ---------- */
 function series(n,vol,trend){
