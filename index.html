@@ -201,6 +201,21 @@
   .mv-tbl col.c-px{width:78px}
   .mv-tbl col.c-pct{width:64px}
   .mv-tbl col.c-sp{width:80px}
+  /* All-Time-High / 52-Week-High card */
+  .hi-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media(max-width:680px){.hi-cols{grid-template-columns:1fr;gap:8px}}
+  .hi-tbl{table-layout:fixed;width:100%}
+  .hi-tbl th{text-align:left;padding:0 0 10px;font-weight:600;
+    font-size:11px;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--text-mute);border-bottom:1px solid var(--line-soft)}
+  .hi-tbl th.r{text-align:right}
+  .hi-tbl td{padding:6px 0;border-top:1px solid var(--line-soft);font-size:13px;vertical-align:middle}
+  .hi-tbl td.r{text-align:right;font-family:'IBM Plex Mono';font-size:12px;
+    font-variant-numeric:tabular-nums}
+  .hi-tbl .nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hi-tbl .ath-tag{font-family:'IBM Plex Mono';font-size:9.5px;
+    background:var(--up-soft);color:var(--up);padding:1px 5px;border-radius:3px;
+    margin-left:6px;letter-spacing:.04em}
 
   /* political news list */
   .pol-list{list-style:none;counter-reset:pol;margin:0;padding:0}
@@ -604,6 +619,32 @@
             <table class="mv-tbl">
               <colgroup><col class="c-name"><col class="c-px"><col class="c-pct"><col class="c-sp"></colgroup>
               <tbody id="moversBot"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 · All-Time High & 52-Week High Watch (Nifty 500) -->
+      <div class="card reveal" style="animation-delay:.28s">
+        <div class="card-h">
+          <div><h3>All-Time High &amp; 52-Week High Watch</h3>
+          <p id="hiSub">Nifty 500 constituents · Dhan (ATH) · Groww (52WH)</p></div>
+        </div>
+        <div class="hi-cols">
+          <div>
+            <div class="sd-h up">All-Time High</div>
+            <table class="hi-tbl">
+              <colgroup><col class="c-name"><col class="c-px"><col class="c-px"></colgroup>
+              <thead><tr><th>Stock</th><th class="r">CMP</th><th class="r">ATH</th></tr></thead>
+              <tbody id="athList"></tbody>
+            </table>
+          </div>
+          <div>
+            <div class="sd-h up">52-Week High</div>
+            <table class="hi-tbl">
+              <colgroup><col class="c-name"><col class="c-px"><col class="c-px"></colgroup>
+              <thead><tr><th>Stock</th><th class="r">CMP</th><th class="r">52W High</th></tr></thead>
+              <tbody id="w52List"></tbody>
             </table>
           </div>
         </div>
@@ -1047,6 +1088,62 @@ document.getElementById('moversTop').innerHTML =
   movers.filter(m=>m[4]>0).map(([s,c,p,ch])=>moverRow(c,s,'₹'+p,ch,true)).join('');
 document.getElementById('moversBot').innerHTML =
   movers.filter(m=>m[4]<0).map(([s,c,p,ch])=>moverRow(c,s,'₹'+p,ch,false)).join('');
+
+/* ---------- ATH + 52-Week High Watch (Nifty 500) ----------
+   ATH list scraped from dhan.co/stocks/market/all-time-high-stocks/
+   (filtered to Nifty 500 constituents). 52WH list scraped from
+   groww.in/markets/52-week-high?index=GIDXNIFTY500 (Groww already
+   filters that page to the chosen index). Both lists are static
+   snapshots; refresh via scripts\rebuild-highs.ps1 + commit. */
+const ATH_AS_OF='2026-05-20';
+const HI_ATH=[
+  // {name, cmp, ath} — Nifty 500 names from Dhan ATH list
+  {name:'Hitachi Energy',       cmp:35335.00, ath:35095.00},
+  {name:'Laurus Labs',          cmp:1359.50,  ath:1353.10},
+  {name:'Manappuram Finance',   cmp:323.75,   ath:321.60},
+  {name:'Avalon Technologies',  cmp:1469.40,  ath:1427.80},
+];
+const HI_W52=[
+  // {name, cmp, w52h} — all rows from Groww (page is already index-filtered to N500)
+  {name:'Hitachi Energy India', cmp:35355.00, w52h:35355.00},
+  {name:'Sai Life Sciences',    cmp:1147.00,  w52h:1148.60},
+  {name:'Laurus Labs',          cmp:1357.90,  w52h:1357.90},
+  {name:'Manappuram Finance',   cmp:321.35,   w52h:321.60},
+  {name:'Acutaas Chemicals',    cmp:2886.80,  w52h:2906.00},
+  {name:'Timken India',         cmp:3708.40,  w52h:3708.40},
+  {name:'Aurobindo Pharma',     cmp:1525.80,  w52h:1530.00},
+  {name:'Ipca Laboratories',    cmp:1642.30,  w52h:1662.20},
+  {name:'Radico Khaitan',       cmp:3569.90,  w52h:3673.90},
+  {name:'Zydus Lifesciences',   cmp:1061.00,  w52h:1061.00},
+  {name:'Godawari Power & Ispat', cmp:309.60, w52h:312.75},
+  {name:'Gland Pharma',         cmp:2210.40,  w52h:2273.90},
+];
+// Local price formatter (a different `inr` is defined later for the
+// movers section; both can't be `const` at the same scope).
+function inrPx(n){ if(n==null||!isFinite(n))return '—';
+  return '₹'+Number(n).toLocaleString('en-IN',{maximumFractionDigits:2}); }
+// Tag a row as "AT ATH" / "AT 52WH" when CMP is essentially equal to the high.
+function highRow(r, hiKey, isAth){
+  const atHigh = r.cmp != null && r[hiKey] != null && r.cmp >= r[hiKey] - 0.5;
+  const tag = atHigh ? `<span class="ath-tag">${isAth?'AT ATH':'AT 52WH'}</span>` : '';
+  return `<tr>
+    <td class="nm" title="${r.name.replace(/"/g,'&quot;')}">${r.name}${tag}</td>
+    <td class="r">${inrPx(r.cmp)}</td>
+    <td class="r">${inrPx(r[hiKey])}</td>
+  </tr>`;
+}
+(function(){
+  const ath=document.getElementById('athList');
+  const w52=document.getElementById('w52List');
+  if(ath) ath.innerHTML=HI_ATH.map(r=>highRow(r,'ath',true)).join('');
+  if(w52) w52.innerHTML=HI_W52.map(r=>highRow(r,'w52h',false)).join('');
+  const sub=document.getElementById('hiSub');
+  if(sub){
+    const d=new Date(ATH_AS_OF);
+    const label=d.toLocaleDateString('en-IN',{timeZone:'Asia/Kolkata',day:'numeric',month:'short',year:'numeric'});
+    sub.textContent=`Nifty 500 constituents · Dhan (ATH) · Groww (52WH) · refreshed ${label}`;
+  }
+})();
 
 /* ---------- Research notes (grouped by house or company) ---------- */
 let researchGroupBy='house';
