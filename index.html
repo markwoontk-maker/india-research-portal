@@ -2231,9 +2231,9 @@ function marketRelevant(items){
 async function loadNews(){
   const el=document.getElementById('newsList');
   const queries=[
-    {cat:'POL', q:'India (economy OR markets OR Sensex OR Nifty OR RBI OR SEBI OR budget OR GST OR tariff OR fiscal OR FII OR FDI OR rupee OR inflation OR "interest rate" OR reforms OR disinvestment OR "trade deal" OR policy) when:1d'},
-    {cat:'EARN', q:'India (Q4 results OR Q1 results OR quarterly results OR earnings OR "net profit" OR "profit after tax" OR PAT OR revenue OR EBITDA) when:1d'},
-    {cat:'CORP', q:'India (merger OR acquisition OR "stake sale" OR demerger OR "open offer" OR buyback OR "board approves" OR resigns OR "steps down" OR "appointed as" OR "new CEO" OR "new MD" OR restructuring OR "joint venture" OR QIP OR "fund raise" OR "order win") when:1d'},
+    {cat:'POL', q:'India (economy OR markets OR Sensex OR Nifty OR RBI OR SEBI OR budget OR GST OR tariff OR fiscal OR FII OR FDI OR rupee OR inflation OR "interest rate" OR reforms OR disinvestment OR "trade deal" OR policy) when:2d'},
+    {cat:'EARN', q:'India (Q4 results OR Q1 results OR quarterly results OR earnings OR "net profit" OR "profit after tax" OR PAT OR revenue OR EBITDA) when:2d'},
+    {cat:'CORP', q:'India (merger OR acquisition OR "stake sale" OR demerger OR "open offer" OR buyback OR "board approves" OR resigns OR "steps down" OR "appointed as" OR "new CEO" OR "new MD" OR restructuring OR "joint venture" OR QIP OR "fund raise" OR "order win") when:2d'},
   ];
   async function pull(q){
     try{
@@ -2252,15 +2252,21 @@ async function loadNews(){
   const all=[].concat(...results);
   // Dedupe by normalised title; sort by pubDate desc; cap 20.
   all.sort((a,b)=>(Date.parse(b.pubDate||0)||0)-(Date.parse(a.pubDate||0)||0));
+  // 2-day clamp measured from the newest item (robust to sandbox /
+  // source clock skew — same pattern used by the movers "why" line).
+  let newest=0;
+  for(const it of all){ const ms=Date.parse(it.pubDate||0); if(!isNaN(ms)&&ms>newest) newest=ms; }
   const seen=new Set(); const merged=[];
   for(const it of all){
+    const ms=Date.parse(it.pubDate||0);
+    if(newest && !isNaN(ms) && (newest-ms) > 2*864e5) continue; // older than 2 days vs newest
     const k=String(it.title||'').toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,60);
     if(!k||seen.has(k)) continue;
     seen.add(k); merged.push(it);
     if(merged.length>=20) break;
   }
   if(!merged.length){
-    el.innerHTML='<li class="pol-empty">No news right now (free feed). Try again shortly.</li>';
+    el.innerHTML='<li class="pol-empty">No news right now (free feed). The CORS proxy may be rate-limited — try again in a minute.</li>';
     return;
   }
   el.innerHTML=fmtNewsItems(merged);
