@@ -328,7 +328,31 @@
     font-size:11px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
 
   @media(max-width:1150px){.kpis{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}}
-  @media(max-width:840px){.layout{grid-template-columns:1fr;border:none}.side{display:none}.wrap{padding:18px 16px}.topbar{padding:14px 16px}}
+  /* On mobile/tablet, the sidebar becomes a horizontal scrollable tab
+     strip at the top — the desktop column-layout sidebar is invisible
+     under 840px otherwise. Same .nav-item DOM + click handlers work. */
+  @media(max-width:840px){
+    .layout{grid-template-columns:1fr;border:none}
+    .side{position:sticky;top:0;z-index:30;height:auto;min-height:0;
+      flex-direction:row;align-items:center;
+      padding:8px 12px;gap:0;
+      border-right:none;border-bottom:1px solid var(--line);
+      overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .side::-webkit-scrollbar{display:none}
+    .side{scrollbar-width:none}
+    .side .brand,.side .side-foot,.side .nav-label{display:none}
+    .side nav{flex-direction:row;gap:4px;width:max-content}
+    .side .nav-item{padding:8px 12px;font-size:13px;flex:none;white-space:nowrap}
+    .side .nav-item svg{display:none}
+    .wrap{padding:14px 14px}
+    .topbar{padding:12px 14px}
+    /* research-notes one-row: tighten widths for narrow screens */
+    .note{gap:8px}
+    .n-date{width:42px;font-size:10.5px}
+    .n-co{max-width:120px;font-size:12.5px}
+    .n-ti{font-size:12px}
+    .n-call{min-width:46px;padding:3px 6px;font-size:10px}
+  }
 </style>
 </head>
 <body>
