@@ -1050,27 +1050,12 @@ function renderResearchNotes(groupBy){
   const NB={}; (typeof NOTEBOOKS==='undefined'?[]:NOTEBOOKS).forEach(n=>{
     if(n && n.url) NB[n.name]=n.url;
   });
-  // Convert a Windows path to a file:// URL with each segment encoded.
-  function toFileUrl(p){
-    const fwd=String(p).replace(/\\/g,'/');
-    const parts=fwd.split('/');
-    // parts[0] is e.g. "C:" — keep as-is; encode the rest.
-    return 'file:///'+parts[0]+'/'+parts.slice(1).map(encodeURIComponent).join('/');
-  }
-  // Click → broker PDF where possible (PDFMAP entry or notesExt URL);
-  // NotebookLM workspace only as a last-resort fallback for local
-  // reports whose PDF isn't in PDFMAP.
+  // Click target: explicit notesExt URL (Trendlyne PDF) wins; otherwise
+  // the company's NotebookLM workspace. file:// PDF links via PDFMAP
+  // were tried but blocked by browsers when the dashboard is served
+  // from https://; sticking with NotebookLM for local entries.
   function urlFor(folder, house, headline, date, explicit){
     if(explicit) return explicit;
-    const map=(typeof PDFMAP==='undefined'?null:PDFMAP);
-    if(map && date){
-      // Lenient key: strip everything except alphanumerics so headline
-      // ↔ filename punctuation differences (commas, em-dash vs hyphen,
-      // slash vs hyphen) don't break the match.
-      const norm=String(headline).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
-      const key=`${house}|${date}|${folder}|${norm}`;
-      if(map[key]) return toFileUrl(map[key]);
-    }
     if(NB[folder]){
       const u=NB[folder];
       return u + (u.includes('?')?'&':'?') + 'authuser=markworktk%40gmail.com';
@@ -1730,7 +1715,71 @@ async function whyForClient(name){
     if(sc>bestScore){ bestScore=sc; best=t; }
   }
   if(!best||bestScore<4) return '';
-  return best.length>130 ? best.slice(0,127).replace(/\s+\S*$/,'')+'…' : best;
+  // Summarise instead of quoting the headline verbatim.
+  return summariseMove(best, name);
+}
+// Rule-based summariser for the Top 20 / Bottom 20 "why" 1-liner.
+// Extracts direction + % move + 1-2 causes (Q4 beat, dividend, M&A,
+// upgrade/downgrade, order win, regulatory, 52-week high/low etc.)
+// rather than echoing the headline word-for-word.
+function summariseMove(title, name){
+  if(!title) return '';
+  // Strip the company name(s), generic stock/scrip words, clickbait.
+  let t = String(title)
+    .replace(new RegExp('\\b'+name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','gi'),'')
+    .replace(/\b(shares?|stock|scrip|share price|stock price)\b/ig,'')
+    .replace(/\bhere'?s (what|why|how)[^.;|]*/ig,'')
+    .replace(/\bshould you (buy|sell|invest|hold)[^.?;|]*\??/ig,'')
+    .replace(/\b(key (takeaways|highlights)|live updates?|in focus|stock in focus|what to expect|explained|deep dive|all you need to know)\b/ig,'')
+    .replace(/[|•·]+/g,' ')
+    .replace(/\s{2,}/g,' ').trim();
+  // Move + %
+  const POS_V=/jump|surge|soar|ris|rose|grew|grow|gain|rally|rallies|spike|zoom|rocket|climb|advance|hit\s+(?:record|all[- ]?time\s+high|52[- ]?week\s+high)|hits\s+(?:record|all[- ]?time\s+high|52[- ]?week\s+high)/i;
+  const NEG_V=/fall|fell|drop|tank|slump|plunge|sink|crash|tumble|skid|slide|nosedive|dive|hit\s+52[- ]?week\s+low|hits\s+52[- ]?week\s+low/i;
+  let dir='', pct='';
+  let mvPos=t.match(/(jumps?|surges?|soars?|rises?|rose|grew|gain(?:s|ed)?|rallies|rally|spikes?|zooms?|rockets?|climbs?|advances?)\s+(\d+(?:\.\d+)?)\s*%/i);
+  let mvNeg=t.match(/(falls?|fell|drops?|tanks?|slumps?|plunges?|sinks?|crashes?|tumbles?|skids?|slides?|nosedives?|dives?)\s+(\d+(?:\.\d+)?)\s*%/i);
+  if(mvPos){ dir='up'; pct=mvPos[2]; }
+  else if(mvNeg){ dir='down'; pct=mvNeg[2]; }
+  else {
+    // "up 5%" / "down 3.4%" / "higher by 2%"
+    const m=t.match(/\b(up|higher|down|lower)\b(?:\s+by)?\s+(\d+(?:\.\d+)?)\s*%/i);
+    if(m){ dir=/up|high/i.test(m[1])?'up':'down'; pct=m[2]; }
+  }
+  // Cause phrases (ordered by importance — first match wins)
+  const causes=[];
+  if(/upgrade(?:d|s)?\s+to/i.test(t)) causes.push('broker upgrade');
+  else if(/downgrade(?:d|s)?\s+to/i.test(t)) causes.push('broker downgrade');
+  if(/(beat|beats|beaten)\s+(?:the\s+)?(?:street|consensus|estimate)/i.test(t)) causes.push('beat estimates');
+  else if(/(miss|misses|missed)\s+(?:the\s+)?(?:street|consensus|estimate)/i.test(t)) causes.push('missed estimates');
+  const qm=t.match(/\bQ[1-4]\b/i);
+  if(qm && !causes.length) causes.push(qm[0].toUpperCase()+' results');
+  if(/(?:bags?|wins?|secures?|receives?)[^.]{0,40}\border\b|\border\s+(?:win|inflow)|\bnew\s+order\b/i.test(t)) causes.push('order win');
+  if(/(acquisition|acquir(?:es|ed|ing)?|merger|m&a)/i.test(t)) causes.push('M&A');
+  if(/(stake\s+(?:sale|buy)|block\s+deal|promoter\s+(?:sale|stake))/i.test(t)) causes.push('stake change');
+  if(/(rights\s+issue|\bqip\b|fund.?rais|preferential|capital\s+infusion|warrants?|infuses?\b|raises?\s+(?:Rs|₹|INR))/i.test(t)) causes.push('fundraise');
+  if(/\bnet\s+profit\b|profit\s+(?:after\s+tax|rises?|fell|drops?|jumps?|surges?|grew|declin\w+)/i.test(t)) causes.push('profit reported');
+  if(/\bdividend\b/i.test(t)) causes.push('dividend');
+  if(/bonus\s+(?:issue|share)/i.test(t)) causes.push('bonus issue');
+  if(/stock\s+split|share\s+split/i.test(t)) causes.push('stock split');
+  if(/buy\s?back/i.test(t)) causes.push('buyback');
+  if(/\b(sebi|rbi|cci|nclt|cbi|ed|govt|government|ministry)\b/i.test(t)) causes.push('regulatory');
+  if(/52[- ]?week\s+high|all[- ]?time\s+high|record\s+high/i.test(t) && dir==='') { dir='up'; causes.push('hits 52w high'); }
+  if(/52[- ]?week\s+low|record\s+low/i.test(t) && dir==='') { dir='down'; causes.push('hits 52w low'); }
+  if(/(weak|soft|disappointing)\s+(?:Q[1-4]|results|guidance|earnings)/i.test(t)) causes.push('weak guidance');
+  if(/(strong|robust)\s+(?:Q[1-4]|results|guidance|earnings)/i.test(t)) causes.push('strong results');
+  if(/profit\s+(?:warning|alert)/i.test(t)) causes.push('profit warning');
+  // Compose
+  const arrow = dir==='up' ? '▲' : dir==='down' ? '▼' : '';
+  const move = pct ? `${arrow}${pct}%` : (arrow||'');
+  const head = [...new Set(causes)].slice(0,2).join(', ');
+  if(move && head) return `${move} on ${head}`;
+  if(move) return move + (POS_V.test(t)?' on positive flow':NEG_V.test(t)?' on negative flow':'');
+  if(head) return head.charAt(0).toUpperCase()+head.slice(1);
+  // Last resort: tightly de-fluffed phrase from the title (≤80 chars, sentence-cased).
+  let c = t.replace(/[—–-]\s*$/,'').replace(/\s*[:;,]\s*$/,'').trim();
+  if(c.length>80) c=c.slice(0,77).replace(/\s+\S*$/,'')+'…';
+  return c.charAt(0).toUpperCase()+c.slice(1);
 }
 async function whyPool(tasks,size){
   let i=0; async function w(){ while(i<tasks.length){ const k=i++; await tasks[k](); } }
@@ -2455,17 +2504,6 @@ window.PDFDATA=null;
 fetch('data/pdfdata.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
   if(!j||typeof j!=='object') return;
   window.PDFDATA=j;
-  renderResearchNotes();
-}).catch(()=>{});
-// PDF path map: house|date|folder|normalized-title -> Windows full path.
-// Built by scripts\rebuild-pdfmap.ps1 from the India Related Reports
-// folder. When loaded, titles in the research card click straight to
-// the PDF via file:// (works when opening index.html locally; on the
-// hosted GitHub Pages site clicks fall back to the NotebookLM URL).
-window.PDFMAP=null;
-fetch('data/pdfmap.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
-  if(!j||typeof j!=='object') return;
-  window.PDFMAP=j;
   renderResearchNotes();
 }).catch(()=>{});
 let screenerLoaded=false;
