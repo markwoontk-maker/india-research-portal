@@ -33,23 +33,35 @@ const NUM = "([\\d,]+(?:\\.\\d+)?)";
 const RS = "(?:₹|Rs\\.?|INR|US\\$|USD|\\$)\\s*";
 
 function extractCurrTP(text) {
-  // Try the most-explicit patterns first.
+  // RS is the currency prefix (₹/Rs/INR/$/US$/USD + space). Wrap as
+  // (?:RS)? when the prefix is optional — appending "?" alone only
+  // makes the trailing \s* non-greedy, NOT the whole prefix optional.
+  const RS_OPT = "(?:" + RS + ")?";
+  // Order matters — most specific labels first. The "target price"
+  // patterns require an RS prefix on the number; otherwise they greedily
+  // match noise like "Target price 4QFY26" and capture "4".
   const patterns = [
     // Jefferies: "PRICE TARGET | % TO PT  INR340 (INR325) | +15%"
-    new RegExp("PRICE\\s*TARGET[^A-Z\\d]*?(?:INR|Rs\\.?|₹|\\$|US\\$|USD)\\s*" + NUM, "i"),
+    new RegExp("PRICE\\s*TARGET[\\s\\S]{0,80}?(?:INR|Rs\\.?|₹|\\$|US\\$|USD)\\s*" + NUM, "i"),
     // JPMorgan: "Price Target (Mar-27):$60.00" / "Price Target (INR)  306.00"
-    new RegExp("price\\s+target\\s*(?:\\([^)]*\\))?\\s*[:\\s]*" + RS + "?" + NUM, "i"),
+    new RegExp("price\\s+target\\s*(?:\\([^)]*\\))?\\s*[:\\s]*" + RS + NUM, "i"),
+    // Nomura two-column header layout, flattened to:
+    //   "Rating Buy Remains INR 220 ..."
+    // Run BEFORE the generic "target price" pattern so we capture the
+    // real TP rather than something near a later "Target price" label.
+    new RegExp("\\bRating\\s+\\w+\\s+(?:Remains|Unchanged|Maintain(?:ed)?|Reiterate(?:d)?)?\\s*(?:INR|Rs\\.?|₹|\\$|US\\$|USD)\\s*" + NUM, "i"),
+    // Kotak: "Fair Value(): 8,150" — no Rs prefix on the number here,
+    // so RS is genuinely optional (the "Fair Value" label is specific
+    // enough to be safe).
+    new RegExp("(?:fair\\s+value|FV)\\s*(?:\\(\\))?[:\\s]*(?:of\\s*)?" + RS_OPT + NUM, "i"),
+    // Kotak compact: "CMP(Rs)/FV(Rs)/Rating  7,154/8,150/BUY"
+    /CMP\([^)]*\)\s*\/\s*FV\([^)]*\)\s*\/\s*Rating\s+[\d,]+\s*\/\s*([\d,]+)\s*\//i,
+    // CLSA "Recommendation history" table — latest row gives current TP.
+    /Recommendation\s+history[\s\S]{0,400}?\d{1,2}\s+\w{3,9}\s+\d{4}\s+(?:BUY|SELL|HOLD|HLD|O[- ]?PF|U[- ]?PF|HC\s+O[- ]?PF|HC\s+U[- ]?PF)\s+([\d,]+(?:\.\d+)?)/i,
     // Generic: "12M price target Rs324.00" / "Target Price Rs 1400"
     new RegExp("(?:12M\\s+price\\s+target|target\\s+price)\\s*(?:of\\s*)?(?::)?\\s*" + RS + NUM, "i"),
-    // Nomura layout: "Target price Remains INR 220"
-    new RegExp("target\\s+price[^A-Z]{0,20}(?:remains|unchanged)?[^\\d]{0,12}" + RS + NUM, "i"),
-    // Kotak: "Fair Value(): 295" / "FV of Rs295"
-    new RegExp("(?:fair\\s+value|FV)\\s*(?:\\(\\))?[:\\s]*(?:of\\s*)?" + RS + "?" + NUM, "i"),
     // JPMorgan prose: "raising PT to Rs5050" / "PT down to $60"
     new RegExp("\\bPT\\b\\s+(?:raised|cut|revised|up|down)?\\s*(?:to|at)\\s*" + RS + NUM, "i"),
-    // CLSA "Recommendation history" table — latest row gives current TP.
-    // Header: "Date  Rec  Target", then "27 Jan 2026  HLD  360.00"
-    /Recommendation\s+history[\s\S]{0,400}?\d{1,2}\s+\w{3,9}\s+\d{4}\s+(?:BUY|SELL|HOLD|HLD|O[- ]?PF|U[- ]?PF|HC\s+O[- ]?PF|HC\s+U[- ]?PF)\s+([\d,]+(?:\.\d+)?)/i,
     // Standalone "Target: Rs1400"
     new RegExp("\\btarget\\b\\s*:?\\s*" + RS + NUM, "i"),
   ];
@@ -171,6 +183,11 @@ function cleanNum(s) {
   if (n.endsWith(".00")) n = n.slice(0, -3);
   const num = Number(n);
   if (!isFinite(num)) return null;
+  // Reject obvious garbage captures: broker TPs are essentially never
+  // single-digit (lowest Indian stock targets are in ₹10s; even VI is
+  // ~₹9-10). Single digits almost always come from regex spilling into
+  // "4QFY26", "FY27", "Q4" etc.
+  if (num < 10) return null;
   return num.toLocaleString("en-IN");
 }
 
