@@ -304,22 +304,32 @@
     border-bottom:1px solid var(--line-soft);white-space:nowrap;overflow:hidden}
   .note:last-child{border:none;padding-bottom:0}
   .n-date{flex:none;width:48px;font-family:'IBM Plex Mono';font-size:11px;color:var(--text-mute)}
-  .n-co{flex:none;max-width:190px;font-size:13px;font-weight:600;color:var(--text);
-    overflow:hidden;text-overflow:ellipsis}
+  /* Fixed width (not max-width) so company column aligns even when
+     names are short like "TCS" or "KIMS". white-space:nowrap + ellipsis
+     keeps long names clipped. */
+  .n-co{flex:none;width:190px;font-size:13px;font-weight:600;color:var(--text);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .n-ti{flex:1;min-width:0;font-size:12.5px;color:var(--text-dim);line-height:1.5;
     text-decoration:none;overflow:hidden;text-overflow:ellipsis}
   .n-ti:hover{color:var(--saffron);text-decoration:underline}
-  .n-call{flex:none;font-family:'IBM Plex Mono';font-size:10.5px;font-weight:600;
-    padding:3px 8px;border-radius:5px;letter-spacing:.05em;white-space:nowrap;
-    min-width:54px;text-align:center}
+  /* Fixed-width chip so curr/prev call columns line up across rows
+     regardless of label length ("BUY" vs "ACCUMULATE"). */
+  .n-call{flex:none;width:74px;box-sizing:border-box;
+    font-family:'IBM Plex Mono';font-size:10.5px;font-weight:600;
+    padding:3px 0;border-radius:5px;letter-spacing:.05em;white-space:nowrap;
+    text-align:center;overflow:hidden;text-overflow:ellipsis}
   .n-call.buy{background:var(--up-soft);color:var(--up)}
   .n-call.hold{background:var(--saffron-soft);color:var(--saffron)}
   .n-call.sell{background:var(--down-soft);color:var(--down)}
-  .n-tp{flex:none;width:62px;text-align:right;font-family:'IBM Plex Mono';
+  .n-call.prev{opacity:.6;font-size:9.5px}
+  .n-call.prev.empty{background:transparent;color:var(--text-mute);opacity:.45}
+  /* Fixed-width numeric cells; mono digits + right align so commas
+     and thousands align across rows. */
+  .n-tp{flex:none;width:72px;box-sizing:border-box;text-align:right;
+    font-family:'IBM Plex Mono';font-variant-numeric:tabular-nums;
     font-size:11.5px;color:var(--text-dim);white-space:nowrap}
   .n-tp.prev{color:var(--text-mute);font-size:10.5px}
   .n-tp.muted{color:var(--text-mute)}
-  .n-call.prev{opacity:.55;font-size:9.5px;padding:3px 6px;min-width:46px}
   /* Column header row above the broker groups */
   .n-header{display:flex;align-items:center;gap:15px;padding:6px 0 10px;
     border-bottom:1px solid var(--line);margin-bottom:10px;
@@ -327,8 +337,9 @@
     text-transform:uppercase;color:var(--text-mute)}
   .n-header .n-co,.n-header .n-ti{font-weight:600}
   .n-header .n-ti{text-decoration:none;cursor:default;color:var(--text-mute)}
-  .n-header .n-tp,.n-header .n-call-h{flex:none;text-align:right;font-size:10px;color:var(--text-mute)}
-  .n-call-h{width:62px}
+  .n-header .n-tp,.n-header .n-call-h{flex:none;font-size:10px;color:var(--text-mute);text-align:center}
+  .n-header .n-tp{text-align:right}
+  .n-call-h{width:74px;box-sizing:border-box}
   .notes-group{background:var(--panel);color:var(--text-dim);
     border:1px solid rgba(255,255,255,.14);border-radius:8px;
     padding:7px 10px;font-size:12px;font-family:inherit;cursor:pointer;
@@ -371,10 +382,10 @@
     .n-date{width:42px;font-size:10.5px}
     .n-co{max-width:120px;font-size:12.5px}
     .n-ti{font-size:12px}
-    .n-call{min-width:46px;padding:3px 6px;font-size:10px}
+    .n-call{width:56px;padding:3px 0;font-size:10px}
     /* On mobile, keep only Curr TP + Curr Call; hide the prev cols */
     .n-tp.prev,.n-call.prev,.n-header .n-tp.prev,.n-header .n-call-h:first-of-type{display:none}
-    .n-tp{width:50px;font-size:10.5px}
+    .n-tp{width:60px;font-size:10.5px}
   }
 </style>
 </head>
@@ -569,6 +580,7 @@
           <select id="notesGroup" class="notes-group" aria-label="Group reports by">
             <option value="house">Group by research house</option>
             <option value="company">Group by company</option>
+            <option value="date">Group by date</option>
           </select>
         </div>
         <div id="notes"></div>
@@ -1101,18 +1113,26 @@ function renderResearchNotes(groupBy){
     return m ? '₹'+m[1] : null;
   }
   // Group key + secondary-column accessor swap based on the chosen axis.
-  const keyOf = grp==='company' ? r=>r[2] : r=>r[0];
-  const secondCol = grp==='company' ? r=>r[0] : r=>r[2];
+  //   by-house    → key=house,   secondary=company
+  //   by-company  → key=company, secondary=house
+  //   by-date     → key=date,    secondary="house · company"
+  let keyOf, secondCol;
+  if (grp==='company') { keyOf=r=>r[2]; secondCol=r=>r[0]; }
+  else if (grp==='date') { keyOf=r=>r[1]; secondCol=r=>r[0]+' · '+r[2]; }
+  else { keyOf=r=>r[0]; secondCol=r=>r[2]; }
   const groupMap={};
   rows.forEach(r=>{ const k=keyOf(r); (groupMap[k]=groupMap[k]||[]).push(r); });
-  // by-company: strict alphabetical; by-house: most reports first, then alpha
+  // Sort: by-date → newest day first; by-company → alpha; by-house → most reports first
   const groups=Object.keys(groupMap).sort((a,b)=>
-    grp==='company'
-      ? a.localeCompare(b)
-      : (groupMap[b].length-groupMap[a].length || a.localeCompare(b)));
+    grp==='date' ? (a<b?1:-1)
+    : grp==='company' ? a.localeCompare(b)
+    : (groupMap[b].length-groupMap[a].length || a.localeCompare(b)));
+  const fmtGroupLabel = g => grp==='date' ? fmtD(g)+' \''+g.slice(0,2) : g;
   const el=document.getElementById('notes');
   if(!el) return;
-  const secondHdr = grp==='company' ? 'Research house' : 'Company';
+  const secondHdr = grp==='company' ? 'Research house'
+    : grp==='date' ? 'House · Company'
+    : 'Company';
   const header =
     `<div class="n-header">`+
       `<span class="n-date">Date</span>`+
@@ -1123,25 +1143,49 @@ function renderResearchNotes(groupBy){
       `<span class="n-call-h">Prev</span>`+
       `<span class="n-call-h">Curr</span>`+
     `</div>`;
+  // Lookup helpers for PDF-body data (extracted by pdftotext + regex).
+  const PD = (typeof PDFDATA==='undefined' || !PDFDATA) ? null : PDFDATA;
+  const pdKey = (h,d,co,ti) => {
+    const norm = String(ti).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
+    return `${h}|${d}|${co}|${norm}`;
+  };
+  const callObj = (label, cls) => label ? { label, cls } : null;
+  const CT_FROM_TAG = { BUY:'buy', OP:'buy', OW:'buy', ADD:'buy', ACCUMULATE:'buy',
+    SELL:'sell', UP:'sell', UW:'sell', REDUCE:'sell',
+    HOLD:'hold', NEUTRAL:'hold', EW:'hold', MP:'hold' };
+
   el.innerHTML=header+groups.map(g=>{
     const arr=groupMap[g].slice().sort((a,b)=>
       b[1]!==a[1] ? (b[1]<a[1]?-1:1) : secondCol(a).localeCompare(secondCol(b)));
     return `<div class="broker-grp">
-      <div class="broker-h">${esc(g)}<span>${arr.length} report${arr.length>1?'s':''}</span></div>
+      <div class="broker-h">${esc(fmtGroupLabel(g))}<span>${arr.length} report${arr.length>1?'s':''}</span></div>
       ${arr.map(r=>{
         const [h,d,co,ti,u]=r;
-        const c=callOf(ti);
         const href=urlFor(co,h,ti,d,u);
         const second=esc(secondCol(r));
-        const currTP=tpOf(ti);
-        const prior=findPrior(h,co,d);
-        const prevTP=prior?tpOf(prior[3]):null;
-        const prevC=prior?callOf(prior[3]):null;
-        const tpCurrCell=currTP?`<span class="n-tp">${currTP}</span>`:`<span class="n-tp muted">—</span>`;
-        const tpPrevCell=prevTP?`<span class="n-tp prev">${prevTP}</span>`:`<span class="n-tp prev muted">—</span>`;
-        const callPrevCell=prevC
-          ?`<span class="n-call prev ${prevC.cls}" title="${esc(prior[1].slice(2,4)+'/'+prior[1].slice(4,6))}">${esc(prevC.label)}</span>`
-          :`<span class="n-call prev hold" style="background:transparent;color:var(--text-mute);opacity:.55">—</span>`;
+        const pd = PD ? PD[pdKey(h,d,co,ti)] : null;
+        // Current TP: PDF-body value wins, else parse from headline.
+        const currTP = (pd && pd.currTP) || tpOf(ti);
+        // Current call: PDF-body wins, else headline-derived.
+        const c = (pd && pd.currCall)
+          ? { label: pd.currCall, cls: CT_FROM_TAG[pd.currCall] || 'hold' }
+          : callOf(ti);
+        // Previous TP / Call: PDF-body wins, else the prior-report-in-
+        // dataset lookup. Both are best-effort.
+        const prior = findPrior(h,co,d);
+        const prevTP = (pd && pd.prevTP) || (prior ? tpOf(prior[3]) : null);
+        const prevC = (pd && pd.prevCall)
+          ? { label: pd.prevCall, cls: CT_FROM_TAG[pd.prevCall] || 'hold' }
+          : (prior ? callOf(prior[3]) : null);
+        const tpCurrCell = currTP
+          ? `<span class="n-tp">₹${esc(currTP)}</span>`
+          : `<span class="n-tp muted">—</span>`;
+        const tpPrevCell = prevTP
+          ? `<span class="n-tp prev">₹${esc(prevTP)}</span>`
+          : `<span class="n-tp prev muted">—</span>`;
+        const callPrevCell = prevC
+          ? `<span class="n-call prev ${prevC.cls}">${esc(prevC.label)}</span>`
+          : `<span class="n-call prev empty">—</span>`;
         return `<div class="note">`+
           `<span class="n-date">${fmtD(d)}</span>`+
           `<span class="n-co" title="${second}">${second}</span>`+
@@ -1152,7 +1196,7 @@ function renderResearchNotes(groupBy){
       }).join('')}
     </div>`;
   }).join('')+
-    `<div class="n-foot">Synced to NotebookLM + Trendlyne — last 2 days. Curr TP / Prev TP show the broker's target price now vs. their most recent prior report on the same name (where available). "—" = no parseable figure or no prior in the dataset.</div>`;
+    `<div class="n-foot">Synced to NotebookLM + Trendlyne — last 2 days. Curr TP / Curr Call are pulled from the report PDF body where parseable, else from the headline; Prev TP / Prev Call come from the broker's stated previous TP/rating in the same PDF, else the most recent prior report on the same name in the dataset. "—" = no parseable signal.</div>`;
 }
 // Called once NOTEBOOKS + nbHref are defined later in the file.
 
@@ -2400,6 +2444,17 @@ fetch('data/research.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(
   if(!j) return;
   if(Array.isArray(j.notes)) notes=j.notes;
   if(Array.isArray(j.ext)) notesExt=j.ext;
+  renderResearchNotes();
+}).catch(()=>{});
+// Extracted broker-stated TP / Call from the PDF body (via pdftotext +
+// regex in scripts/extract-pdfdata.js). Schema:
+//   { "house|date|folder|alphanum-title": {currTP, prevTP, currCall, prevCall} }
+// Render prefers these over title-derived guesses, falling back to the
+// title + history index when a field is null.
+window.PDFDATA=null;
+fetch('data/pdfdata.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
+  if(!j||typeof j!=='object') return;
+  window.PDFDATA=j;
   renderResearchNotes();
 }).catch(()=>{});
 // PDF path map: house|date|folder|normalized-title -> Windows full path.
