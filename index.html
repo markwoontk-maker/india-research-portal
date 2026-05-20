@@ -315,6 +315,12 @@
   .n-call.buy{background:var(--up-soft);color:var(--up)}
   .n-call.hold{background:var(--saffron-soft);color:var(--saffron)}
   .n-call.sell{background:var(--down-soft);color:var(--down)}
+  .notes-group{background:var(--panel);color:var(--text-dim);
+    border:1px solid rgba(255,255,255,.14);border-radius:8px;
+    padding:7px 10px;font-size:12px;font-family:inherit;cursor:pointer;
+    transition:.18s;height:fit-content}
+  .notes-group:hover{color:var(--text);border-color:rgba(233,162,59,.4)}
+  .notes-group:focus{outline:none;border-color:var(--saffron);color:var(--text)}
   .broker-grp{margin-bottom:18px}
   .broker-grp:last-child{margin-bottom:0}
   .broker-h{display:flex;align-items:baseline;justify-content:space-between;
@@ -541,7 +547,13 @@
 
     <div id="viewResearch" hidden>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Latest Research Notes</h3><p id="notesSub">Broker reports added in the last 2 days · grouped by research house</p></div></div>
+        <div class="card-h">
+          <div><h3>Latest Research Notes</h3><p id="notesSub">Broker reports added in the last 2 days · synced to NotebookLM</p></div>
+          <select id="notesGroup" class="notes-group" aria-label="Group reports by">
+            <option value="house">Group by research house</option>
+            <option value="company">Group by company</option>
+          </select>
+        </div>
         <div id="notes"></div>
       </div>
     </div>
@@ -691,9 +703,14 @@ const coverage = [
 // calls (Trendlyne / news) keyed to the same folder names. `let` so the
 // refresher routine's JSON can overlay it at page load.
 let notes = [
+  // Synced to NotebookLM — filename date ≥ today−2d (today = 2026-05-20).
+  // Source: local PDF folder = upload feed for the per-company notebooks.
   ["Bernstein","260518","ICICI Prudential Life Insurance","Parent stake sale confirmed, expect stock under pressure"],
   ["Bernstein","260518","Power Grid","Q4FY26 same old, capex beat and earnings miss"],
   ["Bernstein","260518","ReNew","Q4FY26 execution strong, but earnings impacted by curtailment"],
+  ["Bernstein","260519","India Strategy","A tough summer, austerity measures, the history and the future"],
+  ["Bernstein","260519","Indian Financials","The Long View, what drives deposit growth"],
+  ["Bernstein","260520","Avenue Supermarts","DMart, the LFL vs inflation equation, how much does it really matter"],
   ["CLSA","260518","Fusion Finance","Some improvement"],
   ["CLSA","260518","Hindustan Aeronautics","Backlog built, execution next"],
   ["CLSA","260518","India Macro","Full impact of the war yet to come"],
@@ -707,16 +724,17 @@ let notes = [
   ["CLSA","260519","Amber Enterprises","Near-term margin pressure priced in"],
   ["CLSA","260519","Astral","Operationally in line"],
   ["CLSA","260519","Coforge","Bold bets and execution"],
+  ["CLSA","260519","Indian IT","EU roadshow feedback, high client interest around AI & jobs"],
   ["CLSA","260519","Indraprastha Gas","Margin led beat"],
   ["CLSA","260519","Power Grid","Beat beat beat"],
   ["CLSA","260519","SJVN","Not out of the woods yet"],
   ["CLSA","260519","Vodafone Idea","AGR gain & promoter equity infusion"],
-  ["Jefferies","260516","Tata Steel","Mar-Q beat, more margin expansion ahead"],
-  ["Jefferies","260516","Uno Minda","Mar-Q first cut, in-line quarter"],
-  ["Jefferies","260517","CMS Info Systems","Mar Qtr, improving business momentum & FSS acquisition support FY27 growth"],
-  ["Jefferies","260517","Gland Pharma","Mar-Q, improving outlook, execution key to monitor"],
-  ["Jefferies","260517","ITC Hotels","FTA impact drives weak qtr"],
-  ["Jefferies","260517","Premier Energies","Mar-26 review, marginally ahead, strong FY27 outlook"],
+  ["CLSA","260520","Bharat Petroleum","Hit by a big impairment charge"],
+  ["CLSA","260520","Hindalco","Novelis core earnings strong"],
+  ["CLSA","260520","Indian Oil Corporation","Strong bottom line but details missing"],
+  ["CLSA","260520","Indraprastha Gas","Weathering the storm"],
+  ["CLSA","260520","JSW Energy","A good deal, but"],
+  ["CLSA","260520","Zee Entertainment","EBITDA loss"],
   ["Jefferies","260518","Adani Power","FCF to turn positive by FY30E"],
   ["Jefferies","260518","Astral","Mar26-Q first cut, plumbing volume strong at +24%, adhesives pares margin"],
   ["Jefferies","260518","Bajaj Finserv","Roadshow feedback, core growing well, new ventures near breakeven"],
@@ -726,7 +744,14 @@ let notes = [
   ["Jefferies","260518","JSW Energy","Moving in the right direction"],
   ["Jefferies","260518","Power Grid","Capex-capitalisation guidance retained"],
   ["Jefferies","260518","Uno Minda","Growing well, but near-term margin pressure"],
+  ["Jefferies","260519","AWL Agri Business","Strategic reset, scale-driven upside, assuming coverage at Buy"],
+  ["Jefferies","260519","Hindalco","Novelis Mar-Q, another fire-impacted quarter"],
+  ["Jefferies","260519","Indian Financials","India Financial Daily, 19 May 2026"],
+  ["Jefferies","260519","Indian Hotels","April RevPAR growth improves, Goa leads"],
   ["Jefferies","260519","Indian Jewellery","Expert call with Mr Ketan Kothari (Augmont) on gold policy shift"],
+  ["Jefferies","260519","Indian Oil Corporation","Mar-26 review, beat, valuation favourable"],
+  ["Jefferies","260519","Indraprastha Gas","Mar-26 review, beat, near-term headwinds"],
+  ["Jefferies","260519","Zydus Lifesciences","Strong Mar-Q and FY27 guidance, maintain BUY"],
   ["JPMorgan","260518","Amber Enterprises","Margin pressure and PCB execution delays"],
   ["JPMorgan","260518","Astral","First take, marginal EBITDA miss but strong operational metrics, stay OW"],
   ["JPMorgan","260518","Delhivery","Here comes the FCF"],
@@ -740,9 +765,18 @@ let notes = [
   ["JPMorgan","260518","Siemens Energy India","Export growth key positive but turbine and HVDC concerns remain, stay Neutral"],
   ["JPMorgan","260518","Steel Authority of India","Earnings beat and debt reduction positive, volume growth soft until FY31"],
   ["JPMorgan","260518","United Spirits","Mixing it right for FY27, premiumization + 3 Indias playbook underpin DD growth"],
+  ["JPMorgan","260519","Bharat Petroleum","First take 4QFY26, a beat marred by impairment losses on BPRL"],
   ["JPMorgan","260519","Indian Oil Corporation","First take 4QFY26, inventory gains drive the beat"],
+  ["JPMorgan","260519","Indian Oil Corporation","Strong 4Q, greater refining exposure could help IOC do better than peers"],
   ["JPMorgan","260519","Vodafone Idea","Not out of the woods yet"],
-  ["Kotak","260517","Devyani International","A welcome relief"],
+  ["JPMorgan","260520","Anthem Biosciences","First take, strong growth with best-in-class margins"],
+  ["JPMorgan","260520","GE Vernova T&D India","Emerge incrementally positive on the LT story, raising PT to Rs5050, stay OW"],
+  ["JPMorgan","260520","Hindalco","Novelis 4Q allays most investor concerns"],
+  ["JPMorgan","260520","Indraprastha Gas","Cost pressures can continue near term"],
+  ["JPMorgan","260520","MakeMyTrip","Recovery will take time"],
+  ["JPMorgan","260520","Mankind Pharma","First take 4QFY26, revenue miss, margins ahead"],
+  ["JPMorgan","260520","Orkla India","Volume growth moderates on Kerala distribution reset and weak overseas, Q4 review"],
+  ["JPMorgan","260520","Zydus Lifesciences","Good execution, visible pipeline, upside priced in"],
   ["Kotak","260518","Amber Enterprises","Near-term margin pressure, timely PCB commissioning is key"],
   ["Kotak","260518","Carborundum Universal","Growth accelerating, loss-making subs on their way out"],
   ["Kotak","260518","Chalet Hotels","Rickety close to the year, capacity addition remains strong"],
@@ -760,8 +794,11 @@ let notes = [
   ["Kotak","260518","TCS","CFO meeting notes"],
   ["Kotak","260518","United Spirits","Premiumization set to accelerate further"],
   ["Kotak","260518","Uno Minda","Lackluster quarter"],
+  ["Kotak","260519","Indian Oil Corporation","4Q much better, large loss likely in 1HFY27"],
+  ["Kotak","260519","Indraprastha Gas","CNG price increases getting easier"],
   ["Kotak","260519","NHPC","Earnings growth driven by one-offs"],
-  ["Nomura","260517","Gland Pharma","4QFY26 significantly higher than our estimates"],
+  ["Kotak","260519","Timken","An improved performance"],
+  ["Kotak","260519","Vodafone Idea","Subscriber base stabilizes, but turnaround is a tall ask"],
   ["Nomura","260518","Hindustan Aeronautics","Robust sales growth visibility given mfg book-bill ratio of 25x"],
   ["Nomura","260518","ICICI Prudential Life Insurance","Prudential to reduce stake"],
   ["Nomura","260518","Indian Banks","Asia marketing feedback, cautious flows, clear preferences"],
@@ -774,8 +811,16 @@ let notes = [
   ["Nomura","260518","Uno Minda","EV order wins keep growth visibility high"],
   ["Nomura","260518","Vodafone Idea","In-line results, capital raise awaited"],
   ["Nomura","260519","Afcons Infrastructure","Muted operating performance in 4QFY26"],
+  ["Nomura","260519","Avalon Technologies","India EMS Anchor Report, play on global industrial EMS upcycle, initiating at Buy"],
+  ["Nomura","260519","Bharat Electronics","Steady 4QFY26, slight miss on our estimates"],
+  ["Nomura","260519","GE Vernova T&D India","Another quarter, another upward revision"],
   ["Nomura","260519","GE Vernova T&D India","Exemplary performance in 4Q, beats estimates"],
   ["Nomura","260519","India Macro","El Nino may not scorch the economy"],
+  ["Nomura","260519","India Macro","HOT Long SGD-IDR, maintain maximum conviction level"],
+  ["Nomura","260519","Indian Oil Corporation","Top pick among OMCs"],
+  ["Nomura","260519","KEC International","Persistent weakness in operating performance, guidance soft"],
+  ["Nomura","260519","Zydus Lifesciences","4QFY26 results, ahead of estimates"],
+  ["Nomura","260520","Afcons Infrastructure","Weak 4QFY26, FY27E OI starts on a good note"],
 ];
 // External broker calls (research houses NOT in the local report folders
 // — Motilal Oswal, ICICI Securities, Nuvama, Axis, HDFC Securities, etc.)
@@ -834,8 +879,11 @@ document.getElementById('moversTop').innerHTML =
 document.getElementById('moversBot').innerHTML =
   movers.filter(m=>m[4]<0).map(([s,c,p,ch])=>moverRow(c,s,'₹'+p,ch,false)).join('');
 
-/* ---------- Research notes (grouped by research house) ---------- */
-function renderResearchNotes(){
+/* ---------- Research notes (grouped by house or company) ---------- */
+let researchGroupBy='house';
+function renderResearchNotes(groupBy){
+  if(groupBy) researchGroupBy=groupBy;
+  const grp=researchGroupBy;
   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;');
   const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -884,34 +932,46 @@ function renderResearchNotes(){
       encodeURIComponent(`${house} ${folder} ${headline}`);
   }
   // Normalise into a uniform 5-tuple: [house,date,folder,headline,url?]
-  const rows=[
-    ...notes.map(n=>[n[0],n[1],n[2],n[3],null]),
-    ...notesExt.map(n=>[n[0],n[1],n[2],n[3],n[4]||null]),
-  ];
-  const byHouse={};
-  rows.forEach(r=>{ (byHouse[r[0]]=byHouse[r[0]]||[]).push(r); });
-  const houses=Object.keys(byHouse).sort((a,b)=>
-    byHouse[b].length-byHouse[a].length || a.localeCompare(b));
+  // and dedupe duplicates uploaded twice (e.g. "Title (2)").
+  const normT=t=>String(t).replace(/\s*\(\d+\)\s*$/,'').trim().toLowerCase();
+  const seen=new Set();
+  const rows=[];
+  [...notes,...notesExt].forEach(n=>{
+    if(!n || n.length<4) return;
+    const k=n[0]+'|'+n[1]+'|'+n[2]+'|'+normT(n[3]);
+    if(seen.has(k)) return;
+    seen.add(k);
+    rows.push([n[0],n[1],n[2],n[3],n[4]||null]);
+  });
+  // Group key + secondary-column accessor swap based on the chosen axis.
+  const keyOf = grp==='company' ? r=>r[2] : r=>r[0];
+  const secondCol = grp==='company' ? r=>r[0] : r=>r[2];
+  const groupMap={};
+  rows.forEach(r=>{ const k=keyOf(r); (groupMap[k]=groupMap[k]||[]).push(r); });
+  const groups=Object.keys(groupMap).sort((a,b)=>
+    groupMap[b].length-groupMap[a].length || a.localeCompare(b));
   const el=document.getElementById('notes');
   if(!el) return;
-  el.innerHTML=houses.map(house=>{
-    const arr=byHouse[house].slice().sort((a,b)=>
-      b[1]!==a[1] ? (b[1]<a[1]?-1:1) : a[2].localeCompare(b[2]));
+  el.innerHTML=groups.map(g=>{
+    const arr=groupMap[g].slice().sort((a,b)=>
+      b[1]!==a[1] ? (b[1]<a[1]?-1:1) : secondCol(a).localeCompare(secondCol(b)));
     return `<div class="broker-grp">
-      <div class="broker-h">${esc(house)}<span>${arr.length} report${arr.length>1?'s':''}</span></div>
-      ${arr.map(([h,d,co,ti,u])=>{
+      <div class="broker-h">${esc(g)}<span>${arr.length} report${arr.length>1?'s':''}</span></div>
+      ${arr.map(r=>{
+        const [h,d,co,ti,u]=r;
         const c=callOf(ti);
         const href=urlFor(co,h,ti,u);
+        const second=esc(secondCol(r));
         return `<div class="note">`+
           `<span class="n-date">${fmtD(d)}</span>`+
-          `<span class="n-co" title="${esc(co)}">${esc(co)}</span>`+
+          `<span class="n-co" title="${second}">${second}</span>`+
           `<a class="n-ti" href="${esc(href)}" target="_blank" rel="noopener" title="${esc(ti)}">${esc(ti)}</a>`+
           `<span class="n-call ${c.cls}">${esc(c.label)}</span>`+
         `</div>`;
       }).join('')}
     </div>`;
   }).join('')+
-    `<div class="n-foot">Local-folder reports link to the company's NotebookLM notebook (the report's online home). External broker calls (Motilal Oswal, ICICI Securities, Nuvama, Axis, HDFC Securities, etc.) are populated by the scheduled refresher routine.</div>`;
+    `<div class="n-foot">Synced to NotebookLM — reports added in the last 2 days. Title links open the company's NotebookLM workspace in a new tab. External broker calls (Motilal Oswal, ICICI Securities, Nuvama, Axis, HDFC Securities, etc.) are populated by the scheduled refresher routine.</div>`;
 }
 // Called once NOTEBOOKS + nbHref are defined later in the file.
 
@@ -2046,11 +2106,18 @@ function loadCompanies(){ loadEarnNews(); loadCorpEvents(); loadEarnCal(); }
    Leave url empty ('') until the notebook has been created; the UI
    shows it as "pending" until a URL is filled in here. */
 const NOTEBOOKS = [
+  // Synced via NotebookLM notebook_list — 63 workspaces under markworktk@gmail.com
+  {name:"AWL Agri Business", url:"https://notebooklm.google.com/notebook/9f0a998e-2b3f-4514-9b20-8aeff0d085cb"},
   {name:"Adani Power", url:"https://notebooklm.google.com/notebook/2052a512-3b1a-4dd6-8ff4-f31a1250dbb3"},
   {name:"Afcons Infrastructure", url:"https://notebooklm.google.com/notebook/eb9e1834-c094-466b-91ce-b41aa07cbb03"},
   {name:"Amber Enterprises", url:"https://notebooklm.google.com/notebook/80c2673b-5dfd-4290-87b1-26e0bfa3dacb"},
+  {name:"Anthem Biosciences", url:"https://notebooklm.google.com/notebook/0cefff70-e762-47ee-84d1-91b6c6f197e6"},
   {name:"Astral", url:"https://notebooklm.google.com/notebook/9bdb8911-b0f1-4580-b1c3-70c8e10f692a"},
+  {name:"Avalon Technologies", url:"https://notebooklm.google.com/notebook/a912f78d-7b60-4cd2-a28f-bc6913d3854c"},
+  {name:"Avenue Supermarts", url:"https://notebooklm.google.com/notebook/b709b384-776e-4fa7-88d6-02155e5de1ce"},
   {name:"Bajaj Finserv", url:"https://notebooklm.google.com/notebook/1f3bf443-b4ff-4aa3-bf1f-849ef412ea6d"},
+  {name:"Bharat Electronics", url:"https://notebooklm.google.com/notebook/2063fd8b-62f8-4cbd-8c24-25ffc2885666"},
+  {name:"Bharat Petroleum", url:"https://notebooklm.google.com/notebook/448fc115-d1af-49ca-a169-72acd5a2b66d"},
   {name:"CMS Info Systems", url:"https://notebooklm.google.com/notebook/d74b454f-0839-4dcb-b186-5efa33f0663f"},
   {name:"Carborundum Universal", url:"https://notebooklm.google.com/notebook/52b97895-4f0f-43d9-96a5-afd82eff71f8"},
   {name:"Chalet Hotels", url:"https://notebooklm.google.com/notebook/245d3505-5b16-41b0-99ab-8968c2fb532c"},
@@ -2062,6 +2129,7 @@ const NOTEBOOKS = [
   {name:"GE Vernova T&D India", url:"https://notebooklm.google.com/notebook/6f7d5bac-64bb-4e6d-a996-e680c3cca0b1"},
   {name:"Gland Pharma", url:"https://notebooklm.google.com/notebook/0e89a0df-9f63-4d46-81cc-c914e2d026c3"},
   {name:"Global Health (Medanta)", url:"https://notebooklm.google.com/notebook/dfd48ba2-b8d5-4f1e-965d-4fa34505b77b"},
+  {name:"Hindalco", url:"https://notebooklm.google.com/notebook/36a0fe0b-473f-4946-8d26-957ded2e86b4"},
   {name:"Hindustan Aeronautics", url:"https://notebooklm.google.com/notebook/447614d6-7bb0-46e0-a65f-95eff1c21e90"},
   {name:"ICICI Prudential Life Insurance", url:"https://notebooklm.google.com/notebook/e92628f7-2615-4be0-aa51-81466a391649"},
   {name:"ITC Hotels", url:"https://notebooklm.google.com/notebook/a5d97009-2df5-4ca3-aef5-e7f7869a6a92"},
@@ -2070,6 +2138,8 @@ const NOTEBOOKS = [
   {name:"Indian Banks", url:"https://notebooklm.google.com/notebook/6e8b0e50-86f4-4799-9fa4-d202f1276d3a"},
   {name:"Indian Cement", url:"https://notebooklm.google.com/notebook/9ea63f15-7de4-4476-ba8b-e13c3a98c359"},
   {name:"Indian Financials", url:"https://notebooklm.google.com/notebook/3a0fd753-ab82-4a92-85cc-0fd17ead2ced"},
+  {name:"Indian Hotels", url:"https://notebooklm.google.com/notebook/b4a57303-8b37-4443-9d8d-0738dcedf941"},
+  {name:"Indian IT", url:"https://notebooklm.google.com/notebook/fa819ad3-5760-4e95-81da-afc5a7cac12a"},
   {name:"Indian Jewellery", url:"https://notebooklm.google.com/notebook/a38b5243-f25e-4101-9c9e-a5849565580e"},
   {name:"Indian Oil Corporation", url:"https://notebooklm.google.com/notebook/0eb6e718-3107-41d2-a43a-3826213233c7"},
   {name:"Indian Pharmaceuticals", url:"https://notebooklm.google.com/notebook/add8b569-e624-4e1f-956f-4792826dc6d1"},
@@ -2078,9 +2148,12 @@ const NOTEBOOKS = [
   {name:"JSW Energy", url:"https://notebooklm.google.com/notebook/c5764258-cce8-40b2-bea6-a20cd9965ced"},
   {name:"KEC International", url:"https://notebooklm.google.com/notebook/97a5a006-71f0-4521-84f1-81547e3dd273"},
   {name:"KIMS", url:"https://notebooklm.google.com/notebook/db6d4a68-ad3d-4db0-9f32-bb3a2e54d920"},
+  {name:"MakeMyTrip", url:"https://notebooklm.google.com/notebook/07d4a7bd-03ac-4bdf-a518-0bf78f7a6d48"},
+  {name:"Mankind Pharma", url:"https://notebooklm.google.com/notebook/9d215cf6-849d-4ca0-bdca-8714d29c8444"},
   {name:"NHPC", url:"https://notebooklm.google.com/notebook/1c692695-ba5b-4c6c-9110-5477a7b1648b"},
   {name:"Nagarjuna", url:"https://notebooklm.google.com/notebook/fe920d47-4dea-4131-913c-8e1714a5e407"},
   {name:"Neogen Chemicals", url:"https://notebooklm.google.com/notebook/8080d1de-8478-4868-87b7-47dd17bdd7dc"},
+  {name:"Orkla India", url:"https://notebooklm.google.com/notebook/b0f6275a-5f13-4888-97a7-38e7de718140"},
   {name:"Power Grid", url:"https://notebooklm.google.com/notebook/2b78ce77-c267-42ef-9bd2-8154388bcf2d"},
   {name:"Premier Energies", url:"https://notebooklm.google.com/notebook/c0d655ab-6767-4b33-b9e4-889e97c50007"},
   {name:"ReNew", url:"https://notebooklm.google.com/notebook/dc3e673b-5135-4ab0-a5d7-fd76c532e060"},
@@ -2091,15 +2164,24 @@ const NOTEBOOKS = [
   {name:"Steel Authority of India", url:"https://notebooklm.google.com/notebook/c3882fa6-7b74-4890-91ad-c99b376fb372"},
   {name:"TCS", url:"https://notebooklm.google.com/notebook/f4f797f3-6232-44d0-a6c6-ed2c438084cb"},
   {name:"Tata Steel", url:"https://notebooklm.google.com/notebook/0b071d8d-fe4b-48ad-8de1-872641c958f6"},
+  {name:"Timken", url:"https://notebooklm.google.com/notebook/a3041cf5-f472-41d7-8cde-b927d86cbe81"},
   {name:"United Spirits", url:"https://notebooklm.google.com/notebook/5f8ec16a-55d3-4c0d-8442-8c1a17f56b4c"},
   {name:"Uno Minda", url:"https://notebooklm.google.com/notebook/e6b1be10-5154-4ea2-813d-ee0cf4e43c5e"},
-  {name:"Vodafone Idea", url:"https://notebooklm.google.com/notebook/133b58ce-f599-40a6-bd77-46c2717a1c00"}
+  {name:"Vodafone Idea", url:"https://notebooklm.google.com/notebook/133b58ce-f599-40a6-bd77-46c2717a1c00"},
+  {name:"Zee Entertainment", url:"https://notebooklm.google.com/notebook/0ceb73f0-6dc1-40f1-b52b-a0ef993ba171"},
+  {name:"Zydus Lifesciences", url:"https://notebooklm.google.com/notebook/aeb019e4-5c77-4123-a4a9-3fb361207fd2"}
 ];
 const NB_AUTHUSER='markworktk@gmail.com';
 function nbHref(n){ return n.url ? n.url+(n.url.includes('?')?'&':'?')+'authuser='+encodeURIComponent(NB_AUTHUSER) : ''; }
 // First render of the Research Notes feed (NOTEBOOKS is now in scope so
 // the title links can resolve to the right NotebookLM workspace).
 renderResearchNotes();
+// Sort dropdown: re-render on change. Selector is scoped to the
+// research card header.
+(function(){
+  const sel=document.getElementById('notesGroup');
+  if(sel) sel.addEventListener('change',e=>renderResearchNotes(e.target.value));
+})();
 // If the refresher routine has published a JSON file with newer data
 // (including external broker calls), overlay it. Schema:
 // { notes:[[house,date,folder,headline]], ext:[[house,date,folder,headline,url]] }
