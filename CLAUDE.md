@@ -17,9 +17,18 @@
 - Never introduce a paid/keyed API. No secrets in code or chat (Netlify token/Site ID, if ever needed, live only in GitHub Actions secrets).
 
 ## Research Notes tab
-- "Latest Research Notes" = digest of broker reports added to the local research library in the **last 2 days**, grouped by research house. The NotebookLM per-company list was removed from this tab (the `NOTEBOOKS` map still feeds the Screener tab).
-- Source = PDF filenames under `C:\Users\admin\Desktop\India Related Reports\`, pattern `[YYMMDD] [House] Company - Thesis.pdf`. The post-dash thesis is shown verbatim as the one-liner (no PDF body text reproduced — avoids paid-content/copyright issues). "Past 2 days" is keyed off file modification time (= when the report was added).
-- The coloured date chip is a **wording heuristic, not the broker's formal rating**: contrastive headlines ("soft … but guidance exceeded") resolve to the post-"but" takeaway; otherwise negatives win ties.
+- "Latest Research Notes" = single-row digest grouped by research house: **date | company | clickable headline | colour-coded call chip**. The NotebookLM per-company list was removed from this tab (the `NOTEBOOKS` map still feeds the Screener tab).
+- Two data sources: (1) **local PDF library** under `C:\Users\admin\Desktop\India Related Reports\` — parsed by filename pattern `[YYMMDD] [House] Folder - Thesis.pdf`, parent folder name matches NOTEBOOKS entries; (2) **external broker calls** (Motilal Oswal, ICICI Securities, Morgan Stanley, Citi, UBS, Nuvama, Axis, HDFC Securities, etc.) refreshed by the routine below into `data/research.json`.
+- Title is clickable → opens the company's NotebookLM workspace (local reports) or the source article (external calls) in a new tab; `authuser=markworktk@gmail.com` appended so the right Google account is selected.
+- Call chip: extracts the broker's explicit rating (Buy/Sell/Hold/OW/UW/EW/Neutral/Add/Reduce/OP/UP) from the headline when stated, otherwise falls back to a sentiment-derived label (Positive/Negative/Neutral). Date is plain, only the call is colour-coded.
+
+## Research refresher routine
+- **Trigger:** `trig_018gy39x8QiAfrp9UxSPzPyA` — "India Research Notes Refresher"
+- **URL:** https://claude.ai/code/routines/trig_018gy39x8QiAfrp9UxSPzPyA
+- **Cron (UTC):** `0 1 * * 1-5` (Mon–Fri 1:00 UTC = 6:30 AM IST, just after the daily-email routine fires).
+- **Status:** stub created via API; **prompt has to be pasted into the routines UI** (the create/update API for this trigger family doesn't expose the prompt field in the schema this session can hit — `event_type` / `messages` / `prompt` all rejected). Once the prompt is in, flip `enabled` to true in the UI.
+- **What it does each run:** WebSearches Indian broker research calls from the previous 2 days (Motilal Oswal, ICICI Securities, Morgan Stanley, Citi, UBS, Nuvama, HDFC Securities, Axis Capital, Emkay, JM Financial, Sharekhan, etc. — explicitly NOT the six houses in the local library), builds an `ext` array, drafts a Gmail to markworktk@gmail.com containing the JSON to paste into `data/research.json`. Page picks it up via the fetch at the bottom of index.html.
+- **Prompt:** stored in `docs/research-refresher-prompt.md` — copy-paste into the routine UI under "Initial message".
 
 ## Local dev / preview
 - Node at `C:\Program Files\nodejs`. Optional `netlify dev` on 8899; `C:\Users\admin\.claude\static-server.cjs` preview proxy on 4178 (`launch.json`).
