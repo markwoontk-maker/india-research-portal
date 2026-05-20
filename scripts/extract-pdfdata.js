@@ -42,14 +42,24 @@ function extractCurrTP(text) {
   // match noise like "Target price 4QFY26" and capture "4".
   const patterns = [
     // Jefferies: "PRICE TARGET | % TO PT  INR340 (INR325) | +15%"
-    new RegExp("PRICE\\s*TARGET[\\s\\S]{0,80}?(?:INR|Rs\\.?|₹|\\$|US\\$|USD)\\s*" + NUM, "i"),
+    // Case-sensitive: Jefferies uses ALL CAPS in this header. The
+    // case-insensitive variant kept poaching Bernstein's "Price Target"
+    // table on page 2+ and capturing the close price by mistake.
+    new RegExp("PRICE\\s*TARGET[\\s\\S]{0,80}?(?:INR|Rs\\.?|₹|\\$|US\\$|USD)\\s*" + NUM),
+    // Bernstein: "Price Target [ticker] 5,000.00 INR" / "8.00 USD"
+    // — currency comes AFTER the number, not before. Run before JPM
+    // so the prefix-currency variant doesn't grab the wrong number.
+    new RegExp("Price\\s+Target[\\s\\S]{0,80}?\\b" + NUM + "\\s*(?:INR|Rs\\.?|₹|USD|US\\$)\\b", "i"),
     // JPMorgan: "Price Target (Mar-27):$60.00" / "Price Target (INR)  306.00"
     new RegExp("price\\s+target\\s*(?:\\([^)]*\\))?\\s*[:\\s]*" + RS + NUM, "i"),
-    // Nomura two-column header layout, flattened to:
-    //   "Rating Buy Remains INR 220 ..."
-    // Run BEFORE the generic "target price" pattern so we capture the
-    // real TP rather than something near a later "Target price" label.
-    new RegExp("\\bRating\\s+\\w+\\s+(?:Remains|Unchanged|Maintain(?:ed)?|Reiterate(?:d)?)?\\s*(?:INR|Rs\\.?|₹|\\$|US\\$|USD)\\s*" + NUM, "i"),
+    // Nomura two-column header layout. In some reports body text
+    // wedges between the rating word and "Remains" (the rating sits
+    // in the right column while the headline prose flows down on the
+    // left). Allow up to ~200 chars between them.
+    new RegExp("\\bRating\\s+\\w+[\\s\\S]{0,200}?(?:Remains|Unchanged|Maintain(?:ed)?|Reiterate(?:d)?|Down\\s+from\\s+\\w+|Up\\s+from\\s+\\w+|Cut\\s+from\\s+\\w+|Raised\\s+from\\s+\\w+|Reduced\\s+from\\s+\\w+)[\\s\\S]{0,30}?(?:INR|Rs\\.?|₹|\\$|US\\$|USD)\\s*" + NUM, "i"),
+    // Prose "TP of INR1,494" / "with a TP of INR1,722" — Nomura
+    // anchor-report initiations and Uno Minda's quarter notes.
+    new RegExp("\\bTP\\s+of\\s+(?:INR|Rs\\.?|₹|\\$|US\\$|USD)\\s*" + NUM, "i"),
     // Kotak: "Fair Value(): 8,150" — no Rs prefix on the number here,
     // so RS is genuinely optional (the "Fair Value" label is specific
     // enough to be safe).
@@ -108,6 +118,15 @@ function extractPrevTP(text, currTP) {
   if (m) return cleanNum(m[1]);
   // JPMorgan: "Prior (Dec-26):$110.00" line directly under Price Target
   m = text.match(new RegExp("\\bPrior\\s*\\([^)]*\\)\\s*:?\\s*" + RS + NUM, "i"));
+  if (m) return cleanNum(m[1]);
+  // Nomura: "Target price Reduced from INR ... 845" / "Reduced from INR 1,513"
+  // The previous value sits 0-50 chars after "Reduced/Raised/Cut from",
+  // possibly with a "+X%" upside number in between. Require 3+ digits
+  // so we don't capture "8" from "+8.1%".
+  m = text.match(/(?:Reduced|Raised|Cut|Up|Down|Changed)\s+from(?:\s+(?:INR|Rs\.?|₹|\$|US\$|USD))?[\s\S]{0,50}?\b([\d,]{3,}(?:\.\d+)?)\b(?!\s*\.\d|\s*%)/i);
+  if (m) return cleanNum(m[1]);
+  // Inline "(INR1,513 previously)" / "(Rs1,300 prev)" / "(old Rs1,300)"
+  m = text.match(new RegExp("\\((?:INR|Rs\\.?|₹|\\$|US\\$|USD)\\s*" + NUM + "\\s+(?:previously|prev(?:ious)?|earlier|old)\\s*\\)", "i"));
   if (m) return cleanNum(m[1]);
   // Parenthetical "(from Rs4,300)" / "(from INR325)" — Jefferies/JPMorgan
   m = text.match(new RegExp("\\(\\s*from\\s+" + RS + NUM + "\\s*\\)", "i"));
@@ -174,6 +193,10 @@ function extractPrevCall(text, currCall) {
   if (m) return normCall(m[1]);
   m = text.match(new RegExp("(?:upgrade|downgrade)\\s+from\\s+(" + CALL_WORDS + ")\\b", "i"));
   if (m) return normCall(m[1]);
+  // Nomura layout: "Down from Buy" / "Up from Hold" — the prior rating
+  // sits after the "Down/Up/Cut/Raised from" marker.
+  m = text.match(new RegExp("\\b(?:Down|Up|Cut|Raised|Reduced|Changed)\\s+from\\s+(" + CALL_WORDS + ")\\b", "i"));
+  if (m) return normCall(m[1]);
   // "(prev: BUY)" / "(earlier: HOLD)"
   m = text.match(new RegExp("\\(\\s*(?:prev|previous|earlier|old|was)\\b[^)]*?\\b(" + CALL_WORDS + ")\\b", "i"));
   if (m) return normCall(m[1]);
@@ -198,12 +221,11 @@ function cleanNum(s) {
   let n = String(s).replace(/[,\s]/g, "");
   if (n.endsWith(".00")) n = n.slice(0, -3);
   const num = Number(n);
-  if (!isFinite(num)) return null;
-  // Reject obvious garbage captures: broker TPs are essentially never
-  // single-digit (lowest Indian stock targets are in ₹10s; even VI is
-  // ~₹9-10). Single digits almost always come from regex spilling into
-  // "4QFY26", "FY27", "Q4" etc.
-  if (num < 10) return null;
+  if (!isFinite(num) || num <= 0) return null;
+  // No lower bound — every TP regex now requires a strong label (Price
+  // Target / TP of / Fair Value / Recommendation history / Rating ...
+  // Remains / Reduced from), so garbage like "4QFY26 → 4" no longer
+  // leaks in. Single-digit targets ($8 / Rs9 for VI etc.) are valid.
   return num.toLocaleString("en-IN");
 }
 
