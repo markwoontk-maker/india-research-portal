@@ -334,6 +334,20 @@
   .news-cat.pol{background:var(--saffron-soft);color:var(--saffron)}
   .news-cat.earn{background:var(--up-soft);color:var(--up)}
   .news-cat.corp{background:rgba(120,140,180,.16);color:#9bb3d1}
+  /* Screener: paired (label · dropdown · open-button) rows */
+  .scr-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px}
+  .scr-row + .scr-row{margin-top:12px}
+  .scr-lbl{flex:none;width:72px;font-family:'IBM Plex Mono';font-size:11px;
+    letter-spacing:.06em;text-transform:uppercase;color:var(--text-mute)}
+  .scr-dd{flex:1;min-width:240px;background:var(--panel);color:var(--text);
+    border:1px solid rgba(255,255,255,.14);border-radius:8px;
+    padding:10px 12px;font-size:14px;font-family:inherit;cursor:pointer}
+  .scr-dd:focus{outline:none;border-color:var(--saffron)}
+  .scr-btn{background:var(--saffron-soft);color:var(--saffron);
+    border:1px solid rgba(233,162,59,.22);border-radius:8px;
+    padding:10px 16px;font-size:13px;font-weight:600;text-decoration:none;
+    white-space:nowrap}
+  .scr-btn:hover{background:rgba(233,162,59,.18)}
   /* Fixed-width numeric cells; mono digits + right align so commas
      and thousands align across rows. */
   .n-tp{flex:none;width:72px;box-sizing:border-box;text-align:right;
@@ -419,9 +433,9 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
         Overview
       </div>
-      <div class="nav-item" data-view="markets" data-title="Macro">
+      <div class="nav-item" data-view="markets" data-title="News">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg>
-        Macro
+        News
       </div>
       <div class="nav-item" data-view="screener" data-title="Screener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -634,12 +648,20 @@
 
     <div id="viewScreener" hidden>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Company NotebookLM Notebooks</h3><p id="nbSub">Select a company to open its NotebookLM notebook</p></div></div>
-        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:4px">
-          <select id="nbSelect" style="flex:1;min-width:260px;background:var(--panel);color:var(--text);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit">
+        <div class="card-h"><div><h3>Company NotebookLM Notebooks</h3><p id="nbSub">Select a company or sector to open its NotebookLM notebook</p></div></div>
+        <div class="scr-row">
+          <span class="scr-lbl">Company</span>
+          <select id="nbSelectCo" class="scr-dd">
             <option value="">Select a company…</option>
           </select>
-          <a id="nbOpen" href="#" target="_blank" rel="noopener" style="display:none;background:var(--saffron-soft);color:var(--saffron);border:1px solid rgba(233,162,59,.22);border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;text-decoration:none">Open notebook ↗</a>
+          <a id="nbOpenCo" class="scr-btn" href="#" target="_blank" rel="noopener" style="display:none">Open notebook ↗</a>
+        </div>
+        <div class="scr-row">
+          <span class="scr-lbl">Sector</span>
+          <select id="nbSelectSec" class="scr-dd">
+            <option value="">Select a sector…</option>
+          </select>
+          <a id="nbOpenSec" class="scr-btn" href="#" target="_blank" rel="noopener" style="display:none">Open notebook ↗</a>
         </div>
         <p id="nbStatus" style="color:var(--text-mute);font-size:12px;line-height:1.7;margin-top:14px"></p>
       </div>
@@ -2559,24 +2581,47 @@ fetch('data/pdfdata.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j
   renderResearchNotes();
 }).catch(()=>{});
 let screenerLoaded=false;
+// Sector notebooks vs company notebooks — sectors are the "India(n) X"
+// thematic workspaces (Banks, IT, Pharma, etc.). Anything else is a
+// single-company workspace.
+const SECTOR_NAMES=new Set([
+  'India Macro','India Strategy',
+  'Indian Banks','Indian Cement','Indian Financials','Indian IT',
+  'Indian Jewellery','Indian Pharmaceuticals','Indian Steel'
+]);
 function loadScreener(){
-  const sel=document.getElementById('nbSelect'),
-        openBtn=document.getElementById('nbOpen'),
-        status=document.getElementById('nbStatus');
-  const live=NOTEBOOKS.filter(n=>n.url).length;
-  NOTEBOOKS.forEach((n,i)=>{
-    const o=document.createElement('option');
-    o.value=String(i);
-    o.textContent=n.url?n.name:n.name+'  · notebook pending';
-    sel.appendChild(o);
-  });
-  function refresh(){
-    const i=sel.value, n=i===''?null:NOTEBOOKS[+i];
-    if(n && n.url){ openBtn.href=nbHref(n); openBtn.style.display='inline-block'; }
-    else { openBtn.style.display='none'; openBtn.removeAttribute('href'); }
+  const status=document.getElementById('nbStatus');
+  const coSel  = document.getElementById('nbSelectCo');
+  const coBtn  = document.getElementById('nbOpenCo');
+  const secSel = document.getElementById('nbSelectSec');
+  const secBtn = document.getElementById('nbOpenSec');
+  const companies=[], sectors=[];
+  NOTEBOOKS.forEach(n=>{ (SECTOR_NAMES.has(n.name)?sectors:companies).push(n); });
+  companies.sort((a,b)=>a.name.localeCompare(b.name));
+  sectors  .sort((a,b)=>a.name.localeCompare(b.name));
+  function fill(sel, list){
+    list.forEach((n,i)=>{
+      const o=document.createElement('option');
+      o.value=String(i);
+      o.textContent=n.url?n.name:n.name+'  · notebook pending';
+      sel.appendChild(o);
+    });
   }
-  sel.addEventListener('change',refresh);
-  status.textContent=`${live} of ${NOTEBOOKS.length} notebooks live · ${NOTEBOOKS.length-live} pending creation`;
+  fill(coSel,  companies);
+  fill(secSel, sectors);
+  function bind(sel, btn, list){
+    function refresh(){
+      const i=sel.value, n=i===''?null:list[+i];
+      if(n && n.url){ btn.href=nbHref(n); btn.style.display='inline-block'; }
+      else { btn.style.display='none'; btn.removeAttribute('href'); }
+    }
+    sel.addEventListener('change',refresh);
+  }
+  bind(coSel,  coBtn,  companies);
+  bind(secSel, secBtn, sectors);
+  const live=NOTEBOOKS.filter(n=>n.url).length;
+  status.textContent=`${companies.length} companies · ${sectors.length} sectors · `+
+    `${live} of ${NOTEBOOKS.length} notebooks live · ${NOTEBOOKS.length-live} pending creation`;
 }
 /* ---------- Sidebar tab routing ---------- */
 (function(){
