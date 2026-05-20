@@ -18,20 +18,26 @@ const PDFTOTEXT = "C:\\Program Files\\Git\\mingw64\\bin\\pdftotext.exe";
 
 // ---- Patterns ---------------------------------------------------------
 
-const CALL_WORDS = "BUY|SELL|HOLD|NEUTRAL|OW|UW|EW|OVERWEIGHT|UNDERWEIGHT|EQUAL[- ]?WEIGHT|OUTPERFORM|UNDERPERFORM|MARKET[- ]?PERFORM|ADD|REDUCE|ACCUMULATE";
-const NORM = { OVERWEIGHT:"OW", UNDERWEIGHT:"UW", "EQUAL-WEIGHT":"EW", "EQUAL WEIGHT":"EW", OUTPERFORM:"OP", UNDERPERFORM:"UP", "MARKET-PERFORM":"MP", "MARKET PERFORM":"MP" };
+// CLSA-post-Jun-2024 codes (HLD/O-PF/U-PF + HC O-PF/HC U-PF) included.
+const CALL_WORDS = "BUY|SELL|HOLD|NEUTRAL|OW|UW|EW|OVERWEIGHT|UNDERWEIGHT|EQUAL[- ]?WEIGHT|OUTPERFORM|UNDERPERFORM|MARKET[- ]?PERFORM|ADD|REDUCE|ACCUMULATE|HLD|O[- ]?PF|U[- ]?PF|HC\\s+O[- ]?PF|HC\\s+U[- ]?PF";
+const NORM = {
+  OVERWEIGHT:"OW", UNDERWEIGHT:"UW", "EQUAL-WEIGHT":"EW", "EQUAL WEIGHT":"EW",
+  OUTPERFORM:"OP", UNDERPERFORM:"UP", "MARKET-PERFORM":"MP", "MARKET PERFORM":"MP",
+  HLD:"HOLD", "O-PF":"OP", "OPF":"OP", "U-PF":"UP", "UPF":"UP",
+  "HC O-PF":"OP", "HC OPF":"OP", "HC U-PF":"UP", "HC UPF":"UP"
+};
 const normCall = c => (NORM[c.toUpperCase()] || c.toUpperCase());
 
-// "₹1,400" / "Rs 1400" / "INR 1,400.50" / "Rs. 290" / bare "1,400"
+// "₹1,400" / "Rs 1400" / "INR 1,400.50" / "$60.00" / "US$1,200" / "USD 750"
 const NUM = "([\\d,]+(?:\\.\\d+)?)";
-const RS = "(?:₹|Rs\\.?|INR)\\s*";
+const RS = "(?:₹|Rs\\.?|INR|US\\$|USD|\\$)\\s*";
 
 function extractCurrTP(text) {
   // Try the most-explicit patterns first.
   const patterns = [
     // Jefferies: "PRICE TARGET | % TO PT  INR340 (INR325) | +15%"
-    new RegExp("PRICE\\s*TARGET[^A-Z\\d]*?(?:INR|Rs\\.?|₹)\\s*" + NUM, "i"),
-    // JPMorgan: "Price Target (Mar-27):Rs9.00" / "Price Target (INR)  306.00"
+    new RegExp("PRICE\\s*TARGET[^A-Z\\d]*?(?:INR|Rs\\.?|₹|\\$|US\\$|USD)\\s*" + NUM, "i"),
+    // JPMorgan: "Price Target (Mar-27):$60.00" / "Price Target (INR)  306.00"
     new RegExp("price\\s+target\\s*(?:\\([^)]*\\))?\\s*[:\\s]*" + RS + "?" + NUM, "i"),
     // Generic: "12M price target Rs324.00" / "Target Price Rs 1400"
     new RegExp("(?:12M\\s+price\\s+target|target\\s+price)\\s*(?:of\\s*)?(?::)?\\s*" + RS + NUM, "i"),
@@ -39,8 +45,11 @@ function extractCurrTP(text) {
     new RegExp("target\\s+price[^A-Z]{0,20}(?:remains|unchanged)?[^\\d]{0,12}" + RS + NUM, "i"),
     // Kotak: "Fair Value(): 295" / "FV of Rs295"
     new RegExp("(?:fair\\s+value|FV)\\s*(?:\\(\\))?[:\\s]*(?:of\\s*)?" + RS + "?" + NUM, "i"),
-    // JPMorgan prose: "raising PT to Rs5050"
-    new RegExp("\\bPT\\b\\s+(?:raised|cut|revised)?\\s*(?:to|at)\\s*" + RS + NUM, "i"),
+    // JPMorgan prose: "raising PT to Rs5050" / "PT down to $60"
+    new RegExp("\\bPT\\b\\s+(?:raised|cut|revised|up|down)?\\s*(?:to|at)\\s*" + RS + NUM, "i"),
+    // CLSA "Recommendation history" table — latest row gives current TP.
+    // Header: "Date  Rec  Target", then "27 Jan 2026  HLD  360.00"
+    /Recommendation\s+history[\s\S]{0,400}?\d{1,2}\s+\w{3,9}\s+\d{4}\s+(?:BUY|SELL|HOLD|HLD|O[- ]?PF|U[- ]?PF|HC\s+O[- ]?PF|HC\s+U[- ]?PF)\s+([\d,]+(?:\.\d+)?)/i,
     // Standalone "Target: Rs1400"
     new RegExp("\\btarget\\b\\s*:?\\s*" + RS + NUM, "i"),
   ];
@@ -51,9 +60,26 @@ function extractCurrTP(text) {
   return null;
 }
 
+// Was the TP changed in this report? Any explicit raise/cut/revise/
+// upgrade/downgrade/(from X)/(previously X) signal counts. Used to
+// decide whether "no prev stated" means "no change" (default prev=curr)
+// or genuinely missing data.
+function tpChangeSignaled(text){
+  return /\b(?:raise|raised|raises|raising|cut|cuts|cutting|revis(?:e|ed|ing)|lower(?:ed|ing)?|hike(?:d)?|increase(?:d|s)?|decrease(?:d|s)?|moves?\s+(?:up|down)|moved\s+(?:to|up|down))\b[^.]{0,80}?(?:TP|target|PT|FV|fair\s+value|price\s+target|estimate)/i.test(text)
+      || /\(\s*(?:previously|from|earlier|prev(?:ious)?|old|was)\b/i.test(text)
+      || /\b(?:old|previous|earlier|prior)\s+(?:TP|target|PT|FV|fair\s+value|price\s+target)\b/i.test(text)
+      || /\b(?:upgrade(?:d)?|downgrade(?:d)?)\s+(?:to|from)\b/i.test(text);
+}
+function callChangeSignaled(text){
+  return /\b(?:upgrade(?:d|s|\s+to)|downgrade(?:d|s|\s+to)|change(?:d|s)?\s+(?:our\s+)?(?:rating|recommendation|stance|call)\s+(?:to|from)|move\s+to|moved?\s+to)\b/i.test(text);
+}
+
 function extractPrevTP(text, currTP) {
   // Parenthetical "(previously Rs125)" — very common in JPMorgan etc.
   let m = text.match(new RegExp("\\(\\s*previously\\s+" + RS + NUM + "\\s*\\)", "i"));
+  if (m) return cleanNum(m[1]);
+  // JPMorgan: "Prior (Dec-26):$110.00" line directly under Price Target
+  m = text.match(new RegExp("\\bPrior\\s*\\([^)]*\\)\\s*:?\\s*" + RS + NUM, "i"));
   if (m) return cleanNum(m[1]);
   // Parenthetical "(from Rs4,300)" / "(from INR325)" — Jefferies/JPMorgan
   m = text.match(new RegExp("\\(\\s*from\\s+" + RS + NUM + "\\s*\\)", "i"));
@@ -83,20 +109,33 @@ function extractPrevTP(text, currTP) {
     const reiterate2 = /(?:target|TP|PT|FV|fair\s+value|price\s+target)[^A-Z]{0,30}\b(remains?|unchanged|maintain(?:ed|s)?|reiterate(?:s|d)?)\b/i;
     if (reiterate.test(text) || reiterate2.test(text)) return currTP;
   }
+  // Final fallback: if curr TP is known and the report shows no
+  // explicit change signal (raise/cut/revise/upgrade/(from X)/etc.),
+  // assume the broker is reiterating and default prev TP = curr TP.
+  // This covers ordinary quarter-result updates that don't restate the
+  // prior TP in prose.
+  if (currTP && !tpChangeSignaled(text)) return currTP;
   return null;
 }
 
 function extractCurrCall(text) {
-  // Search the first ~600 chars (top of page 1) for a clear rating word.
-  const head = text.slice(0, 800);
+  // Search the top of the report (page 1-2 worth) for a clear rating.
+  const head = text.slice(0, 2400);
   // Explicit "Rating: X" / "Recommendation: X"
   let m = head.match(new RegExp("(?:rating|recommendation)\\s*[:\\-]\\s*(" + CALL_WORDS + ")\\b", "i"));
   if (m) return normCall(m[1]);
   // "stay/maintain/reiterate/upgrade to/downgrade to X"
   m = head.match(new RegExp("(?:stay|maintain|reiterate|upgrade\\s*to|downgrade\\s*to|initiate\\s*(?:with)?)\\s+(" + CALL_WORDS + ")\\b", "i"));
   if (m) return normCall(m[1]);
-  // Standalone ALL-CAPS word that looks like a rating.
-  m = head.match(new RegExp("\\b(" + CALL_WORDS.replace(/\(\?[!=][^)]*\)/g,"") + ")\\b", ""));
+  // CLSA inline: "Bharat Petro (BPCL IB - RS286.50 - HOLD)" / "(... - O-PF)"
+  m = head.match(new RegExp("-\\s*(" + CALL_WORDS + ")\\s*\\)", "i"));
+  if (m) return normCall(m[1]);
+  // CLSA Recommendation history table — latest row's rating column
+  m = text.match(/Recommendation\s+history[\s\S]{0,400}?\d{1,2}\s+\w{3,9}\s+\d{4}\s+(BUY|SELL|HOLD|HLD|O[- ]?PF|U[- ]?PF|HC\s+O[- ]?PF|HC\s+U[- ]?PF)\b/i);
+  if (m) return normCall(m[1]);
+  // Standalone rating word in the head (case-insensitive — "Overweight"
+  // / "Underweight" / "Buy" / "Hold" all match).
+  m = head.match(new RegExp("\\b(" + CALL_WORDS + ")\\b", "i"));
   if (m) return normCall(m[1]);
   return null;
 }
@@ -119,6 +158,10 @@ function extractPrevCall(text, currCall) {
     const m2 = text.match(reiterate);
     if (m2 && normCall(m2[1]) === currCall) return currCall;
   }
+  // Final fallback: if curr call is known and no rating-change signal
+  // appears in the report, assume the broker is reiterating and default
+  // prev call = curr call.
+  if (currCall && !callChangeSignaled(text)) return currCall;
   return null;
 }
 
@@ -171,11 +214,10 @@ const cutoff = ((d) => {
 
 function extractPage1(p) {
   try {
-    // Pages 1–5 — TP / call show on p1 in most layouts, but Estimate-
-    // Revision / Changes-to-Estimates tables (key for prev TP) often
-    // sit on p2–p4. 5 pages keeps us under any noisy back-matter and
-    // PDFs run fast.
-    const buf = execFileSync(PDFTOTEXT, ["-layout", "-f", "1", "-l", "5", "--", p, "-"], { maxBuffer: 8 * 1024 * 1024 });
+    // Pages 1–10 — TP/call usually on p1, Estimate-Revision tables on
+    // p2–p4, CLSA's "Recommendation history" table on p6+. 10 pages
+    // covers all common layouts without dragging in back-matter noise.
+    const buf = execFileSync(PDFTOTEXT, ["-layout", "-f", "1", "-l", "10", "--", p, "-"], { maxBuffer: 12 * 1024 * 1024 });
     return buf.toString("utf8");
   } catch (e) {
     return "";
