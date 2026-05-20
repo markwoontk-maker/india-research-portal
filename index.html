@@ -315,6 +315,20 @@
   .n-call.buy{background:var(--up-soft);color:var(--up)}
   .n-call.hold{background:var(--saffron-soft);color:var(--saffron)}
   .n-call.sell{background:var(--down-soft);color:var(--down)}
+  .n-tp{flex:none;width:62px;text-align:right;font-family:'IBM Plex Mono';
+    font-size:11.5px;color:var(--text-dim);white-space:nowrap}
+  .n-tp.prev{color:var(--text-mute);font-size:10.5px}
+  .n-tp.muted{color:var(--text-mute)}
+  .n-call.prev{opacity:.55;font-size:9.5px;padding:3px 6px;min-width:46px}
+  /* Column header row above the broker groups */
+  .n-header{display:flex;align-items:center;gap:15px;padding:6px 0 10px;
+    border-bottom:1px solid var(--line);margin-bottom:10px;
+    font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--text-mute)}
+  .n-header .n-co,.n-header .n-ti{font-weight:600}
+  .n-header .n-ti{text-decoration:none;cursor:default;color:var(--text-mute)}
+  .n-header .n-tp,.n-header .n-call-h{flex:none;text-align:right;font-size:10px;color:var(--text-mute)}
+  .n-call-h{width:62px}
   .notes-group{background:var(--panel);color:var(--text-dim);
     border:1px solid rgba(255,255,255,.14);border-radius:8px;
     padding:7px 10px;font-size:12px;font-family:inherit;cursor:pointer;
@@ -358,6 +372,9 @@
     .n-co{max-width:120px;font-size:12.5px}
     .n-ti{font-size:12px}
     .n-call{min-width:46px;padding:3px 6px;font-size:10px}
+    /* On mobile, keep only Curr TP + Curr Call; hide the prev cols */
+    .n-tp.prev,.n-call.prev,.n-header .n-tp.prev,.n-header .n-call-h:first-of-type{display:none}
+    .n-tp{width:50px;font-size:10.5px}
   }
 </style>
 </head>
@@ -827,6 +844,36 @@ let notes = [
 // Refreshed by the research refresher routine from Trendlyne / news.
 // Schema adds a 5th field: source-article URL for the clickable title.
 // Empty until the routine's first run; the page falls back gracefully.
+// Prior reports (older than the 2-day window) used purely to populate
+// the "previous TP / call" columns. Not rendered as their own rows.
+// Sourced from older local PDFs + Trendlyne pages 7-8.
+const notesPrior = [
+  // Local (filename date 260420-260517)
+  ["Jefferies","260516","Tata Steel","Mar-Q Beat, More Margin Expansion Ahead"],
+  ["Jefferies","260516","Uno Minda","Mar-Q First Cut, In-line Quarter"],
+  ["Jefferies","260517","CMS Info Systems","Mar Qtr, Improving Business Momentum & FSS Acquisition Support FY27 Growth"],
+  ["Jefferies","260517","Gland Pharma","Mar-Q, Improving Outlook, Execution Key to Monitor"],
+  ["Jefferies","260517","ITC Hotels","FTA Impact Drives Weak Qtr"],
+  ["Jefferies","260517","Premier Energies","Mar-26 Review, Marginally ahead, Strong FY27 Outlook"],
+  ["Kotak","260517","Devyani International","A welcome relief"],
+  ["Kotak","260420","India Strategy","India @ 2070, the great energy rewrite for Net Zero"],
+  ["Nomura","260517","Gland Pharma","4QFY26 significantly higher than our estimates"],
+  // Trendlyne (page 7-8, 260516-260517)
+  ["BOB Capital Markets","260517","Somany Ceramics","Buy · TP ₹520 — Sharp margin recovery drives earnings beat"],
+  ["BOB Capital Markets","260517","Devyani International","Buy · TP ₹141 — Recovery trends"],
+  ["BOB Capital Markets","260516","Tata Steel","Hold · TP ₹223 — Results beat on better volumes, cost saving"],
+  ["BOB Capital Markets","260516","Steel Authority of India","Sell · TP ₹178 — Operational performance beats on lower cost"],
+  ["BOB Capital Markets","260516","Alembic Pharma","Buy · TP ₹1,013 — Higher R&D spend underscores focus on US market"],
+  ["BP Wealth","260516","Vedanta","Buy · TP ₹387"],
+  ["ICICI Direct","260517","Bharti Airtel","Buy · TP ₹2,350"],
+  ["ICICI Direct","260516","Solar Industries","Buy · TP ₹20,200 — Defence business enters accelerated growth phase"],
+  ["ICICI Direct","260516","Hindustan Aeronautics","Buy · TP ₹5,300 — Execution recovery and manufacturing ramp-up"],
+  ["ICICI Direct","260516","Pearl Global","Buy · TP ₹2,255 — Double-digit revenue growth guidance of 12-14% retained"],
+  ["Prabhudas Lilladhar","260516","NCC","Buy · TP ₹195 — Strong fundamentals, but FY27E caution persists"],
+  ["Prabhudas Lilladhar","260516","Carborundum Universal","Sell · TP ₹986 — Mixed Q4, subsidiaries recovery remains key"],
+  ["Prabhudas Lilladhar","260516","Steel Authority of India","Accumulate · TP ₹209 — Higher steel pricing drive Q4; stepped up capex"],
+];
+
 // External broker calls sourced from trendlyne.com/research-reports/all/
 // — last 2 days, filename date ≥ today−2d. Schema: [house,date,folder,
 // headline,url]. The "Buy/Sell/Hold/Accumulate/Reduce/Neutral" in the
@@ -1012,16 +1059,52 @@ function renderResearchNotes(groupBy){
     seen.add(k);
     rows.push([n[0],n[1],n[2],n[3],n[4]||null]);
   });
+  // Build (house|company) → sorted-desc history index for "previous TP /
+  // previous call" lookup. Pool current rows + prior reports (older
+  // than the 2-day window) from notesPrior.
+  const priorPool=(typeof notesPrior==='undefined'?[]:notesPrior).map(n=>[n[0],n[1],n[2],n[3]]);
+  const history={};
+  [...rows.map(r=>[r[0],r[1],r[2],r[3]]),...priorPool].forEach(r=>{
+    const k=r[0]+'|'+r[2];
+    (history[k]=history[k]||[]).push(r);
+  });
+  Object.values(history).forEach(arr=>arr.sort((a,b)=>a[1]<b[1]?1:-1));
+  function findPrior(house, co, date){
+    const arr=history[house+'|'+co]||[];
+    return arr.find(r=>r[1]<date)||null;
+  }
+  // Extract target price from a headline (₹1,400 / Rs 360 / "TP 5050").
+  const TP_RE=/(?:TP\s*)?(?:₹|Rs\.?|INR)\s*([\d,]+(?:\.\d+)?)/i;
+  const TP_RE2=/TP\s*to\s*Rs\s*([\d,]+)/i;
+  function tpOf(s){
+    if(!s) return null;
+    let m=s.match(TP_RE2)||s.match(TP_RE);
+    return m ? '₹'+m[1] : null;
+  }
   // Group key + secondary-column accessor swap based on the chosen axis.
   const keyOf = grp==='company' ? r=>r[2] : r=>r[0];
   const secondCol = grp==='company' ? r=>r[0] : r=>r[2];
   const groupMap={};
   rows.forEach(r=>{ const k=keyOf(r); (groupMap[k]=groupMap[k]||[]).push(r); });
+  // by-company: strict alphabetical; by-house: most reports first, then alpha
   const groups=Object.keys(groupMap).sort((a,b)=>
-    groupMap[b].length-groupMap[a].length || a.localeCompare(b));
+    grp==='company'
+      ? a.localeCompare(b)
+      : (groupMap[b].length-groupMap[a].length || a.localeCompare(b)));
   const el=document.getElementById('notes');
   if(!el) return;
-  el.innerHTML=groups.map(g=>{
+  const secondHdr = grp==='company' ? 'Research house' : 'Company';
+  const header =
+    `<div class="n-header">`+
+      `<span class="n-date">Date</span>`+
+      `<span class="n-co">${secondHdr}</span>`+
+      `<span class="n-ti">Headline</span>`+
+      `<span class="n-tp">Curr TP</span>`+
+      `<span class="n-tp prev">Prev TP</span>`+
+      `<span class="n-call-h">Prev</span>`+
+      `<span class="n-call-h">Curr</span>`+
+    `</div>`;
+  el.innerHTML=header+groups.map(g=>{
     const arr=groupMap[g].slice().sort((a,b)=>
       b[1]!==a[1] ? (b[1]<a[1]?-1:1) : secondCol(a).localeCompare(secondCol(b)));
     return `<div class="broker-grp">
@@ -1031,16 +1114,26 @@ function renderResearchNotes(groupBy){
         const c=callOf(ti);
         const href=urlFor(co,h,ti,u);
         const second=esc(secondCol(r));
+        const currTP=tpOf(ti);
+        const prior=findPrior(h,co,d);
+        const prevTP=prior?tpOf(prior[3]):null;
+        const prevC=prior?callOf(prior[3]):null;
+        const tpCurrCell=currTP?`<span class="n-tp">${currTP}</span>`:`<span class="n-tp muted">—</span>`;
+        const tpPrevCell=prevTP?`<span class="n-tp prev">${prevTP}</span>`:`<span class="n-tp prev muted">—</span>`;
+        const callPrevCell=prevC
+          ?`<span class="n-call prev ${prevC.cls}" title="${esc(prior[1].slice(2,4)+'/'+prior[1].slice(4,6))}">${esc(prevC.label)}</span>`
+          :`<span class="n-call prev hold" style="background:transparent;color:var(--text-mute);opacity:.55">—</span>`;
         return `<div class="note">`+
           `<span class="n-date">${fmtD(d)}</span>`+
           `<span class="n-co" title="${second}">${second}</span>`+
           `<a class="n-ti" href="${esc(href)}" target="_blank" rel="noopener" title="${esc(ti)}">${esc(ti)}</a>`+
+          tpCurrCell+tpPrevCell+callPrevCell+
           `<span class="n-call ${c.cls}">${esc(c.label)}</span>`+
         `</div>`;
       }).join('')}
     </div>`;
   }).join('')+
-    `<div class="n-foot">Synced to NotebookLM — reports added in the last 2 days. Title links open the company's NotebookLM workspace in a new tab. External broker calls (Motilal Oswal, ICICI Securities, Nuvama, Axis, HDFC Securities, etc.) are populated by the scheduled refresher routine.</div>`;
+    `<div class="n-foot">Synced to NotebookLM + Trendlyne — last 2 days. Curr TP / Prev TP show the broker's target price now vs. their most recent prior report on the same name (where available). "—" = no parseable figure or no prior in the dataset.</div>`;
 }
 // Called once NOTEBOOKS + nbHref are defined later in the file.
 
