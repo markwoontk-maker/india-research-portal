@@ -77,10 +77,26 @@ function extractCurrTP(text) {
 // decide whether "no prev stated" means "no change" (default prev=curr)
 // or genuinely missing data.
 function tpChangeSignaled(text){
-  return /\b(?:raise|raised|raises|raising|cut|cuts|cutting|revis(?:e|ed|ing)|lower(?:ed|ing)?|hike(?:d)?|increase(?:d|s)?|decrease(?:d|s)?|moves?\s+(?:up|down)|moved\s+(?:to|up|down))\b[^.]{0,80}?(?:TP|target|PT|FV|fair\s+value|price\s+target|estimate)/i.test(text)
-      || /\(\s*(?:previously|from|earlier|prev(?:ious)?|old|was)\b/i.test(text)
-      || /\b(?:old|previous|earlier|prior)\s+(?:TP|target|PT|FV|fair\s+value|price\s+target)\b/i.test(text)
-      || /\b(?:upgrade(?:d)?|downgrade(?:d)?)\s+(?:to|from)\b/i.test(text);
+  // Must be a tight phrasing — verb adjacent to the TP keyword (≤20
+  // chars, not 80, otherwise unrelated mentions like "cutting LPG
+  // consumption ... estimate ..." trip the check).
+  const verb = "raise|raised|raises|raising|cut|cuts|cutting|revis(?:e|ed|ing)|lower(?:ed|ing)?|hike(?:d)?|increase(?:d|s)?|decrease(?:d|s)?|chang(?:e|ed|ing)";
+  const tp = "TP|PT|target\\s+price|target|FV|fair\\s+value|price\\s+target";
+  // verb → TP within 20 chars  (e.g. "raise our TP", "cut TP to 200")
+  if (new RegExp("\\b(?:" + verb + ")\\b[^A-Z\\d]{0,20}(?:our\\s+)?(?:" + tp + ")\\b", "i").test(text)) return true;
+  // TP → verb within 20 chars  (e.g. "TP raised to 1500", "FV revised")
+  if (new RegExp("\\b(?:" + tp + ")\\b[^A-Z\\d]{0,20}(?:" + verb + ")\\b", "i").test(text)) return true;
+  // Explicit parenthetical change tags — must include either an Rs
+  // prefix or a marker word that ties it to a price ("previously RsX"
+  // / "(from $110)" / "(Rs1400 earlier)"). Bare "(from XYZ)" doesn't count.
+  if (/\(\s*previously\s+(?:Rs\.?|INR|₹|\$|US\$|USD)\s*\d/i.test(text)) return true;
+  if (/\(\s*from\s+(?:Rs\.?|INR|₹|\$|US\$|USD)\s*\d/i.test(text)) return true;
+  if (/\(\s*(?:Rs\.?|INR|₹|\$|US\$|USD)\s*[\d,]+\s+(?:earlier|prev(?:ious(?:ly)?)?|old)\s*\)/i.test(text)) return true;
+  // Explicit "old/previous TP" labels
+  if (/\b(?:old|previous|earlier|prior)\s+(?:TP|PT|target|target\s+price|FV|fair\s+value|price\s+target)\b/i.test(text)) return true;
+  // Rating-change wording near an actual rating word
+  if (new RegExp("\\b(?:upgrade(?:d)?|downgrade(?:d)?)\\s+(?:to|from)\\s+(?:" + CALL_WORDS + ")\\b", "i").test(text)) return true;
+  return false;
 }
 function callChangeSignaled(text){
   return /\b(?:upgrade(?:d|s|\s+to)|downgrade(?:d|s|\s+to)|change(?:d|s)?\s+(?:our\s+)?(?:rating|recommendation|stance|call)\s+(?:to|from)|move\s+to|moved?\s+to)\b/i.test(text);
