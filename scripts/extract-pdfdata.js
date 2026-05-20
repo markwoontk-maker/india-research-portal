@@ -52,17 +52,29 @@ function extractCurrTP(text) {
 }
 
 function extractPrevTP(text, currTP) {
+  // Parenthetical "(previously Rs125)" — very common in JPMorgan etc.
+  let m = text.match(new RegExp("\\(\\s*previously\\s+" + RS + NUM + "\\s*\\)", "i"));
+  if (m) return cleanNum(m[1]);
+  // Parenthetical "(from Rs4,300)" / "(from INR325)" — Jefferies/JPMorgan
+  m = text.match(new RegExp("\\(\\s*from\\s+" + RS + NUM + "\\s*\\)", "i"));
+  if (m) return cleanNum(m[1]);
   // Jefferies "INR340 (INR325)" — number followed by parens with another number
-  let m = text.match(new RegExp(RS + NUM + "\\s*\\(\\s*(?:INR|Rs\\.?|₹)\\s*" + NUM + "\\s*\\)", "i"));
+  m = text.match(new RegExp(RS + NUM + "\\s*\\(\\s*(?:INR|Rs\\.?|₹)\\s*" + NUM + "\\s*\\)", "i"));
   if (m && m[1] !== m[2]) return cleanNum(m[2]);
   // "(earlier Rs1300)" / "(prev Rs 1300)" / "(old TP: Rs1300)" / "(was Rs1300)"
   m = text.match(new RegExp("\\(\\s*(?:earlier|prev(?:ious)?|old|was)\\b[^)]*?" + RS + NUM + "\\s*\\)", "i"));
   if (m) return cleanNum(m[1]);
   // "TP revised from Rs1300 to Rs1400" / "raise TP from 1300 to 1400"
-  m = text.match(new RegExp("(?:TP|target|PT)\\s*(?:raised|cut|revised)?\\s*from\\s*" + RS + NUM, "i"));
+  m = text.match(new RegExp("(?:TP|target|PT)\\s*(?:raised|cut|revised|moved|moved\\s+up|moved\\s+down)?\\s*from\\s*" + RS + NUM, "i"));
+  if (m) return cleanNum(m[1]);
+  // "raise/raising/raised our TP to Rs1500 (Rs1400 earlier)" / "(Rs1400 prev)"
+  m = text.match(new RegExp("\\(\\s*" + RS + NUM + "\\s+(?:earlier|prev(?:ious(?:ly)?)?|old)\\s*\\)", "i"));
   if (m) return cleanNum(m[1]);
   // "earlier TP of Rs1300" / "previous TP Rs1300"
   m = text.match(new RegExp("(?:earlier|previous|old)\\s+(?:TP|target|PT|FV|fair\\s+value)[^A-Za-z0-9]+" + RS + NUM, "i"));
+  if (m) return cleanNum(m[1]);
+  // "Old TP Rs1300 New TP Rs1400" / "Old PT 1300 | New PT 1400"
+  m = text.match(new RegExp("(?:Old|Prev(?:ious)?)\\s*(?:TP|PT|target|FV|fair\\s+value)\\s*:?\\s*" + RS + NUM, "i"));
   if (m) return cleanNum(m[1]);
   // "Remains/Unchanged/Maintained" near TP → prev TP equals current TP
   // (broker explicitly reiterating their prior target).
@@ -146,8 +158,11 @@ function listPdfs() {
   return out;
 }
 
+// Scan back ~45 days. Prior-report PDFs older than the 2-day digest
+// window need pdfdata too so the render can fall back to their curr TP
+// when the current report doesn't explicitly state a prev TP.
 const cutoff = ((d) => {
-  d.setDate(d.getDate() - 2);
+  d.setDate(d.getDate() - 45);
   const yy = String(d.getFullYear()).slice(-2);
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
@@ -156,7 +171,11 @@ const cutoff = ((d) => {
 
 function extractPage1(p) {
   try {
-    const buf = execFileSync(PDFTOTEXT, ["-layout", "-f", "1", "-l", "3", "--", p, "-"], { maxBuffer: 8 * 1024 * 1024 });
+    // Pages 1–5 — TP / call show on p1 in most layouts, but Estimate-
+    // Revision / Changes-to-Estimates tables (key for prev TP) often
+    // sit on p2–p4. 5 pages keeps us under any noisy back-matter and
+    // PDFs run fast.
+    const buf = execFileSync(PDFTOTEXT, ["-layout", "-f", "1", "-l", "5", "--", p, "-"], { maxBuffer: 8 * 1024 * 1024 });
     return buf.toString("utf8");
   } catch (e) {
     return "";

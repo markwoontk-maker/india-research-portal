@@ -1178,12 +1178,19 @@ function renderResearchNotes(groupBy){
         const c = (pd && pd.currCall)
           ? { label: pd.currCall, cls: CT_FROM_TAG[pd.currCall] || 'hold' }
           : callOf(ti);
-        // Previous TP / Call: PDF-body wins, else the prior-report-in-
-        // dataset lookup. Both are best-effort.
+        // Previous TP / Call lookup chain:
+        //   1. Current report's PDF body explicitly states a prev TP/call
+        //   2. Prior report's PDF body has a curr TP/call (same broker, same co)
+        //   3. Prior report's headline has a parseable TP / call
         const prior = findPrior(h,co,d);
-        const prevTP = (pd && pd.prevTP) || (prior ? tpOf(prior[3]) : null);
-        const prevC = (pd && pd.prevCall)
-          ? { label: pd.prevCall, cls: CT_FROM_TAG[pd.prevCall] || 'hold' }
+        const priorPd = (PD && prior) ? PD[pdKey(prior[0],prior[1],prior[2],prior[3])] : null;
+        const prevTP = (pd && pd.prevTP)
+          || (priorPd && priorPd.currTP)
+          || (prior ? tpOf(prior[3]) : null);
+        const prevCallStr = (pd && pd.prevCall)
+          || (priorPd && priorPd.currCall);
+        const prevC = prevCallStr
+          ? { label: prevCallStr, cls: CT_FROM_TAG[prevCallStr] || 'hold' }
           : (prior ? callOf(prior[3]) : null);
         // TP change arrow: green ▲ if currTP > prevTP, red ▼ if lower.
         const tpNum = s => { if(!s) return null; const m=String(s).replace(/[,₹\s]/g,'').match(/^([\d.]+)/); return m?parseFloat(m[1]):null; };
