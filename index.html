@@ -323,6 +323,17 @@
   .n-call.sell{background:var(--down-soft);color:var(--down)}
   .n-call.prev{opacity:.6;font-size:9.5px}
   .n-call.prev.empty{background:transparent;color:var(--text-mute);opacity:.45}
+  /* TP change arrow — green up if curr > prev, red down if curr < prev */
+  .tp-arrow{margin-left:4px;font-size:10px;vertical-align:baseline}
+  .tp-arrow.up{color:var(--up)}
+  .tp-arrow.down{color:var(--down)}
+  /* News-You-Need-to-Know category chip */
+  .news-cat{flex:none;font-family:'IBM Plex Mono';font-size:9.5px;font-weight:600;
+    padding:3px 7px;border-radius:4px;letter-spacing:.06em;white-space:nowrap;
+    text-transform:uppercase;align-self:center}
+  .news-cat.pol{background:var(--saffron-soft);color:var(--saffron)}
+  .news-cat.earn{background:var(--up-soft);color:var(--up)}
+  .news-cat.corp{background:rgba(120,140,180,.16);color:#9bb3d1}
   /* Fixed-width numeric cells; mono digits + right align so commas
      and thousands align across rows. */
   .n-tp{flex:none;width:72px;box-sizing:border-box;text-align:right;
@@ -383,8 +394,10 @@
     .n-co{max-width:120px;font-size:12.5px}
     .n-ti{font-size:12px}
     .n-call{width:56px;padding:3px 0;font-size:10px}
-    /* On mobile, keep only Curr TP + Curr Call; hide the prev cols */
-    .n-tp.prev,.n-call.prev,.n-header .n-tp.prev,.n-header .n-call-h:first-of-type{display:none}
+    /* On mobile, keep only Curr TP + Curr Call; hide the prev cols.
+       After the column reorder the "Prev" header is the LAST .n-call-h
+       (the first one is now "Curr"), so target :last-of-type. */
+    .n-tp.prev,.n-call.prev,.n-header .n-tp.prev,.n-header .n-call-h:last-of-type{display:none}
     .n-tp{width:60px;font-size:10.5px}
   }
 </style>
@@ -409,10 +422,6 @@
       <div class="nav-item" data-view="markets" data-title="Macro">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg>
         Macro
-      </div>
-      <div class="nav-item" data-view="companies" data-title="Companies">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-3"/><path d="M9 9h0M9 13h0M9 17h0"/></svg>
-        Companies
       </div>
       <div class="nav-item" data-view="screener" data-title="Screener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -589,27 +598,19 @@
 
     <div id="viewMarkets" hidden>
       <div class="card reveal">
-        <div class="card-h"><div><h3>India — Latest Political News</h3><p id="polSub">Market-relevant headlines · social/sports/entertainment excluded · click to read</p></div></div>
-        <ol id="polList" class="pol-list"><li class="pol-empty">Loading political news…</li></ol>
+        <div class="card-h"><div><h3>News You Need to Know</h3>
+          <p id="newsSub">Top 20/day · politics, earnings, M&amp;A and corporate events · India</p></div></div>
+        <ol id="newsList" class="pol-list"><li class="pol-empty">Loading news…</li></ol>
       </div>
       <div class="card reveal">
-        <div class="card-h"><div><h3>India Macro Snapshot</h3><p id="macroSub">Monthly indicators · last 10 months (latest at right)</p></div></div>
-        <div class="macro-wrap"><table class="macro-tbl" id="macroTbl"><tbody><tr><td class="macro-empty">Loading monthly macro data…</td></tr></tbody></table></div>
-      </div>
-    </div>
-
-    <div id="viewCompanies" hidden>
-      <div class="card reveal">
-        <div class="card-h"><div><h3>Earnings Updates — Today</h3><p>Latest Indian results coverage · up to 20 · click to read</p></div></div>
-        <ol id="earnList" class="pol-list"><li class="pol-empty">Loading earnings updates…</li></ol>
-      </div>
-      <div class="card reveal">
-        <div class="card-h"><div><h3>Corporate Events</h3><p>M&amp;A, board changes, fund-raising, restructuring · click to read</p></div></div>
-        <ol id="corpList" class="pol-list"><li class="pol-empty">Loading corporate events…</li></ol>
-      </div>
-      <div class="card reveal">
-        <div class="card-h"><div><h3>Earnings Calendar — Next 7 Business Days</h3><p id="calSub">Forthcoming results · BSE</p></div></div>
+        <div class="card-h"><div><h3>Earnings Calendar — Next 7 Business Days</h3>
+          <p id="calSub">Forthcoming results · BSE</p></div></div>
         <div id="earnCal" class="earn-cal"><div class="pol-empty">Loading earnings calendar…</div></div>
+      </div>
+      <div class="card reveal">
+        <div class="card-h"><div><h3>India Macro Snapshot</h3>
+          <p id="macroSub">Monthly indicators · last 10 months (latest at right)</p></div></div>
+        <div class="macro-wrap"><table class="macro-tbl" id="macroTbl"><tbody><tr><td class="macro-empty">Loading monthly macro data…</td></tr></tbody></table></div>
       </div>
     </div>
 
@@ -1124,9 +1125,9 @@ function renderResearchNotes(groupBy){
       `<span class="n-co">${secondHdr}</span>`+
       `<span class="n-ti">Headline</span>`+
       `<span class="n-tp">Curr TP</span>`+
+      `<span class="n-call-h">Curr</span>`+
       `<span class="n-tp prev">Prev TP</span>`+
       `<span class="n-call-h">Prev</span>`+
-      `<span class="n-call-h">Curr</span>`+
     `</div>`;
   // Lookup helpers for PDF-body data (extracted by pdftotext + regex).
   const PD = (typeof PDFDATA==='undefined' || !PDFDATA) ? null : PDFDATA;
@@ -1162,21 +1163,29 @@ function renderResearchNotes(groupBy){
         const prevC = (pd && pd.prevCall)
           ? { label: pd.prevCall, cls: CT_FROM_TAG[pd.prevCall] || 'hold' }
           : (prior ? callOf(prior[3]) : null);
+        // TP change arrow: green ▲ if currTP > prevTP, red ▼ if lower.
+        const tpNum = s => { if(!s) return null; const m=String(s).replace(/[,₹\s]/g,'').match(/^([\d.]+)/); return m?parseFloat(m[1]):null; };
+        const cN=tpNum(currTP), pN=tpNum(prevTP);
+        const arrow = (cN!=null && pN!=null && cN!==pN)
+          ? (cN>pN ? `<span class="tp-arrow up" title="Raised from ₹${esc(prevTP)}">▲</span>`
+                   : `<span class="tp-arrow down" title="Cut from ₹${esc(prevTP)}">▼</span>`)
+          : '';
         const tpCurrCell = currTP
-          ? `<span class="n-tp">₹${esc(currTP)}</span>`
+          ? `<span class="n-tp">₹${esc(currTP)}${arrow}</span>`
           : `<span class="n-tp muted">—</span>`;
         const tpPrevCell = prevTP
           ? `<span class="n-tp prev">₹${esc(prevTP)}</span>`
           : `<span class="n-tp prev muted">—</span>`;
+        const callCurrCell = `<span class="n-call ${c.cls}">${esc(c.label)}</span>`;
         const callPrevCell = prevC
           ? `<span class="n-call prev ${prevC.cls}">${esc(prevC.label)}</span>`
           : `<span class="n-call prev empty">—</span>`;
+        // Column order: date · secondary · headline · curr TP · curr call · prev TP · prev call
         return `<div class="note">`+
           `<span class="n-date">${fmtD(d)}</span>`+
           `<span class="n-co" title="${second}">${second}</span>`+
           `<a class="n-ti" href="${esc(href)}" target="_blank" rel="noopener" title="${esc(ti)}">${esc(ti)}</a>`+
-          tpCurrCell+tpPrevCell+callPrevCell+
-          `<span class="n-call ${c.cls}">${esc(c.label)}</span>`+
+          tpCurrCell+callCurrCell+tpPrevCell+callPrevCell+
         `</div>`;
       }).join('')}
     </div>`;
@@ -1989,20 +1998,60 @@ function marketRelevant(items){
     return MKT_RE.test(t);
   });
 }
-async function loadPolitics(){
-  const q='India (economy OR markets OR Sensex OR Nifty OR RBI OR SEBI OR budget OR GST OR tariff OR fiscal OR FII OR FDI OR rupee OR inflation OR "interest rate" OR reforms OR disinvestment OR "trade deal" OR policy) when:4d';
-  const el=document.getElementById('polList');
-  const done=items=>{ const f=marketRelevant(items);
-    if(f.length){ el.innerHTML=fmtPolItems(f); return true; } return false; };
-  try{
-    const r=await fetch('/api/news?q='+encodeURIComponent(q)+'&n=12',{cache:'no-store'});
-    if(r.ok){ const j=await r.json(); if(j&&j.items&&done(j.items)) return; }
-  }catch(e){}
-  try{
-    const items=await newsViaProxy(q);
-    if(items&&done(items)) return;
-  }catch(e){}
-  el.innerHTML='<li class="pol-empty">No market-relevant political news right now (free feed). Try again shortly.</li>';
+// "News You Need to Know" merges politics + earnings + M&A/corp into one
+// unified feed. Fires 3 parallel queries, filters each with its own regex,
+// dedupes by normalised title, sorts by pubDate desc, caps at 20.
+async function loadNews(){
+  const el=document.getElementById('newsList');
+  const queries=[
+    {cat:'POL', q:'India (economy OR markets OR Sensex OR Nifty OR RBI OR SEBI OR budget OR GST OR tariff OR fiscal OR FII OR FDI OR rupee OR inflation OR "interest rate" OR reforms OR disinvestment OR "trade deal" OR policy) when:1d'},
+    {cat:'EARN', q:'India (Q4 results OR Q1 results OR quarterly results OR earnings OR "net profit" OR "profit after tax" OR PAT OR revenue OR EBITDA) when:1d'},
+    {cat:'CORP', q:'India (merger OR acquisition OR "stake sale" OR demerger OR "open offer" OR buyback OR "board approves" OR resigns OR "steps down" OR "appointed as" OR "new CEO" OR "new MD" OR restructuring OR "joint venture" OR QIP OR "fund raise" OR "order win") when:1d'},
+  ];
+  async function pull(q){
+    try{
+      const r=await fetch('/api/news?q='+encodeURIComponent(q)+'&n=20',{cache:'no-store'});
+      if(r.ok){ const j=await r.json(); if(j&&Array.isArray(j.items)&&j.items.length) return j.items; }
+    }catch(e){}
+    try{ return (await newsViaProxy(q))||[]; }catch(e){ return []; }
+  }
+  const results=await Promise.all(queries.map(async ({cat,q})=>{
+    let items=await pull(q);
+    if(cat==='POL') items=marketRelevant(items);
+    else if(cat==='EARN') items=(items||[]).filter(it=>{const t=String(it.title||'');return EARN_RE.test(t)&&!EARN_EXCL.test(t)&&!SOC_RE.test(t);});
+    else items=(items||[]).filter(it=>{const t=String(it.title||'');return CORP_RE.test(t)&&!GOVT_RE.test(t)&&!SOC_RE.test(t);});
+    return items.map(it=>({...it,cat}));
+  }));
+  const all=[].concat(...results);
+  // Dedupe by normalised title; sort by pubDate desc; cap 20.
+  all.sort((a,b)=>(Date.parse(b.pubDate||0)||0)-(Date.parse(a.pubDate||0)||0));
+  const seen=new Set(); const merged=[];
+  for(const it of all){
+    const k=String(it.title||'').toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,60);
+    if(!k||seen.has(k)) continue;
+    seen.add(k); merged.push(it);
+    if(merged.length>=20) break;
+  }
+  if(!merged.length){
+    el.innerHTML='<li class="pol-empty">No news right now (free feed). Try again shortly.</li>';
+    return;
+  }
+  el.innerHTML=fmtNewsItems(merged);
+}
+function fmtNewsItems(items){
+  const LBL={POL:'POLITICS',EARN:'EARNINGS',CORP:'CORP'};
+  return items.map(it=>{
+    const title=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').replace(/</g,'&lt;');
+    const tm=it.pubDate?relTime(Date.parse(it.pubDate)/1000):'';
+    const src=[it.source,tm].filter(Boolean).join(' · ');
+    const cat=(it.cat||'POL').toLowerCase();
+    return `<li><div class="pol-item">
+      <div class="pol-top">
+        <span class="news-cat ${cat}">${LBL[it.cat]||'NEWS'}</span>
+        <a class="pol-h" href="${it.link||'#'}" target="_blank" rel="noopener" title="${title}">${title}</a>
+        <span class="src">${src}</span>
+      </div></div></li>`;
+  }).join('');
 }
 
 function fmtPeriod(p){
@@ -2403,7 +2452,10 @@ async function loadEarnCal(){
   document.getElementById('calSub').textContent=
     'Forthcoming results · live calendar needs the deployed backend (BSE)';
 }
-function loadCompanies(){ loadEarnNews(); loadCorpEvents(); loadEarnCal(); }
+// loadEarnNews / loadCorpEvents are no longer wired (the Companies tab
+// was removed); their feeds are now merged into loadNews() in the Macro
+// tab. Kept here only because the regexes (EARN_RE, EARN_EXCL, CORP_RE,
+// GOVT_RE) and the fmtEarnFeed helper are still referenced.
 
 /* ---------- Company NotebookLM notebooks ----------
    name = India Related Reports folder · url = NotebookLM notebook URL
@@ -2532,24 +2584,25 @@ function loadScreener(){
         vR=document.getElementById('viewResearch'),
         vM=document.getElementById('viewMarkets'),
         vW=document.getElementById('viewWatchlist'),
-        vCo=document.getElementById('viewCompanies'),
         vScr=document.getElementById('viewScreener'),
         vS=document.getElementById('viewSoon'),
         title=document.querySelector('.topbar .title');
-  let marketsLoaded=false, watchlistLoaded=false, companiesLoaded=false;
+  let marketsLoaded=false, watchlistLoaded=false;
   function showView(v,label){
     vO.hidden=v!=='overview';
     vR.hidden=v!=='research';
     vM.hidden=v!=='markets';
     vW.hidden=v!=='watchlist';
-    vCo.hidden=v!=='companies';
     vScr.hidden=v!=='screener';
     vS.hidden=v!=='soon';
     if(v==='soon') document.getElementById('soonTitle').textContent=label;
     if(v==='screener' && !screenerLoaded){ screenerLoaded=true; loadScreener(); }
-    if(v==='markets' && !marketsLoaded){ marketsLoaded=true; loadPolitics(); loadMacro(); }
+    if(v==='markets' && !marketsLoaded){
+      marketsLoaded=true;
+      // Macro tab now hosts: News You Need to Know, Earnings Calendar, Macro Snapshot
+      loadNews(); loadEarnCal(); loadMacro();
+    }
     if(v==='watchlist' && !watchlistLoaded){ watchlistLoaded=true; loadWatchlist(); }
-    if(v==='companies' && !companiesLoaded){ companiesLoaded=true; loadCompanies(); }
     title.textContent=label||'Market Overview';
     window.scrollTo(0,0);
   }
