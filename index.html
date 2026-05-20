@@ -757,7 +757,7 @@ let notes = [
   ["Jefferies","260518","Bajaj Finserv","Roadshow feedback, core growing well, new ventures near breakeven"],
   ["Jefferies","260518","Indian Financials","India BFSI Monthly — April 2026"],
   ["Jefferies","260518","Indian Financials","India Financial Daily, 18 May 2026"],
-  ["Jefferies","260518","Indian Pharmaceuticals","GxMeter, Zydus and Lupin hold steady, Cipla mixed"],
+  ["Jefferies","260518","Indian Pharmaceuticals","GxMeter, Zydus and Lupin holds steady, Cipla mixed"],
   ["Jefferies","260518","JSW Energy","Moving in the right direction"],
   ["Jefferies","260518","Power Grid","Capex-capitalisation guidance retained"],
   ["Jefferies","260518","Uno Minda","Growing well, but near-term margin pressure"],
@@ -1038,8 +1038,27 @@ function renderResearchNotes(groupBy){
   const NB={}; (typeof NOTEBOOKS==='undefined'?[]:NOTEBOOKS).forEach(n=>{
     if(n && n.url) NB[n.name]=n.url;
   });
-  function urlFor(folder, house, headline, explicit){
+  // Convert a Windows path to a file:// URL with each segment encoded.
+  function toFileUrl(p){
+    const fwd=String(p).replace(/\\/g,'/');
+    const parts=fwd.split('/');
+    // parts[0] is e.g. "C:" — keep as-is; encode the rest.
+    return 'file:///'+parts[0]+'/'+parts.slice(1).map(encodeURIComponent).join('/');
+  }
+  // Click → broker PDF where possible (PDFMAP entry or notesExt URL);
+  // NotebookLM workspace only as a last-resort fallback for local
+  // reports whose PDF isn't in PDFMAP.
+  function urlFor(folder, house, headline, date, explicit){
     if(explicit) return explicit;
+    const map=(typeof PDFMAP==='undefined'?null:PDFMAP);
+    if(map && date){
+      // Lenient key: strip everything except alphanumerics so headline
+      // ↔ filename punctuation differences (commas, em-dash vs hyphen,
+      // slash vs hyphen) don't break the match.
+      const norm=String(headline).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
+      const key=`${house}|${date}|${folder}|${norm}`;
+      if(map[key]) return toFileUrl(map[key]);
+    }
     if(NB[folder]){
       const u=NB[folder];
       return u + (u.includes('?')?'&':'?') + 'authuser=markworktk%40gmail.com';
@@ -1112,7 +1131,7 @@ function renderResearchNotes(groupBy){
       ${arr.map(r=>{
         const [h,d,co,ti,u]=r;
         const c=callOf(ti);
-        const href=urlFor(co,h,ti,u);
+        const href=urlFor(co,h,ti,d,u);
         const second=esc(secondCol(r));
         const currTP=tpOf(ti);
         const prior=findPrior(h,co,d);
@@ -1728,9 +1747,13 @@ function relTime(sec){
   return Math.round(d/86400)+'d ago';
 }
 async function fetchText(url){
+  // corsproxy.io now requires paid plan (403); allorigins.win is
+  // intermittently down (500/timeout). Fall back to text-only proxies
+  // that still serve free CORS, then to the original two as last-ditch.
   const ps=[
+    u=>'https://api.codetabs.com/v1/proxy/?quest='+encodeURIComponent(u),
+    u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),
     u=>'https://corsproxy.io/?url='+encodeURIComponent(u),
-    u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u)
   ];
   for(const p of ps){
     try{ const r=await fetch(p(url),{cache:'no-store'}); if(r.ok){ const t=await r.text(); if(t&&t.length>40) return t; } }
@@ -1782,9 +1805,35 @@ async function newsViaFunction(q){
   }catch(e){ return null; }
 }
 async function newsViaProxy(q){
+  const rss=`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-IN&gl=IN&ceid=IN:en`;
+  // Primary: rss2json.com — free, CORS-enabled, returns parsed JSON
+  // already (no XML parsing, no extra proxy hop). Replaces the dead
+  // corsproxy.io / allorigins fallbacks for the news fetch path.
   try{
-    const url=`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-IN&gl=IN&ceid=IN:en`;
-    const xml=await fetchText(url);
+    const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(rss),{cache:'no-store'});
+    if(r.ok){
+      const j=await r.json();
+      if(j && j.status==='ok' && Array.isArray(j.items)){
+        return j.items.map(it=>{
+          // rss2json puts the Google News publisher inside description
+          // ('<font color="..."><a href="...">Source</a></font>...'); pull it out.
+          let source='';
+          const mSrc=String(it.description||'').match(/>([^<>]+)<\/a><\/font>\s*$/);
+          if(mSrc) source=mSrc[1];
+          return {
+            title: it.title||'',
+            link: it.link||'#',
+            pubDate: it.pubDate||'',
+            source
+          };
+        });
+      }
+    }
+  }catch(e){}
+  // Fallback: original XML-via-proxy path (mostly dead but kept in
+  // case any of the proxies recover).
+  try{
+    const xml=await fetchText(rss);
     const doc=new DOMParser().parseFromString(xml,'text/xml');
     return [...doc.querySelectorAll('item')].map(it=>({
       title:(it.querySelector('title')||{}).textContent||'',
@@ -2351,6 +2400,17 @@ fetch('data/research.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(
   if(!j) return;
   if(Array.isArray(j.notes)) notes=j.notes;
   if(Array.isArray(j.ext)) notesExt=j.ext;
+  renderResearchNotes();
+}).catch(()=>{});
+// PDF path map: house|date|folder|normalized-title -> Windows full path.
+// Built by scripts\rebuild-pdfmap.ps1 from the India Related Reports
+// folder. When loaded, titles in the research card click straight to
+// the PDF via file:// (works when opening index.html locally; on the
+// hosted GitHub Pages site clicks fall back to the NotebookLM URL).
+window.PDFMAP=null;
+fetch('data/pdfmap.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
+  if(!j||typeof j!=='object') return;
+  window.PDFMAP=j;
   renderResearchNotes();
 }).catch(()=>{});
 let screenerLoaded=false;
