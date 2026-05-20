@@ -1255,6 +1255,26 @@ const datasets={
   '1M':series(66,1.4,0.05),
   '1Y':series(80,2.4,0.08),
 };
+// X-axis label formatting per range. 1D shows time (HH:mm), 1W shows
+// weekday + time, 1M shows day + month, 1Y shows month + 2-digit year.
+const IST={timeZone:'Asia/Kolkata'};
+function fmtAxisLabel(ts, range){
+  const d=new Date(ts);
+  if(range==='1D') return d.toLocaleTimeString('en-IN',{...IST,hour:'2-digit',minute:'2-digit',hour12:false});
+  if(range==='1W') return d.toLocaleDateString('en-IN',{...IST,weekday:'short'})+' '+
+                          d.toLocaleTimeString('en-IN',{...IST,hour:'2-digit',minute:'2-digit',hour12:false});
+  if(range==='1M') return d.toLocaleDateString('en-IN',{...IST,day:'numeric',month:'short'});
+  if(range==='1Y') return d.toLocaleDateString('en-IN',{...IST,month:'short',year:'2-digit'});
+  return d.toLocaleString('en-IN',IST);
+}
+// Generate synthetic IST timestamps for the sample-fallback chart so
+// the axis still reads as a time/date even when no live data loads.
+function sampleTimes(range, n){
+  const now=Date.now();
+  const step={'1D':5*60*1000,'1W':30*60*1000,'1M':86400000,'1Y':7*86400000}[range]||60000;
+  const out=[]; for(let i=n-1;i>=0;i--) out.push(now-i*step); return out;
+}
+let currentRange='1D';
 const ctx=document.getElementById('mainChart');
 const grad=ctx.getContext('2d').createLinearGradient(0,0,0,300);
 grad.addColorStop(0,'rgba(233,162,59,.32)');
@@ -1262,7 +1282,7 @@ grad.addColorStop(1,'rgba(233,162,59,0)');
 
 const chart=new Chart(ctx,{
   type:'line',
-  data:{labels:datasets['1D'].map((_,i)=>i),
+  data:{labels:sampleTimes('1D',datasets['1D'].length).map(t=>fmtAxisLabel(t,'1D')),
     datasets:[{data:datasets['1D'],borderColor:'#e9a23b',borderWidth:1.5,
       fill:true,backgroundColor:grad,tension:.18,pointRadius:0,pointHoverRadius:5,
       pointHoverBackgroundColor:'#e9a23b',borderJoinStyle:'round'}]},
@@ -1271,9 +1291,12 @@ const chart=new Chart(ctx,{
     plugins:{legend:{display:false},
       tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,
         titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:11,displayColors:false,
-        callbacks:{title:()=>'',label:c=>'  '+c.parsed.y.toFixed(2)}}},
+        // Title shows the formatted timestamp; body shows the value.
+        callbacks:{title:items=>items[0]&&items[0].label||'',label:c=>'  '+c.parsed.y.toFixed(2)}}},
     scales:{
-      x:{display:false},
+      x:{display:true,grid:{display:false},border:{display:false},
+        ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
+          maxRotation:0,autoSkip:true,maxTicksLimit:6}},
       y:{position:'right',grid:{color:'#1f2530'},border:{display:false},
         ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10}}}},
     interaction:{intersect:false,mode:'index'}}
@@ -1282,8 +1305,9 @@ document.querySelectorAll('#rangeSeg button').forEach(b=>{
   b.onclick=()=>{
     document.querySelectorAll('#rangeSeg button').forEach(x=>x.classList.remove('on'));
     b.classList.add('on');
-    const d=datasets[b.dataset.r];
-    chart.data.labels=d.map((_,i)=>i);
+    currentRange=b.dataset.r;
+    const d=datasets[currentRange];
+    chart.data.labels=sampleTimes(currentRange,d.length).map(t=>fmtAxisLabel(t,currentRange));
     chart.data.datasets[0].data=d;
     chart.update();
   };
@@ -1400,27 +1424,38 @@ async function loadQuotes(){
 const RANGE={ '1D':['1d','5m'],'1W':['5d','30m'],'1M':['1mo','1d'],'1Y':['1y','1wk'] };
 const chartCache={};
 async function liveChart(r){
-  if(chartCache[r]){ applyChart(chartCache[r]); return; }
+  if(chartCache[r]){ applyChart(chartCache[r],r); return; }
   const [rng,iv]=RANGE[r];
   const j=await getJSON(`https://query1.finance.yahoo.com/v8/finance/chart/%5ECRSLDX?range=${rng}&interval=${iv}`);
   const res=j.chart&&j.chart.result&&j.chart.result[0];
   const cl=res&&res.indicators&&res.indicators.quote[0].close;
+  const ts=res&&res.timestamp; // unix seconds
   if(!cl) throw new Error('no chart');
-  const data=cl.filter(x=>x!=null);
-  chartCache[r]=data; applyChart(data);
+  // Keep close + timestamp aligned through the null-filter.
+  const pairs=cl.map((v,i)=>({v,t:ts?ts[i]*1000:null})).filter(p=>p.v!=null);
+  const payload={data:pairs.map(p=>p.v), times:pairs.map(p=>p.t)};
+  chartCache[r]=payload;
+  applyChart(payload,r);
 }
-function applyChart(data){
-  chart.data.labels=data.map((_,i)=>i);
-  chart.data.datasets[0].data=data;
+function applyChart(payload,r){
+  currentRange=r;
+  chart.data.labels=payload.times.map(t=>t?fmtAxisLabel(t,r):'');
+  chart.data.datasets[0].data=payload.data;
   chart.update();
 }
 document.querySelectorAll('#rangeSeg button').forEach(b=>{
   b.onclick=async()=>{
     document.querySelectorAll('#rangeSeg button').forEach(x=>x.classList.remove('on'));
     b.classList.add('on');
-    try{ await liveChart(b.dataset.r); }
-    catch(e){ const d=datasets[b.dataset.r]; chart.data.labels=d.map((_,i)=>i);
-      chart.data.datasets[0].data=d; chart.update(); }
+    const r=b.dataset.r;
+    try{ await liveChart(r); }
+    catch(e){
+      const d=datasets[r];
+      currentRange=r;
+      chart.data.labels=sampleTimes(r,d.length).map(t=>fmtAxisLabel(t,r));
+      chart.data.datasets[0].data=d;
+      chart.update();
+    }
   };
 });
 
