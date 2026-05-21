@@ -3384,10 +3384,8 @@ function showMarkerPop(markerEl, name, p){
   const d = new Date(p.t);
   const IST = {timeZone:'Asia/Kolkata'};
   const dateStr = d.toLocaleDateString('en-IN',{...IST,day:'numeric',month:'short',year:'numeric'});
-  const ymd = d.toISOString().slice(0,10);
   const cls = p.pct >= 0 ? 'up' : 'down';
   const sign = p.pct >= 0 ? '▲' : '▼';
-  const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(name+' news '+dateStr)}&tbm=nws`;
   pop.innerHTML = `<div class="cmp-date">${dateStr}</div>`+
     `<div class="cmp-move ${cls}">${sign} ${Math.abs(p.pct).toFixed(2)}% (single-day)</div>`+
     `<div class="cmp-news cmp-load">Looking for news…</div>`;
@@ -3412,16 +3410,15 @@ function showMarkerPop(markerEl, name, p){
     if(pop.dataset.markerT != p.t) return;
     const newsEl = pop.querySelector('.cmp-news');
     if(!newsEl) return;
+    newsEl.classList.remove('cmp-load');
     if(items && items.length){
-      newsEl.classList.remove('cmp-load');
-      newsEl.innerHTML = items.map(it => {
-        const t = String(it.title||'').replace(/\s+-\s+[^-]+$/,'').replace(/</g,'&lt;');
-        const src = it.source ? ' · '+it.source : '';
-        return `<div style="margin-bottom:5px"><a href="${it.link||'#'}" target="_blank" rel="noopener">${t}</a><span style="color:var(--text-mute);font-size:10.5px">${src}</span></div>`;
-      }).join('') + `<div style="margin-top:6px"><a href="${searchUrl}" target="_blank" rel="noopener">More on Google News →</a></div>`;
+      // One clean sentence — strip publisher suffix and entity-decode.
+      let s = String(items[0].title||'').replace(/\s+-\s+[^-]+$/,'').trim()
+        .replace(/&amp;/g,'&').replace(/&#39;|&apos;/g,"'").replace(/&quot;/g,'"');
+      if(s && !/[.!?]$/.test(s)) s += '.';
+      newsEl.textContent = s;
     } else {
-      newsEl.classList.remove('cmp-load');
-      newsEl.innerHTML = `Older than the live-news window — <a href="${searchUrl}" target="_blank" rel="noopener">search Google News for this date →</a>`;
+      newsEl.textContent = 'No specific news identified for this date.';
     }
   });
 }
