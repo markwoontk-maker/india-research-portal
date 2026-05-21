@@ -22,6 +22,26 @@
 - Title is clickable → opens the company's NotebookLM workspace (local reports) or the source article (external calls) in a new tab; `authuser=markworktk@gmail.com` appended so the right Google account is selected.
 - Call chip: extracts the broker's explicit rating (Buy/Sell/Hold/OW/UW/EW/Neutral/Add/Reduce/OP/UP) from the headline when stated, otherwise falls back to a sentiment-derived label (Positive/Negative/Neutral). Date is plain, only the call is colour-coded.
 
+## Broker abbreviations (use these in citations everywhere)
+Inline citation format: `(<Abbrev>, YYYY/MM/DD)`. Used in `data/companies.json` descriptions and any other research-derived prose.
+
+| Abbrev | Broker |
+|---|---|
+| Bern | Bernstein |
+| CLSA | CLSA |
+| Jeff | Jefferies |
+| JP | JPMorgan |
+| Kotak | Kotak Mahindra |
+| Nomura | Nomura |
+| AR | Anand Rathi |
+| Axis | Axis Direct |
+| DC | Deven Choksey |
+| Geojit | Geojit BNP Paribas |
+| ICICI | ICICI Direct |
+| IDBI | IDBI Capital |
+| KS | Khambatta Securities |
+| PL | Prabhudas Lilladhar |
+
 ## Research refresher routine
 - **Trigger:** `trig_018gy39x8QiAfrp9UxSPzPyA` — "India Research Notes Refresher"
 - **URL:** https://claude.ai/code/routines/trig_018gy39x8QiAfrp9UxSPzPyA
