@@ -2517,12 +2517,28 @@ async function loadNews(){
     {cat:'EARN', q:'India (Q4 results OR Q1 results OR quarterly results OR earnings OR "net profit" OR "profit after tax" OR PAT OR revenue OR EBITDA) when:1d'},
     {cat:'CORP', q:'India (merger OR acquisition OR "stake sale" OR demerger OR "open offer" OR buyback OR "board approves" OR resigns OR "steps down" OR "appointed as" OR "new CEO" OR "new MD" OR restructuring OR "joint venture" OR QIP OR "fund raise" OR "order win") when:1d'},
   ];
-  // Reject opinion / preview / listicle / speculation — articles
-  // that aren't anchored in a fact. Note: trailing clickbait like
-  // "; should you buy?" is NOT in here — the summariser strips that
-  // and we keep the factual lead. Rejection here is for headlines
-  // whose ENTIRE point is speculation / listicle / live-blog.
-  const NEWS_EXCL=/\b(?:live updates?|results live|what to (?:expect|know)|stocks? to watch|buzzing stocks|in focus|ahead of (?:q[1-4]|results|earnings|the budget|monetary policy|rbi)|\d+ (?:things|reasons|stocks?|key|smart|top|best) (?:to|you|that|things)|key (?:takeaways|highlights|things to know)|all you need to know|here'?s (?:why|how|what|where)\b|will (?:rbi|the|govt|fed|markets?|inflation)\b|stocks to buy|set to (?:rise|fall|hike|cut)|why (?:is|are|did)\b|(?:might|may|could) (?:rise|fall|cut|hike|gain|drop)|\bpreview\b)/i;
+  // Reject anything that isn't a clear, present-tense FACT.
+  // Filters in three layers (any one rejects):
+  //   - NEWS_EXCL: structural noise (listicle / preview / live-blog /
+  //                speculation / forecast / explainer / report)
+  //   - OPINION_NAMED_RE: "<Proper Name> says|flags|warns|..." pundit
+  //                      commentary (case-sensitive on the name)
+  //   - QUESTION_RE: any question-form headline
+  // Trailing clickbait ("; should you buy?") is still NOT rejected —
+  // summariseNews strips it and we keep the factual lead.
+  const NEWS_EXCL=/\b(?:live updates?|results live|what to (?:expect|know)|stocks? to watch|buzzing stocks|in focus|ahead of (?:q[1-4]|results|earnings|the budget|monetary policy|rbi)|\d+ (?:things|reasons|stocks?|key|smart|top|best) (?:to|you|that|things)|key (?:takeaways|highlights|things to know)|all you need to know|here'?s (?:why|how|what|where)\b|will (?:rbi|the|govt|fed|markets?|inflation)\b|stocks to buy|set to (?:rise|fall|hike|cut)|why (?:is|are|did)\b|(?:might|may|could) (?:rise|fall|cut|hike|gain|drop)|\bpreview\b|\bexplained\b|\bexplainer\b|\bbreakdown\b|what changed|why it matters|\bdeep dive\b|\bby 20\d\d\b|needs? to\s|likely to\s|expected to\s|forecast(?:s|ing|ed)?\b|\bprojected\b|\bprojection\b|aims? to\s|targets? to\s|\bestimates? to\b|to (?:reach|boost|raise|grow|hit|cross|touch|achieve|become|spend|invest)\s|should (?:hit|reach|raise|boost|grow|cross|achieve)\s|\b(?:report|study|survey|paper)\s*:|\boutlook\b|seen at\b)/i;
+  // Case-sensitive named-pundit detection. Two patterns:
+  //   1. Two+ capitalised words + opinion verb  → "Gita Gopinath says"
+  //   2. Single capitalised word + opinion verb → "Krugman expects"
+  //      with a stop-list for institutions ("RBI", "Govt", "Cabinet"…)
+  //      so "RBI says repo rate unchanged" still passes.
+  const OPINION_VERB = '(?:says?|said|flags?|flagged|warns?|warned|argues?|argued|notes?|noted|believes?|opines?|cautions?|cautioned|told|tells|sees?|saw|reckons?|reckoned|comments?|commented|highlights?|highlighted|fears?|feared|expects?|predicts?|predicted)';
+  const OPINION_NAMED_RE = new RegExp('\\b[A-Z][a-z]+\\s+[A-Z][a-z]+(?:\\s+[A-Z][a-z]+)?\\s+'+OPINION_VERB+'\\b');
+  const INSTITUTION = 'RBI|SEBI|Govt|Government|PMO|Cabinet|Ministry|Court|Supreme|High|FED|US|EU|UK|UN|IMF|OECD|World|Bank|Inc|Ltd|India|Indian|National|Modi|Centre|State|Parliament|Lok|Rajya|White|House|Trump|President|Prime|Minister|Mr|Mrs|Ms|Dr|CM';
+  const OPINION_SINGLE_RE = new RegExp('\\b(?!(?:'+INSTITUTION+')\\b)[A-Z][a-z]+\\s+'+OPINION_VERB+'\\b');
+  // Only reject titles that START with a question word (a trailing "?"
+  // on otherwise-factual leads is left to summariseNews to strip).
+  const QUESTION_RE=/^\s*(?:will|why|how|what|does|should|can|could|would|are|is|do|did)\s+/i;
   async function pull(q){
     try{
       const r=await fetch('/api/news?q='+encodeURIComponent(q)+'&n=20',{cache:'no-store'});
@@ -2535,9 +2551,16 @@ async function loadNews(){
     if(cat==='POL' || cat==='ECON') items=marketRelevant(items);
     else if(cat==='EARN') items=(items||[]).filter(it=>{const t=String(it.title||'');return EARN_RE.test(t)&&!EARN_EXCL.test(t)&&!SOC_RE.test(t);});
     else items=(items||[]).filter(it=>{const t=String(it.title||'');return CORP_RE.test(t)&&!GOVT_RE.test(t)&&!SOC_RE.test(t);});
-    // Universal clickbait / opinion / preview filter — keeps the feed
-    // tied to facts.
-    items=(items||[]).filter(it=>!NEWS_EXCL.test(String(it.title||'')));
+    // Universal fact-only filter — drop listicle/preview structure,
+    // named-person punditry (multi-word or single name + opinion verb),
+    // and any question-form headline.
+    items=(items||[]).filter(it=>{
+      const t=String(it.title||'');
+      if(NEWS_EXCL.test(t)) return false;
+      if(QUESTION_RE.test(t)) return false;
+      if(OPINION_NAMED_RE.test(t) || OPINION_SINGLE_RE.test(t)) return false;
+      return true;
+    });
     return items.map(it=>({...it,cat}));
   }));
   const all=[].concat(...results);
@@ -2614,12 +2637,16 @@ function fmtNewsItems(items){
   return items.map(it=>{
     const titleRaw=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').trim();
     // Pull the company: prefer NAMES-mapped ticker (full company
-    // name), else the lead-company heuristic. For macro / political
-    // headlines without a single company anchor → no chip.
-    const tk=pickTicker(titleRaw);
+    // name), else the lead-company heuristic. For macro / political /
+    // economic headlines without a single company anchor → no chip.
+    // ECON rows skip the company extraction entirely — economic data
+    // isn't a company event even when an OMC name happens to appear.
     let co='';
-    if(tk) co=NAMES[tk]||tk;
-    else { const lead=leadCompany(titleRaw); if(lead && lead.length>=3 && lead.split(' ').length<=5) co=lead; }
+    if(it.cat!=='ECON'){
+      const tk=pickTicker(titleRaw);
+      if(tk) co=NAMES[tk]||tk;
+      else { const lead=leadCompany(titleRaw); if(lead && lead.length>=3 && lead.split(' ').length<=5) co=lead; }
+    }
     // Sentiment from the headline — drives the chip colour.
     const sent=co?sentiment(titleRaw):'flat';
     const sentCls=sent==='up'?'up':sent==='down'?'down':'flat';
