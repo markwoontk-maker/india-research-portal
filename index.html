@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>India Research Portal — India Equity Desk</title>
+<title>India Research Portal â€” India Equity Desk</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -341,7 +341,7 @@
   .pill.d{background:var(--down-soft);color:var(--down)}
   .spark{width:74px;height:26px}
 
-  /* research feed — one row per report */
+  /* research feed â€” one row per report */
   .note{display:flex;align-items:baseline;gap:12px;padding:5px 0;
     border-bottom:1px solid var(--line-soft);white-space:nowrap;overflow:hidden}
   .note:last-child{border:none;padding-bottom:0}
@@ -365,7 +365,7 @@
   .n-call.sell{background:var(--down-soft);color:var(--down)}
   .n-call.prev{opacity:.6;font-size:9.5px}
   .n-call.prev.empty{background:transparent;color:var(--text-mute);opacity:.45}
-  /* TP change arrow — green up if curr > prev, red down if curr < prev */
+  /* TP change arrow â€” green up if curr > prev, red down if curr < prev */
   .tp-arrow{margin-left:4px;font-size:10px;vertical-align:baseline}
   .tp-arrow.up{color:var(--up)}
   .tp-arrow.down{color:var(--down)}
@@ -377,14 +377,14 @@
   .news-cat.earn{background:var(--up-soft);color:var(--up)}
   .news-cat.corp{background:rgba(120,140,180,.16);color:#9bb3d1}
   .news-cat.econ{background:rgba(120,180,220,.18);color:#7dc6e6}
-  /* Per-row company tag — green / red / neutral by sentiment */
+  /* Per-row company tag â€” green / red / neutral by sentiment */
   .news-co{flex:none;font-family:'IBM Plex Mono';font-size:11px;font-weight:600;
     padding:3px 8px;border-radius:4px;letter-spacing:.02em;white-space:nowrap;
     max-width:170px;overflow:hidden;text-overflow:ellipsis;align-self:center}
   .news-co.up{background:var(--up-soft);color:var(--up)}
   .news-co.down{background:var(--down-soft);color:var(--down)}
   .news-co.flat{background:rgba(255,255,255,.07);color:var(--text)}
-  /* Screener: paired (label · dropdown · open-button) rows */
+  /* Screener: paired (label Â· dropdown Â· open-button) rows */
   .scr-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px}
   .scr-row + .scr-row{margin-top:12px}
   .scr-lbl{flex:none;width:72px;font-family:'IBM Plex Mono';font-size:11px;
@@ -419,12 +419,12 @@
   .cm-marker.up{border-color:var(--up);background:rgba(46,200,128,.4)}
   .cm-marker.down{border-color:var(--down);background:rgba(232,93,93,.4)}
   .cm-marker:hover{transform:translate(-50%,-50%) scale(1.5);background:#fff}
-  /* Vertical line from chart top down to the marker — hover only */
+  /* Vertical line from chart top down to the marker â€” hover only */
   .cm-line{position:absolute;left:50%;bottom:50%;width:1px;height:0;
     background:rgba(255,255,255,.55);transform:translateX(-50%);
     opacity:0;transition:opacity .15s;pointer-events:none}
   .cm-marker:hover .cm-line{opacity:1}
-  /* Popup with date / move / news — hover only */
+  /* Popup with date / move / news â€” hover only */
   .cm-pop{position:absolute;z-index:50;display:none;
     background:var(--panel);color:var(--text);
     border:1px solid var(--line);border-radius:8px;
@@ -489,7 +489,7 @@
 
   @media(max-width:1150px){.kpis{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}}
   /* On mobile/tablet, the sidebar becomes a horizontal scrollable tab
-     strip at the top — the desktop column-layout sidebar is invisible
+     strip at the top â€” the desktop column-layout sidebar is invisible
      under 840px otherwise. Same .nav-item DOM + click handlers work. */
   @media(max-width:840px){
     .layout{grid-template-columns:1fr;border:none}
@@ -561,7 +561,7 @@
     <div class="side-foot">
       <b>India Equity Desk</b><br/>
       Nifty 500 coverage universe<br/>
-      Data delayed 15 min · Indicative
+      Data delayed 15 min Â· Indicative
     </div>
   </aside>
 
@@ -570,13 +570,13 @@
     <div class="topbar">
       <div>
         <div class="title">Market Overview</div>
-        <div class="sub" id="dateline">—</div>
+        <div class="sub" id="dateline">â€”</div>
       </div>
       <div class="search">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input placeholder="Search RELIANCE, HDFCBANK, sectors…" />
+        <input placeholder="Search RELIANCE, HDFCBANK, sectorsâ€¦" />
       </div>
-      <div class="session" id="dataStatus"><span class="dot"></span> Connecting…</div>
+      <div class="session" id="dataStatus"><span class="dot"></span> Connectingâ€¦</div>
     </div>
 
     <!-- Ticker -->
@@ -593,37 +593,37 @@
         <div class="kpi reveal" style="animation-delay:.05s">
           <div class="lbl">Nifty 500</div>
           <div class="big mono" id="k500">23,148.65</div>
-          <div class="chg up" id="k500c">▲ 184.20 &nbsp;(+0.80%)</div>
-          <div class="meta" id="k500m">Day range 22,930 – 23,201</div>
+          <div class="chg up" id="k500c">â–² 184.20 &nbsp;(+0.80%)</div>
+          <div class="meta" id="k500m">Day range 22,930 â€“ 23,201</div>
         </div>
         <div class="kpi reveal" style="animation-delay:.12s">
-          <div class="lbl">Market Breadth <em style="font-style:normal;color:var(--text-mute);font-size:9px;letter-spacing:.1em">· SAMPLE</em></div>
+          <div class="lbl">Market Breadth <em style="font-style:normal;color:var(--text-mute);font-size:9px;letter-spacing:.1em">Â· SAMPLE</em></div>
           <div class="big mono">312 / 169</div>
-          <div class="chg up">Advances lead · 1.85×</div>
-          <div class="meta">No free live feed · indicative</div>
+          <div class="chg up">Advances lead Â· 1.85Ã—</div>
+          <div class="meta">No free live feed Â· indicative</div>
         </div>
         <div class="kpi reveal" style="animation-delay:.19s">
-          <div class="lbl">FII Net Flow <em style="font-style:normal;color:var(--text-mute);font-size:9px;letter-spacing:.1em">· SAMPLE</em></div>
-          <div class="big mono">+₹2,418 Cr</div>
-          <div class="chg up">▲ Buyers in cash</div>
-          <div class="meta">No free live feed · indicative</div>
+          <div class="lbl">FII Net Flow <em style="font-style:normal;color:var(--text-mute);font-size:9px;letter-spacing:.1em">Â· SAMPLE</em></div>
+          <div class="big mono">+â‚¹2,418 Cr</div>
+          <div class="chg up">â–² Buyers in cash</div>
+          <div class="meta">No free live feed Â· indicative</div>
         </div>
         <div class="kpi reveal" style="animation-delay:.26s">
           <div class="lbl">India VIX</div>
           <div class="big mono" id="kvix">13.24</div>
-          <div class="chg down" id="kvixc">▼ 0.68 &nbsp;(−4.89%)</div>
+          <div class="chg down" id="kvixc">â–¼ 0.68 &nbsp;(âˆ’4.89%)</div>
           <div class="meta">Volatility gauge</div>
         </div>
       </section>
 
-      <!-- Single vertical column · separate boxes -->
+      <!-- Single vertical column Â· separate boxes -->
 
-      <!-- 1 · Index performance -->
+      <!-- 1 Â· Index performance -->
       <div class="card reveal" style="animation-delay:.16s">
         <div class="card-h">
           <div>
-            <h3 id="mainChartTitle">Nifty 500 — Index Performance</h3>
-            <p id="mainChartSub">Yahoo Finance · ^CRSLDX · daily close</p>
+            <h3 id="mainChartTitle">Nifty 500 â€” Index Performance</h3>
+            <p id="mainChartSub">Yahoo Finance Â· ^CRSLDX Â· daily close</p>
           </div>
           <div class="seg" id="rangeSeg">
             <button data-r="1D" class="on">1D</button>
@@ -639,37 +639,37 @@
         <div class="chart-box"><canvas id="mainChart"></canvas></div>
       </div>
 
-      <!-- 2 · Desk Snapshot — tick checkboxes to overlay indices on
+      <!-- 2 Â· Desk Snapshot â€” tick checkboxes to overlay indices on
            the chart above with normalized % returns (0% baseline). -->
       <div class="card reveal" style="animation-delay:.2s">
-        <div class="card-h"><div><h3>Desk Snapshot</h3><p>Tick one or more rows · multi-select overlays returns (0% baseline)</p></div></div>
+        <div class="card-h"><div><h3>Desk Snapshot</h3><p>Tick one or more rows Â· multi-select overlays returns (0% baseline)</p></div></div>
         <label class="stat-row clickable" data-sym="^CRSLDX" data-label="Nifty 500">
           <input type="checkbox" class="stat-cb" data-sym="^CRSLDX" checked>
           <span class="stat-sw" style="--sw:#e9a23b"></span>
-          <span class="stat-nm">Nifty 500</span><b class="up" id="sN500">—</b></label>
+          <span class="stat-nm">Nifty 500</span><b class="up" id="sN500">â€”</b></label>
         <label class="stat-row clickable" data-sym="^NSEI" data-label="Nifty 50">
           <input type="checkbox" class="stat-cb" data-sym="^NSEI">
           <span class="stat-sw" style="--sw:#3fc78a"></span>
-          <span class="stat-nm">Nifty 50</span><b class="up" id="sN50">—</b></label>
+          <span class="stat-nm">Nifty 50</span><b class="up" id="sN50">â€”</b></label>
         <label class="stat-row clickable" data-sym="NIFTY_MIDCAP_100.NS" data-label="Nifty Midcap 100">
           <input type="checkbox" class="stat-cb" data-sym="NIFTY_MIDCAP_100.NS">
           <span class="stat-sw" style="--sw:#5b9eff"></span>
-          <span class="stat-nm">Nifty Midcap 100</span><b class="up" id="sMid">—</b></label>
+          <span class="stat-nm">Nifty Midcap 100</span><b class="up" id="sMid">â€”</b></label>
         <label class="stat-row clickable" data-sym="SMALLCAP.NS" data-label="Nifty Small Cap">
           <input type="checkbox" class="stat-cb" data-sym="SMALLCAP.NS">
           <span class="stat-sw" style="--sw:#c478e6"></span>
-          <span class="stat-nm">Nifty Small Cap</span><b class="up" id="sSml">—</b></label>
+          <span class="stat-nm">Nifty Small Cap</span><b class="up" id="sSml">â€”</b></label>
         <label class="stat-row clickable" data-sym="INR=X" data-label="USD / INR">
           <input type="checkbox" class="stat-cb" data-sym="INR=X">
           <span class="stat-sw" style="--sw:#6db4b4"></span>
-          <span class="stat-nm">USD / INR</span><b class="down" id="sFx">—</b></label>
+          <span class="stat-nm">USD / INR</span><b class="down" id="sFx">â€”</b></label>
         <div class="stat-row" style="padding-left:6px"><span class="stat-nm">India 10Y G-Sec <em style="font-style:normal;color:var(--text-mute);font-size:9px">no Yahoo feed</em></span><b id="sBond">6.78%</b></div>
       </div>
 
-      <!-- 3 · Sector Performance -->
+      <!-- 3 Â· Sector Performance -->
       <div class="card reveal" style="animation-delay:.22s">
         <div class="card-h">
-          <div><h3>Sector Performance</h3><p id="secCaption">NSE sectoral indices · 1D return</p></div>
+          <div><h3>Sector Performance</h3><p id="secCaption">NSE sectoral indices Â· 1D return</p></div>
           <div class="sec-ctrls">
             <select id="tfSel" class="dd" aria-label="Timeframe">
               <option>1D</option><option>1W</option><option>1M</option>
@@ -679,7 +679,7 @@
         </div>
         <div id="sectors"></div>
         <div id="secDetail">
-          <button id="secBack" class="back" type="button">‹ All sectors</button>
+          <button id="secBack" class="back" type="button">â€¹ All sectors</button>
           <div class="sd-chart"><canvas id="secChart"></canvas></div>
           <div class="sd-lists">
             <div><div class="sd-h up">Top 5</div><div id="secTop"></div></div>
@@ -688,10 +688,10 @@
         </div>
       </div>
 
-      <!-- 4 · Top 20 & Bottom 20 (Nifty 500) -->
+      <!-- 4 Â· Top 20 & Bottom 20 (Nifty 500) -->
       <div class="card reveal" style="animation-delay:.24s">
         <div class="card-h">
-          <div><h3>Top 20 &amp; Bottom 20</h3><p id="mvSub">Nifty 500 constituents · today's % move</p></div>
+          <div><h3>Top 20 &amp; Bottom 20</h3><p id="mvSub">Nifty 500 constituents Â· today's % move</p></div>
           <div class="sec-ctrls">
             <select id="mvTf" class="dd" aria-label="Movers timeframe">
               <option value="1D">1D (Today)</option>
@@ -703,7 +703,7 @@
             </select>
           </div>
         </div>
-        <div class="mv-note" id="mvSummary">Loading Nifty 500 movers…</div>
+        <div class="mv-note" id="mvSummary">Loading Nifty 500 moversâ€¦</div>
         <div class="mv-cols">
           <div>
             <div class="sd-h up">Top 20 Gainers</div>
@@ -722,11 +722,11 @@
         </div>
       </div>
 
-      <!-- 5 · All-Time High & 52-Week High Watch (Nifty 500) -->
+      <!-- 5 Â· All-Time High & 52-Week High Watch (Nifty 500) -->
       <div class="card reveal" style="animation-delay:.28s">
         <div class="card-h">
           <div><h3>All-Time High &amp; 52-Week High Watch</h3>
-          <p id="hiSub">Nifty 500 constituents · Dhan (ATH) · Groww (52WH)</p></div>
+          <p id="hiSub">Nifty 500 constituents Â· Dhan (ATH) Â· Groww (52WH)</p></div>
         </div>
         <div class="hi-cols">
           <div>
@@ -754,7 +754,7 @@
     <div id="viewResearch" hidden>
       <div class="card reveal">
         <div class="card-h">
-          <div><h3>Latest Research Notes</h3><p id="notesSub">Broker reports — last 2 days · synced to NotebookLM + Trendlyne</p></div>
+          <div><h3>Latest Research Notes</h3><p id="notesSub">Broker reports â€” last 2 days Â· synced to NotebookLM + Trendlyne</p></div>
           <select id="notesGroup" class="notes-group" aria-label="Group reports by">
             <option value="house">Group by research house</option>
             <option value="company">Group by company</option>
@@ -768,36 +768,36 @@
     <div id="viewMarkets" hidden>
       <div class="card reveal">
         <div class="card-h"><div><h3>News You Need to Know</h3>
-          <p id="newsSub">Last 24h · fact-based · politics → economy → company news · India</p></div></div>
-        <ol id="newsList" class="pol-list"><li class="pol-empty">Loading news…</li></ol>
+          <p id="newsSub">Last 24h Â· fact-based Â· politics â†’ economy â†’ company news Â· India</p></div></div>
+        <ol id="newsList" class="pol-list"><li class="pol-empty">Loading newsâ€¦</li></ol>
       </div>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Earnings Calendar — Next 7 Business Days</h3>
-          <p id="calSub">Forthcoming results · BSE</p></div></div>
-        <div id="earnCal" class="earn-cal"><div class="pol-empty">Loading earnings calendar…</div></div>
+        <div class="card-h"><div><h3>Earnings Calendar â€” Next 7 Business Days</h3>
+          <p id="calSub">Forthcoming results Â· BSE</p></div></div>
+        <div id="earnCal" class="earn-cal"><div class="pol-empty">Loading earnings calendarâ€¦</div></div>
       </div>
       <div class="card reveal">
         <div class="card-h"><div><h3>India Macro Snapshot</h3>
-          <p id="macroSub">Monthly indicators · last 10 months (latest at right)</p></div></div>
-        <div class="macro-wrap"><table class="macro-tbl" id="macroTbl"><tbody><tr><td class="macro-empty">Loading monthly macro data…</td></tr></tbody></table></div>
+          <p id="macroSub">Monthly indicators Â· last 10 months (latest at right)</p></div></div>
+        <div class="macro-wrap"><table class="macro-tbl" id="macroTbl"><tbody><tr><td class="macro-empty">Loading monthly macro dataâ€¦</td></tr></tbody></table></div>
       </div>
     </div>
 
     <div id="viewWatchlist" hidden>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Current Holdings</h3><p>Live prices · NSE</p></div></div>
+        <div class="card-h"><div><h3>Current Holdings</h3><p>Live prices Â· NSE</p></div></div>
         <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th></tr></thead>
-          <tbody id="wlHold"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
+          <tbody id="wlHold"><tr><td class="pol-empty">Loadingâ€¦</td></tr></tbody></table>
       </div>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Coverage</h3><p>Live prices · NSE</p></div></div>
+        <div class="card-h"><div><h3>Coverage</h3><p>Live prices Â· NSE</p></div></div>
         <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th></tr></thead>
-          <tbody id="wlCov"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
+          <tbody id="wlCov"><tr><td class="pol-empty">Loadingâ€¦</td></tr></tbody></table>
       </div>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Watchlist</h3><p>Live prices · NSE</p></div></div>
+        <div class="card-h"><div><h3>Watchlist</h3><p>Live prices Â· NSE</p></div></div>
         <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th></tr></thead>
-          <tbody id="wlWatch"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
+          <tbody id="wlWatch"><tr><td class="pol-empty">Loadingâ€¦</td></tr></tbody></table>
       </div>
     </div>
 
@@ -807,23 +807,23 @@
         <div class="scr-row">
           <span class="scr-lbl">Company</span>
           <select id="nbSelectCo" class="scr-dd">
-            <option value="">Select a company…</option>
+            <option value="">Select a companyâ€¦</option>
           </select>
-          <a id="nbOpenCo" class="scr-btn" href="#" target="_blank" rel="noopener" style="display:none">Open notebook ↗</a>
+          <a id="nbOpenCo" class="scr-btn" href="#" target="_blank" rel="noopener" style="display:none">Open notebook â†—</a>
         </div>
         <div class="scr-row">
           <span class="scr-lbl">Sector</span>
           <select id="nbSelectSec" class="scr-dd">
-            <option value="">Select a sector…</option>
+            <option value="">Select a sectorâ€¦</option>
           </select>
-          <a id="nbOpenSec" class="scr-btn" href="#" target="_blank" rel="noopener" style="display:none">Open notebook ↗</a>
+          <a id="nbOpenSec" class="scr-btn" href="#" target="_blank" rel="noopener" style="display:none">Open notebook â†—</a>
         </div>
         <p id="nbStatus" style="color:var(--text-mute);font-size:12px;line-height:1.7;margin-top:14px"></p>
       </div>
       <div class="card reveal">
         <div class="card-h">
           <div><h3 id="cChartTitle">Price Chart</h3>
-          <p id="cChartSub">Select a company or sector above to load price history (Yahoo Finance · daily close)</p></div>
+          <p id="cChartSub">Select a company or sector above to load price history (Yahoo Finance Â· daily close)</p></div>
           <div class="seg" id="cRangeSeg">
             <button data-r="1D">1D</button>
             <button data-r="1W">1W</button>
@@ -836,7 +836,7 @@
           </div>
         </div>
         <div class="cm-return-row">
-          <span id="cRetPct" class="cm-return">—</span>
+          <span id="cRetPct" class="cm-return">â€”</span>
           <span id="cRetMeta" class="cm-return-meta"></span>
         </div>
         <div class="cm-wrap">
@@ -850,37 +850,37 @@
       <div class="card reveal" id="cDescCard" hidden>
         <div class="card-h">
           <div><h3 id="cDescTitle">About the Company</h3>
-          <p id="cDescMeta">Sector · Ticker</p></div>
+          <p id="cDescMeta">Sector Â· Ticker</p></div>
         </div>
         <p id="cDesc" class="co-desc"></p>
-        <p class="co-desc-src">Business profile only — sourced from the company's website and its latest annual report. For the broker view, see the Research Notes tab.</p>
+        <p class="co-desc-src">Business profile only â€” sourced from the company's website and its latest annual report. For the broker view, see the Research Notes tab.</p>
       </div>
     </div>
 
     <div id="viewSoon" hidden>
       <div class="card reveal">
         <div class="card-h"><div><h3 id="soonTitle">Section</h3><p>On the roadmap</p></div></div>
-        <p style="color:var(--text-mute);font-size:13px;line-height:1.7">This module isn’t built yet. Use <b style="color:var(--text-dim)">Overview</b> for the live market dashboard or <b style="color:var(--text-dim)">Coverage</b> for the analyst watchlist.</p>
+        <p style="color:var(--text-mute);font-size:13px;line-height:1.7">This module isnâ€™t built yet. Use <b style="color:var(--text-dim)">Overview</b> for the live market dashboard or <b style="color:var(--text-dim)">Coverage</b> for the analyst watchlist.</p>
       </div>
     </div>
 
     </div>
 
     <div class="footer">
-      <div>© 2026 India Research Portal · India Equity Desk · For illustration only — not investment advice.</div>
-      <div class="mono" id="clock">—</div>
+      <div>Â© 2026 India Research Portal Â· India Equity Desk Â· For illustration only â€” not investment advice.</div>
+      <div class="mono" id="clock">â€”</div>
     </div>
   </main>
 </div>
 
 <div id="newsModal" class="nm-overlay" hidden>
   <div class="nm-box" role="dialog" aria-modal="true" aria-labelledby="nmTitle">
-    <button class="nm-close" id="nmClose" aria-label="Close">✕</button>
+    <button class="nm-close" id="nmClose" aria-label="Close">âœ•</button>
     <div class="nm-head">
-      <h3 id="nmTitle">—</h3>
+      <h3 id="nmTitle">â€”</h3>
       <div id="nmMove" class="nm-move"></div>
     </div>
-    <div class="nm-disc">Latest headlines for context — markets move for many reasons; treat these as <b>possible drivers</b>, not a confirmed cause.</div>
+    <div class="nm-disc">Latest headlines for context â€” markets move for many reasons; treat these as <b>possible drivers</b>, not a confirmed cause.</div>
     <div id="nmBody" class="nm-body"></div>
   </div>
 </div>
@@ -892,12 +892,12 @@ const indices = [
   ["SENSEX","81,420.31","+0.74%",1],
   ["NIFTY 500","23,148.65","+0.80%",1],
   ["BANK NIFTY","51,866.05","+1.12%",1],
-  ["NIFTY IT","42,118.90","−0.54%",-1],
+  ["NIFTY IT","42,118.90","âˆ’0.54%",-1],
   ["NIFTY AUTO","26,540.25","+1.46%",1],
   ["NIFTY PHARMA","22,905.70","+0.22%",1],
-  ["NIFTY FMCG","58,640.10","−0.31%",-1],
+  ["NIFTY FMCG","58,640.10","âˆ’0.31%",-1],
   ["MIDCAP 100","58,210.40","+0.41%",1],
-  ["INDIA VIX","13.24","−4.89%",-1],
+  ["INDIA VIX","13.24","âˆ’4.89%",-1],
 ];
 
 // NSE sectoral indices (official list). [name, Yahoo symbol, sample %].
@@ -924,16 +924,16 @@ const movers = [
   ["HINDALCO","Hindalco Inds.","672.15","+4.12",1],
   ["DLF","DLF Ltd.","868.90","+3.55",1],
   ["MARUTI","Maruti Suzuki","12,940.00","+2.91",1],
-  ["INFY","Infosys","1,498.25","−2.34",-1],
-  ["NESTLEIND","Nestlé India","2,205.40","−1.78",-1],
+  ["INFY","Infosys","1,498.25","âˆ’2.34",-1],
+  ["NESTLEIND","NestlÃ© India","2,205.40","âˆ’1.78",-1],
 ];
 
 const coverage = [
   ["RELIANCE","Reliance Inds.","2,948","3,420","+16.0","buy"],
   ["HDFCBANK","HDFC Bank","1,712","1,950","+13.9","buy"],
   ["ICICIBANK","ICICI Bank","1,256","1,400","+11.5","buy"],
-  ["TCS","Tata Consultancy","4,118","4,050","−1.7","hold"],
-  ["ASIANPAINT","Asian Paints","2,884","2,650","−8.1","sell"],
+  ["TCS","Tata Consultancy","4,118","4,050","âˆ’1.7","hold"],
+  ["ASIANPAINT","Asian Paints","2,884","2,650","âˆ’8.1","sell"],
   ["LT","Larsen & Toubro","3,640","4,150","+14.0","buy"],
 ];
 
@@ -945,18 +945,16 @@ const coverage = [
 // calls (Trendlyne / news) keyed to the same folder names. `let` so the
 // refresher routine's JSON can overlay it at page load.
 let notes = [
-  // Synced to NotebookLM — filename date ≥ today−2d (today = 2026-05-20).
-  // Source: local PDF folder = upload feed for the per-company notebooks.
   ["Bernstein","260518","ICICI Prudential Life Insurance","Parent stake sale confirmed, expect stock under pressure"],
   ["Bernstein","260518","Power Grid","Q4FY26 same old, capex beat and earnings miss"],
   ["Bernstein","260518","ReNew","Q4FY26 execution strong, but earnings impacted by curtailment"],
   ["Bernstein","260519","India Strategy","A tough summer, austerity measures, the history and the future"],
-  ["Bernstein","260519","Indian Financials","The Long View, what drives deposit growth"],
-  ["Bernstein","260520","Avenue Supermarts","DMart, the LFL vs inflation equation, how much does it really matter"],
+  ["Bernstein","260519","Indian Financials","The Long View, What drives deposit growth"],
+  ["Bernstein","260520","Avenue Supermarts","DMart, The LFL vs inflation equation, how much does it really matter"],
   ["CLSA","260518","Fusion Finance","Some improvement"],
-  ["CLSA","260518","Hindustan Aeronautics","Backlog built, execution next"],
-  ["CLSA","260518","India Macro","Full impact of the war yet to come"],
+  ["CLSA","260518","Hindustan Aeronautics","Backlog built execution next"],
   ["CLSA","260518","India Macro","Quantifying impact of high oil prices"],
+  ["CLSA","260518","India Macro","Full impact of the war yet to come"],
   ["CLSA","260518","Nagarjuna","Still hazy or defensive"],
   ["CLSA","260518","NHPC","Worth the wait"],
   ["CLSA","260518","Restaurant Brands Asia","Consistent SSSG growth"],
@@ -966,70 +964,121 @@ let notes = [
   ["CLSA","260519","Amber Enterprises","Near-term margin pressure priced in"],
   ["CLSA","260519","Astral","Operationally in line"],
   ["CLSA","260519","Coforge","Bold bets and execution"],
-  ["CLSA","260519","Indian IT","EU roadshow feedback, high client interest around AI & jobs"],
+  ["CLSA","260519","Coforge","Bold bets and execution (2)"],
+  ["CLSA","260519","Indian IT","EU roadshow feedback, High client interest around AI & Jobs"],
   ["CLSA","260519","Indraprastha Gas","Margin led beat"],
   ["CLSA","260519","Power Grid","Beat beat beat"],
   ["CLSA","260519","SJVN","Not out of the woods yet"],
   ["CLSA","260519","Vodafone Idea","AGR gain & promoter equity infusion"],
+  ["CLSA","260520","ASK Automotive","Steady execution amidst turbulence"],
   ["CLSA","260520","Bharat Petroleum","Hit by a big impairment charge"],
-  ["CLSA","260520","Hindalco","Novelis core earnings strong"],
+  ["CLSA","260520","Bharat Petroleum","Hit by a big impairment charge (2)"],
+  ["CLSA","260520","Hindalco","Novelis Core earnings strong"],
+  ["CLSA","260520","Hindalco","Novelis Core earnings strong (2)"],
   ["CLSA","260520","Indian Oil Corporation","Strong bottom line but details missing"],
+  ["CLSA","260520","Indian Oil Corporation","Strong bottom line but details missing (2)"],
+  ["CLSA","260520","Indraprastha Gas","Weathering the storm (2)"],
   ["CLSA","260520","Indraprastha Gas","Weathering the storm"],
-  ["CLSA","260520","JSW Energy","A good deal, but"],
-  ["CLSA","260520","Zee Entertainment","EBITDA loss"],
+  ["CLSA","260520","JSW Energy","A good deal but"],
+  ["CLSA","260520","JSW Energy","A good deal but (2)"],
+  ["CLSA","260520","Samvardhana Motherson","Robust execution"],
+  ["CLSA","260520","Zee Entertainment","Ebitda loss"],
+  ["CLSA","260521","Astral","Analysts meet takeaways"],
+  ["CLSA","260521","Bharat Electronics","Delivered again"],
+  ["CLSA","260521","Bharat Petroleum","Pulled down by a one-off"],
+  ["CLSA","260521","Indian Consumer","Winning the right way"],
+  ["CLSA","260521","Jubilant FoodWorks","Focus on affordability"],
+  ["Jefferies","260516","Tata Steel","Mar-Q Beat, More Margin Expansion Ahead"],
+  ["Jefferies","260516","Uno Minda","Mar-Q First Cut, In-line Quarter"],
+  ["Jefferies","260517","CMS Info Systems","Mar Qtr, Improving Business Momentum & FSS Acquisition Support FY27 Growth"],
+  ["Jefferies","260517","Gland Pharma","Mar-Q, Improving Outlook, Execution Key to Monitor"],
+  ["Jefferies","260517","ITC Hotels","FTA Impact Drives Weak Qtr"],
+  ["Jefferies","260517","Premier Energies","Mar-26 Review, Marginally ahead, Strong FY27 Outlook"],
   ["Jefferies","260518","Adani Power","FCF to turn positive by FY30E"],
-  ["Jefferies","260518","Astral","Mar26-Q first cut, plumbing volume strong at +24%, adhesives pares margin"],
-  ["Jefferies","260518","Bajaj Finserv","Roadshow feedback, core growing well, new ventures near breakeven"],
-  ["Jefferies","260518","Indian Financials","India BFSI Monthly — April 2026"],
+  ["Jefferies","260518","Astral","Mar26-Q First Cut, Plumbing Volume Strong at +24%, Adhesives Pares Margin"],
+  ["Jefferies","260518","Bajaj Finserv","Roadshow Feedback, Core Growing Well, New Ventures Near Breakeven"],
+  ["Jefferies","260518","Indian Financials","India BFSI Monthly - April 2026"],
   ["Jefferies","260518","Indian Financials","India Financial Daily, 18 May 2026"],
   ["Jefferies","260518","Indian Pharmaceuticals","GxMeter, Zydus and Lupin holds steady, Cipla mixed"],
   ["Jefferies","260518","JSW Energy","Moving in the right direction"],
-  ["Jefferies","260518","Power Grid","Capex-capitalisation guidance retained"],
-  ["Jefferies","260518","Uno Minda","Growing well, but near-term margin pressure"],
-  ["Jefferies","260519","AWL Agri Business","Strategic reset, scale-driven upside, assuming coverage at Buy"],
-  ["Jefferies","260519","Hindalco","Novelis Mar-Q, another fire-impacted quarter"],
+  ["Jefferies","260518","Power Grid","Capex-Capitalisation Guidance Retained"],
+  ["Jefferies","260518","Uno Minda","Growing Well, but Near-Term Margin Pressure"],
+  ["Jefferies","260519","AWL Agri Business","Strategic Reset, Scale-driven Upside, Assuming Coverage at Buy"],
+  ["Jefferies","260519","Hindalco","Novelis Mar-Q, Another Fire-Impacted Quarter"],
   ["Jefferies","260519","Indian Financials","India Financial Daily, 19 May 2026"],
   ["Jefferies","260519","Indian Hotels","April RevPAR growth improves, Goa leads"],
-  ["Jefferies","260519","Indian Jewellery","Expert call with Mr Ketan Kothari (Augmont) on gold policy shift"],
-  ["Jefferies","260519","Indian Oil Corporation","Mar-26 review, beat, valuation favourable"],
-  ["Jefferies","260519","Indraprastha Gas","Mar-26 review, beat, near-term headwinds"],
+  ["Jefferies","260519","Indian Jewellery","Expert Call with Mr Ketan Kothari (Augmont) on Gold Policy Shift"],
+  ["Jefferies","260519","Indian Oil Corporation","Mar-26 Review, Beat, Valuation Favourable"],
+  ["Jefferies","260519","Indraprastha Gas","Mar-26 Review, Beat, Near-term headwinds"],
   ["Jefferies","260519","Zydus Lifesciences","Strong Mar-Q and FY27 guidance, maintain BUY"],
+  ["Jefferies","260520","Aditya Birla Capital","ABCAP Announces Equity Infusion Through Preferential Issue"],
+  ["Jefferies","260520","Afcons Infrastructure","Weakness to persist, downgrade to Hold"],
+  ["Jefferies","260520","Astral","Analyst Meet Takeaways, Plumbing Strong"],
+  ["Jefferies","260520","Bharat Electronics","Visibility remains strong"],
+  ["Jefferies","260520","Bharat Petroleum","Mar-26 Review, EBITDA beat, Valuation Favourable"],
+  ["Jefferies","260520","Grasim Industries","Improving Standalone Biz Drive Strong Exit to FY26"],
+  ["Jefferies","260520","Grasim Industries","Mar-Q First Cut, Stronger Performance Across Segments"],
+  ["Jefferies","260520","India Strategy","INR Pressure, The Downside of SIPs"],
+  ["Jefferies","260520","Indian Financials","India Financial Daily, 20 May 2026"],
+  ["Jefferies","260520","Jubilant FoodWorks","Still Waiting for Pick-up in Earnings Growth"],
+  ["Jefferies","260520","Lenskart","Consumer Tech to Consumer AI"],
+  ["Jefferies","260520","Mankind Pharma","Faith Vindicated"],
+  ["Jefferies","260520","PI Industries","Mar-26 Review, Miss again, Soft base for FY27"],
+  ["Jefferies","260520","Samvardhana Motherson","Growing Well Despite Subdued Macro"],
   ["JPMorgan","260518","Amber Enterprises","Margin pressure and PCB execution delays"],
-  ["JPMorgan","260518","Astral","First take, marginal EBITDA miss but strong operational metrics, stay OW"],
+  ["JPMorgan","260518","Astral","First Take, marginal EBITDA miss but strong operational metrics, stay OW"],
   ["JPMorgan","260518","Delhivery","Here comes the FCF"],
-  ["JPMorgan","260518","GE Vernova T&D India","First take, margin driven beat, stay OW"],
+  ["JPMorgan","260518","GE Vernova T&D India","First Take, margin driven beat, stay OW"],
   ["JPMorgan","260518","Global Health (Medanta)","Entering growth acceleration phase, upgrade to OW"],
   ["JPMorgan","260518","India Strategy","4QFY26 Earnings Dissector, better-than-expected prints, upgrade Industrials to OW"],
   ["JPMorgan","260518","Indian Cement","Limited pricing momentum, demand weakening into monsoon"],
-  ["JPMorgan","260518","Indraprastha Gas","First take 4QFY26, miss on higher gas costs"],
+  ["JPMorgan","260518","Indraprastha Gas","First Take 4QFY26, miss on higher gas costs"],
   ["JPMorgan","260518","Power Grid","Soft P&L but FY26 capex-capitalization guidance exceeded"],
   ["JPMorgan","260518","Premier Energies","Margins hold up, improved solar outlook positive for stock"],
   ["JPMorgan","260518","Siemens Energy India","Export growth key positive but turbine and HVDC concerns remain, stay Neutral"],
   ["JPMorgan","260518","Steel Authority of India","Earnings beat and debt reduction positive, volume growth soft until FY31"],
   ["JPMorgan","260518","United Spirits","Mixing it right for FY27, premiumization + 3 Indias playbook underpin DD growth"],
-  ["JPMorgan","260519","Bharat Petroleum","First take 4QFY26, a beat marred by impairment losses on BPRL"],
-  ["JPMorgan","260519","Indian Oil Corporation","First take 4QFY26, inventory gains drive the beat"],
-  ["JPMorgan","260519","Indian Oil Corporation","Strong 4Q, greater refining exposure could help IOC do better than peers"],
+  ["JPMorgan","260519","Bharat Petroleum","First Take 4QFY26, a beat marred by impairment losses on BPRL"],
+  ["JPMorgan","260519","Indian Oil Corporation","First Take 4QFY26, inventory gains drive the beat"],
+  ["JPMorgan","260519","Indian Oil Corporation","Strong 4Q, Greater refining exposure could help IOC do better than peers"],
+  ["JPMorgan","260519","Indian Oil Corporation","Strong 4Q, Greater refining exposure could help IOC do better than peers (2)"],
   ["JPMorgan","260519","Vodafone Idea","Not out of the woods yet"],
-  ["JPMorgan","260520","Anthem Biosciences","First take, strong growth with best-in-class margins"],
+  ["JPMorgan","260520","Anthem Biosciences","CRDMO pipeline depth, capabilities and capacity expansion underpin multi-year growth visibility"],
+  ["JPMorgan","260520","Anthem Biosciences","First Take, Strong growth with best-in-class margins"],
+  ["JPMorgan","260520","Bharat Electronics","Growth momentum remains intact, preferred defense play in India"],
+  ["JPMorgan","260520","Bharat Petroleum","A strong 4Q as with other OMCs, BPCL maintaining capex guidance"],
   ["JPMorgan","260520","GE Vernova T&D India","Emerge incrementally positive on the LT story, raising PT to Rs5050, stay OW"],
   ["JPMorgan","260520","Hindalco","Novelis 4Q allays most investor concerns"],
   ["JPMorgan","260520","Indraprastha Gas","Cost pressures can continue near term"],
+  ["JPMorgan","260520","L&T Finance","Model Update"],
   ["JPMorgan","260520","MakeMyTrip","Recovery will take time"],
-  ["JPMorgan","260520","Mankind Pharma","First take 4QFY26, revenue miss, margins ahead"],
+  ["JPMorgan","260520","MakeMyTrip","Recovery will take time (2)"],
+  ["JPMorgan","260520","Mankind Pharma","First Take 4QFY26, Revenue miss, margins ahead"],
   ["JPMorgan","260520","Orkla India","Volume growth moderates on Kerala distribution reset and weak overseas, Q4 review"],
+  ["JPMorgan","260520","Samvardhana Motherson","First Take, A strong 4QFY26 beat across the board"],
+  ["JPMorgan","260520","Tata Motors","Takeaways from JPM India Auto CXO series"],
   ["JPMorgan","260520","Zydus Lifesciences","Good execution, visible pipeline, upside priced in"],
+  ["JPMorgan","260521","Apollo Hospitals","First Take 4QFY26, Strong broad-based growth, digital losses narrow further"],
+  ["JPMorgan","260521","Grasim Industries","Headline paints revenue growth higher than expected"],
+  ["JPMorgan","260521","Jubilant FoodWorks","Measured outlook amid rising costs, SSSG recovery pace key monitorable"],
+  ["JPMorgan","260521","Mankind Pharma","Execution stabilizing in India, FY27 guidance sets baseline"],
+  ["JPMorgan","260521","Samvardhana Motherson","Emerging businesses should drive revenue momentum, Maintain OW"],
+  ["Kotak","260420","India Strategy","India @ 2070, The great energy rewrite for Net Zero"],
+  ["Kotak","260517","Devyani International","A welcome relief"],
   ["Kotak","260518","Amber Enterprises","Near-term margin pressure, timely PCB commissioning is key"],
+  ["Kotak","260518","Amber Enterprises","Near-term margin pressure, timely PCB commissioning is key (2)"],
   ["Kotak","260518","Carborundum Universal","Growth accelerating, loss-making subs on their way out"],
   ["Kotak","260518","Chalet Hotels","Rickety close to the year, capacity addition remains strong"],
   ["Kotak","260518","Deepak Nitrite","Windfall profits may not last beyond a couple of quarters"],
   ["Kotak","260518","Delhivery","Blockbuster end to a strong year"],
   ["Kotak","260518","India Macro","Fortnightly rates and FX view"],
-  ["Kotak","260518","India Strategy","E25 ethanol blending, opportunities abound, risks remain"],
   ["Kotak","260518","India Strategy","KS-Ownership Navigator, sequential changes in March 2026 quarter"],
+  ["Kotak","260518","India Strategy","E25 ethanol blending, opportunities abound, risks remain"],
   ["Kotak","260518","KEC International","Weak performance, recovery to be gradual"],
   ["Kotak","260518","KIMS","Still not there yet"],
   ["Kotak","260518","Neogen Chemicals","Everything comes to him who hustles while he waits"],
+  ["Kotak","260518","Neogen Chemicals","Everything comes to him who hustles while he waits (2)"],
+  ["Kotak","260518","Power Grid","Strong capitalization sets base for improved earnings growth (2)"],
   ["Kotak","260518","Power Grid","Strong capitalization sets base for improved earnings growth"],
   ["Kotak","260518","Restaurant Brands Asia","Steady show in India"],
   ["Kotak","260518","S H Kelkar and Company","Margins remain under pressure, an FY2028 story"],
@@ -1038,34 +1087,46 @@ let notes = [
   ["Kotak","260518","Uno Minda","Lackluster quarter"],
   ["Kotak","260519","Indian Oil Corporation","4Q much better, large loss likely in 1HFY27"],
   ["Kotak","260519","Indraprastha Gas","CNG price increases getting easier"],
+  ["Kotak","260519","NHPC","Earnings growth driven by one-offs (2)"],
   ["Kotak","260519","NHPC","Earnings growth driven by one-offs"],
   ["Kotak","260519","Timken","An improved performance"],
   ["Kotak","260519","Vodafone Idea","Subscriber base stabilizes, but turnaround is a tall ask"],
+  ["Kotak","260520","India Macro","Turning toward the adjustment cycle"],
+  ["Kotak","260520","Mankind Pharma","Recovery taking shape"],
+  ["Nomura","260517","Gland Pharma","4QFY26 Significantly higher than our estimates"],
   ["Nomura","260518","Hindustan Aeronautics","Robust sales growth visibility given mfg book-bill ratio of 25x"],
   ["Nomura","260518","ICICI Prudential Life Insurance","Prudential to reduce stake"],
   ["Nomura","260518","Indian Banks","Asia marketing feedback, cautious flows, clear preferences"],
   ["Nomura","260518","Indian Steel","Steel weekly trends (week ended 15 May 2026)"],
   ["Nomura","260518","Indraprastha Gas","4Q beats on volumes, but margins miss"],
-  ["Nomura","260518","KEC International","4Q operating performance misses estimates on all fronts"],
+  ["Nomura","260518","KEC International","4Q Operating performance misses estimates on all fronts"],
   ["Nomura","260518","Premier Energies","Operating performance beats estimates in 4Q"],
   ["Nomura","260518","Tata Steel","Price recovery drives the performance"],
-  ["Nomura","260518","United Spirits","1H27F volumes/margins to see impact, medium-term story intact"],
+  ["Nomura","260518","United Spirits","1H27F volumes-margins to see impact, medium-term story intact"],
   ["Nomura","260518","Uno Minda","EV order wins keep growth visibility high"],
   ["Nomura","260518","Vodafone Idea","In-line results, capital raise awaited"],
   ["Nomura","260519","Afcons Infrastructure","Muted operating performance in 4QFY26"],
-  ["Nomura","260519","Avalon Technologies","India EMS Anchor Report, play on global industrial EMS upcycle, initiating at Buy"],
+  ["Nomura","260519","Avalon Technologies","India EMS Anchor Report, Play on global industrial EMS upcycle, initiating at Buy"],
   ["Nomura","260519","Bharat Electronics","Steady 4QFY26, slight miss on our estimates"],
-  ["Nomura","260519","GE Vernova T&D India","Another quarter, another upward revision"],
   ["Nomura","260519","GE Vernova T&D India","Exemplary performance in 4Q, beats estimates"],
+  ["Nomura","260519","GE Vernova T&D India","Another quarter, another upward revision"],
   ["Nomura","260519","India Macro","El Nino may not scorch the economy"],
-  ["Nomura","260519","India Macro","HOT Long SGD-IDR, maintain maximum conviction level"],
+  ["Nomura","260519","India Macro","HOT Long SGD-IDR, Maintain maximum conviction level"],
   ["Nomura","260519","Indian Oil Corporation","Top pick among OMCs"],
   ["Nomura","260519","KEC International","Persistent weakness in operating performance, guidance soft"],
-  ["Nomura","260519","Zydus Lifesciences","4QFY26 results, ahead of estimates"],
+  ["Nomura","260519","Zydus Lifesciences","4QFY26 results, Ahead of estimates"],
   ["Nomura","260520","Afcons Infrastructure","Weak 4QFY26, FY27E OI starts on a good note"],
+  ["Nomura","260520","Bharat Petroleum","Earnings may bounce back in FY28F after a washout FY27F"],
+  ["Nomura","260520","Eureka Forbes","New categories to support growth momentum"],
+  ["Nomura","260520","Indian Paints","Birla Opus, To improve profitability q-q, could ease competition"],
+  ["Nomura","260520","Indraprastha Gas","Near-term margin risks, volume may surprise"],
+  ["Nomura","260521","Anthem Biosciences","4QFY26 Strong recovery following subdued 3Q"],
+  ["Nomura","260521","Bharat Electronics","Delivering as expected, trading ahead"],
+  ["Nomura","260521","Nephrocare Health Services","4QFY26 Revenue momentum remains healthy"],
+  ["Unknown","260518","Welspun Living","Q4FY26 Result Update, Sequential Recovery Gains Traction"],
 ];
 // External broker calls (research houses NOT in the local report folders
-// — Motilal Oswal, ICICI Securities, Nuvama, Axis, HDFC Securities, etc.)
+// â€” Motilal Oswal, ICICI Securities, Nuvama, Axis, HDFC Securities, etc.)
 // Refreshed by the research refresher routine from Trendlyne / news.
 // Schema adds a 5th field: source-article URL for the clickable title.
 // Empty until the routine's first run; the page falls back gracefully.
@@ -1084,88 +1145,88 @@ const notesPrior = [
   ["Kotak","260420","India Strategy","India @ 2070, the great energy rewrite for Net Zero"],
   ["Nomura","260517","Gland Pharma","4QFY26 significantly higher than our estimates"],
   // Trendlyne (page 7-8, 260516-260517)
-  ["BOB Capital Markets","260517","Somany Ceramics","Buy · TP ₹520 — Sharp margin recovery drives earnings beat"],
-  ["BOB Capital Markets","260517","Devyani International","Buy · TP ₹141 — Recovery trends"],
-  ["BOB Capital Markets","260516","Tata Steel","Hold · TP ₹223 — Results beat on better volumes, cost saving"],
-  ["BOB Capital Markets","260516","Steel Authority of India","Sell · TP ₹178 — Operational performance beats on lower cost"],
-  ["BOB Capital Markets","260516","Alembic Pharma","Buy · TP ₹1,013 — Higher R&D spend underscores focus on US market"],
-  ["BP Wealth","260516","Vedanta","Buy · TP ₹387"],
-  ["ICICI Direct","260517","Bharti Airtel","Buy · TP ₹2,350"],
-  ["ICICI Direct","260516","Solar Industries","Buy · TP ₹20,200 — Defence business enters accelerated growth phase"],
-  ["ICICI Direct","260516","Hindustan Aeronautics","Buy · TP ₹5,300 — Execution recovery and manufacturing ramp-up"],
-  ["ICICI Direct","260516","Pearl Global","Buy · TP ₹2,255 — Double-digit revenue growth guidance of 12-14% retained"],
-  ["Prabhudas Lilladhar","260516","NCC","Buy · TP ₹195 — Strong fundamentals, but FY27E caution persists"],
-  ["Prabhudas Lilladhar","260516","Carborundum Universal","Sell · TP ₹986 — Mixed Q4, subsidiaries recovery remains key"],
-  ["Prabhudas Lilladhar","260516","Steel Authority of India","Accumulate · TP ₹209 — Higher steel pricing drive Q4; stepped up capex"],
+  ["BOB Capital Markets","260517","Somany Ceramics","Buy Â· TP â‚¹520 â€” Sharp margin recovery drives earnings beat"],
+  ["BOB Capital Markets","260517","Devyani International","Buy Â· TP â‚¹141 â€” Recovery trends"],
+  ["BOB Capital Markets","260516","Tata Steel","Hold Â· TP â‚¹223 â€” Results beat on better volumes, cost saving"],
+  ["BOB Capital Markets","260516","Steel Authority of India","Sell Â· TP â‚¹178 â€” Operational performance beats on lower cost"],
+  ["BOB Capital Markets","260516","Alembic Pharma","Buy Â· TP â‚¹1,013 â€” Higher R&D spend underscores focus on US market"],
+  ["BP Wealth","260516","Vedanta","Buy Â· TP â‚¹387"],
+  ["ICICI Direct","260517","Bharti Airtel","Buy Â· TP â‚¹2,350"],
+  ["ICICI Direct","260516","Solar Industries","Buy Â· TP â‚¹20,200 â€” Defence business enters accelerated growth phase"],
+  ["ICICI Direct","260516","Hindustan Aeronautics","Buy Â· TP â‚¹5,300 â€” Execution recovery and manufacturing ramp-up"],
+  ["ICICI Direct","260516","Pearl Global","Buy Â· TP â‚¹2,255 â€” Double-digit revenue growth guidance of 12-14% retained"],
+  ["Prabhudas Lilladhar","260516","NCC","Buy Â· TP â‚¹195 â€” Strong fundamentals, but FY27E caution persists"],
+  ["Prabhudas Lilladhar","260516","Carborundum Universal","Sell Â· TP â‚¹986 â€” Mixed Q4, subsidiaries recovery remains key"],
+  ["Prabhudas Lilladhar","260516","Steel Authority of India","Accumulate Â· TP â‚¹209 â€” Higher steel pricing drive Q4; stepped up capex"],
 ];
 
 // External broker calls sourced from trendlyne.com/research-reports/all/
-// — last 2 days, filename date ≥ today−2d. Schema: [house,date,folder,
+// â€” last 2 days, filename date â‰¥ todayâˆ’2d. Schema: [house,date,folder,
 // headline,url]. The "Buy/Sell/Hold/Accumulate/Reduce/Neutral" in the
 // headline feeds the chip via the existing CALL/BARE regexes; the URL
 // makes the headline clickable to the actual Trendlyne report.
 // Refreshed manually 2026-05-20; the scheduled refresher routine
 // overlays this with a fresh pull each weekday morning.
 let notesExt = [
-  ["Anand Rathi","260519","Global Health (Medanta)","Buy · TP ₹1,400 — Above par show, ramp-up of new units to drive earnings; maintain BUY","https://trendlyne.com/get-document/post/pdf/5647430/"],
-  ["Anand Rathi","260519","Jupiter Life Line Hospitals","Buy · TP ₹1,560 — Steady performance, ramp-up of Dombivli unit remain key; maintain BUY","https://trendlyne.com/get-document/post/pdf/5647409/"],
-  ["Anand Rathi","260519","Greenpanel Industries","Buy · TP ₹320 — In-line show, outlook positive as cycle bottomed out; maintain BUY","https://trendlyne.com/get-document/post/pdf/5647408/"],
-  ["Geojit BNP Paribas","260519","Phoenix Mills","Accumulate · TP ₹1,926","https://trendlyne.com/get-document/post/pdf/5646726/"],
-  ["IDBI Capital","260519","Neogen Chemicals","Buy · TP ₹2,001 — Q4FY26 result review","https://trendlyne.com/get-document/post/pdf/5646720/"],
-  ["IDBI Capital","260519","Rolex Rings","Buy · TP ₹175 — Q4FY26 result review","https://trendlyne.com/get-document/post/pdf/5646719/"],
-  ["IDBI Capital","260519","Greenpanel Industries","Hold · TP ₹204 — Q4FY26 result review","https://trendlyne.com/get-document/post/pdf/5646718/"],
-  ["Axis Direct","260519","Uno Minda","Buy · TP ₹1,240 — Result update","https://trendlyne.com/get-document/post/pdf/5646717/"],
-  ["Axis Direct","260519","KEC International","Buy · TP ₹590 — Result update","https://trendlyne.com/get-document/post/pdf/5646716/"],
-  ["Axis Direct","260519","Pitti Engineering","Buy · TP ₹1,230 — Result update","https://trendlyne.com/get-document/post/pdf/5646715/"],
-  ["Prabhudas Lilladhar","260519","Astral","Buy · TP ₹1,813 — Outperforms on strong P&F momentum","https://trendlyne.com/get-document/post/pdf/5646696/"],
-  ["Prabhudas Lilladhar","260519","Jupiter Life Line Hospitals","Buy · TP ₹1,600 — Strong growth ex Dombivli unit","https://trendlyne.com/get-document/post/pdf/5646695/"],
-  ["Prabhudas Lilladhar","260519","Latent View Analytics","Buy · TP ₹450 — Balancing growth & margin amid top-client challenges","https://trendlyne.com/get-document/post/pdf/5646694/"],
-  ["Prabhudas Lilladhar","260519","KIMS","Buy · TP ₹800 — New clusters to drive growth","https://trendlyne.com/get-document/post/pdf/5646693/"],
-  ["ICICI Direct","260519","Amber Enterprises","Buy · TP ₹8,250","https://trendlyne.com/research-reports/stock/73518/AMBER/amber-enterprises-india-ltd/"],
-  ["ICICI Direct","260519","EPack Prefab Technologies","Buy · TP ₹240","https://trendlyne.com/research-reports/stock/3267506/EPACKPEB/epack-prefab-technologies-ltd/"],
-  ["ICICI Direct","260519","Apollo Tyres","Hold · TP ₹425","https://trendlyne.com/research-reports/stock/94/APOLLOTYRE/apollo-tyres-ltd/"],
-  ["ICICI Direct","260519","Patel Engineering","Buy · TP ₹33","https://trendlyne.com/research-reports/stock/1010/PATELENG/patel-engineering-ltd/"],
-  ["ICICI Direct","260519","Latent View Analytics","Buy · TP ₹410","https://trendlyne.com/research-reports/stock/717540/LATENTVIEW/latent-view-analytics-ltd/"],
-  ["ICICI Direct","260519","Rishabh Instruments","Buy · TP ₹630","https://trendlyne.com/research-reports/stock/1650515/RISHABH/rishabh-instruments-ltd/"],
-  ["ICICI Direct","260519","Vinati Organics","Buy · TP ₹1,610","https://trendlyne.com/research-reports/stock/1485/VINATIORGA/vinati-organics-ltd/"],
-  ["Deven Choksey","260519","Pitti Engineering","Buy · TP ₹1,183 — Expansion plan and value-added focus","https://trendlyne.com/research-reports/stock/1045/PITTIENG/pitti-engineering-ltd/"],
-  ["Deven Choksey","260519","Alembic Pharma","Accumulate · TP ₹840 — US generics strength, animal-health outperformance, ex-US expansion","https://trendlyne.com/research-reports/stock/92/APLLTD/alembic-pharmaceuticals-ltd/"],
-  ["Deven Choksey","260519","Uno Minda","Buy · TP ₹1,292 — Record revenue, green mobility inflects higher","https://trendlyne.com/research-reports/stock/864/UNOMINDA/uno-minda-ltd/"],
-  ["Geojit BNP Paribas","260518","Coforge","Buy · TP ₹1,670","https://trendlyne.com/get-document/post/pdf/5646729/"],
-  ["Geojit BNP Paribas","260518","SBI Cards and Payment","Accumulate · TP ₹698","https://trendlyne.com/get-document/post/pdf/5646724/"],
-  ["Deven Choksey","260518","Vinati Organics","Accumulate · TP ₹1,482 — Valuation & outlook","https://trendlyne.com/get-document/post/pdf/5645275/"],
-  ["IDBI Capital","260518","Somany Ceramics","Buy · TP ₹520 — Q4FY26 result review","https://trendlyne.com/get-document/post/pdf/5644697/"],
-  ["IDBI Capital","260518","Chalet Hotels","Buy · TP ₹937 — Q4FY26 result review","https://trendlyne.com/get-document/post/pdf/5644696/"],
-  ["IDBI Capital","260518","Tata Steel","Hold · TP ₹229 — Q4FY26 result review","https://trendlyne.com/get-document/post/pdf/5644695/"],
-  ["IDBI Capital","260518","Steel Authority of India","Sell · TP ₹158 — Q4FY26 result review","https://trendlyne.com/get-document/post/pdf/5644694/"],
-  ["Axis Direct","260518","Tata Steel","Hold · TP ₹235 — Result update","https://trendlyne.com/get-document/post/pdf/5644693/"],
-  ["Axis Direct","260518","Chalet Hotels","Buy · TP ₹1,000 — Result update","https://trendlyne.com/get-document/post/pdf/5644692/"],
-  ["Axis Direct","260518","Steel Authority of India","Hold · TP ₹200 — Result update","https://trendlyne.com/get-document/post/pdf/5644691/"],
-  ["Axis Direct","260518","Welspun Living","Buy · TP ₹180 — Result update","https://trendlyne.com/get-document/post/pdf/5644690/"],
-  ["Axis Direct","260518","Kirloskar Brothers","Buy · TP ₹2,330 — Result update","https://trendlyne.com/get-document/post/pdf/5644689/"],
-  ["Axis Direct","260518","Kalpataru Projects","Buy · TP ₹1,470 — Result update","https://trendlyne.com/get-document/post/pdf/5644688/"],
-  ["Axis Direct","260518","City Union Bank","Buy · TP ₹276 — Pick of the week","https://trendlyne.com/get-document/post/pdf/5644686/"],
-  ["Axis Direct","260518","Endurance Technologies","Buy · TP ₹2,880 — Result update","https://trendlyne.com/get-document/post/pdf/5644685/"],
-  ["Prabhudas Lilladhar","260518","Tata Steel","Accumulate · TP ₹247 — India pricing to drive earnings","https://trendlyne.com/get-document/post/pdf/5644679/"],
-  ["Prabhudas Lilladhar","260518","Global Health (Medanta)","Buy · TP ₹1,450 — Noida unit ramp-up on track","https://trendlyne.com/get-document/post/pdf/5644678/"],
-  ["Prabhudas Lilladhar","260518","Delhivery","Buy · TP ₹534 — Turns FCFF positive","https://trendlyne.com/get-document/post/pdf/5644677/"],
-  ["Prabhudas Lilladhar","260518","VIP Industries","Sell · TP ₹245 — BS cleansing over, downgrade to SELL","https://trendlyne.com/get-document/post/pdf/5644676/"],
-  ["ICICI Direct","260518","Power Grid","Buy · TP ₹360","https://trendlyne.com/get-document/post/pdf/5644663/"],
-  ["ICICI Direct","260518","Somany Ceramics","Buy · TP ₹520","https://trendlyne.com/get-document/post/pdf/5644662/"],
-  ["ICICI Direct","260518","Tata Motors PV","Hold · TP ₹390","https://trendlyne.com/get-document/post/pdf/5644661/"],
-  ["ICICI Direct","260518","KEC International","Buy · TP ₹609","https://trendlyne.com/get-document/post/pdf/5644660/"],
-  ["ICICI Direct","260518","Tata Steel","Buy · TP ₹270","https://trendlyne.com/get-document/post/pdf/5644659/"],
-  ["ICICI Direct","260518","Indian Hotels","Buy · TP ₹220 — Muted Q4 (ex-residential); Q1FY27 expected better","https://trendlyne.com/get-document/post/pdf/5644658/"],
-  ["ICICI Direct","260518","Kaynes Technology","Hold · TP ₹3,590 — Q4FY26 dismal, revenue significantly below guidance","https://trendlyne.com/get-document/post/pdf/5644657/"],
-  ["ICICI Direct","260518","Saregama","Hold · TP ₹410 — Strong Q4FY26 across music and artist management","https://trendlyne.com/get-document/post/pdf/5644656/"],
-  ["ICICI Direct","260518","Steel Authority of India","Buy · TP ₹240 — Robust growth visibility, rising steel demand","https://trendlyne.com/get-document/post/pdf/5644655/"],
-  ["ICICI Direct","260518","Allied Blenders","Buy · TP ₹690 — Q4FY26 consolidated revenue +9.4% YoY","https://trendlyne.com/get-document/post/pdf/5644654/"],
-  ["Deven Choksey","260518","Tata Motors PV","Accumulate · TP ₹395 — FY27 transition year; execution determines earnings","https://trendlyne.com/get-document/post/pdf/5644267/"],
-  ["Khambatta Securities","260518","Sharda Cropchem","Buy · TP ₹1,325 — Agrochemical recovery, pricing power; long-term outlook intact","https://trendlyne.com/get-document/post/pdf/5644262/"],
-  ["Deven Choksey","260518","Archean Chemical","Sell · TP ₹489 — FY26 affected by logistics and macro headwinds","https://trendlyne.com/get-document/post/pdf/5643620/"],
-  ["Deven Choksey","260518","Balkrishna Industries","Accumulate · TP ₹2,350 — Record volumes marred by margin compression","https://trendlyne.com/get-document/post/pdf/5643619/"],
-  ["Deven Choksey","260518","Godrej Consumer Products","Buy · TP ₹1,344 — Multiple growth engines entering inflection phase","https://trendlyne.com/get-document/post/pdf/5643618/"],
-  ["Deven Choksey","260518","Dr Reddy's Labs","Accumulate · TP ₹1,445 — Outlook","https://trendlyne.com/get-document/post/pdf/5643403/"],
+  ["Anand Rathi","260519","Global Health (Medanta)","Buy Â· TP â‚¹1,400 â€” Above par show, ramp-up of new units to drive earnings; maintain BUY","https://trendlyne.com/get-document/post/pdf/5647430/"],
+  ["Anand Rathi","260519","Jupiter Life Line Hospitals","Buy Â· TP â‚¹1,560 â€” Steady performance, ramp-up of Dombivli unit remain key; maintain BUY","https://trendlyne.com/get-document/post/pdf/5647409/"],
+  ["Anand Rathi","260519","Greenpanel Industries","Buy Â· TP â‚¹320 â€” In-line show, outlook positive as cycle bottomed out; maintain BUY","https://trendlyne.com/get-document/post/pdf/5647408/"],
+  ["Geojit BNP Paribas","260519","Phoenix Mills","Accumulate Â· TP â‚¹1,926","https://trendlyne.com/get-document/post/pdf/5646726/"],
+  ["IDBI Capital","260519","Neogen Chemicals","Buy Â· TP â‚¹2,001 â€” Q4FY26 result review","https://trendlyne.com/get-document/post/pdf/5646720/"],
+  ["IDBI Capital","260519","Rolex Rings","Buy Â· TP â‚¹175 â€” Q4FY26 result review","https://trendlyne.com/get-document/post/pdf/5646719/"],
+  ["IDBI Capital","260519","Greenpanel Industries","Hold Â· TP â‚¹204 â€” Q4FY26 result review","https://trendlyne.com/get-document/post/pdf/5646718/"],
+  ["Axis Direct","260519","Uno Minda","Buy Â· TP â‚¹1,240 â€” Result update","https://trendlyne.com/get-document/post/pdf/5646717/"],
+  ["Axis Direct","260519","KEC International","Buy Â· TP â‚¹590 â€” Result update","https://trendlyne.com/get-document/post/pdf/5646716/"],
+  ["Axis Direct","260519","Pitti Engineering","Buy Â· TP â‚¹1,230 â€” Result update","https://trendlyne.com/get-document/post/pdf/5646715/"],
+  ["Prabhudas Lilladhar","260519","Astral","Buy Â· TP â‚¹1,813 â€” Outperforms on strong P&F momentum","https://trendlyne.com/get-document/post/pdf/5646696/"],
+  ["Prabhudas Lilladhar","260519","Jupiter Life Line Hospitals","Buy Â· TP â‚¹1,600 â€” Strong growth ex Dombivli unit","https://trendlyne.com/get-document/post/pdf/5646695/"],
+  ["Prabhudas Lilladhar","260519","Latent View Analytics","Buy Â· TP â‚¹450 â€” Balancing growth & margin amid top-client challenges","https://trendlyne.com/get-document/post/pdf/5646694/"],
+  ["Prabhudas Lilladhar","260519","KIMS","Buy Â· TP â‚¹800 â€” New clusters to drive growth","https://trendlyne.com/get-document/post/pdf/5646693/"],
+  ["ICICI Direct","260519","Amber Enterprises","Buy Â· TP â‚¹8,250","https://trendlyne.com/research-reports/stock/73518/AMBER/amber-enterprises-india-ltd/"],
+  ["ICICI Direct","260519","EPack Prefab Technologies","Buy Â· TP â‚¹240","https://trendlyne.com/research-reports/stock/3267506/EPACKPEB/epack-prefab-technologies-ltd/"],
+  ["ICICI Direct","260519","Apollo Tyres","Hold Â· TP â‚¹425","https://trendlyne.com/research-reports/stock/94/APOLLOTYRE/apollo-tyres-ltd/"],
+  ["ICICI Direct","260519","Patel Engineering","Buy Â· TP â‚¹33","https://trendlyne.com/research-reports/stock/1010/PATELENG/patel-engineering-ltd/"],
+  ["ICICI Direct","260519","Latent View Analytics","Buy Â· TP â‚¹410","https://trendlyne.com/research-reports/stock/717540/LATENTVIEW/latent-view-analytics-ltd/"],
+  ["ICICI Direct","260519","Rishabh Instruments","Buy Â· TP â‚¹630","https://trendlyne.com/research-reports/stock/1650515/RISHABH/rishabh-instruments-ltd/"],
+  ["ICICI Direct","260519","Vinati Organics","Buy Â· TP â‚¹1,610","https://trendlyne.com/research-reports/stock/1485/VINATIORGA/vinati-organics-ltd/"],
+  ["Deven Choksey","260519","Pitti Engineering","Buy Â· TP â‚¹1,183 â€” Expansion plan and value-added focus","https://trendlyne.com/research-reports/stock/1045/PITTIENG/pitti-engineering-ltd/"],
+  ["Deven Choksey","260519","Alembic Pharma","Accumulate Â· TP â‚¹840 â€” US generics strength, animal-health outperformance, ex-US expansion","https://trendlyne.com/research-reports/stock/92/APLLTD/alembic-pharmaceuticals-ltd/"],
+  ["Deven Choksey","260519","Uno Minda","Buy Â· TP â‚¹1,292 â€” Record revenue, green mobility inflects higher","https://trendlyne.com/research-reports/stock/864/UNOMINDA/uno-minda-ltd/"],
+  ["Geojit BNP Paribas","260518","Coforge","Buy Â· TP â‚¹1,670","https://trendlyne.com/get-document/post/pdf/5646729/"],
+  ["Geojit BNP Paribas","260518","SBI Cards and Payment","Accumulate Â· TP â‚¹698","https://trendlyne.com/get-document/post/pdf/5646724/"],
+  ["Deven Choksey","260518","Vinati Organics","Accumulate Â· TP â‚¹1,482 â€” Valuation & outlook","https://trendlyne.com/get-document/post/pdf/5645275/"],
+  ["IDBI Capital","260518","Somany Ceramics","Buy Â· TP â‚¹520 â€” Q4FY26 result review","https://trendlyne.com/get-document/post/pdf/5644697/"],
+  ["IDBI Capital","260518","Chalet Hotels","Buy Â· TP â‚¹937 â€” Q4FY26 result review","https://trendlyne.com/get-document/post/pdf/5644696/"],
+  ["IDBI Capital","260518","Tata Steel","Hold Â· TP â‚¹229 â€” Q4FY26 result review","https://trendlyne.com/get-document/post/pdf/5644695/"],
+  ["IDBI Capital","260518","Steel Authority of India","Sell Â· TP â‚¹158 â€” Q4FY26 result review","https://trendlyne.com/get-document/post/pdf/5644694/"],
+  ["Axis Direct","260518","Tata Steel","Hold Â· TP â‚¹235 â€” Result update","https://trendlyne.com/get-document/post/pdf/5644693/"],
+  ["Axis Direct","260518","Chalet Hotels","Buy Â· TP â‚¹1,000 â€” Result update","https://trendlyne.com/get-document/post/pdf/5644692/"],
+  ["Axis Direct","260518","Steel Authority of India","Hold Â· TP â‚¹200 â€” Result update","https://trendlyne.com/get-document/post/pdf/5644691/"],
+  ["Axis Direct","260518","Welspun Living","Buy Â· TP â‚¹180 â€” Result update","https://trendlyne.com/get-document/post/pdf/5644690/"],
+  ["Axis Direct","260518","Kirloskar Brothers","Buy Â· TP â‚¹2,330 â€” Result update","https://trendlyne.com/get-document/post/pdf/5644689/"],
+  ["Axis Direct","260518","Kalpataru Projects","Buy Â· TP â‚¹1,470 â€” Result update","https://trendlyne.com/get-document/post/pdf/5644688/"],
+  ["Axis Direct","260518","City Union Bank","Buy Â· TP â‚¹276 â€” Pick of the week","https://trendlyne.com/get-document/post/pdf/5644686/"],
+  ["Axis Direct","260518","Endurance Technologies","Buy Â· TP â‚¹2,880 â€” Result update","https://trendlyne.com/get-document/post/pdf/5644685/"],
+  ["Prabhudas Lilladhar","260518","Tata Steel","Accumulate Â· TP â‚¹247 â€” India pricing to drive earnings","https://trendlyne.com/get-document/post/pdf/5644679/"],
+  ["Prabhudas Lilladhar","260518","Global Health (Medanta)","Buy Â· TP â‚¹1,450 â€” Noida unit ramp-up on track","https://trendlyne.com/get-document/post/pdf/5644678/"],
+  ["Prabhudas Lilladhar","260518","Delhivery","Buy Â· TP â‚¹534 â€” Turns FCFF positive","https://trendlyne.com/get-document/post/pdf/5644677/"],
+  ["Prabhudas Lilladhar","260518","VIP Industries","Sell Â· TP â‚¹245 â€” BS cleansing over, downgrade to SELL","https://trendlyne.com/get-document/post/pdf/5644676/"],
+  ["ICICI Direct","260518","Power Grid","Buy Â· TP â‚¹360","https://trendlyne.com/get-document/post/pdf/5644663/"],
+  ["ICICI Direct","260518","Somany Ceramics","Buy Â· TP â‚¹520","https://trendlyne.com/get-document/post/pdf/5644662/"],
+  ["ICICI Direct","260518","Tata Motors PV","Hold Â· TP â‚¹390","https://trendlyne.com/get-document/post/pdf/5644661/"],
+  ["ICICI Direct","260518","KEC International","Buy Â· TP â‚¹609","https://trendlyne.com/get-document/post/pdf/5644660/"],
+  ["ICICI Direct","260518","Tata Steel","Buy Â· TP â‚¹270","https://trendlyne.com/get-document/post/pdf/5644659/"],
+  ["ICICI Direct","260518","Indian Hotels","Buy Â· TP â‚¹220 â€” Muted Q4 (ex-residential); Q1FY27 expected better","https://trendlyne.com/get-document/post/pdf/5644658/"],
+  ["ICICI Direct","260518","Kaynes Technology","Hold Â· TP â‚¹3,590 â€” Q4FY26 dismal, revenue significantly below guidance","https://trendlyne.com/get-document/post/pdf/5644657/"],
+  ["ICICI Direct","260518","Saregama","Hold Â· TP â‚¹410 â€” Strong Q4FY26 across music and artist management","https://trendlyne.com/get-document/post/pdf/5644656/"],
+  ["ICICI Direct","260518","Steel Authority of India","Buy Â· TP â‚¹240 â€” Robust growth visibility, rising steel demand","https://trendlyne.com/get-document/post/pdf/5644655/"],
+  ["ICICI Direct","260518","Allied Blenders","Buy Â· TP â‚¹690 â€” Q4FY26 consolidated revenue +9.4% YoY","https://trendlyne.com/get-document/post/pdf/5644654/"],
+  ["Deven Choksey","260518","Tata Motors PV","Accumulate Â· TP â‚¹395 â€” FY27 transition year; execution determines earnings","https://trendlyne.com/get-document/post/pdf/5644267/"],
+  ["Khambatta Securities","260518","Sharda Cropchem","Buy Â· TP â‚¹1,325 â€” Agrochemical recovery, pricing power; long-term outlook intact","https://trendlyne.com/get-document/post/pdf/5644262/"],
+  ["Deven Choksey","260518","Archean Chemical","Sell Â· TP â‚¹489 â€” FY26 affected by logistics and macro headwinds","https://trendlyne.com/get-document/post/pdf/5643620/"],
+  ["Deven Choksey","260518","Balkrishna Industries","Accumulate Â· TP â‚¹2,350 â€” Record volumes marred by margin compression","https://trendlyne.com/get-document/post/pdf/5643619/"],
+  ["Deven Choksey","260518","Godrej Consumer Products","Buy Â· TP â‚¹1,344 â€” Multiple growth engines entering inflection phase","https://trendlyne.com/get-document/post/pdf/5643618/"],
+  ["Deven Choksey","260518","Dr Reddy's Labs","Accumulate Â· TP â‚¹1,445 â€” Outlook","https://trendlyne.com/get-document/post/pdf/5643403/"],
 ];
 
 /* ---------- Render ticker ---------- */
@@ -1218,9 +1279,9 @@ function moverRow(name,ticker,pxStr,pctStr,up,why){
     <td class="r">${spark(up)}</td></tr>`;
 }
 document.getElementById('moversTop').innerHTML =
-  movers.filter(m=>m[4]>0).map(([s,c,p,ch])=>moverRow(c,s,'₹'+p,ch,true)).join('');
+  movers.filter(m=>m[4]>0).map(([s,c,p,ch])=>moverRow(c,s,'â‚¹'+p,ch,true)).join('');
 document.getElementById('moversBot').innerHTML =
-  movers.filter(m=>m[4]<0).map(([s,c,p,ch])=>moverRow(c,s,'₹'+p,ch,false)).join('');
+  movers.filter(m=>m[4]<0).map(([s,c,p,ch])=>moverRow(c,s,'â‚¹'+p,ch,false)).join('');
 
 /* ---------- ATH + 52-Week High Watch (Nifty 500) ----------
    ATH list scraped from dhan.co/stocks/market/all-time-high-stocks/
@@ -1230,14 +1291,14 @@ document.getElementById('moversBot').innerHTML =
    snapshots; refresh via scripts\rebuild-highs.ps1 + commit. */
 const ATH_AS_OF='2026-05-20';
 const HI_ATH=[
-  // {name, cmp, ath} — Nifty 500 names from Dhan ATH list
+  // {name, cmp, ath} â€” Nifty 500 names from Dhan ATH list
   {name:'Hitachi Energy',       cmp:35335.00, ath:35095.00},
   {name:'Laurus Labs',          cmp:1359.50,  ath:1353.10},
   {name:'Manappuram Finance',   cmp:323.75,   ath:321.60},
   {name:'Avalon Technologies',  cmp:1469.40,  ath:1427.80},
 ];
 const HI_W52=[
-  // {name, cmp, w52h} — all rows from Groww (page is already index-filtered to N500)
+  // {name, cmp, w52h} â€” all rows from Groww (page is already index-filtered to N500)
   {name:'Hitachi Energy India', cmp:35355.00, w52h:35355.00},
   {name:'Sai Life Sciences',    cmp:1147.00,  w52h:1148.60},
   {name:'Laurus Labs',          cmp:1357.90,  w52h:1357.90},
@@ -1253,8 +1314,8 @@ const HI_W52=[
 ];
 // Local price formatter (a different `inr` is defined later for the
 // movers section; both can't be `const` at the same scope).
-function inrPx(n){ if(n==null||!isFinite(n))return '—';
-  return '₹'+Number(n).toLocaleString('en-IN',{maximumFractionDigits:2}); }
+function inrPx(n){ if(n==null||!isFinite(n))return 'â€”';
+  return 'â‚¹'+Number(n).toLocaleString('en-IN',{maximumFractionDigits:2}); }
 // Tag a row as "AT ATH" / "AT 52WH" when CMP is essentially equal to the high.
 function highRow(r, hiKey, isAth){
   const atHigh = r.cmp != null && r[hiKey] != null && r.cmp >= r[hiKey] - 0.5;
@@ -1274,7 +1335,7 @@ function highRow(r, hiKey, isAth){
   if(sub){
     const d=new Date(ATH_AS_OF);
     const label=d.toLocaleDateString('en-IN',{timeZone:'Asia/Kolkata',day:'numeric',month:'short',year:'numeric'});
-    sub.textContent=`Nifty 500 constituents · Dhan (ATH) · Groww (52WH) · refreshed ${label}`;
+    sub.textContent=`Nifty 500 constituents Â· Dhan (ATH) Â· Groww (52WH) Â· refreshed ${label}`;
   }
 })();
 
@@ -1348,7 +1409,7 @@ function renderResearchNotes(groupBy){
     seen.add(k);
     rows.push([n[0],n[1],n[2],n[3],n[4]||null]);
   });
-  // Build (house|company) → sorted-desc history index for "previous TP /
+  // Build (house|company) â†’ sorted-desc history index for "previous TP /
   // previous call" lookup. Pool current rows + prior reports (older
   // than the 2-day window) from notesPrior.
   const priorPool=(typeof notesPrior==='undefined'?[]:notesPrior).map(n=>[n[0],n[1],n[2],n[3]]);
@@ -1362,25 +1423,25 @@ function renderResearchNotes(groupBy){
     const arr=history[house+'|'+co]||[];
     return arr.find(r=>r[1]<date)||null;
   }
-  // Extract target price from a headline (₹1,400 / Rs 360 / "TP 5050").
-  const TP_RE=/(?:TP\s*)?(?:₹|Rs\.?|INR)\s*([\d,]+(?:\.\d+)?)/i;
+  // Extract target price from a headline (â‚¹1,400 / Rs 360 / "TP 5050").
+  const TP_RE=/(?:TP\s*)?(?:â‚¹|Rs\.?|INR)\s*([\d,]+(?:\.\d+)?)/i;
   const TP_RE2=/TP\s*to\s*Rs\s*([\d,]+)/i;
   function tpOf(s){
     if(!s) return null;
     let m=s.match(TP_RE2)||s.match(TP_RE);
-    return m ? '₹'+m[1] : null;
+    return m ? 'â‚¹'+m[1] : null;
   }
   // Group key + secondary-column accessor swap based on the chosen axis.
-  //   by-house    → key=house,   secondary=company
-  //   by-company  → key=company, secondary=house
-  //   by-date     → key=date,    secondary="house · company"
+  //   by-house    â†’ key=house,   secondary=company
+  //   by-company  â†’ key=company, secondary=house
+  //   by-date     â†’ key=date,    secondary="house Â· company"
   let keyOf, secondCol;
   if (grp==='company') { keyOf=r=>r[2]; secondCol=r=>r[0]; }
-  else if (grp==='date') { keyOf=r=>r[1]; secondCol=r=>r[2]+' · '+r[0]; }
+  else if (grp==='date') { keyOf=r=>r[1]; secondCol=r=>r[2]+' Â· '+r[0]; }
   else { keyOf=r=>r[0]; secondCol=r=>r[2]; }
   const groupMap={};
   rows.forEach(r=>{ const k=keyOf(r); (groupMap[k]=groupMap[k]||[]).push(r); });
-  // Sort: by-date → newest day first; by-company → alpha; by-house → most reports first
+  // Sort: by-date â†’ newest day first; by-company â†’ alpha; by-house â†’ most reports first
   const groups=Object.keys(groupMap).sort((a,b)=>
     grp==='date' ? (a<b?1:-1)
     : grp==='company' ? a.localeCompare(b)
@@ -1389,7 +1450,7 @@ function renderResearchNotes(groupBy){
   const el=document.getElementById('notes');
   if(!el) return;
   const secondHdr = grp==='company' ? 'Research house'
-    : grp==='date' ? 'Company · House'
+    : grp==='date' ? 'Company Â· House'
     : 'Company';
   const header =
     `<div class="n-header">`+
@@ -1442,24 +1503,24 @@ function renderResearchNotes(groupBy){
         const prevC = prevCallStr
           ? { label: prevCallStr, cls: CT_FROM_TAG[prevCallStr] || 'hold' }
           : (prior ? callOf(prior[3]) : null);
-        // TP change arrow: green ▲ if currTP > prevTP, red ▼ if lower.
-        const tpNum = s => { if(!s) return null; const m=String(s).replace(/[,₹\s]/g,'').match(/^([\d.]+)/); return m?parseFloat(m[1]):null; };
+        // TP change arrow: green â–² if currTP > prevTP, red â–¼ if lower.
+        const tpNum = s => { if(!s) return null; const m=String(s).replace(/[,â‚¹\s]/g,'').match(/^([\d.]+)/); return m?parseFloat(m[1]):null; };
         const cN=tpNum(currTP), pN=tpNum(prevTP);
         const arrow = (cN!=null && pN!=null && cN!==pN)
-          ? (cN>pN ? `<span class="tp-arrow up" title="Raised from ₹${esc(prevTP)}">▲</span>`
-                   : `<span class="tp-arrow down" title="Cut from ₹${esc(prevTP)}">▼</span>`)
+          ? (cN>pN ? `<span class="tp-arrow up" title="Raised from â‚¹${esc(prevTP)}">â–²</span>`
+                   : `<span class="tp-arrow down" title="Cut from â‚¹${esc(prevTP)}">â–¼</span>`)
           : '';
         const tpCurrCell = currTP
-          ? `<span class="n-tp">₹${esc(currTP)}${arrow}</span>`
-          : `<span class="n-tp muted">—</span>`;
+          ? `<span class="n-tp">â‚¹${esc(currTP)}${arrow}</span>`
+          : `<span class="n-tp muted">â€”</span>`;
         const tpPrevCell = prevTP
-          ? `<span class="n-tp prev">₹${esc(prevTP)}</span>`
-          : `<span class="n-tp prev muted">—</span>`;
+          ? `<span class="n-tp prev">â‚¹${esc(prevTP)}</span>`
+          : `<span class="n-tp prev muted">â€”</span>`;
         const callCurrCell = `<span class="n-call ${c.cls}">${esc(c.label)}</span>`;
         const callPrevCell = prevC
           ? `<span class="n-call prev ${prevC.cls}">${esc(prevC.label)}</span>`
-          : `<span class="n-call prev empty">—</span>`;
-        // Column order: date · secondary · headline · curr TP · curr call · prev TP · prev call
+          : `<span class="n-call prev empty">â€”</span>`;
+        // Column order: date Â· secondary Â· headline Â· curr TP Â· curr call Â· prev TP Â· prev call
         return `<div class="note">`+
           `<span class="n-date">${fmtD(d)}</span>`+
           `<span class="n-co" title="${second}">${second}</span>`+
@@ -1471,7 +1532,7 @@ function renderResearchNotes(groupBy){
       }).join('')}
     </div>`;
   }).join('')+
-    `<div class="n-foot">Synced to NotebookLM + Trendlyne — last 2 days. Curr TP / Curr Call are pulled from the report PDF body where parseable, else from the headline; Prev TP / Prev Call come from the broker's stated previous TP/rating in the same PDF, else the most recent prior report on the same name in the dataset. "—" = no parseable signal.</div>`;
+    `<div class="n-foot">Synced to NotebookLM + Trendlyne â€” last 2 days. Curr TP / Curr Call are pulled from the report PDF body where parseable, else from the headline; Prev TP / Prev Call come from the broker's stated previous TP/rating in the same PDF, else the most recent prior report on the same name in the dataset. "â€”" = no parseable signal.</div>`;
 }
 // Called once NOTEBOOKS + nbHref are defined later in the file.
 
@@ -1567,7 +1628,7 @@ const chart=new Chart(ctx,{
             const date=d.toLocaleDateString('en-IN',{...IST,day:'numeric',month:'short',year:'numeric'});
             if(chart._intraday){
               const tm=d.toLocaleTimeString('en-IN',{...IST,hour:'2-digit',minute:'2-digit',hour12:false});
-              return date+' · '+tm;
+              return date+' Â· '+tm;
             }
             return date;
           },
@@ -1591,8 +1652,8 @@ const chart=new Chart(ctx,{
         border:{display:false},
         beginAtZero:false,grace:'5%',
         ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
-          // Chart.js v4 runs this callback during `new Chart()` —
-          // BEFORE the `const chart = …` assignment completes. Using
+          // Chart.js v4 runs this callback during `new Chart()` â€”
+          // BEFORE the `const chart = â€¦` assignment completes. Using
           // the outer `chart` binding would throw a TDZ ReferenceError.
           // Use `this.chart` (the scale's parent chart), which Chart.js
           // wires up before the layout/tick pass runs.
@@ -1607,7 +1668,7 @@ const chart=new Chart(ctx,{
 });
 // (Note: the live #rangeSeg handler is wired further down, after the
 // liveChart() / fetchSym() definitions. The stale sample-only handler
-// that used to live here was removed — it both crashed on the new
+// that used to live here was removed â€” it both crashed on the new
 // YTD/3Y/5Y/10Y timeframes (missing key in `datasets`) and clobbered
 // the live datasets array when it fired first.)
 
@@ -1617,7 +1678,7 @@ function tick(){
   const opt={timeZone:'Asia/Kolkata',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false};
   const dt={timeZone:'Asia/Kolkata',weekday:'long',day:'numeric',month:'long',year:'numeric'};
   document.getElementById('clock').textContent='IST '+n.toLocaleTimeString('en-IN',opt);
-  document.getElementById('dateline').textContent=n.toLocaleDateString('en-IN',dt)+' · NSE / BSE';
+  document.getElementById('dateline').textContent=n.toLocaleDateString('en-IN',dt)+' Â· NSE / BSE';
 }
 tick(); setInterval(tick,1000);
 
@@ -1670,11 +1731,11 @@ const COV=[
 
 function setStatus(live){
   const el=document.getElementById('dataStatus');
-  if(live){ el.innerHTML='<span class="dot"></span> Live · Yahoo Finance'; }
+  if(live){ el.innerHTML='<span class="dot"></span> Live Â· Yahoo Finance'; }
   else{ el.style.background='var(--saffron-soft)'; el.style.borderColor='rgba(233,162,59,.3)';
-        el.style.color='var(--saffron)'; el.innerHTML='Sample data · live feed unreachable'; }
+        el.style.color='var(--saffron)'; el.innerHTML='Sample data Â· live feed unreachable'; }
 }
-function fmtChg(pct){ return `${pct>=0?'▲':'▼'} ${pct>=0?'+':''}${pct.toFixed(2)}%`; }
+function fmtChg(pct){ return `${pct>=0?'â–²':'â–¼'} ${pct>=0?'+':''}${pct.toFixed(2)}%`; }
 
 async function loadQuotes(){
   const j=await sparkApi([...IDX.map(x=>x[0]),'NIFTY_MIDCAP_100.NS','SMALLCAP.NS','INR=X']);
@@ -1700,10 +1761,10 @@ async function loadQuotes(){
   upd('k500','k500c','^CRSLDX'); upd('kvix','kvixc','^INDIAVIX');
   const n5=pick(j,'^CRSLDX');
   if(n5&&n5.close){ const v=n5.close.filter(x=>x!=null);
-    if(v.length) document.getElementById('k500m').textContent=`Day range ${inr(Math.min(...v))} – ${inr(Math.max(...v))}`; }
+    if(v.length) document.getElementById('k500m').textContent=`Day range ${inr(Math.min(...v))} â€“ ${inr(Math.max(...v))}`; }
 
   // Snapshot
-  const snap=(id,s,pfx='',cur='₹')=>{
+  const snap=(id,s,pfx='',cur='â‚¹')=>{
     const d=pick(j,s),p=last(d),pc=prevC(d); if(p==null||pc==null) return;
     const ch=(p-pc)/pc*100, e=document.getElementById(id);
     e.textContent=`${pfx||cur}${inr(p)}  ${ch>=0?'+':''}${ch.toFixed(2)}%`;
@@ -1797,7 +1858,7 @@ async function liveChart(r){
   chart._multi=multi;
   chart.data.labels=primary.times.map(t=>fmtAxisLabel(t,r));
   if(multi){
-    // Each line = (price/firstPrice − 1) × 100  → 0% baseline.
+    // Each line = (price/firstPrice âˆ’ 1) Ã— 100  â†’ 0% baseline.
     chart.data.datasets=fetched.map(f=>{
       const base=f.p.data[0];
       return {
@@ -1826,12 +1887,12 @@ async function liveChart(r){
   const t=document.getElementById('mainChartTitle');
   const s=document.getElementById('mainChartSub');
   if(multi){
-    t.textContent=`${fetched.length} indices — ${r} return`;
-    s.textContent=`Yahoo Finance · normalized to 0% baseline (common start = ${new Date(commonStart).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})})`;
+    t.textContent=`${fetched.length} indices â€” ${r} return`;
+    s.textContent=`Yahoo Finance Â· normalized to 0% baseline (common start = ${new Date(commonStart).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})})`;
   }else{
     const def=MAIN_TF_DEF[r];
-    t.textContent=`${labelFor(fetched[0].sym)} — Index Performance`;
-    s.textContent=`Yahoo Finance · ${fetched[0].sym} · ${def.interval==='1d'?'daily close':def.interval+' intraday'}`;
+    t.textContent=`${labelFor(fetched[0].sym)} â€” Index Performance`;
+    s.textContent=`Yahoo Finance Â· ${fetched[0].sym} Â· ${def.interval==='1d'?'daily close':def.interval+' intraday'}`;
   }
   chart.update();
 }
@@ -1930,7 +1991,7 @@ function drawSecChart(data){
 async function loadSectorDetail(name,tf){
   const sec=sectors.find(s=>s[0]===name); if(!sec) return;
   const [r,i]=TF[tf];
-  document.getElementById('secCaption').textContent=`${name} · ${tf} return`;
+  document.getElementById('secCaption').textContent=`${name} Â· ${tf} return`;
   try{
     const j=await getJSON(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sec[1])}?range=${r}&interval=${i}`);
     const res=j.chart&&j.chart.result&&j.chart.result[0];
@@ -1963,7 +2024,7 @@ function refreshSector(){
     loadSectorDetail(curSec,curTF);
   }else{
     det.style.display='none'; bars.style.display='block';
-    document.getElementById('secCaption').textContent=`NSE sectoral indices · ${curTF} return`;
+    document.getElementById('secCaption').textContent=`NSE sectoral indices Â· ${curTF} return`;
     loadSectorBars(curTF);
   }
 }
@@ -1986,7 +2047,7 @@ BAJFINANCE:"Bajaj Finance",AXISBANK:"Axis Bank",MARUTI:"Maruti Suzuki",SUNPHARMA
 HCLTECH:"HCL Technologies",NTPC:"NTPC",TATAMOTORS:"Tata Motors",ONGC:"Oil & Natural Gas",
 ADANIENT:"Adani Enterprises","M&M":"Mahindra & Mahindra",WIPRO:"Wipro",ADANIPORTS:"Adani Ports",
 POWERGRID:"Power Grid Corp",ULTRACEMCO:"UltraTech Cement",TITAN:"Titan Company",ASIANPAINT:"Asian Paints",
-COALINDIA:"Coal India",BAJAJFINSV:"Bajaj Finserv",NESTLEIND:"Nestlé India",JSWSTEEL:"JSW Steel",
+COALINDIA:"Coal India",BAJAJFINSV:"Bajaj Finserv",NESTLEIND:"NestlÃ© India",JSWSTEEL:"JSW Steel",
 TATASTEEL:"Tata Steel",DMART:"Avenue Supermarts","BAJAJ-AUTO":"Bajaj Auto",HDFCLIFE:"HDFC Life",
 SBILIFE:"SBI Life Insurance",GRASIM:"Grasim Industries",HINDALCO:"Hindalco Industries",TECHM:"Tech Mahindra",
 INDUSINDBK:"IndusInd Bank",DIVISLAB:"Divi's Laboratories",DRREDDY:"Dr Reddy's Labs",CIPLA:"Cipla",
@@ -2153,17 +2214,17 @@ function moversSummary(o){
     ? ` Biggest move <b>${t.s}</b> ${t.ch>=0?'+':''}${t.ch.toFixed(2)}%, weakest <b>${b.s}</b> ${b.ch.toFixed(2)}%.`
     : '';
   const tf=o.tf||'1D';
-  return `<b>${tone}</b> — ${o.adv} up / ${o.dec} down across ${o.count} Nifty 500 names (${tf}).${secTxt}${ext}`;
+  return `<b>${tone}</b> â€” ${o.adv} up / ${o.dec} down across ${o.count} Nifty 500 names (${tf}).${secTxt}${ext}`;
 }
 
 function renderMovers(o){
   const fmt=arr=>arr.map(m=>
-    moverRow(NAMES[m.s]||m.s, m.s, ' ₹'+inr(m.p),(m.ch>=0?'+':'')+(+m.ch).toFixed(2),m.ch>=0,m.why)).join('');
+    moverRow(NAMES[m.s]||m.s, m.s, ' â‚¹'+inr(m.p),(m.ch>=0?'+':'')+(+m.ch).toFixed(2),m.ch>=0,m.why)).join('');
   document.getElementById('moversTop').innerHTML=fmt(o.top);
   document.getElementById('moversBot').innerHTML=fmt(o.bottom);
   document.getElementById('mvSummary').innerHTML=moversSummary(o);
   document.getElementById('mvSub').textContent=
-    `Nifty 500 constituents · ${TF_LABEL[o.tf||moversTF]||"today's % move"}`;
+    `Nifty 500 constituents Â· ${TF_LABEL[o.tf||moversTF]||"today's % move"}`;
 }
 function statsOf(all){
   all.sort((a,b)=>b.ch-a.ch);
@@ -2224,7 +2285,7 @@ function summariseMove(title, name){
     .replace(/\bhere'?s (what|why|how)[^.;|]*/ig,'')
     .replace(/\bshould you (buy|sell|invest|hold)[^.?;|]*\??/ig,'')
     .replace(/\b(key (takeaways|highlights)|live updates?|in focus|stock in focus|what to expect|explained|deep dive|all you need to know)\b/ig,'')
-    .replace(/[|•·]+/g,' ')
+    .replace(/[|â€¢Â·]+/g,' ')
     .replace(/\s{2,}/g,' ').trim();
   // Move + %
   const POS_V=/jump|surge|soar|ris|rose|grew|grow|gain|rally|rallies|spike|zoom|rocket|climb|advance|hit\s+(?:record|all[- ]?time\s+high|52[- ]?week\s+high)|hits\s+(?:record|all[- ]?time\s+high|52[- ]?week\s+high)/i;
@@ -2239,7 +2300,7 @@ function summariseMove(title, name){
     const m=t.match(/\b(up|higher|down|lower)\b(?:\s+by)?\s+(\d+(?:\.\d+)?)\s*%/i);
     if(m){ dir=/up|high/i.test(m[1])?'up':'down'; pct=m[2]; }
   }
-  // Cause phrases (ordered by importance — first match wins)
+  // Cause phrases (ordered by importance â€” first match wins)
   const causes=[];
   if(/upgrade(?:d|s)?\s+to/i.test(t)) causes.push('broker upgrade');
   else if(/downgrade(?:d|s)?\s+to/i.test(t)) causes.push('broker downgrade');
@@ -2250,7 +2311,7 @@ function summariseMove(title, name){
   if(/(?:bags?|wins?|secures?|receives?)[^.]{0,40}\border\b|\border\s+(?:win|inflow)|\bnew\s+order\b/i.test(t)) causes.push('order win');
   if(/(acquisition|acquir(?:es|ed|ing)?|merger|m&a)/i.test(t)) causes.push('M&A');
   if(/(stake\s+(?:sale|buy)|block\s+deal|promoter\s+(?:sale|stake))/i.test(t)) causes.push('stake change');
-  if(/(rights\s+issue|\bqip\b|fund.?rais|preferential|capital\s+infusion|warrants?|infuses?\b|raises?\s+(?:Rs|₹|INR))/i.test(t)) causes.push('fundraise');
+  if(/(rights\s+issue|\bqip\b|fund.?rais|preferential|capital\s+infusion|warrants?|infuses?\b|raises?\s+(?:Rs|â‚¹|INR))/i.test(t)) causes.push('fundraise');
   if(/\bnet\s+profit\b|profit\s+(?:after\s+tax|rises?|fell|drops?|jumps?|surges?|grew|declin\w+)/i.test(t)) causes.push('profit reported');
   if(/\bdividend\b/i.test(t)) causes.push('dividend');
   if(/bonus\s+(?:issue|share)/i.test(t)) causes.push('bonus issue');
@@ -2263,15 +2324,15 @@ function summariseMove(title, name){
   if(/(strong|robust)\s+(?:Q[1-4]|results|guidance|earnings)/i.test(t)) causes.push('strong results');
   if(/profit\s+(?:warning|alert)/i.test(t)) causes.push('profit warning');
   // Compose
-  const arrow = dir==='up' ? '▲' : dir==='down' ? '▼' : '';
+  const arrow = dir==='up' ? 'â–²' : dir==='down' ? 'â–¼' : '';
   const move = pct ? `${arrow}${pct}%` : (arrow||'');
   const head = [...new Set(causes)].slice(0,2).join(', ');
   if(move && head) return `${move} on ${head}`;
   if(move) return move + (POS_V.test(t)?' on positive flow':NEG_V.test(t)?' on negative flow':'');
   if(head) return head.charAt(0).toUpperCase()+head.slice(1);
-  // Last resort: tightly de-fluffed phrase from the title (≤80 chars, sentence-cased).
-  let c = t.replace(/[—–-]\s*$/,'').replace(/\s*[:;,]\s*$/,'').trim();
-  if(c.length>80) c=c.slice(0,77).replace(/\s+\S*$/,'')+'…';
+  // Last resort: tightly de-fluffed phrase from the title (â‰¤80 chars, sentence-cased).
+  let c = t.replace(/[â€”â€“-]\s*$/,'').replace(/\s*[:;,]\s*$/,'').trim();
+  if(c.length>80) c=c.slice(0,77).replace(/\s+\S*$/,'')+'â€¦';
   return c.charAt(0).toUpperCase()+c.slice(1);
 }
 async function whyPool(tasks,size){
@@ -2293,7 +2354,7 @@ async function enrichWhy(o){
   }),5);
 }
 async function loadMovers(){
-  // Primary: serverless aggregator (one cached request — server fetches
+  // Primary: serverless aggregator (one cached request â€” server fetches
   // the whole Nifty 500 + per-stock news reason). Free-tier friendly.
   try{
     const r=await fetch('/api/movers?tf='+encodeURIComponent(moversTF),{cache:'no-store'});
@@ -2314,7 +2375,7 @@ async function loadMovers(){
     if(all.length>=10){ const o=statsOf(all); renderMovers(o); enrichWhy(o); return true; }
   }catch(e){}
   document.getElementById('mvSummary').textContent=
-    'Nifty 500 movers unavailable — retrying next cycle.';
+    'Nifty 500 movers unavailable â€” retrying next cycle.';
   return false;
 }
 
@@ -2356,7 +2417,7 @@ async function openNews(ticker,name){
   if(pill){ mv.textContent=pill.textContent; mv.className='nm-move '+(pill.classList.contains('u')?'up':'down'); }
   else mv.textContent='';
   const body=document.getElementById('nmBody');
-  body.innerHTML='<div class="nm-empty">Fetching latest headlines…</div>';
+  body.innerHTML='<div class="nm-empty">Fetching latest headlinesâ€¦</div>';
   nm.hidden=false;
   try{
     const query=`"${name}" (share OR stock OR results) when:4d`;
@@ -2374,12 +2435,12 @@ async function openNews(ticker,name){
     body.innerHTML=items.slice(0,7).map(it=>{
       const title=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').replace(/</g,'&lt;');
       const tm=it.pubDate?relTime(Date.parse(it.pubDate)/1000):'';
-      const src=it.source?(' · '+it.source):'';
+      const src=it.source?(' Â· '+it.source):'';
       return `<a class="nm-item" href="${it.link||'#'}" target="_blank" rel="noopener">
         <h4>${title}</h4><div class="meta">${tm}${src}</div></a>`;
     }).join('');
   }catch(e){
-    body.innerHTML='<div class="nm-empty">Couldn’t load headlines (free news feed unreachable). Try again shortly.</div>';
+    body.innerHTML='<div class="nm-empty">Couldnâ€™t load headlines (free news feed unreachable). Try again shortly.</div>';
   }
 }
 async function newsViaFunction(q){
@@ -2398,7 +2459,7 @@ async function newsViaFunction(q){
 const _newsCache=new Map();            // q -> {items, time}
 const _newsInflight=new Map();         // q -> Promise (dedupe concurrent identical queries)
 const NEWS_TTL=5*60*1000;
-const NEWS_GAP_MS=800;                  // ~75 req/min — under rss2json soft limit
+const NEWS_GAP_MS=800;                  // ~75 req/min â€” under rss2json soft limit
 let _newsQueue=Promise.resolve();
 let _backoffUntil=0;
 
@@ -2480,7 +2541,7 @@ function cleanSnippet(s,title,source){
   const norm=x=>x.toLowerCase().replace(/[^a-z0-9]+/g,'');
   let rest=norm(t).replace(norm(title),'').replace(norm(source||''),'');
   if(rest.length<45) return '';
-  if(t.length>220) t=t.slice(0,217).replace(/\s+\S*$/,'')+'…';
+  if(t.length>220) t=t.slice(0,217).replace(/\s+\S*$/,'')+'â€¦';
   return t;
 }
 function fmtPolItems(items){
@@ -2489,7 +2550,7 @@ function fmtPolItems(items){
     const tm=it.pubDate?relTime(Date.parse(it.pubDate)/1000):'';
     const cs=cleanSnippet(it.snippet,it.title,it.source);
     const sum=cs?`<div class="sum">${cs.replace(/</g,'&lt;')}</div>`:'';
-    const src=[it.source,tm].filter(Boolean).join(' · ');
+    const src=[it.source,tm].filter(Boolean).join(' Â· ');
     return `<li><div class="pol-item">
       <div class="pol-top">
         <a class="pol-h" href="${it.link||'#'}" target="_blank" rel="noopener" title="${title}">${title}</a>
@@ -2524,13 +2585,13 @@ async function loadNews(){
   //   - OPINION_NAMED_RE: "<Proper Name> says|flags|warns|..." pundit
   //                      commentary (case-sensitive on the name)
   //   - QUESTION_RE: any question-form headline
-  // Trailing clickbait ("; should you buy?") is still NOT rejected —
+  // Trailing clickbait ("; should you buy?") is still NOT rejected â€”
   // summariseNews strips it and we keep the factual lead.
   const NEWS_EXCL=/\b(?:live updates?|results live|what to (?:expect|know)|stocks? to watch|buzzing stocks|in focus|ahead of (?:q[1-4]|results|earnings|the budget|monetary policy|rbi)|\d+ (?:things|reasons|stocks?|key|smart|top|best) (?:to|you|that|things)|key (?:takeaways|highlights|things to know)|all you need to know|here'?s (?:why|how|what|where)\b|will (?:rbi|the|govt|fed|markets?|inflation)\b|stocks to buy|set to (?:rise|fall|hike|cut)|why (?:is|are|did)\b|(?:might|may|could) (?:rise|fall|cut|hike|gain|drop)|\bpreview\b|\bexplained\b|\bexplainer\b|\bbreakdown\b|what changed|why it matters|\bdeep dive\b|\bby 20\d\d\b|needs? to\s|likely to\s|expected to\s|forecast(?:s|ing|ed)?\b|\bprojected\b|\bprojection\b|aims? to\s|targets? to\s|\bestimates? to\b|to (?:reach|boost|raise|grow|hit|cross|touch|achieve|become|spend|invest)\s|should (?:hit|reach|raise|boost|grow|cross|achieve)\s|\b(?:report|study|survey|paper)\s*:|\boutlook\b|seen at\b)/i;
   // Case-sensitive named-pundit detection. Two patterns:
-  //   1. Two+ capitalised words + opinion verb  → "Gita Gopinath says"
-  //   2. Single capitalised word + opinion verb → "Krugman expects"
-  //      with a stop-list for institutions ("RBI", "Govt", "Cabinet"…)
+  //   1. Two+ capitalised words + opinion verb  â†’ "Gita Gopinath says"
+  //   2. Single capitalised word + opinion verb â†’ "Krugman expects"
+  //      with a stop-list for institutions ("RBI", "Govt", "Cabinet"â€¦)
   //      so "RBI says repo rate unchanged" still passes.
   const OPINION_VERB = '(?:says?|said|flags?|flagged|warns?|warned|argues?|argued|notes?|noted|believes?|opines?|cautions?|cautioned|told|tells|sees?|saw|reckons?|reckoned|comments?|commented|highlights?|highlighted|fears?|feared|expects?|predicts?|predicted)';
   const OPINION_NAMED_RE = new RegExp('\\b[A-Z][a-z]+\\s+[A-Z][a-z]+(?:\\s+[A-Z][a-z]+)?\\s+'+OPINION_VERB+'\\b');
@@ -2551,7 +2612,7 @@ async function loadNews(){
     if(cat==='POL' || cat==='ECON') items=marketRelevant(items);
     else if(cat==='EARN') items=(items||[]).filter(it=>{const t=String(it.title||'');return EARN_RE.test(t)&&!EARN_EXCL.test(t)&&!SOC_RE.test(t);});
     else items=(items||[]).filter(it=>{const t=String(it.title||'');return CORP_RE.test(t)&&!GOVT_RE.test(t)&&!SOC_RE.test(t);});
-    // Universal fact-only filter — drop listicle/preview structure,
+    // Universal fact-only filter â€” drop listicle/preview structure,
     // named-person punditry (multi-word or single name + opinion verb),
     // and any question-form headline.
     items=(items||[]).filter(it=>{
@@ -2568,7 +2629,7 @@ async function loadNews(){
   // NEWEST headline per company wins.
   all.sort((a,b)=>(Date.parse(b.pubDate||0)||0)-(Date.parse(a.pubDate||0)||0));
   // 24-hour clamp measured from the newest item (robust to sandbox /
-  // source clock skew — same pattern used by the movers "why" line).
+  // source clock skew â€” same pattern used by the movers "why" line).
   let newest=0;
   for(const it of all){ const ms=Date.parse(it.pubDate||0); if(!isNaN(ms)&&ms>newest) newest=ms; }
   // Dedupe by company first (ticker if matchable, else lead-company
@@ -2595,10 +2656,10 @@ async function loadNews(){
     if(merged.length>=20) break;
   }
   if(!merged.length){
-    el.innerHTML='<li class="pol-empty">No news right now (free feed). The CORS proxy may be rate-limited — try again in a minute.</li>';
+    el.innerHTML='<li class="pol-empty">No news right now (free feed). The CORS proxy may be rate-limited â€” try again in a minute.</li>';
     return;
   }
-  // Tiered order: POL → ECON → company-specific (EARN+CORP).
+  // Tiered order: POL â†’ ECON â†’ company-specific (EARN+CORP).
   // Political decisions and macro indicators set the day's tone, so
   // they sit above individual-company headlines. Within each tier,
   // newest first.
@@ -2610,7 +2671,7 @@ async function loadNews(){
   });
   el.innerHTML=fmtNewsItems(merged);
 }
-// Rule-based 1-sentence summary of a news headline. No LLM — strips
+// Rule-based 1-sentence summary of a news headline. No LLM â€” strips
 // publisher / clickbait clauses, takes the first sentence, normalises
 // punctuation. Keeps the factual core; drops "should you buy", "live
 // updates", "what to expect", "5 things to know" type trailing fluff.
@@ -2620,8 +2681,8 @@ function summariseNews(rawTitle){
     .replace(/&amp;/g,'&').replace(/&#39;|&apos;/g,"'").replace(/&quot;/g,'"')
     .replace(/\s+/g,' ').trim();
   // Strip trailing clickbait/preview clauses after a separator
-  t=t.replace(/\s*[;,:\-—–|]\s*(?:should you|here'?s|what to|why .{3,40}\?|how to|key (?:takeaways|highlights|things)|all you need to know|explained|live updates?|in focus|stocks? to (?:buy|watch)|\d+ (?:things|reasons|stocks?|key) (?:to|you|that|things))\b[^.]*$/i,'')
-    .replace(/\s*[;:—–|-]\s*$/,'').trim();
+  t=t.replace(/\s*[;,:\-â€”â€“|]\s*(?:should you|here'?s|what to|why .{3,40}\?|how to|key (?:takeaways|highlights|things)|all you need to know|explained|live updates?|in focus|stocks? to (?:buy|watch)|\d+ (?:things|reasons|stocks?|key) (?:to|you|that|things))\b[^.]*$/i,'')
+    .replace(/\s*[;:â€”â€“|-]\s*$/,'').trim();
   // Cut at first sentence end if there's a follow-on clause beginning
   // with a capital letter (keeps the lead).
   const m=t.match(/^([^.!?]{20,200}?[.!?])\s+[A-Z]/);
@@ -2638,8 +2699,8 @@ function fmtNewsItems(items){
     const titleRaw=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').trim();
     // Pull the company: prefer NAMES-mapped ticker (full company
     // name), else the lead-company heuristic. For macro / political /
-    // economic headlines without a single company anchor → no chip.
-    // ECON rows skip the company extraction entirely — economic data
+    // economic headlines without a single company anchor â†’ no chip.
+    // ECON rows skip the company extraction entirely â€” economic data
     // isn't a company event even when an OMC name happens to appear.
     let co='';
     if(it.cat!=='ECON'){
@@ -2647,14 +2708,14 @@ function fmtNewsItems(items){
       if(tk) co=NAMES[tk]||tk;
       else { const lead=leadCompany(titleRaw); if(lead && lead.length>=3 && lead.split(' ').length<=5) co=lead; }
     }
-    // Sentiment from the headline — drives the chip colour.
+    // Sentiment from the headline â€” drives the chip colour.
     const sent=co?sentiment(titleRaw):'flat';
     const sentCls=sent==='up'?'up':sent==='down'?'down':'flat';
     // Strip the company name off the front before summarising so we
     // don't end up with "<company> <company> ..." after the chip.
     let body=titleRaw;
     if(co){
-      const re=new RegExp('^'+co.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[\\s:,;\\-—–]+','i');
+      const re=new RegExp('^'+co.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[\\s:,;\\-â€”â€“]+','i');
       const stripped=body.replace(re,'').trim();
       if(stripped.length>10) body=stripped;
     }
@@ -2662,7 +2723,7 @@ function fmtNewsItems(items){
     const summary=summariseNews(body) || body;
     const title=esc(summary);
     const tm=it.pubDate?relTime(Date.parse(it.pubDate)/1000):'';
-    const src=[it.source,tm].filter(Boolean).join(' · ');
+    const src=[it.source,tm].filter(Boolean).join(' Â· ');
     const cat=(it.cat||'POL').toLowerCase();
     const coChip=co?`<span class="news-co ${sentCls}" title="${esc(co)}">${esc(co)}</span>`:'';
     return `<li><div class="pol-item">
@@ -2676,16 +2737,16 @@ function fmtNewsItems(items){
 }
 
 function fmtPeriod(p){
-  // "2026-03" -> "Mar ’26"
+  // "2026-03" -> "Mar â€™26"
   const m=String(p||'').match(/^(\d{4})-(\d{2})/);
   if(!m) return String(p||'');
   const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return mon[(+m[2])-1]+' ’'+m[1].slice(2);
+  return mon[(+m[2])-1]+' â€™'+m[1].slice(2);
 }
 function macroNum(v,unit){
   if(unit==='pct') return v.toFixed(2)+'%';
   // IMF IFS USD series are reported in US$ millions -> show US$ billions
-  const b=v/1000, s=b<0?'−':'';
+  const b=v/1000, s=b<0?'âˆ’':'';
   return s+'$'+Math.abs(b).toFixed(1)+'B';
 }
 function renderMacro(j){
@@ -2694,7 +2755,7 @@ function renderMacro(j){
     Array.from({length:cols},(_,i)=>`<th>${i===cols-1?'Latest':('M-'+(cols-1-i))}</th>`).join('')+`</tr>`;
   const rows=j.items.map(it=>{
     const pad=cols-it.points.length;
-    const cells=Array.from({length:pad},()=>`<td>·</td>`).join('')+
+    const cells=Array.from({length:pad},()=>`<td>Â·</td>`).join('')+
       it.points.map((p,i)=>{
         const last=i===it.points.length-1, neg=p.value<0;
         return `<td class="${last?'lat':''} ${neg?'neg':''}" title="${fmtPeriod(p.period)}">${macroNum(p.value,it.unit)}</td>`;
@@ -2704,7 +2765,7 @@ function renderMacro(j){
   }).join('');
   document.querySelector('#macroTbl').innerHTML=`<thead>${head}</thead><tbody>${rows}</tbody>`;
   document.getElementById('macroSub').textContent=
-    `Monthly · ${j.source} · last 10 months · IMF/IFS publishes with a lag, so the latest reported month may be in the prior year (shown per row)`;
+    `Monthly Â· ${j.source} Â· last 10 months Â· IMF/IFS publishes with a lag, so the latest reported month may be in the prior year (shown per row)`;
 }
 
 // Client fallback for the macro function (DBnomics is CORS-enabled;
@@ -2753,7 +2814,7 @@ async function buildMacroClient(){
       items.splice(3,0,{key:'tradeBal',label:lt.value<0?'Trade deficit (goods)':'Trade surplus (goods)',
         unit:'usdb',points:tb,latest:lt}); }
   }
-  return items.length?{source:'DBnomics · IMF IFS / BIS (client)',items}:null;
+  return items.length?{source:'DBnomics Â· IMF IFS / BIS (client)',items}:null;
 }
 async function loadMacro(){
   const tb=document.querySelector('#macroTbl tbody');
@@ -2800,7 +2861,7 @@ const WL_WATCH=[
   ["Schneider Electric","SCHNEIDER.NS"]
 ];
 function wlPct(v){
-  if(v==null||isNaN(v)) return '<td class="r"><span style="color:var(--text-mute)">—</span></td>';
+  if(v==null||isNaN(v)) return '<td class="r"><span style="color:var(--text-mute)">â€”</span></td>';
   const up=v>=0;
   return `<td class="r"><span class="${up?'up':'down'}">${up?'+':''}${v.toFixed(2)}%</span></td>`;
 }
@@ -2810,7 +2871,7 @@ function wlRows(list,map){
     const hit=cands.find(c=>map[c]&&map[c].p!=null)||cands.find(c=>map[c]);
     const d=hit?map[hit]:null;
     const tk=(hit||cands[0]).replace('.NS','');
-    const px=d&&d.p!=null?'₹'+inr(d.p):'<span style="color:var(--text-mute)">—</span>';
+    const px=d&&d.p!=null?'â‚¹'+inr(d.p):'<span style="color:var(--text-mute)">â€”</span>';
     return `<tr><td><span class="sym">${nm}</span><span class="wl-tk">${tk}</span></td>
       <td class="r px">${px}</td>
       ${wlPct(d&&d.d1)}${wlPct(d&&d.w1)}${wlPct(d&&d.m1)}${wlPct(d&&d.ytd)}</tr>`;
@@ -2862,8 +2923,8 @@ function pickTicker(title){
   return null;
 }
 function leadCompany(title){
-  const head=title.split(/\s+(?=Q[1-4]\b|H[12]\b|FY\d|results?\b|net profit|PAT\b|posts?\b|reports?\b|shares?\b|stock\b|announces?\b|declares?\b|standalone\b|consolidated\b|net loss|profit\b|revenue\b|earnings\b|to (acquire|buy|merge)|acquires?\b|merges?\b|board\b|appoints?\b|:|—|–)/i)[0]||title;
-  const w=head.replace(/[\s:–—-]+$/,'').trim().split(/\s+/);
+  const head=title.split(/\s+(?=Q[1-4]\b|H[12]\b|FY\d|results?\b|net profit|PAT\b|posts?\b|reports?\b|shares?\b|stock\b|announces?\b|declares?\b|standalone\b|consolidated\b|net loss|profit\b|revenue\b|earnings\b|to (acquire|buy|merge)|acquires?\b|merges?\b|board\b|appoints?\b|:|â€”|â€“)/i)[0]||title;
+  const w=head.replace(/[\s:â€“â€”-]+$/,'').trim().split(/\s+/);
   return w.slice(0,5).join(' ');
 }
 const SENT_POS=/(surge|jump|soar|ris(e|es|ing)|rose|grew|grow(s|th)?|gain|beat|doubl|tripl|record|strong|turns? profit|narrows? loss|multibagger|rally|rallies|zoom|spike|robust|\bup\b|higher|outperform|upgrade)/i;
@@ -2877,7 +2938,7 @@ function relDate(pd){
   const d=new Date(ms);
   return d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
 }
-function dirSign(w){ return /jump|surg|soar|ris|rose|grew|grow|gain|\bup\b|doubl|tripl|multipl|beat|higher/i.test(w)?'+':'−'; }
+function dirSign(w){ return /jump|surg|soar|ris|rose|grew|grow|gain|\bup\b|doubl|tripl|multipl|beat|higher/i.test(w)?'+':'âˆ’'; }
 // Rule-based normalisation of a numeric earnings headline into a
 // daily-report-style line (NOT a verbatim copy). No free runtime
 // summariser/LLM exists; this reconstructs from the figures, and
@@ -2890,20 +2951,20 @@ function summariseEarning(raw){
   const lossHit=/\bnet loss\b|posts? (?:a )?loss|slips? into (?:the )?red|swung? to (?:a )?loss/i.test(t);
   const profHit=/(net profit|profit after tax|\bPAT\b|net income|standalone (?:net )?profit|cons(?:olidated)? (?:net )?profit)/i.test(t);
   if(lossHit && !profHit){
-    const a=t.match(/loss[^%]*?(?:of|at|to)\s?(?:Rs|₹|INR)?\s?([\d,]+(?:\.\d+)?)\s?(crore|cr|bn|billion|lakh)/i);
-    parts.push('net loss'+(a?` of ₹${a[1]} ${/cr|crore/i.test(a[2])?'cr':a[2]}`:''));
+    const a=t.match(/loss[^%]*?(?:of|at|to)\s?(?:Rs|â‚¹|INR)?\s?([\d,]+(?:\.\d+)?)\s?(crore|cr|bn|billion|lakh)/i);
+    parts.push('net loss'+(a?` of â‚¹${a[1]} ${/cr|crore/i.test(a[2])?'cr':a[2]}`:''));
   } else {
     const MET='(?:net profit|profit after tax|profit before tax|\\bPAT\\b|\\bPBT\\b|net income|standalone (?:net )?profit|cons(?:olidated)? (?:net )?profit|\\bprofit\\b)';
     const DIR='(jump\\w*|surg\\w*|soar\\w*|ris\\w*|rose|grew|grow\\w*|gain\\w*|up|fall\\w*|fell|drop\\w*|declin\\w*|slump\\w*|plunge\\w*|slip\\w*|down|doubl\\w*|tripl\\w*|beat\\w*|jump|halv\\w*)';
-    const AMT='(?:(?:Rs|₹|INR)\\s?)?([\\d,]+(?:\\.\\d+)?)\\s?(crore|cr|bn|billion|\\bb\\b|lakh|trillion|tn)(?:\\s?rupees)?';
+    const AMT='(?:(?:Rs|â‚¹|INR)\\s?)?([\\d,]+(?:\\.\\d+)?)\\s?(crore|cr|bn|billion|\\bb\\b|lakh|trillion|tn)(?:\\s?rupees)?';
     const abs=t.match(new RegExp('(?:net profit|pat|profit|income)[^.]*?(?:to|at|of)\\s?'+AMT,'i'));
-    const absTxt=abs?` to ₹${abs[1]} ${/cr|crore/i.test(abs[2])?'cr':abs[2].toLowerCase()}`:'';
+    const absTxt=abs?` to â‚¹${abs[1]} ${/cr|crore/i.test(abs[2])?'cr':abs[2].toLowerCase()}`:'';
     const pm=t.match(new RegExp(MET+'[^%]*?\\b'+DIR+'\\b[^%]*?(\\d+(?:\\.\\d+)?)\\s?%','i'));
     if(pm){
       parts.push(`net profit ${dirSign(pm[1])}${pm[2]}% YoY`+absTxt);
     } else {
       const pa=t.match(new RegExp(MET+'[^.]*?\\b'+DIR+'\\b[^.]*?(?:to|at)\\s?'+AMT,'i'));
-      if(pa) parts.push(`net profit ${dirSign(pa[1])} to ₹${pa[2]} ${/cr|crore/i.test(pa[3])?'cr':pa[3].toLowerCase()}`);
+      if(pa) parts.push(`net profit ${dirSign(pa[1])} to â‚¹${pa[2]} ${/cr|crore/i.test(pa[3])?'cr':pa[3].toLowerCase()}`);
     }
   }
   const rm=t.match(/(?:revenue|sales|topline|total income)[^%]*?\b(jump\w*|surg\w*|soar\w*|ris\w*|rose|grew|grow\w*|gain\w*|up|fall\w*|fell|drop\w*|declin\w*|down)\b[^%]*?(\d+(?:\.\d+)?)\s?%/i);
@@ -2928,8 +2989,8 @@ function summariseEarning(raw){
   }
   if(/beat(?:s|en)?\s+(?:the\s+)?(?:street|analyst|consensus|estimate)/i.test(t)) seg.push('beat estimates');
   else if(/miss(?:es|ed)?\s+(?:the\s+)?(?:street|analyst|consensus|estimate)/i.test(t)) seg.push('missed estimates');
-  const dm=t.match(/dividend(?:\s+of)?\s*(?:Rs\.?|₹|INR)?\s*([\d.]+)/i);
-  if(dm) seg.push(`declared ₹${dm[1]} dividend`);
+  const dm=t.match(/dividend(?:\s+of)?\s*(?:Rs\.?|â‚¹|INR)?\s*([\d.]+)/i);
+  if(dm) seg.push(`declared â‚¹${dm[1]} dividend`);
   else if(/\bdividend\b/i.test(t)) seg.push('declared a dividend');
   if(/bonus\s+(?:issue|share)/i.test(t)) seg.push('announced a bonus issue');
   if(/stock split|share split|sub-?division of (?:equity )?shares/i.test(t)) seg.push('announced a stock split');
@@ -2956,14 +3017,14 @@ function summariseEarning(raw){
     .replace(/\bshould you (buy|sell|invest|hold)[^.?;|]*\??/ig,'')
     .replace(/\b(key (takeaways|highlights)|live updates?|results live|in focus|stock in focus|what to expect|explained|deep dive|key things to know|all you need to know)\b/ig,'')
     .replace(/\b(brokerages?|analysts?) (say|said|view|on|remain|are)[^.;|]*/ig,'')
-    .replace(/[|•]+/g,' ').replace(/[—–-]\s*$/,'').replace(/\s*[:;,]\s*$/,'')
+    .replace(/[|â€¢]+/g,' ').replace(/[â€”â€“-]\s*$/,'').replace(/\s*[:;,]\s*$/,'')
     .replace(/\s{2,}/g,' ').trim();
   const lead=leadCompany(t);
   if(lead && c.toLowerCase().startsWith(lead.toLowerCase()))
-    c=c.slice(lead.length).replace(/^[\s:–—,'-]+/,'').trim()||c;
+    c=c.slice(lead.length).replace(/^[\s:â€“â€”,'-]+/,'').trim()||c;
   if(period && !new RegExp('\\b'+period+'\\b','i').test(c)) c=period+': '+c;
   c=c.charAt(0).toUpperCase()+c.slice(1);
-  return c.length>120?c.slice(0,117).replace(/\s+\S*$/,'')+'…':c;
+  return c.length>120?c.slice(0,117).replace(/\s+\S*$/,'')+'â€¦':c;
 }
 function fmtEarnFeed(items,mode){
   const seen=new Set(), rows=[];
@@ -2984,10 +3045,10 @@ function fmtEarnFeed(items,mode){
     const lead=leadCompany(safeT);
     const tk=pickTicker(safeT);
     // earnings feed shows the company name (not the ticker)
-    const coName=tk?(NAMES[tk]||lead||tk):(lead||tk||'—');
+    const coName=tk?(NAMES[tk]||lead||tk):(lead||tk||'â€”');
     const dispName=String(coName)
       .replace(/\s+(?:Ltd\.?|Limited|Corporation|Industries)$/i,'').trim()||coName;
-    const label=mode==='earn'?dispName:(tk||lead||'—');
+    const label=mode==='earn'?dispName:(tk||lead||'â€”');
     if(mode==='earn'){
       // exclude repeated company names (keep first occurrence)
       const key=(tk?(NAMES[tk]||tk):String(lead)).toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,16);
@@ -3000,8 +3061,8 @@ function fmtEarnFeed(items,mode){
     } else {
       sum=safeT;
       if(lead && safeT.toLowerCase().startsWith(lead.toLowerCase()))
-        sum=safeT.slice(lead.length).replace(/^[\s:–—,-]+/,'').trim()||safeT;
-      if(sum.length>200) sum=sum.slice(0,197).replace(/\s+\S*$/,'')+'…';
+        sum=safeT.slice(lead.length).replace(/^[\s:â€“â€”,-]+/,'').trim()||safeT;
+      if(sum.length>200) sum=sum.slice(0,197).replace(/\s+\S*$/,'')+'â€¦';
     }
     const cls=mode==='earn'?sentiment(title):'flat';
     const nmeCls=mode==='earn'?`ec-co ${cls}`:`ec-tk ${cls}`;
@@ -3037,7 +3098,7 @@ function bizDays(n){
   const out=[], d=new Date(); d.setHours(0,0,0,0);
   while(out.length<n){
     const dow=d.getDay();
-    if(dow!==0) out.push(new Date(d)); // Mon–Sat (Sundays excluded)
+    if(dow!==0) out.push(new Date(d)); // Monâ€“Sat (Sundays excluded)
     d.setDate(d.getDate()+1);
   }
   return out;
@@ -3058,10 +3119,10 @@ function renderEarnCal(items,sourceLabel){
     const body=cos.length
       ? `<div class="ec-co">${cos.slice(0,40).map(c=>`<b>${String(c).replace(/</g,'&lt;')}</b>`).join('')}</div>`
       : `<div class="ec-none">No results scheduled / not yet announced</div>`;
-    return `<div class="ec-day"><div class="ec-date">${L.dow} · ${L.date}
+    return `<div class="ec-day"><div class="ec-date">${L.dow} Â· ${L.date}
       <span>${cos.length?cos.length+' co.':''}</span></div>${body}</div>`;
   }).join('');
-  if(sourceLabel) document.getElementById('calSub').textContent='Forthcoming results · '+sourceLabel;
+  if(sourceLabel) document.getElementById('calSub').textContent='Forthcoming results Â· '+sourceLabel;
 }
 async function loadEarnCal(){
   try{
@@ -3071,7 +3132,7 @@ async function loadEarnCal(){
   // No reliable free no-key client fallback for the forward calendar.
   renderEarnCal([], null);
   document.getElementById('calSub').textContent=
-    'Forthcoming results · live calendar needs the deployed backend (BSE)';
+    'Forthcoming results Â· live calendar needs the deployed backend (BSE)';
 }
 // loadEarnNews / loadCorpEvents are no longer wired (the Companies tab
 // was removed); their feeds are now merged into loadNews() in the Macro
@@ -3079,74 +3140,88 @@ async function loadEarnCal(){
 // GOVT_RE) and the fmtEarnFeed helper are still referenced.
 
 /* ---------- Company NotebookLM notebooks ----------
-   name = India Related Reports folder · url = NotebookLM notebook URL
+   name = India Related Reports folder Â· url = NotebookLM notebook URL
    Leave url empty ('') until the notebook has been created; the UI
    shows it as "pending" until a URL is filled in here. */
 const NOTEBOOKS = [
-  // Synced via NotebookLM notebook_list — 63 workspaces under markworktk@gmail.com
-  {name:"AWL Agri Business", url:"https://notebooklm.google.com/notebook/9f0a998e-2b3f-4514-9b20-8aeff0d085cb"},
   {name:"Adani Power", url:"https://notebooklm.google.com/notebook/2052a512-3b1a-4dd6-8ff4-f31a1250dbb3"},
+  {name:"Aditya Birla Capital", url:"https://notebooklm.google.com/notebook/2b272dab-5e35-43e5-b3ac-593a70f07369"},
   {name:"Afcons Infrastructure", url:"https://notebooklm.google.com/notebook/eb9e1834-c094-466b-91ce-b41aa07cbb03"},
   {name:"Amber Enterprises", url:"https://notebooklm.google.com/notebook/80c2673b-5dfd-4290-87b1-26e0bfa3dacb"},
   {name:"Anthem Biosciences", url:"https://notebooklm.google.com/notebook/0cefff70-e762-47ee-84d1-91b6c6f197e6"},
+  {name:"Apollo Hospitals", url:"https://notebooklm.google.com/notebook/f9678474-c06c-4a87-80da-1325af20945e"},
+  {name:"ASK Automotive", url:"https://notebooklm.google.com/notebook/56f7e916-df3c-455d-b66b-05a9ad45785e"},
   {name:"Astral", url:"https://notebooklm.google.com/notebook/9bdb8911-b0f1-4580-b1c3-70c8e10f692a"},
   {name:"Avalon Technologies", url:"https://notebooklm.google.com/notebook/a912f78d-7b60-4cd2-a28f-bc6913d3854c"},
   {name:"Avenue Supermarts", url:"https://notebooklm.google.com/notebook/b709b384-776e-4fa7-88d6-02155e5de1ce"},
+  {name:"AWL Agri Business", url:"https://notebooklm.google.com/notebook/9f0a998e-2b3f-4514-9b20-8aeff0d085cb"},
   {name:"Bajaj Finserv", url:"https://notebooklm.google.com/notebook/1f3bf443-b4ff-4aa3-bf1f-849ef412ea6d"},
   {name:"Bharat Electronics", url:"https://notebooklm.google.com/notebook/2063fd8b-62f8-4cbd-8c24-25ffc2885666"},
   {name:"Bharat Petroleum", url:"https://notebooklm.google.com/notebook/448fc115-d1af-49ca-a169-72acd5a2b66d"},
-  {name:"CMS Info Systems", url:"https://notebooklm.google.com/notebook/d74b454f-0839-4dcb-b186-5efa33f0663f"},
   {name:"Carborundum Universal", url:"https://notebooklm.google.com/notebook/52b97895-4f0f-43d9-96a5-afd82eff71f8"},
   {name:"Chalet Hotels", url:"https://notebooklm.google.com/notebook/245d3505-5b16-41b0-99ab-8968c2fb532c"},
+  {name:"CMS Info Systems", url:"https://notebooklm.google.com/notebook/d74b454f-0839-4dcb-b186-5efa33f0663f"},
   {name:"Coforge", url:"https://notebooklm.google.com/notebook/90165e49-c5c9-4263-8895-5fb2f81920f3"},
   {name:"Deepak Nitrite", url:"https://notebooklm.google.com/notebook/0a076081-e434-4282-8946-3a44043255bb"},
   {name:"Delhivery", url:"https://notebooklm.google.com/notebook/e60ebf13-75fa-4493-b6b5-02035dea2ad9"},
   {name:"Devyani International", url:"https://notebooklm.google.com/notebook/68912360-0235-4e81-816d-f8092348e1f5"},
+  {name:"Eureka Forbes", url:"https://notebooklm.google.com/notebook/a299dedf-6647-4288-b4cb-533f4ab8ef86"},
   {name:"Fusion Finance", url:"https://notebooklm.google.com/notebook/f7ee8db4-668b-46bc-a17f-e65553273672"},
   {name:"GE Vernova T&D India", url:"https://notebooklm.google.com/notebook/6f7d5bac-64bb-4e6d-a996-e680c3cca0b1"},
   {name:"Gland Pharma", url:"https://notebooklm.google.com/notebook/0e89a0df-9f63-4d46-81cc-c914e2d026c3"},
   {name:"Global Health (Medanta)", url:"https://notebooklm.google.com/notebook/dfd48ba2-b8d5-4f1e-965d-4fa34505b77b"},
+  {name:"Grasim Industries", url:"https://notebooklm.google.com/notebook/92b7152f-4ac0-430f-a6c8-3c28244d4235"},
   {name:"Hindalco", url:"https://notebooklm.google.com/notebook/36a0fe0b-473f-4946-8d26-957ded2e86b4"},
   {name:"Hindustan Aeronautics", url:"https://notebooklm.google.com/notebook/447614d6-7bb0-46e0-a65f-95eff1c21e90"},
   {name:"ICICI Prudential Life Insurance", url:"https://notebooklm.google.com/notebook/e92628f7-2615-4be0-aa51-81466a391649"},
-  {name:"ITC Hotels", url:"https://notebooklm.google.com/notebook/a5d97009-2df5-4ca3-aef5-e7f7869a6a92"},
   {name:"India Macro", url:"https://notebooklm.google.com/notebook/079cc13f-a419-4ebf-92fc-74d14db11412"},
   {name:"India Strategy", url:"https://notebooklm.google.com/notebook/b2c638b3-4343-4034-9c16-703a1e5fe330"},
   {name:"Indian Banks", url:"https://notebooklm.google.com/notebook/6e8b0e50-86f4-4799-9fa4-d202f1276d3a"},
   {name:"Indian Cement", url:"https://notebooklm.google.com/notebook/9ea63f15-7de4-4476-ba8b-e13c3a98c359"},
+  {name:"Indian Consumer", url:"https://notebooklm.google.com/notebook/a05fa42e-0fea-4b2a-944f-706913972ab9"},
   {name:"Indian Financials", url:"https://notebooklm.google.com/notebook/3a0fd753-ab82-4a92-85cc-0fd17ead2ced"},
   {name:"Indian Hotels", url:"https://notebooklm.google.com/notebook/b4a57303-8b37-4443-9d8d-0738dcedf941"},
   {name:"Indian IT", url:"https://notebooklm.google.com/notebook/fa819ad3-5760-4e95-81da-afc5a7cac12a"},
   {name:"Indian Jewellery", url:"https://notebooklm.google.com/notebook/a38b5243-f25e-4101-9c9e-a5849565580e"},
   {name:"Indian Oil Corporation", url:"https://notebooklm.google.com/notebook/0eb6e718-3107-41d2-a43a-3826213233c7"},
+  {name:"Indian Paints", url:"https://notebooklm.google.com/notebook/e791f26b-c8f6-4ee1-8818-03bd8f5c1851"},
   {name:"Indian Pharmaceuticals", url:"https://notebooklm.google.com/notebook/add8b569-e624-4e1f-956f-4792826dc6d1"},
   {name:"Indian Steel", url:"https://notebooklm.google.com/notebook/c0637308-bb27-4851-aca4-ae9f11a5c079"},
   {name:"Indraprastha Gas", url:"https://notebooklm.google.com/notebook/bf67a59b-9fa6-4308-b7a3-8c8f7a34b2f9"},
+  {name:"ITC Hotels", url:"https://notebooklm.google.com/notebook/a5d97009-2df5-4ca3-aef5-e7f7869a6a92"},
   {name:"JSW Energy", url:"https://notebooklm.google.com/notebook/c5764258-cce8-40b2-bea6-a20cd9965ced"},
+  {name:"Jubilant FoodWorks", url:"https://notebooklm.google.com/notebook/9f876966-147e-4546-bfcb-2cb60208d622"},
   {name:"KEC International", url:"https://notebooklm.google.com/notebook/97a5a006-71f0-4521-84f1-81547e3dd273"},
   {name:"KIMS", url:"https://notebooklm.google.com/notebook/db6d4a68-ad3d-4db0-9f32-bb3a2e54d920"},
+  {name:"L&T Finance", url:"https://notebooklm.google.com/notebook/0440e7e3-358e-42ac-b20f-e70e4dcd531a"},
+  {name:"Lenskart", url:"https://notebooklm.google.com/notebook/926fd5e1-57bf-429e-9c37-8d4270efbe58"},
   {name:"MakeMyTrip", url:"https://notebooklm.google.com/notebook/07d4a7bd-03ac-4bdf-a518-0bf78f7a6d48"},
   {name:"Mankind Pharma", url:"https://notebooklm.google.com/notebook/9d215cf6-849d-4ca0-bdca-8714d29c8444"},
-  {name:"NHPC", url:"https://notebooklm.google.com/notebook/1c692695-ba5b-4c6c-9110-5477a7b1648b"},
   {name:"Nagarjuna", url:"https://notebooklm.google.com/notebook/fe920d47-4dea-4131-913c-8e1714a5e407"},
   {name:"Neogen Chemicals", url:"https://notebooklm.google.com/notebook/8080d1de-8478-4868-87b7-47dd17bdd7dc"},
+  {name:"Nephrocare Health Services", url:"https://notebooklm.google.com/notebook/9cd9a37c-5f62-4ce5-9e83-1d40d057e983"},
+  {name:"NHPC", url:"https://notebooklm.google.com/notebook/1c692695-ba5b-4c6c-9110-5477a7b1648b"},
   {name:"Orkla India", url:"https://notebooklm.google.com/notebook/b0f6275a-5f13-4888-97a7-38e7de718140"},
+  {name:"PI Industries", url:"https://notebooklm.google.com/notebook/2f8b0243-b513-47eb-a11d-29b5f72eb3e6"},
   {name:"Power Grid", url:"https://notebooklm.google.com/notebook/2b78ce77-c267-42ef-9bd2-8154388bcf2d"},
   {name:"Premier Energies", url:"https://notebooklm.google.com/notebook/c0d655ab-6767-4b33-b9e4-889e97c50007"},
   {name:"ReNew", url:"https://notebooklm.google.com/notebook/dc3e673b-5135-4ab0-a5d7-fd76c532e060"},
   {name:"Restaurant Brands Asia", url:"https://notebooklm.google.com/notebook/d7688241-1a0a-45ed-992e-add37268cbf6"},
   {name:"S H Kelkar and Company", url:"https://notebooklm.google.com/notebook/2ba2f7e9-34c6-4876-b047-6303936a7eb2"},
-  {name:"SJVN", url:"https://notebooklm.google.com/notebook/fec9a9fa-d697-4e09-b5b3-3bd063881340"},
+  {name:"Samvardhana Motherson", url:"https://notebooklm.google.com/notebook/5884c3c9-6f26-45bc-b358-8c2ccfbd9c58"},
   {name:"Siemens Energy India", url:"https://notebooklm.google.com/notebook/3169355f-89c2-46da-b671-3472301783a1"},
+  {name:"SJVN", url:"https://notebooklm.google.com/notebook/fec9a9fa-d697-4e09-b5b3-3bd063881340"},
   {name:"Steel Authority of India", url:"https://notebooklm.google.com/notebook/c3882fa6-7b74-4890-91ad-c99b376fb372"},
-  {name:"TCS", url:"https://notebooklm.google.com/notebook/f4f797f3-6232-44d0-a6c6-ed2c438084cb"},
+  {name:"Tata Motors", url:"https://notebooklm.google.com/notebook/c6b879cf-729a-4f39-bf27-59dcaac58f0d"},
   {name:"Tata Steel", url:"https://notebooklm.google.com/notebook/0b071d8d-fe4b-48ad-8de1-872641c958f6"},
+  {name:"TCS", url:"https://notebooklm.google.com/notebook/f4f797f3-6232-44d0-a6c6-ed2c438084cb"},
   {name:"Timken", url:"https://notebooklm.google.com/notebook/a3041cf5-f472-41d7-8cde-b927d86cbe81"},
   {name:"United Spirits", url:"https://notebooklm.google.com/notebook/5f8ec16a-55d3-4c0d-8442-8c1a17f56b4c"},
   {name:"Uno Minda", url:"https://notebooklm.google.com/notebook/e6b1be10-5154-4ea2-813d-ee0cf4e43c5e"},
   {name:"Vodafone Idea", url:"https://notebooklm.google.com/notebook/133b58ce-f599-40a6-bd77-46c2717a1c00"},
+  {name:"Welspun Living", url:"https://notebooklm.google.com/notebook/f3de60a7-c103-4f7d-85cc-d255499aaf35"},
   {name:"Zee Entertainment", url:"https://notebooklm.google.com/notebook/0ceb73f0-6dc1-40f1-b52b-a0ef993ba171"},
-  {name:"Zydus Lifesciences", url:"https://notebooklm.google.com/notebook/aeb019e4-5c77-4123-a4a9-3fb361207fd2"}
+  {name:"Zydus Lifesciences", url:"https://notebooklm.google.com/notebook/aeb019e4-5c77-4123-a4a9-3fb361207fd2"},
 ];
 const NB_AUTHUSER='markworktk@gmail.com';
 function nbHref(n){ return n.url ? n.url+(n.url.includes('?')?'&':'?')+'authuser='+encodeURIComponent(NB_AUTHUSER) : ''; }
@@ -3180,7 +3255,7 @@ fetch('data/pdfdata.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j
   renderResearchNotes();
 }).catch(()=>{});
 let screenerLoaded=false;
-// Sector notebooks vs company notebooks — sectors are the "India(n) X"
+// Sector notebooks vs company notebooks â€” sectors are the "India(n) X"
 // thematic workspaces (Banks, IT, Pharma, etc.). Anything else is a
 // single-company workspace.
 const SECTOR_NAMES=new Set([
@@ -3231,7 +3306,7 @@ const SECTOR_TICKERS={
 function yahooSymFor(name){
   let s = COMPANY_TICKERS[name] || SECTOR_TICKERS[name];
   if(!s) return null;
-  // ^ prefix → index; MMYT / RNW are NASDAQ; everything else gets .NS
+  // ^ prefix â†’ index; MMYT / RNW are NASDAQ; everything else gets .NS
   if(s.startsWith('^')) return s;
   if(s==='MMYT' || s==='RNW') return s;
   return s + '.NS';
@@ -3267,7 +3342,7 @@ function fmtTickFor(tf){
 let companyChart=null;
 let currentCompany=null;
 let currentTf='10Y';
-// Company profile data — ticker + sector + 3-4 sentence business
+// Company profile data â€” ticker + sector + 3-4 sentence business
 // description sourced from each company's website, latest annual
 // report and the broker reports in its NotebookLM workspace.
 window.COMPANIES=null;
@@ -3286,7 +3361,7 @@ function updateCoDesc(){
   if(!e || !e.desc){ card.hidden=true; return; }
   card.hidden=false;
   title.textContent=currentCompany;
-  meta.textContent=[e.sector, e.ticker].filter(Boolean).join(' · ');
+  meta.textContent=[e.sector, e.ticker].filter(Boolean).join(' Â· ');
   body.textContent=e.desc;
 }
 
@@ -3318,8 +3393,8 @@ async function loadCompanyChart(name, tf){
   }
   const def = TF_DEF[currentTf] || TF_DEF['10Y'];
   const intervalLabel = def.interval==='1d' ? 'daily close' : def.interval+' intraday';
-  titleEl.textContent = `${currentCompany} — ${currentTf}`;
-  subEl.textContent = `Yahoo Finance · ${sym} · ${intervalLabel}`;
+  titleEl.textContent = `${currentCompany} â€” ${currentTf}`;
+  subEl.textContent = `Yahoo Finance Â· ${sym} Â· ${intervalLabel}`;
   msgEl.style.display='none';
   // Build period1 / period2 in unix seconds so we cover the exact window
   // (Yahoo's named ranges don't include 3Y).
@@ -3348,7 +3423,7 @@ async function loadCompanyChart(name, tf){
 function renderCompanyChart(data, times, sym, tf){
   const c = document.getElementById('cChart');
   if(!c) return;
-  const ccy = (sym==='MMYT' || sym==='RNW') ? '$' : '₹';
+  const ccy = (sym==='MMYT' || sym==='RNW') ? '$' : 'â‚¹';
   if(!companyChart){
     const gc = c.getContext('2d').createLinearGradient(0,0,0,300);
     gc.addColorStop(0,'rgba(233,162,59,.32)');
@@ -3365,7 +3440,7 @@ function renderCompanyChart(data, times, sym, tf){
             titleColor:'#646c7c', bodyColor:'#e9e6dd', padding:11, displayColors:false,
             // Tooltip title reads the full timestamp (day + month + year,
             // plus HH:mm on intraday timeframes) from the parallel _times
-            // array — the x-axis labels are sparse "May '26" style which
+            // array â€” the x-axis labels are sparse "May '26" style which
             // wouldn't tell you the exact date on a 10Y chart.
             callbacks:{title:items=>{
                 if(!items||!items[0]) return '';
@@ -3375,7 +3450,7 @@ function renderCompanyChart(data, times, sym, tf){
                 const date=d.toLocaleDateString('en-IN',{...IST,day:'numeric',month:'short',year:'numeric'});
                 if(companyChart._intraday){
                   const time=d.toLocaleTimeString('en-IN',{...IST,hour:'2-digit',minute:'2-digit',hour12:false});
-                  return date+' · '+time;
+                  return date+' Â· '+time;
                 }
                 return date;
               },
@@ -3383,8 +3458,8 @@ function renderCompanyChart(data, times, sym, tf){
         scales:{x:{display:true, grid:{display:false}, border:{display:false},
           ticks:{color:'#646c7c', font:{family:'IBM Plex Mono',size:10},
             maxRotation:0, autoSkip:true, maxTicksLimit:10}},
-          // Y-axis auto-scales to the data range with a 5% grace —
-          // don't pin to zero (a stock at ₹2,000 with min:0 makes
+          // Y-axis auto-scales to the data range with a 5% grace â€”
+          // don't pin to zero (a stock at â‚¹2,000 with min:0 makes
           // daily moves look flat).
           y:{position:'right', grid:{color:'#1f2530'}, border:{display:false},
             beginAtZero:false, grace:'5%',
@@ -3400,7 +3475,7 @@ function renderCompanyChart(data, times, sym, tf){
   companyChart.data.labels = times.map(fmt);
   companyChart.data.datasets[0].data = data;
   companyChart.update();
-  // Period return + abnormal-move markers — run after chart paints.
+  // Period return + abnormal-move markers â€” run after chart paints.
   requestAnimationFrame(()=>{ updateChartReturn(data, ccy, tf); paintMarkers(data, times, currentCompany, tf); });
 }
 
@@ -3409,19 +3484,19 @@ function renderCompanyChart(data, times, sym, tf){
 function updateChartReturn(data, ccy, tf){
   const elPct = document.getElementById('cRetPct');
   const elMeta = document.getElementById('cRetMeta');
-  if(!elPct || !elMeta || !data || data.length < 2){ if(elPct) elPct.textContent='—'; return; }
+  if(!elPct || !elMeta || !data || data.length < 2){ if(elPct) elPct.textContent='â€”'; return; }
   const first = data[0], last = data[data.length-1];
   const pct = (last/first - 1) * 100;
   const abs = last - first;
   const cls = pct >= 0 ? 'up' : 'down';
-  const sign = pct >= 0 ? '+' : '−';
+  const sign = pct >= 0 ? '+' : 'âˆ’';
   elPct.className = 'cm-return '+cls;
   elPct.textContent = sign + Math.abs(pct).toFixed(2) + '%';
   const fmtN = n => Number(n).toLocaleString('en-IN',{maximumFractionDigits:2});
-  elMeta.textContent = `${tf} · ${ccy}${fmtN(first)} → ${ccy}${fmtN(last)}  (${sign}${ccy}${fmtN(Math.abs(abs))})`;
+  elMeta.textContent = `${tf} Â· ${ccy}${fmtN(first)} â†’ ${ccy}${fmtN(last)}  (${sign}${ccy}${fmtN(Math.abs(abs))})`;
 }
 
-// Cache: "company|YYYY-MM-DD" → array of news items (or null)
+// Cache: "company|YYYY-MM-DD" â†’ array of news items (or null)
 const newsByDate = {};
 async function fetchNewsForDate(name, ts){
   const d = new Date(ts);
@@ -3437,7 +3512,7 @@ async function fetchNewsForDate(name, ts){
   try{
     const items = await newsViaProxy(q);
     if(!items || !items.length){ newsByDate[key] = []; return []; }
-    // Keep items pub-dated within ±2 days of the target marker.
+    // Keep items pub-dated within Â±2 days of the target marker.
     const filtered = items.filter(it => {
       const ms = Date.parse(it.pubDate);
       return !isNaN(ms) && Math.abs(ms - ts) <= 2*864e5;
@@ -3465,7 +3540,7 @@ function paintMarkers(data, times, name, tf){
   const wrap = document.getElementById('cChartMarkers');
   if(!wrap || !companyChart || !companyChart.chartArea) { lastMarkerCtx = {data, times, name, tf}; return; }
   wrap.innerHTML = '';
-  // Threshold scales with timeframe — daily moves above this stand out.
+  // Threshold scales with timeframe â€” daily moves above this stand out.
   const threshold = (tf==='1D' || tf==='1W') ? 0.02
                   : (tf==='1M' || tf==='YTD' || tf==='1Y') ? 0.05
                   : 0.07;
@@ -3505,10 +3580,10 @@ function showMarkerPop(markerEl, name, p){
   const IST = {timeZone:'Asia/Kolkata'};
   const dateStr = d.toLocaleDateString('en-IN',{...IST,day:'numeric',month:'short',year:'numeric'});
   const cls = p.pct >= 0 ? 'up' : 'down';
-  const sign = p.pct >= 0 ? '▲' : '▼';
+  const sign = p.pct >= 0 ? 'â–²' : 'â–¼';
   pop.innerHTML = `<div class="cmp-date">${dateStr}</div>`+
     `<div class="cmp-move ${cls}">${sign} ${Math.abs(p.pct).toFixed(2)}%</div>`+
-    `<div class="cmp-news cmp-load">Looking for news…</div>`;
+    `<div class="cmp-news cmp-load">Looking for newsâ€¦</div>`;
   // Position popup above the marker; flip below if it would clip.
   const wrap = document.getElementById('cChartMarkers').parentElement;
   const mx = parseFloat(markerEl.style.left);
@@ -3532,11 +3607,11 @@ function showMarkerPop(markerEl, name, p){
     if(!newsEl) return;
     newsEl.classList.remove('cmp-load');
     if(items === null){
-      // Date is older than the ~14-day Google News window — no free
+      // Date is older than the ~14-day Google News window â€” no free
       // historical news source is available from a browser.
       newsEl.textContent = 'Older than the live-news window (last 14 days).';
     } else if(items.length){
-      // One clean sentence — strip publisher suffix and entity-decode.
+      // One clean sentence â€” strip publisher suffix and entity-decode.
       let s = String(items[0].title||'').replace(/\s+-\s+[^-]+$/,'').trim()
         .replace(/&amp;/g,'&').replace(/&#39;|&apos;/g,"'").replace(/&quot;/g,'"');
       if(s && !/[.!?]$/.test(s)) s += '.';
@@ -3579,7 +3654,7 @@ function loadScreener(){
     list.forEach((n,i)=>{
       const o=document.createElement('option');
       o.value=String(i);
-      o.textContent=n.url?n.name:n.name+'  · notebook pending';
+      o.textContent=n.url?n.name:n.name+'  Â· notebook pending';
       sel.appendChild(o);
     });
   }
@@ -3599,8 +3674,8 @@ function loadScreener(){
   bind(coSel,  coBtn,  secSel, companies);
   bind(secSel, secBtn, coSel,  sectors);
   const live=NOTEBOOKS.filter(n=>n.url).length;
-  status.textContent=`${companies.length} companies · ${sectors.length} sectors · `+
-    `${live} of ${NOTEBOOKS.length} notebooks live · ${NOTEBOOKS.length-live} pending creation`;
+  status.textContent=`${companies.length} companies Â· ${sectors.length} sectors Â· `+
+    `${live} of ${NOTEBOOKS.length} notebooks live Â· ${NOTEBOOKS.length-live} pending creation`;
 }
 /* ---------- Sidebar tab routing ---------- */
 (function(){
@@ -3642,7 +3717,7 @@ function loadScreener(){
 /* ---------- Movers timeframe dropdown ---------- */
 document.getElementById('mvTf').onchange=e=>{
   moversTF=e.target.value;
-  document.getElementById('mvSummary').textContent=`Loading ${moversTF} movers…`;
+  document.getElementById('mvSummary').textContent=`Loading ${moversTF} moversâ€¦`;
   loadMovers().catch(()=>{});
 };
 
@@ -3650,7 +3725,7 @@ document.getElementById('mvTf').onchange=e=>{
   try{ const ok=await loadQuotes(); if(ok){ try{ await liveChart('1D'); }catch(e){} } else setStatus(false); }
   catch(e){ setStatus(false); }
   refreshSector();
-  loadMovers().catch(()=>{ document.getElementById('mvSummary').textContent='Nifty 500 movers unavailable — free feed unreachable.'; });
+  loadMovers().catch(()=>{ document.getElementById('mvSummary').textContent='Nifty 500 movers unavailable â€” free feed unreachable.'; });
 })();
 setInterval(()=>{ loadQuotes().catch(()=>{}); refreshSector(); }, 60000);
 setInterval(()=>{ loadMovers().catch(()=>{}); }, 300000);
