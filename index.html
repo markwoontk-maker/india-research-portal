@@ -768,7 +768,7 @@
     <div id="viewMarkets" hidden>
       <div class="card reveal">
         <div class="card-h"><div><h3>News You Need to Know</h3>
-          <p id="newsSub">Top 20/day · politics → economy → company news · India</p></div></div>
+          <p id="newsSub">Last 24h · fact-based · politics → economy → company news · India</p></div></div>
         <ol id="newsList" class="pol-list"><li class="pol-empty">Loading news…</li></ol>
       </div>
       <div class="card reveal">
@@ -2512,11 +2512,17 @@ function marketRelevant(items){
 async function loadNews(){
   const el=document.getElementById('newsList');
   const queries=[
-    {cat:'POL',  q:'India (cabinet OR "Modi cabinet" OR PMO OR ministry OR "fuel price" OR "petrol price" OR "diesel price" OR "LPG price" OR "gas price" OR "excise duty" OR "windfall tax" OR budget OR GST OR tariff OR reform OR disinvestment OR "trade deal" OR policy OR election OR parliament) when:2d'},
-    {cat:'ECON', q:'India (inflation OR CPI OR WPI OR repo OR "interest rate" OR "rate cut" OR "rate hike" OR RBI OR "monetary policy" OR GDP OR IIP OR "industrial production" OR "fiscal deficit" OR "current account" OR FII OR FDI OR rupee OR "USD-INR" OR "bond yield" OR "10-year") when:2d'},
-    {cat:'EARN', q:'India (Q4 results OR Q1 results OR quarterly results OR earnings OR "net profit" OR "profit after tax" OR PAT OR revenue OR EBITDA) when:2d'},
-    {cat:'CORP', q:'India (merger OR acquisition OR "stake sale" OR demerger OR "open offer" OR buyback OR "board approves" OR resigns OR "steps down" OR "appointed as" OR "new CEO" OR "new MD" OR restructuring OR "joint venture" OR QIP OR "fund raise" OR "order win") when:2d'},
+    {cat:'POL',  q:'India (cabinet OR "Modi cabinet" OR PMO OR ministry OR "fuel price" OR "petrol price" OR "diesel price" OR "LPG price" OR "gas price" OR "excise duty" OR "windfall tax" OR budget OR GST OR tariff OR reform OR disinvestment OR "trade deal" OR policy OR election OR parliament) when:1d'},
+    {cat:'ECON', q:'India (inflation OR CPI OR WPI OR repo OR "interest rate" OR "rate cut" OR "rate hike" OR RBI OR "monetary policy" OR GDP OR IIP OR "industrial production" OR "fiscal deficit" OR "current account" OR FII OR FDI OR rupee OR "USD-INR" OR "bond yield" OR "10-year") when:1d'},
+    {cat:'EARN', q:'India (Q4 results OR Q1 results OR quarterly results OR earnings OR "net profit" OR "profit after tax" OR PAT OR revenue OR EBITDA) when:1d'},
+    {cat:'CORP', q:'India (merger OR acquisition OR "stake sale" OR demerger OR "open offer" OR buyback OR "board approves" OR resigns OR "steps down" OR "appointed as" OR "new CEO" OR "new MD" OR restructuring OR "joint venture" OR QIP OR "fund raise" OR "order win") when:1d'},
   ];
+  // Reject opinion / preview / listicle / speculation — articles
+  // that aren't anchored in a fact. Note: trailing clickbait like
+  // "; should you buy?" is NOT in here — the summariser strips that
+  // and we keep the factual lead. Rejection here is for headlines
+  // whose ENTIRE point is speculation / listicle / live-blog.
+  const NEWS_EXCL=/\b(?:live updates?|results live|what to (?:expect|know)|stocks? to watch|buzzing stocks|in focus|ahead of (?:q[1-4]|results|earnings|the budget|monetary policy|rbi)|\d+ (?:things|reasons|stocks?|key|smart|top|best) (?:to|you|that|things)|key (?:takeaways|highlights|things to know)|all you need to know|here'?s (?:why|how|what|where)\b|will (?:rbi|the|govt|fed|markets?|inflation)\b|stocks to buy|set to (?:rise|fall|hike|cut)|why (?:is|are|did)\b|(?:might|may|could) (?:rise|fall|cut|hike|gain|drop)|\bpreview\b)/i;
   async function pull(q){
     try{
       const r=await fetch('/api/news?q='+encodeURIComponent(q)+'&n=20',{cache:'no-store'});
@@ -2529,13 +2535,16 @@ async function loadNews(){
     if(cat==='POL' || cat==='ECON') items=marketRelevant(items);
     else if(cat==='EARN') items=(items||[]).filter(it=>{const t=String(it.title||'');return EARN_RE.test(t)&&!EARN_EXCL.test(t)&&!SOC_RE.test(t);});
     else items=(items||[]).filter(it=>{const t=String(it.title||'');return CORP_RE.test(t)&&!GOVT_RE.test(t)&&!SOC_RE.test(t);});
+    // Universal clickbait / opinion / preview filter — keeps the feed
+    // tied to facts.
+    items=(items||[]).filter(it=>!NEWS_EXCL.test(String(it.title||'')));
     return items.map(it=>({...it,cat}));
   }));
   const all=[].concat(...results);
   // Sort by pubDate desc so when we dedupe by company below, the
   // NEWEST headline per company wins.
   all.sort((a,b)=>(Date.parse(b.pubDate||0)||0)-(Date.parse(a.pubDate||0)||0));
-  // 2-day clamp measured from the newest item (robust to sandbox /
+  // 24-hour clamp measured from the newest item (robust to sandbox /
   // source clock skew — same pattern used by the movers "why" line).
   let newest=0;
   for(const it of all){ const ms=Date.parse(it.pubDate||0); if(!isNaN(ms)&&ms>newest) newest=ms; }
@@ -2556,7 +2565,7 @@ async function loadNews(){
   const seen=new Set(); const merged=[];
   for(const it of all){
     const ms=Date.parse(it.pubDate||0);
-    if(newest && !isNaN(ms) && (newest-ms) > 2*864e5) continue; // older than 2 days vs newest
+    if(newest && !isNaN(ms) && (newest-ms) > 864e5) continue; // older than 24h vs newest
     const k=newsKey(it);
     if(!k||seen.has(k)) continue;
     seen.add(k); merged.push(it);
@@ -2578,6 +2587,27 @@ async function loadNews(){
   });
   el.innerHTML=fmtNewsItems(merged);
 }
+// Rule-based 1-sentence summary of a news headline. No LLM — strips
+// publisher / clickbait clauses, takes the first sentence, normalises
+// punctuation. Keeps the factual core; drops "should you buy", "live
+// updates", "what to expect", "5 things to know" type trailing fluff.
+function summariseNews(rawTitle){
+  let t=String(rawTitle||'')
+    .replace(/\s+-\s+[^-]+$/,'')                       // strip publisher suffix
+    .replace(/&amp;/g,'&').replace(/&#39;|&apos;/g,"'").replace(/&quot;/g,'"')
+    .replace(/\s+/g,' ').trim();
+  // Strip trailing clickbait/preview clauses after a separator
+  t=t.replace(/\s*[;,:\-—–|]\s*(?:should you|here'?s|what to|why .{3,40}\?|how to|key (?:takeaways|highlights|things)|all you need to know|explained|live updates?|in focus|stocks? to (?:buy|watch)|\d+ (?:things|reasons|stocks?|key) (?:to|you|that|things))\b[^.]*$/i,'')
+    .replace(/\s*[;:—–|-]\s*$/,'').trim();
+  // Cut at first sentence end if there's a follow-on clause beginning
+  // with a capital letter (keeps the lead).
+  const m=t.match(/^([^.!?]{20,200}?[.!?])\s+[A-Z]/);
+  if(m) t=m[1].trim();
+  // Ensure terminator + sentence-case.
+  if(t && !/[.!?]$/.test(t)) t+='.';
+  if(t) t=t.charAt(0).toUpperCase()+t.slice(1);
+  return t;
+}
 function fmtNewsItems(items){
   const LBL={POL:'POLITICS',ECON:'ECONOMY',EARN:'EARNINGS',CORP:'CORP'};
   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -2593,16 +2623,17 @@ function fmtNewsItems(items){
     // Sentiment from the headline — drives the chip colour.
     const sent=co?sentiment(titleRaw):'flat';
     const sentCls=sent==='up'?'up':sent==='down'?'down':'flat';
-    // Strip the company name off the front of the headline so we don't
-    // show it twice. Falls back to the raw title if the strip would
-    // leave nothing useful.
+    // Strip the company name off the front before summarising so we
+    // don't end up with "<company> <company> ..." after the chip.
     let body=titleRaw;
     if(co){
       const re=new RegExp('^'+co.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[\\s:,;\\-—–]+','i');
       const stripped=body.replace(re,'').trim();
       if(stripped.length>10) body=stripped;
     }
-    const title=esc(body);
+    // 1-sentence summary instead of the raw title.
+    const summary=summariseNews(body) || body;
+    const title=esc(summary);
     const tm=it.pubDate?relTime(Date.parse(it.pubDate)/1000):'';
     const src=[it.source,tm].filter(Boolean).join(' · ');
     const cat=(it.cat||'POL').toLowerCase();
