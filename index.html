@@ -1583,9 +1583,16 @@ const chart=new Chart(ctx,{
         border:{display:false},
         beginAtZero:false,grace:'5%',
         ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
+          // Chart.js v4 runs this callback during `new Chart()` —
+          // BEFORE the `const chart = …` assignment completes. Using
+          // the outer `chart` binding would throw a TDZ ReferenceError.
+          // Use `this.chart` (the scale's parent chart), which Chart.js
+          // wires up before the layout/tick pass runs.
           callback:function(v){
             const n=Number(v);
-            if(chart && chart._multi){ const s=n>=0?'+':''; return s+n.toFixed(1)+'%'; }
+            if(this && this.chart && this.chart._multi){
+              const s=n>=0?'+':''; return s+n.toFixed(1)+'%';
+            }
             return String(n);
           }}}},
     interaction:{intersect:false,mode:'index'}}
