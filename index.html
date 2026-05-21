@@ -376,6 +376,13 @@
   .news-cat.pol{background:var(--saffron-soft);color:var(--saffron)}
   .news-cat.earn{background:var(--up-soft);color:var(--up)}
   .news-cat.corp{background:rgba(120,140,180,.16);color:#9bb3d1}
+  /* Per-row company tag — green / red / neutral by sentiment */
+  .news-co{flex:none;font-family:'IBM Plex Mono';font-size:11px;font-weight:600;
+    padding:3px 8px;border-radius:4px;letter-spacing:.02em;white-space:nowrap;
+    max-width:170px;overflow:hidden;text-overflow:ellipsis;align-self:center}
+  .news-co.up{background:var(--up-soft);color:var(--up)}
+  .news-co.down{background:var(--down-soft);color:var(--down)}
+  .news-co.flat{background:rgba(255,255,255,.07);color:var(--text)}
   /* Screener: paired (label · dropdown · open-button) rows */
   .scr-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px}
   .scr-row + .scr-row{margin-top:12px}
@@ -2504,7 +2511,7 @@ function marketRelevant(items){
 async function loadNews(){
   const el=document.getElementById('newsList');
   const queries=[
-    {cat:'POL', q:'India (economy OR markets OR Sensex OR Nifty OR RBI OR SEBI OR budget OR GST OR tariff OR fiscal OR FII OR FDI OR rupee OR inflation OR "interest rate" OR reforms OR disinvestment OR "trade deal" OR policy) when:2d'},
+    {cat:'POL', q:'India (economy OR markets OR Sensex OR Nifty OR RBI OR SEBI OR budget OR GST OR tariff OR fiscal OR FII OR FDI OR rupee OR inflation OR "interest rate" OR reforms OR disinvestment OR "trade deal" OR policy OR "fuel price" OR "petrol price" OR "diesel price" OR "LPG price" OR "gas price" OR "excise duty" OR "windfall tax" OR cabinet OR "Modi cabinet" OR PMO OR ministry) when:2d'},
     {cat:'EARN', q:'India (Q4 results OR Q1 results OR quarterly results OR earnings OR "net profit" OR "profit after tax" OR PAT OR revenue OR EBITDA) when:2d'},
     {cat:'CORP', q:'India (merger OR acquisition OR "stake sale" OR demerger OR "open offer" OR buyback OR "board approves" OR resigns OR "steps down" OR "appointed as" OR "new CEO" OR "new MD" OR restructuring OR "joint venture" OR QIP OR "fund raise" OR "order win") when:2d'},
   ];
@@ -2557,19 +2564,50 @@ async function loadNews(){
     el.innerHTML='<li class="pol-empty">No news right now (free feed). The CORS proxy may be rate-limited — try again in a minute.</li>';
     return;
   }
+  // Surface political/macro headlines at the top — fuel-price calls,
+  // RBI/cabinet decisions etc. tend to set the day's tone; then the
+  // rest by pubDate desc.
+  merged.sort((a,b)=>{
+    const pa=a.cat==='POL'?0:1, pb=b.cat==='POL'?0:1;
+    if(pa!==pb) return pa-pb;
+    return (Date.parse(b.pubDate||0)||0)-(Date.parse(a.pubDate||0)||0);
+  });
   el.innerHTML=fmtNewsItems(merged);
 }
 function fmtNewsItems(items){
   const LBL={POL:'POLITICS',EARN:'EARNINGS',CORP:'CORP'};
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   return items.map(it=>{
-    const title=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').replace(/</g,'&lt;');
+    const titleRaw=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').trim();
+    // Pull the company: prefer NAMES-mapped ticker (full company
+    // name), else the lead-company heuristic. For macro / political
+    // headlines without a single company anchor → no chip.
+    const tk=pickTicker(titleRaw);
+    let co='';
+    if(tk) co=NAMES[tk]||tk;
+    else { const lead=leadCompany(titleRaw); if(lead && lead.length>=3 && lead.split(' ').length<=5) co=lead; }
+    // Sentiment from the headline — drives the chip colour.
+    const sent=co?sentiment(titleRaw):'flat';
+    const sentCls=sent==='up'?'up':sent==='down'?'down':'flat';
+    // Strip the company name off the front of the headline so we don't
+    // show it twice. Falls back to the raw title if the strip would
+    // leave nothing useful.
+    let body=titleRaw;
+    if(co){
+      const re=new RegExp('^'+co.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[\\s:,;\\-—–]+','i');
+      const stripped=body.replace(re,'').trim();
+      if(stripped.length>10) body=stripped;
+    }
+    const title=esc(body);
     const tm=it.pubDate?relTime(Date.parse(it.pubDate)/1000):'';
     const src=[it.source,tm].filter(Boolean).join(' · ');
     const cat=(it.cat||'POL').toLowerCase();
+    const coChip=co?`<span class="news-co ${sentCls}" title="${esc(co)}">${esc(co)}</span>`:'';
     return `<li><div class="pol-item">
       <div class="pol-top">
         <span class="news-cat ${cat}">${LBL[it.cat]||'NEWS'}</span>
-        <a class="pol-h" href="${it.link||'#'}" target="_blank" rel="noopener" title="${title}">${title}</a>
+        ${coChip}
+        <a class="pol-h" href="${it.link||'#'}" target="_blank" rel="noopener" title="${esc(titleRaw)}">${title}</a>
         <span class="src">${src}</span>
       </div></div></li>`;
   }).join('');
