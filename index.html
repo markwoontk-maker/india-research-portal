@@ -3011,7 +3011,11 @@ function renderCompanyChart(data, times, sym, tf){
         scales:{x:{display:true, grid:{display:false}, border:{display:false},
           ticks:{color:'#646c7c', font:{family:'IBM Plex Mono',size:10},
             maxRotation:0, autoSkip:true, maxTicksLimit:10}},
+          // Y-axis auto-scales to the data range with a 5% grace —
+          // don't pin to zero (a stock at ₹2,000 with min:0 makes
+          // daily moves look flat).
           y:{position:'right', grid:{color:'#1f2530'}, border:{display:false},
+            beginAtZero:false, grace:'5%',
             ticks:{color:'#646c7c', font:{family:'IBM Plex Mono',size:10}}}},
         interaction:{intersect:false, mode:'index'}}
     });
