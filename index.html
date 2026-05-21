@@ -2382,34 +2382,37 @@ async function newsViaFunction(q){
     return (j&&j.items)||null;
   }catch(e){ return null; }
 }
-async function newsViaProxy(q){
+// --- Throttle for rss2json (free tier rate-limits aggressively) ---
+// Serializes ALL news fetches through one queue with a min gap so
+// firing 40 mover-news + 20 News-tab queries at once doesn't get
+// every request 429'd. 5-min in-memory cache by query string. On a
+// 429, back off for 6s before the next request.
+const _newsCache=new Map();            // q -> {items, time}
+const _newsInflight=new Map();         // q -> Promise (dedupe concurrent identical queries)
+const NEWS_TTL=5*60*1000;
+const NEWS_GAP_MS=800;                  // ~75 req/min — under rss2json soft limit
+let _newsQueue=Promise.resolve();
+let _backoffUntil=0;
+
+async function _rawNewsViaProxy(q){
   const rss=`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-IN&gl=IN&ceid=IN:en`;
-  // Primary: rss2json.com — free, CORS-enabled, returns parsed JSON
-  // already (no XML parsing, no extra proxy hop). Replaces the dead
-  // corsproxy.io / allorigins fallbacks for the news fetch path.
   try{
     const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(rss),{cache:'no-store'});
-    if(r.ok){
+    if(r.status===429){
+      _backoffUntil=Date.now()+6000;     // global cool-off
+    } else if(r.ok){
       const j=await r.json();
       if(j && j.status==='ok' && Array.isArray(j.items)){
         return j.items.map(it=>{
-          // rss2json puts the Google News publisher inside description
-          // ('<font color="..."><a href="...">Source</a></font>...'); pull it out.
           let source='';
           const mSrc=String(it.description||'').match(/>([^<>]+)<\/a><\/font>\s*$/);
           if(mSrc) source=mSrc[1];
-          return {
-            title: it.title||'',
-            link: it.link||'#',
-            pubDate: it.pubDate||'',
-            source
-          };
+          return {title:it.title||'',link:it.link||'#',pubDate:it.pubDate||'',source};
         });
       }
     }
   }catch(e){}
-  // Fallback: original XML-via-proxy path (mostly dead but kept in
-  // case any of the proxies recover).
+  // Fallback: XML-via-proxy path (mostly dead).
   try{
     const xml=await fetchText(rss);
     const doc=new DOMParser().parseFromString(xml,'text/xml');
@@ -2420,6 +2423,27 @@ async function newsViaProxy(q){
       source:(it.getElementsByTagName('source')[0]||{}).textContent||''
     }));
   }catch(e){ return null; }
+}
+
+async function newsViaProxy(q){
+  // Cache hit
+  const cached=_newsCache.get(q);
+  if(cached && Date.now()-cached.time < NEWS_TTL) return cached.items;
+  // Dedupe in-flight identical queries
+  if(_newsInflight.has(q)) return _newsInflight.get(q);
+  // Serialize through the queue with min-gap + 429 backoff
+  const task=_newsQueue.then(async()=>{
+    const wait=Math.max(NEWS_GAP_MS, _backoffUntil-Date.now());
+    if(wait>0) await new Promise(r=>setTimeout(r,wait));
+    return _rawNewsViaProxy(q);
+  });
+  _newsQueue=task.catch(()=>{});         // don't poison the chain on rejection
+  _newsInflight.set(q, task);
+  let items=null;
+  try{ items=await task; }catch(e){ items=null; }
+  _newsInflight.delete(q);
+  if(items && items.length) _newsCache.set(q,{items,time:Date.now()});
+  return items;
 }
 function onMoverActivate(e){
   const el=e.target.closest('.mv-name'); if(!el) return;
