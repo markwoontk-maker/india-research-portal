@@ -1576,29 +1576,25 @@ const chart=new Chart(ctx,{
       x:{display:true,grid:{display:false},border:{display:false},
         ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
           maxRotation:0,autoSkip:true,maxTicksLimit:10}},
-      // Auto-scale y. Multi mode draws a thin 0% baseline.
+      // Auto-scale y, breathing room top/bottom. In multi-line mode,
+      // tick labels render as +/- percentages with a 0% baseline.
       y:{position:'right',
-        grid:{color:c=>{ return (chart._multi && c.tick && c.tick.value===0) ? '#646c7c' : '#1f2530'; }},
+        grid:{color:'#1f2530'},
         border:{display:false},
         beginAtZero:false,grace:'5%',
         ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
           callback:function(v){
-            if(chart._multi){ const s=v>=0?'+':''; return s+v.toFixed(1)+'%'; }
-            return v;
+            const n=Number(v);
+            if(chart && chart._multi){ const s=n>=0?'+':''; return s+n.toFixed(1)+'%'; }
+            return String(n);
           }}}},
     interaction:{intersect:false,mode:'index'}}
 });
-document.querySelectorAll('#rangeSeg button').forEach(b=>{
-  b.onclick=()=>{
-    document.querySelectorAll('#rangeSeg button').forEach(x=>x.classList.remove('on'));
-    b.classList.add('on');
-    currentRange=b.dataset.r;
-    const d=datasets[currentRange];
-    chart.data.labels=sampleTimes(currentRange,d.length).map(t=>fmtAxisLabel(t,currentRange));
-    chart.data.datasets[0].data=d;
-    chart.update();
-  };
-});
+// (Note: the live #rangeSeg handler is wired further down, after the
+// liveChart() / fetchSym() definitions. The stale sample-only handler
+// that used to live here was removed — it both crashed on the new
+// YTD/3Y/5Y/10Y timeframes (missing key in `datasets`) and clobbered
+// the live datasets array when it fired first.)
 
 /* ---------- Clock ---------- */
 function tick(){
