@@ -373,6 +373,10 @@
     padding:10px 16px;font-size:13px;font-weight:600;text-decoration:none;
     white-space:nowrap}
   .scr-btn:hover{background:rgba(233,162,59,.18)}
+  /* Company description block (under the price chart) */
+  .co-desc{font-size:13.5px;line-height:1.7;color:var(--text-dim);margin-top:4px}
+  .co-desc-src{font-size:11px;color:var(--text-mute);margin-top:12px;
+    padding-top:10px;border-top:1px solid var(--line-soft);font-style:italic}
   /* Fixed-width numeric cells; mono digits + right align so commas
      and thousands align across rows. */
   .n-tp{flex:none;width:72px;box-sizing:border-box;text-align:right;
@@ -2906,10 +2910,35 @@ function fmtTickFor(tf){
 let companyChart=null;
 let currentCompany=null;
 let currentTf='10Y';
+// Company profile data — ticker + sector + 3-4 sentence business
+// description sourced from each company's website, latest annual
+// report and the broker reports in its NotebookLM workspace.
+window.COMPANIES=null;
+fetch('data/companies.json',{cache:'no-store'})
+  .then(r=>r.ok?r.json():null)
+  .then(j=>{ if(j) window.COMPANIES=j; updateCoDesc(); })
+  .catch(()=>{});
+function updateCoDesc(){
+  const card=document.getElementById('cDescCard');
+  const title=document.getElementById('cDescTitle');
+  const meta=document.getElementById('cDescMeta');
+  const body=document.getElementById('cDesc');
+  if(!card) return;
+  if(!currentCompany || !window.COMPANIES){ card.hidden=true; return; }
+  const e=window.COMPANIES[currentCompany];
+  if(!e || !e.desc){ card.hidden=true; return; }
+  card.hidden=false;
+  title.textContent=currentCompany;
+  meta.textContent=[e.sector, e.ticker].filter(Boolean).join(' · ');
+  body.textContent=e.desc;
+}
 
 async function loadCompanyChart(name, tf){
   if (name) currentCompany = name;
   if (tf) currentTf = tf;
+  // Refresh the company description below the chart whenever the
+  // selection changes (no-op if COMPANIES hasn't loaded yet).
+  if (name) updateCoDesc();
   // Sync the segmented control highlight to the current timeframe.
   document.querySelectorAll('#cRangeSeg button').forEach(b=>{
     b.classList.toggle('on', b.dataset.r===currentTf);
