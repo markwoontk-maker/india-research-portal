@@ -148,14 +148,27 @@
   .seg button.on{background:var(--saffron);color:#1a1206;font-weight:600}
   .chart-box{height:248px;position:relative}
 
-  .stat-row{display:flex;justify-content:space-between;align-items:center;padding:13px 6px;border-bottom:1px solid var(--line-soft);font-size:13px;border-radius:6px;transition:background .12s}
-  .stat-row:last-child{border:none;padding-bottom:6px}
-  .stat-row span{color:var(--text-dim)}
-  .stat-row b{font-family:'IBM Plex Mono';font-weight:500}
+  /* Tighter rows + room for the left-side checkbox + color swatch. */
+  .stat-row{display:flex;align-items:center;gap:9px;padding:6px;
+    border-bottom:1px solid var(--line-soft);font-size:13px;
+    border-radius:6px;transition:background .12s}
+  .stat-row:last-child{border:none}
+  .stat-row .stat-nm{color:var(--text-dim);flex:1;min-width:0}
+  .stat-row b{font-family:'IBM Plex Mono';font-weight:500;margin-left:auto}
   .stat-row.clickable{cursor:pointer}
   .stat-row.clickable:hover{background:var(--panel)}
-  .stat-row.clickable.active{background:var(--saffron-soft);border-color:rgba(233,162,59,.18)}
-  .stat-row.clickable.active span{color:var(--saffron);font-weight:600}
+  /* Checkbox + color swatch (the swatch matches the line color used
+     when this index is overlaid on the chart). */
+  .stat-cb{appearance:none;-webkit-appearance:none;width:14px;height:14px;
+    border:1.5px solid var(--line);border-radius:3px;background:transparent;
+    cursor:pointer;position:relative;flex:none;transition:.12s}
+  .stat-cb:hover{border-color:var(--saffron)}
+  .stat-cb:checked{background:var(--saffron);border-color:var(--saffron)}
+  .stat-cb:checked::after{content:'';position:absolute;left:3px;top:0px;
+    width:5px;height:9px;border:solid #1a1206;border-width:0 1.6px 1.6px 0;
+    transform:rotate(45deg)}
+  .stat-sw{width:10px;height:2px;background:var(--sw,#e9a23b);flex:none;
+    border-radius:1px}
 
   /* sector bars */
   .sector{display:flex;align-items:center;gap:14px;padding:11px 8px;margin:0 -8px;
@@ -579,15 +592,31 @@
         <div class="chart-box"><canvas id="mainChart"></canvas></div>
       </div>
 
-      <!-- 2 · Desk Snapshot — clickable rows drive the chart above -->
+      <!-- 2 · Desk Snapshot — tick checkboxes to overlay indices on
+           the chart above with normalized % returns (0% baseline). -->
       <div class="card reveal" style="animation-delay:.2s">
-        <div class="card-h"><div><h3>Desk Snapshot</h3><p>Click any row to load the chart above</p></div></div>
-        <div class="stat-row clickable active" data-sym="^CRSLDX"  data-label="Nifty 500"><span>Nifty 500</span><b class="up" id="sN500">—</b></div>
-        <div class="stat-row clickable"        data-sym="^NSEI"     data-label="Nifty 50"><span>Nifty 50</span><b class="up" id="sN50">—</b></div>
-        <div class="stat-row clickable"        data-sym="NIFTY_MIDCAP_100.NS" data-label="Nifty Midcap 100"><span>Nifty Midcap 100</span><b class="up" id="sMid">—</b></div>
-        <div class="stat-row clickable"        data-sym="SMALLCAP.NS" data-label="Nifty Small Cap"><span>Nifty Small Cap</span><b class="up" id="sSml">—</b></div>
-        <div class="stat-row clickable"        data-sym="INR=X"     data-label="USD / INR"><span>USD / INR</span><b class="down" id="sFx">—</b></div>
-        <div class="stat-row"                                                                    ><span>India 10Y G-Sec <em style="font-style:normal;color:var(--text-mute);font-size:9px">no Yahoo feed</em></span><b id="sBond">6.78%</b></div>
+        <div class="card-h"><div><h3>Desk Snapshot</h3><p>Tick one or more rows · multi-select overlays returns (0% baseline)</p></div></div>
+        <label class="stat-row clickable" data-sym="^CRSLDX" data-label="Nifty 500">
+          <input type="checkbox" class="stat-cb" data-sym="^CRSLDX" checked>
+          <span class="stat-sw" style="--sw:#e9a23b"></span>
+          <span class="stat-nm">Nifty 500</span><b class="up" id="sN500">—</b></label>
+        <label class="stat-row clickable" data-sym="^NSEI" data-label="Nifty 50">
+          <input type="checkbox" class="stat-cb" data-sym="^NSEI">
+          <span class="stat-sw" style="--sw:#3fc78a"></span>
+          <span class="stat-nm">Nifty 50</span><b class="up" id="sN50">—</b></label>
+        <label class="stat-row clickable" data-sym="NIFTY_MIDCAP_100.NS" data-label="Nifty Midcap 100">
+          <input type="checkbox" class="stat-cb" data-sym="NIFTY_MIDCAP_100.NS">
+          <span class="stat-sw" style="--sw:#5b9eff"></span>
+          <span class="stat-nm">Nifty Midcap 100</span><b class="up" id="sMid">—</b></label>
+        <label class="stat-row clickable" data-sym="SMALLCAP.NS" data-label="Nifty Small Cap">
+          <input type="checkbox" class="stat-cb" data-sym="SMALLCAP.NS">
+          <span class="stat-sw" style="--sw:#c478e6"></span>
+          <span class="stat-nm">Nifty Small Cap</span><b class="up" id="sSml">—</b></label>
+        <label class="stat-row clickable" data-sym="INR=X" data-label="USD / INR">
+          <input type="checkbox" class="stat-cb" data-sym="INR=X">
+          <span class="stat-sw" style="--sw:#6db4b4"></span>
+          <span class="stat-nm">USD / INR</span><b class="down" id="sFx">—</b></label>
+        <div class="stat-row" style="padding-left:6px"><span class="stat-nm">India 10Y G-Sec <em style="font-style:normal;color:var(--text-mute);font-size:9px">no Yahoo feed</em></span><b id="sBond">6.78%</b></div>
       </div>
 
       <!-- 3 · Sector Performance -->
@@ -1469,11 +1498,12 @@ const chart=new Chart(ctx,{
       pointHoverBackgroundColor:'#e9a23b',borderJoinStyle:'round'}]},
   options:{responsive:true,maintainAspectRatio:false,
     devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
-    plugins:{legend:{display:false},
+    plugins:{
+      legend:{display:false,position:'bottom',
+        labels:{color:'#a9b0c0',font:{family:'IBM Plex Mono',size:10},
+          boxWidth:14,boxHeight:2,padding:14,usePointStyle:false}},
       tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,
-        titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:11,displayColors:false,
-        // Tooltip title reads the full timestamp from _times (set by
-        // applyChart) instead of the sparse x-axis label.
+        titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:11,displayColors:true,
         callbacks:{title:items=>{
             if(!items||!items[0]) return '';
             const t = chart._times && chart._times[items[0].dataIndex];
@@ -1486,16 +1516,29 @@ const chart=new Chart(ctx,{
             }
             return date;
           },
-          label:c=>'  '+c.parsed.y.toFixed(2)}}},
+          // Multi mode: show "Index name: +X.XX%"; single mode: raw value.
+          label:c=>{
+            const v=c.parsed.y;
+            if(chart._multi){
+              const sign=v>=0?'+':'';
+              return ' '+(c.dataset.label||'')+': '+sign+v.toFixed(2)+'%';
+            }
+            return '  '+v.toFixed(2);
+          }}}},
     scales:{
       x:{display:true,grid:{display:false},border:{display:false},
         ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
           maxRotation:0,autoSkip:true,maxTicksLimit:10}},
-      // Auto-scale y to the data range with 5% breathing room — never
-      // pin to zero (an index at 23,000 with min:0 makes moves look flat).
-      y:{position:'right',grid:{color:'#1f2530'},border:{display:false},
+      // Auto-scale y. Multi mode draws a thin 0% baseline.
+      y:{position:'right',
+        grid:{color:c=>{ return (chart._multi && c.tick && c.tick.value===0) ? '#646c7c' : '#1f2530'; }},
+        border:{display:false},
         beginAtZero:false,grace:'5%',
-        ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10}}}},
+        ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
+          callback:function(v){
+            if(chart._multi){ const s=v>=0?'+':''; return s+v.toFixed(1)+'%'; }
+            return v;
+          }}}},
     interaction:{intersect:false,mode:'index'}}
 });
 document.querySelectorAll('#rangeSeg button').forEach(b=>{
@@ -1618,10 +1661,10 @@ async function loadQuotes(){
 }
 
 
-// Live chart: switchable symbol + 8 timeframes. Default = Nifty 500.
-// Reuses the same TF_DEF + period1/period2 pattern as the Company chart.
-let mainSym='^CRSLDX', mainSymLabel='Nifty 500';
-const mainChartCache={};
+// Live chart: switchable symbol set + 8 timeframes.
+// Default = Nifty 500. Multi-select normalizes each line to % return
+// from a common start so indices of very different price scales
+// (Nifty 500 ~23k vs USD/INR ~83) can be compared visually.
 const MAIN_TF_DEF={
   '1D' :{days:1,        interval:'5m'},
   '1W' :{days:7,        interval:'30m'},
@@ -1632,73 +1675,130 @@ const MAIN_TF_DEF={
   '5Y' :{days:366*5,    interval:'1d'},
   '10Y':{days:366*10,   interval:'1d'},
 };
-async function liveChart(r){
-  const cacheKey=mainSym+'|'+r;
-  if(mainChartCache[cacheKey]){ applyChart(mainChartCache[cacheKey],r); return; }
+const STAT_COLORS={
+  '^CRSLDX':'#e9a23b','^NSEI':'#3fc78a',
+  'NIFTY_MIDCAP_100.NS':'#5b9eff','SMALLCAP.NS':'#c478e6',
+  'INR=X':'#6db4b4'
+};
+const labelFor=sym=>{
+  const r=document.querySelector(`.stat-row[data-sym="${sym}"]`);
+  return r?r.dataset.label:sym;
+};
+const mainChartCache={};
+async function fetchSym(sym, r){
+  const cacheKey=sym+'|'+r;
+  if(mainChartCache[cacheKey]) return mainChartCache[cacheKey];
   const def=MAIN_TF_DEF[r]||MAIN_TF_DEF['1D'];
   const now=Math.floor(Date.now()/1000);
   const start=def.ytd
     ? Math.floor(new Date(new Date().getFullYear(),0,1).getTime()/1000)
     : now-def.days*86400;
-  const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(mainSym)}`+
+  const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}`+
     `?period1=${start}&period2=${now}&interval=${def.interval}`;
-  const j=await getJSON(url);
-  const res=j&&j.chart&&j.chart.result&&j.chart.result[0];
-  const cl=res&&res.indicators&&res.indicators.quote&&res.indicators.quote[0]&&res.indicators.quote[0].close;
-  const ts=res&&res.timestamp;
-  if(!cl||!ts) throw new Error('no chart');
-  const pairs=cl.map((v,i)=>({v,t:ts[i]*1000})).filter(p=>p.v!=null);
-  const payload={data:pairs.map(p=>p.v), times:pairs.map(p=>p.t)};
-  mainChartCache[cacheKey]=payload;
-  applyChart(payload,r);
+  try{
+    const j=await getJSON(url);
+    const res=j&&j.chart&&j.chart.result&&j.chart.result[0];
+    const cl=res&&res.indicators&&res.indicators.quote&&res.indicators.quote[0]&&res.indicators.quote[0].close;
+    const ts=res&&res.timestamp;
+    if(!cl||!ts) return null;
+    const pairs=cl.map((v,i)=>({v,t:ts[i]*1000})).filter(p=>p.v!=null);
+    const payload={data:pairs.map(p=>p.v), times:pairs.map(p=>p.t)};
+    mainChartCache[cacheKey]=payload;
+    return payload;
+  }catch(e){ return null; }
 }
-function applyChart(payload,r){
+async function liveChart(r){
   currentRange=r;
-  chart._times = payload.times;
-  chart._intraday = (r==='1D' || r==='1W');
-  chart.data.labels=payload.times.map(t=>t?fmtAxisLabel(t,r):'');
-  chart.data.datasets[0].data=payload.data;
-  chart.update();
-}
-async function setMainSym(sym, label){
-  mainSym=sym; mainSymLabel=label;
-  // Update titles + active-row highlight
-  const t=document.getElementById('mainChartTitle'); if(t) t.textContent=`${label} — Index Performance`;
-  const s=document.getElementById('mainChartSub');   if(s) s.textContent=`Yahoo Finance · ${sym} · ${currentRange==='1D'||currentRange==='1W' ? '5/30m intraday' : 'daily close'}`;
-  document.querySelectorAll('.stat-row.clickable').forEach(r=>{
-    r.classList.toggle('active', r.dataset.sym===sym);
-  });
-  try{ await liveChart(currentRange); }
-  catch(e){
-    // Fallback to canned sample data if Yahoo is unreachable.
-    const d=datasets[currentRange]||datasets['1D'];
-    chart._times=null; chart._intraday=false;
-    chart.data.labels=sampleTimes(currentRange,d.length).map(t=>fmtAxisLabel(t,currentRange));
-    chart.data.datasets[0].data=d;
+  const syms=[...document.querySelectorAll('.stat-cb:checked')].map(c=>c.dataset.sym);
+  if(!syms.length){
+    // Fallback to canned sample data when nothing is selected.
+    const d=datasets[r]||datasets['1D'];
+    chart._times=null; chart._intraday=false; chart._multi=false;
+    chart.data.labels=sampleTimes(r,d.length).map(t=>fmtAxisLabel(t,r));
+    chart.data.datasets=[{data:d,borderColor:'#e9a23b',borderWidth:1.5,
+      fill:true,backgroundColor:grad,tension:.18,pointRadius:0,pointHoverRadius:5,
+      pointHoverBackgroundColor:'#e9a23b',borderJoinStyle:'round'}];
+    chart.options.plugins.legend.display=false;
     chart.update();
+    return;
   }
+  const fetched=(await Promise.all(syms.map(s=>fetchSym(s,r).then(p=>({sym:s,p})))))
+    .filter(x=>x.p && x.p.data.length);
+  if(!fetched.length) throw new Error('no chart');
+  // Common start: align all selected series to the latest "first-bar"
+  // timestamp so % returns are measured from the same starting point.
+  const commonStart=Math.max(...fetched.map(f=>f.p.times[0]));
+  fetched.forEach(f=>{
+    const i=f.p.times.findIndex(t=>t>=commonStart);
+    f.p={data:f.p.data.slice(i), times:f.p.times.slice(i)};
+  });
+  const primary=fetched[0].p;
+  const multi=fetched.length>1;
+  chart._times=primary.times;
+  chart._intraday=(r==='1D'||r==='1W');
+  chart._multi=multi;
+  chart.data.labels=primary.times.map(t=>fmtAxisLabel(t,r));
+  if(multi){
+    // Each line = (price/firstPrice − 1) × 100  → 0% baseline.
+    chart.data.datasets=fetched.map(f=>{
+      const base=f.p.data[0];
+      return {
+        label:labelFor(f.sym),
+        data:f.p.data.map(v=>(v/base-1)*100),
+        borderColor:STAT_COLORS[f.sym]||'#e9a23b',
+        borderWidth:1.5, fill:false, tension:.18,
+        pointRadius:0, pointHoverRadius:5,
+        pointHoverBackgroundColor:STAT_COLORS[f.sym]||'#e9a23b',
+        borderJoinStyle:'round'
+      };
+    });
+    chart.options.plugins.legend.display=true;
+  }else{
+    const f=fetched[0];
+    chart.data.datasets=[{
+      label:labelFor(f.sym), data:f.p.data,
+      borderColor:'#e9a23b', borderWidth:1.5,
+      fill:true, backgroundColor:grad, tension:.18,
+      pointRadius:0, pointHoverRadius:5,
+      pointHoverBackgroundColor:'#e9a23b', borderJoinStyle:'round'
+    }];
+    chart.options.plugins.legend.display=false;
+  }
+  // Title / subtitle reflect the current selection mode.
+  const t=document.getElementById('mainChartTitle');
+  const s=document.getElementById('mainChartSub');
+  if(multi){
+    t.textContent=`${fetched.length} indices — ${r} return`;
+    s.textContent=`Yahoo Finance · normalized to 0% baseline (common start = ${new Date(commonStart).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})})`;
+  }else{
+    const def=MAIN_TF_DEF[r];
+    t.textContent=`${labelFor(fetched[0].sym)} — Index Performance`;
+    s.textContent=`Yahoo Finance · ${fetched[0].sym} · ${def.interval==='1d'?'daily close':def.interval+' intraday'}`;
+  }
+  chart.update();
 }
 document.querySelectorAll('#rangeSeg button').forEach(b=>{
   b.onclick=async()=>{
     document.querySelectorAll('#rangeSeg button').forEach(x=>x.classList.remove('on'));
     b.classList.add('on');
-    const r=b.dataset.r;
-    currentRange=r;
-    const s=document.getElementById('mainChartSub');
-    if(s) s.textContent=`Yahoo Finance · ${mainSym} · ${r==='1D'||r==='1W' ? '5/30m intraday' : 'daily close'}`;
-    try{ await liveChart(r); }
+    try{ await liveChart(b.dataset.r); }
     catch(e){
-      const d=datasets[r]||datasets['1D'];
-      chart._times=null; chart._intraday=false;
-      chart.data.labels=sampleTimes(r,d.length).map(t=>fmtAxisLabel(t,r));
-      chart.data.datasets[0].data=d;
+      const d=datasets[b.dataset.r]||datasets['1D'];
+      chart._times=null; chart._intraday=false; chart._multi=false;
+      chart.data.labels=sampleTimes(b.dataset.r,d.length).map(t=>fmtAxisLabel(t,b.dataset.r));
+      chart.data.datasets=[{data:d,borderColor:'#e9a23b',borderWidth:1.5,
+        fill:true,backgroundColor:grad,tension:.18,pointRadius:0,pointHoverRadius:5,
+        pointHoverBackgroundColor:'#e9a23b',borderJoinStyle:'round'}];
+      chart.options.plugins.legend.display=false;
       chart.update();
     }
   };
 });
-// Desk-Snapshot rows act as the index selector for the chart above.
-document.querySelectorAll('.stat-row.clickable').forEach(row=>{
-  row.addEventListener('click',()=>setMainSym(row.dataset.sym, row.dataset.label));
+// Re-render whenever a checkbox toggles.
+document.querySelectorAll('.stat-cb').forEach(cb=>{
+  cb.addEventListener('change', async()=>{
+    try{ await liveChart(currentRange); }catch(e){}
+  });
 });
 
 /* ---------- Sector module: timeframe + per-sector detail ---------- */
