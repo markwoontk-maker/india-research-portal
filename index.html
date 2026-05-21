@@ -148,10 +148,14 @@
   .seg button.on{background:var(--saffron);color:#1a1206;font-weight:600}
   .chart-box{height:248px;position:relative}
 
-  .stat-row{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line-soft);font-size:13px}
-  .stat-row:last-child{border:none;padding-bottom:0}
+  .stat-row{display:flex;justify-content:space-between;align-items:center;padding:13px 6px;border-bottom:1px solid var(--line-soft);font-size:13px;border-radius:6px;transition:background .12s}
+  .stat-row:last-child{border:none;padding-bottom:6px}
   .stat-row span{color:var(--text-dim)}
   .stat-row b{font-family:'IBM Plex Mono';font-weight:500}
+  .stat-row.clickable{cursor:pointer}
+  .stat-row.clickable:hover{background:var(--panel)}
+  .stat-row.clickable.active{background:var(--saffron-soft);border-color:rgba(233,162,59,.18)}
+  .stat-row.clickable.active span{color:var(--saffron);font-weight:600}
 
   /* sector bars */
   .sector{display:flex;align-items:center;gap:14px;padding:11px 8px;margin:0 -8px;
@@ -558,29 +562,32 @@
       <div class="card reveal" style="animation-delay:.16s">
         <div class="card-h">
           <div>
-            <h3>Nifty 500 — Index Performance</h3>
-            <p>Intraday composite · indexed to open</p>
+            <h3 id="mainChartTitle">Nifty 500 — Index Performance</h3>
+            <p id="mainChartSub">Yahoo Finance · ^CRSLDX · daily close</p>
           </div>
           <div class="seg" id="rangeSeg">
             <button data-r="1D" class="on">1D</button>
             <button data-r="1W">1W</button>
             <button data-r="1M">1M</button>
+            <button data-r="YTD">YTD</button>
             <button data-r="1Y">1Y</button>
+            <button data-r="3Y">3Y</button>
+            <button data-r="5Y">5Y</button>
+            <button data-r="10Y">10Y</button>
           </div>
         </div>
         <div class="chart-box"><canvas id="mainChart"></canvas></div>
       </div>
 
-      <!-- 2 · Desk Snapshot -->
+      <!-- 2 · Desk Snapshot — clickable rows drive the chart above -->
       <div class="card reveal" style="animation-delay:.2s">
-        <div class="card-h"><div><h3>Desk Snapshot</h3><p>Key risk & flow metrics</p></div></div>
-        <div class="stat-row"><span>Sensex</span><b class="up" id="sSensex">81,420.31 &nbsp;+0.74%</b></div>
-        <div class="stat-row"><span>Bank Nifty</span><b class="up" id="sBank">51,866.05 &nbsp;+1.12%</b></div>
-        <div class="stat-row"><span>Nifty Midcap 100</span><b class="up" id="sMid">58,210.40 &nbsp;+0.41%</b></div>
-        <div class="stat-row"><span>USD / INR</span><b class="down" id="sFx">83.41 &nbsp;+0.09%</b></div>
-        <div class="stat-row"><span>Brent Crude</span><b class="down" id="sBrent">$78.12 &nbsp;−1.30%</b></div>
-        <div class="stat-row"><span>India 10Y G-Sec <em style="font-style:normal;color:var(--text-mute);font-size:9px">SAMPLE</em></span><b>6.78%</b></div>
-        <div class="stat-row"><span>Gold (MCX, 10g) <em style="font-style:normal;color:var(--text-mute);font-size:9px">SAMPLE</em></span><b class="up">₹72,910 &nbsp;+0.38%</b></div>
+        <div class="card-h"><div><h3>Desk Snapshot</h3><p>Click any row to load the chart above</p></div></div>
+        <div class="stat-row clickable active" data-sym="^CRSLDX"  data-label="Nifty 500"><span>Nifty 500</span><b class="up" id="sN500">—</b></div>
+        <div class="stat-row clickable"        data-sym="^NSEI"     data-label="Nifty 50"><span>Nifty 50</span><b class="up" id="sN50">—</b></div>
+        <div class="stat-row clickable"        data-sym="NIFTY_MIDCAP_100.NS" data-label="Nifty Midcap 100"><span>Nifty Midcap 100</span><b class="up" id="sMid">—</b></div>
+        <div class="stat-row clickable"        data-sym="SMALLCAP.NS" data-label="Nifty Small Cap"><span>Nifty Small Cap</span><b class="up" id="sSml">—</b></div>
+        <div class="stat-row clickable"        data-sym="INR=X"     data-label="USD / INR"><span>USD / INR</span><b class="down" id="sFx">—</b></div>
+        <div class="stat-row"                                                                    ><span>India 10Y G-Sec <em style="font-style:normal;color:var(--text-mute);font-size:9px">no Yahoo feed</em></span><b id="sBond">6.78%</b></div>
       </div>
 
       <!-- 3 · Sector Performance -->
@@ -1465,13 +1472,29 @@ const chart=new Chart(ctx,{
     plugins:{legend:{display:false},
       tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,
         titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:11,displayColors:false,
-        // Title shows the formatted timestamp; body shows the value.
-        callbacks:{title:items=>items[0]&&items[0].label||'',label:c=>'  '+c.parsed.y.toFixed(2)}}},
+        // Tooltip title reads the full timestamp from _times (set by
+        // applyChart) instead of the sparse x-axis label.
+        callbacks:{title:items=>{
+            if(!items||!items[0]) return '';
+            const t = chart._times && chart._times[items[0].dataIndex];
+            if(!t) return items[0].label||'';
+            const d=new Date(t), IST={timeZone:'Asia/Kolkata'};
+            const date=d.toLocaleDateString('en-IN',{...IST,day:'numeric',month:'short',year:'numeric'});
+            if(chart._intraday){
+              const tm=d.toLocaleTimeString('en-IN',{...IST,hour:'2-digit',minute:'2-digit',hour12:false});
+              return date+' · '+tm;
+            }
+            return date;
+          },
+          label:c=>'  '+c.parsed.y.toFixed(2)}}},
     scales:{
       x:{display:true,grid:{display:false},border:{display:false},
         ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
-          maxRotation:0,autoSkip:true,maxTicksLimit:6}},
+          maxRotation:0,autoSkip:true,maxTicksLimit:10}},
+      // Auto-scale y to the data range with 5% breathing room — never
+      // pin to zero (an index at 23,000 with min:0 makes moves look flat).
       y:{position:'right',grid:{color:'#1f2530'},border:{display:false},
+        beginAtZero:false,grace:'5%',
         ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10}}}},
     interaction:{intersect:false,mode:'index'}}
 });
@@ -1553,7 +1576,7 @@ function setStatus(live){
 function fmtChg(pct){ return `${pct>=0?'▲':'▼'} ${pct>=0?'+':''}${pct.toFixed(2)}%`; }
 
 async function loadQuotes(){
-  const j=await sparkApi([...IDX.map(x=>x[0]),'^NSEMDCP50','INR=X','BZ=F']);
+  const j=await sparkApi([...IDX.map(x=>x[0]),'NIFTY_MIDCAP_100.NS','SMALLCAP.NS','INR=X']);
   let any=false;
 
   // Ticker
@@ -1585,8 +1608,9 @@ async function loadQuotes(){
     e.textContent=`${pfx||cur}${inr(p)}  ${ch>=0?'+':''}${ch.toFixed(2)}%`;
     e.className=ch>=0?'up':'down';
   };
-  snap('sSensex','^BSESN'); snap('sBank','^NSEBANK'); snap('sMid','^NSEMDCP50');
-  snap('sFx','INR=X','',''); snap('sBrent','BZ=F','$','');
+  snap('sN500','^CRSLDX'); snap('sN50','^NSEI');
+  snap('sMid','NIFTY_MIDCAP_100.NS'); snap('sSml','SMALLCAP.NS');
+  snap('sFx','INR=X','','');
 
 
   setStatus(any);
@@ -1594,43 +1618,87 @@ async function loadQuotes(){
 }
 
 
-// Live chart for Nifty 500
-const RANGE={ '1D':['1d','5m'],'1W':['5d','30m'],'1M':['1mo','1d'],'1Y':['1y','1wk'] };
-const chartCache={};
+// Live chart: switchable symbol + 8 timeframes. Default = Nifty 500.
+// Reuses the same TF_DEF + period1/period2 pattern as the Company chart.
+let mainSym='^CRSLDX', mainSymLabel='Nifty 500';
+const mainChartCache={};
+const MAIN_TF_DEF={
+  '1D' :{days:1,        interval:'5m'},
+  '1W' :{days:7,        interval:'30m'},
+  '1M' :{days:31,       interval:'1d'},
+  'YTD':{ytd:true,      interval:'1d'},
+  '1Y' :{days:366,      interval:'1d'},
+  '3Y' :{days:366*3,    interval:'1d'},
+  '5Y' :{days:366*5,    interval:'1d'},
+  '10Y':{days:366*10,   interval:'1d'},
+};
 async function liveChart(r){
-  if(chartCache[r]){ applyChart(chartCache[r],r); return; }
-  const [rng,iv]=RANGE[r];
-  const j=await getJSON(`https://query1.finance.yahoo.com/v8/finance/chart/%5ECRSLDX?range=${rng}&interval=${iv}`);
-  const res=j.chart&&j.chart.result&&j.chart.result[0];
-  const cl=res&&res.indicators&&res.indicators.quote[0].close;
-  const ts=res&&res.timestamp; // unix seconds
-  if(!cl) throw new Error('no chart');
-  // Keep close + timestamp aligned through the null-filter.
-  const pairs=cl.map((v,i)=>({v,t:ts?ts[i]*1000:null})).filter(p=>p.v!=null);
+  const cacheKey=mainSym+'|'+r;
+  if(mainChartCache[cacheKey]){ applyChart(mainChartCache[cacheKey],r); return; }
+  const def=MAIN_TF_DEF[r]||MAIN_TF_DEF['1D'];
+  const now=Math.floor(Date.now()/1000);
+  const start=def.ytd
+    ? Math.floor(new Date(new Date().getFullYear(),0,1).getTime()/1000)
+    : now-def.days*86400;
+  const url=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(mainSym)}`+
+    `?period1=${start}&period2=${now}&interval=${def.interval}`;
+  const j=await getJSON(url);
+  const res=j&&j.chart&&j.chart.result&&j.chart.result[0];
+  const cl=res&&res.indicators&&res.indicators.quote&&res.indicators.quote[0]&&res.indicators.quote[0].close;
+  const ts=res&&res.timestamp;
+  if(!cl||!ts) throw new Error('no chart');
+  const pairs=cl.map((v,i)=>({v,t:ts[i]*1000})).filter(p=>p.v!=null);
   const payload={data:pairs.map(p=>p.v), times:pairs.map(p=>p.t)};
-  chartCache[r]=payload;
+  mainChartCache[cacheKey]=payload;
   applyChart(payload,r);
 }
 function applyChart(payload,r){
   currentRange=r;
+  chart._times = payload.times;
+  chart._intraday = (r==='1D' || r==='1W');
   chart.data.labels=payload.times.map(t=>t?fmtAxisLabel(t,r):'');
   chart.data.datasets[0].data=payload.data;
   chart.update();
+}
+async function setMainSym(sym, label){
+  mainSym=sym; mainSymLabel=label;
+  // Update titles + active-row highlight
+  const t=document.getElementById('mainChartTitle'); if(t) t.textContent=`${label} — Index Performance`;
+  const s=document.getElementById('mainChartSub');   if(s) s.textContent=`Yahoo Finance · ${sym} · ${currentRange==='1D'||currentRange==='1W' ? '5/30m intraday' : 'daily close'}`;
+  document.querySelectorAll('.stat-row.clickable').forEach(r=>{
+    r.classList.toggle('active', r.dataset.sym===sym);
+  });
+  try{ await liveChart(currentRange); }
+  catch(e){
+    // Fallback to canned sample data if Yahoo is unreachable.
+    const d=datasets[currentRange]||datasets['1D'];
+    chart._times=null; chart._intraday=false;
+    chart.data.labels=sampleTimes(currentRange,d.length).map(t=>fmtAxisLabel(t,currentRange));
+    chart.data.datasets[0].data=d;
+    chart.update();
+  }
 }
 document.querySelectorAll('#rangeSeg button').forEach(b=>{
   b.onclick=async()=>{
     document.querySelectorAll('#rangeSeg button').forEach(x=>x.classList.remove('on'));
     b.classList.add('on');
     const r=b.dataset.r;
+    currentRange=r;
+    const s=document.getElementById('mainChartSub');
+    if(s) s.textContent=`Yahoo Finance · ${mainSym} · ${r==='1D'||r==='1W' ? '5/30m intraday' : 'daily close'}`;
     try{ await liveChart(r); }
     catch(e){
-      const d=datasets[r];
-      currentRange=r;
+      const d=datasets[r]||datasets['1D'];
+      chart._times=null; chart._intraday=false;
       chart.data.labels=sampleTimes(r,d.length).map(t=>fmtAxisLabel(t,r));
       chart.data.datasets[0].data=d;
       chart.update();
     }
   };
+});
+// Desk-Snapshot rows act as the index selector for the chart above.
+document.querySelectorAll('.stat-row.clickable').forEach(row=>{
+  row.addEventListener('click',()=>setMainSym(row.dataset.sym, row.dataset.label));
 });
 
 /* ---------- Sector module: timeframe + per-sector detail ---------- */
