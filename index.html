@@ -2523,17 +2523,32 @@ async function loadNews(){
     return items.map(it=>({...it,cat}));
   }));
   const all=[].concat(...results);
-  // Dedupe by normalised title; sort by pubDate desc; cap 20.
+  // Sort by pubDate desc so when we dedupe by company below, the
+  // NEWEST headline per company wins.
   all.sort((a,b)=>(Date.parse(b.pubDate||0)||0)-(Date.parse(a.pubDate||0)||0));
   // 2-day clamp measured from the newest item (robust to sandbox /
   // source clock skew — same pattern used by the movers "why" line).
   let newest=0;
   for(const it of all){ const ms=Date.parse(it.pubDate||0); if(!isNaN(ms)&&ms>newest) newest=ms; }
+  // Dedupe by company first (ticker if matchable, else lead-company
+  // name). Macro headlines without a specific company fall back to
+  // title-key so they still dedup against duplicates of themselves.
+  function newsKey(it){
+    const t=String(it.title||'');
+    const tk=pickTicker(t);
+    if(tk) return 'tk:'+tk;
+    const lead=leadCompany(t);
+    if(lead){
+      const k=lead.toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,24);
+      if(k.length>=3) return 'co:'+k;
+    }
+    return 'ti:'+t.toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,60);
+  }
   const seen=new Set(); const merged=[];
   for(const it of all){
     const ms=Date.parse(it.pubDate||0);
     if(newest && !isNaN(ms) && (newest-ms) > 2*864e5) continue; // older than 2 days vs newest
-    const k=String(it.title||'').toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,60);
+    const k=newsKey(it);
     if(!k||seen.has(k)) continue;
     seen.add(k); merged.push(it);
     if(merged.length>=20) break;
