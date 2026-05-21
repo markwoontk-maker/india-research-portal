@@ -736,7 +736,7 @@
       <div class="card reveal">
         <div class="card-h">
           <div><h3 id="cChartTitle">Price Chart</h3>
-          <p id="cChartSub">Select a company or sector above to load price history (Yahoo Finance · daily bar)</p></div>
+          <p id="cChartSub">Select a company or sector above to load price history (Yahoo Finance · daily close)</p></div>
           <div class="seg" id="cRangeSeg">
             <button data-r="1D">1D</button>
             <button data-r="1W">1W</button>
@@ -750,6 +750,15 @@
         </div>
         <div class="chart-box"><canvas id="cChart"></canvas></div>
         <p id="cChartMsg" style="color:var(--text-mute);font-size:11px;text-align:center;margin-top:10px;display:none"></p>
+      </div>
+      <!-- About the company: 3-4 sentence business description -->
+      <div class="card reveal" id="cDescCard" hidden>
+        <div class="card-h">
+          <div><h3 id="cDescTitle">About the Company</h3>
+          <p id="cDescMeta">Sector · Ticker</p></div>
+        </div>
+        <p id="cDesc" class="co-desc"></p>
+        <p class="co-desc-src">Sourced from the company's website, latest annual report, and the broker reports indexed in the NotebookLM workspace.</p>
       </div>
     </div>
 
@@ -2922,9 +2931,9 @@ async function loadCompanyChart(name, tf){
     return;
   }
   const def = TF_DEF[currentTf] || TF_DEF['10Y'];
-  const intervalLabel = def.interval==='1d' ? 'daily' : def.interval+' intraday';
+  const intervalLabel = def.interval==='1d' ? 'daily close' : def.interval+' intraday';
   titleEl.textContent = `${currentCompany} — ${currentTf}`;
-  subEl.textContent = `Yahoo Finance · ${sym} · ${intervalLabel} bars`;
+  subEl.textContent = `Yahoo Finance · ${sym} · ${intervalLabel}`;
   msgEl.style.display='none';
   // Build period1 / period2 in unix seconds so we cover the exact window
   // (Yahoo's named ranges don't include 3Y).
@@ -2955,11 +2964,14 @@ function renderCompanyChart(data, times, sym, tf){
   if(!c) return;
   const ccy = (sym==='MMYT' || sym==='RNW') ? '$' : '₹';
   if(!companyChart){
+    const gc = c.getContext('2d').createLinearGradient(0,0,0,300);
+    gc.addColorStop(0,'rgba(233,162,59,.32)');
+    gc.addColorStop(1,'rgba(233,162,59,0)');
     companyChart = new Chart(c, {
-      type:'bar',
-      data:{labels:[], datasets:[{data:[], backgroundColor:'#e9a23b',
-        borderWidth:0, borderRadius:0,
-        barPercentage:1.0, categoryPercentage:1.0}]},
+      type:'line',
+      data:{labels:[], datasets:[{data:[], borderColor:'#e9a23b', borderWidth:1.5,
+        fill:true, backgroundColor:gc, tension:.18, pointRadius:0, pointHoverRadius:5,
+        pointHoverBackgroundColor:'#e9a23b', borderJoinStyle:'round'}]},
       options:{responsive:true, maintainAspectRatio:false,
         devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
         plugins:{legend:{display:false},
