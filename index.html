@@ -394,6 +394,45 @@
   .co-desc{font-size:13.5px;line-height:1.7;color:var(--text-dim);margin-top:4px}
   .co-desc-src{font-size:11px;color:var(--text-mute);margin-top:12px;
     padding-top:10px;border-top:1px solid var(--line-soft);font-style:italic}
+  /* Company chart: period return display + abnormal-move markers */
+  .cm-return-row{display:flex;align-items:baseline;gap:12px;margin:4px 0 14px}
+  .cm-return{font-family:'IBM Plex Mono';font-size:24px;font-weight:600;color:var(--text-mute)}
+  .cm-return.up{color:var(--up)}
+  .cm-return.down{color:var(--down)}
+  .cm-return-meta{font-family:'IBM Plex Mono';font-size:11px;color:var(--text-mute);
+    letter-spacing:.06em;text-transform:uppercase}
+  .cm-wrap{position:relative}
+  /* Overlay covers the chart-box for positioned markers */
+  .cm-markers{position:absolute;inset:0;pointer-events:none}
+  .cm-marker{position:absolute;width:9px;height:9px;border-radius:50%;
+    background:rgba(255,255,255,.4);border:1.5px solid rgba(255,255,255,.95);
+    transform:translate(-50%,-50%);cursor:pointer;pointer-events:auto;
+    transition:transform .15s,background .15s;z-index:2}
+  .cm-marker.up{border-color:var(--up);background:rgba(46,200,128,.4)}
+  .cm-marker.down{border-color:var(--down);background:rgba(232,93,93,.4)}
+  .cm-marker:hover{transform:translate(-50%,-50%) scale(1.5);background:#fff}
+  /* Vertical line from chart top down to the marker — hover only */
+  .cm-line{position:absolute;left:50%;bottom:50%;width:1px;height:0;
+    background:rgba(255,255,255,.55);transform:translateX(-50%);
+    opacity:0;transition:opacity .15s;pointer-events:none}
+  .cm-marker:hover .cm-line{opacity:1}
+  /* Popup with date / move / news — hover only */
+  .cm-pop{position:absolute;z-index:50;display:none;
+    background:var(--panel);color:var(--text);
+    border:1px solid var(--line);border-radius:8px;
+    padding:10px 12px;font-size:12px;line-height:1.5;
+    max-width:340px;box-shadow:0 6px 20px rgba(0,0,0,.55);
+    pointer-events:none}
+  .cm-pop.show{display:block}
+  .cm-pop .cmp-date{font-family:'IBM Plex Mono';font-size:10px;color:var(--text-mute);
+    text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+  .cm-pop .cmp-move{font-family:'IBM Plex Mono';font-size:13px;font-weight:600;margin-bottom:6px}
+  .cm-pop .cmp-move.up{color:var(--up)}
+  .cm-pop .cmp-move.down{color:var(--down)}
+  .cm-pop .cmp-news{color:var(--text-dim);font-size:11.5px;line-height:1.5}
+  .cm-pop .cmp-news a{color:var(--saffron);text-decoration:none;pointer-events:auto}
+  .cm-pop .cmp-news a:hover{text-decoration:underline}
+  .cm-pop .cmp-load{color:var(--text-mute);font-style:italic;font-size:11px}
   /* Fixed-width numeric cells; mono digits + right align so commas
      and thousands align across rows. */
   .n-tp{flex:none;width:72px;box-sizing:border-box;text-align:right;
@@ -788,7 +827,15 @@
             <button data-r="10Y" class="on">10Y</button>
           </div>
         </div>
-        <div class="chart-box"><canvas id="cChart"></canvas></div>
+        <div class="cm-return-row">
+          <span id="cRetPct" class="cm-return">—</span>
+          <span id="cRetMeta" class="cm-return-meta"></span>
+        </div>
+        <div class="cm-wrap">
+          <div class="chart-box"><canvas id="cChart"></canvas></div>
+          <div id="cChartMarkers" class="cm-markers"></div>
+          <div id="cChartPop" class="cm-pop"></div>
+        </div>
         <p id="cChartMsg" style="color:var(--text-mute);font-size:11px;text-align:center;margin-top:10px;display:none"></p>
       </div>
       <!-- About the company: 3-4 sentence business description -->
@@ -3206,11 +3253,161 @@ function renderCompanyChart(data, times, sym, tf){
   companyChart._ccy = ccy;
   companyChart._times = times;
   companyChart._intraday = (tf==='1D' || tf==='1W');
+  companyChart._data = data;
   const fmt = fmtTickFor(tf);
   companyChart.data.labels = times.map(fmt);
   companyChart.data.datasets[0].data = data;
   companyChart.update();
+  // Period return + abnormal-move markers — run after chart paints.
+  requestAnimationFrame(()=>{ updateChartReturn(data, ccy, tf); paintMarkers(data, times, currentCompany, tf); });
 }
+
+// === Period-return label + abnormal-move markers ===================
+
+function updateChartReturn(data, ccy, tf){
+  const elPct = document.getElementById('cRetPct');
+  const elMeta = document.getElementById('cRetMeta');
+  if(!elPct || !elMeta || !data || data.length < 2){ if(elPct) elPct.textContent='—'; return; }
+  const first = data[0], last = data[data.length-1];
+  const pct = (last/first - 1) * 100;
+  const abs = last - first;
+  const cls = pct >= 0 ? 'up' : 'down';
+  const sign = pct >= 0 ? '+' : '−';
+  elPct.className = 'cm-return '+cls;
+  elPct.textContent = sign + Math.abs(pct).toFixed(2) + '%';
+  const fmtN = n => Number(n).toLocaleString('en-IN',{maximumFractionDigits:2});
+  elMeta.textContent = `${tf} · ${ccy}${fmtN(first)} → ${ccy}${fmtN(last)}  (${sign}${ccy}${fmtN(Math.abs(abs))})`;
+}
+
+// Cache: "company|YYYY-MM-DD" → array of news items (or null)
+const newsByDate = {};
+async function fetchNewsForDate(name, ts){
+  const d = new Date(ts);
+  const key = `${name}|${d.toISOString().slice(0,10)}`;
+  if(newsByDate[key] !== undefined) return newsByDate[key];
+  // Google News only reliably returns results for recent dates through
+  // the RSS feed. For older dates, return null and let the popup fall
+  // back to a "Search news →" link.
+  const daysAgo = (Date.now() - ts) / 864e5;
+  if(daysAgo > 35){ newsByDate[key] = null; return null; }
+  const after  = new Date(ts - 1*864e5).toISOString().slice(0,10);
+  const before = new Date(ts + 2*864e5).toISOString().slice(0,10);
+  const q = `"${name}" (share OR stock OR results OR profit OR guidance OR order OR deal OR upgrade OR downgrade) after:${after} before:${before}`;
+  try{
+    const items = await newsViaProxy(q);
+    newsByDate[key] = (items && items.length) ? items.slice(0,3) : [];
+    return newsByDate[key];
+  }catch(e){ newsByDate[key] = null; return null; }
+}
+
+function findAbnormalMoves(data, times, threshold){
+  const moves = [];
+  for(let i=1; i<data.length; i++){
+    if(data[i]==null || data[i-1]==null) continue;
+    const pct = data[i]/data[i-1] - 1;
+    if(Math.abs(pct) >= threshold) moves.push({idx:i, value:data[i], t:times[i], pct:pct*100});
+  }
+  // Keep the top-10 by absolute magnitude (avoid clutter on 5Y/10Y).
+  moves.sort((a,b)=>Math.abs(b.pct)-Math.abs(a.pct));
+  return moves.slice(0,10);
+}
+
+let lastMarkerCtx = null;  // remember the inputs so we can re-place on resize
+
+function paintMarkers(data, times, name, tf){
+  const wrap = document.getElementById('cChartMarkers');
+  if(!wrap || !companyChart || !companyChart.chartArea) { lastMarkerCtx = {data, times, name, tf}; return; }
+  wrap.innerHTML = '';
+  // Threshold scales with timeframe — daily moves above this stand out.
+  const threshold = (tf==='1D' || tf==='1W') ? 0.02
+                  : (tf==='1M' || tf==='YTD' || tf==='1Y') ? 0.05
+                  : 0.07;
+  const moves = findAbnormalMoves(data, times, threshold);
+  const ca = companyChart.chartArea, xs = companyChart.scales.x, ys = companyChart.scales.y;
+  // Align overlay to the canvas position inside .cm-wrap.
+  const canvas = document.getElementById('cChart');
+  const wrapRect = wrap.parentElement.getBoundingClientRect();
+  const canvRect = canvas.getBoundingClientRect();
+  const offX = canvRect.left - wrapRect.left;
+  const offY = canvRect.top  - wrapRect.top;
+  moves.forEach(p => {
+    const xPix = offX + xs.getPixelForValue(p.idx);
+    const yPix = offY + ys.getPixelForValue(p.value);
+    if(!isFinite(xPix) || !isFinite(yPix)) return;
+    const m = document.createElement('div');
+    m.className = 'cm-marker '+(p.pct >= 0 ? 'up' : 'down');
+    m.style.left = xPix + 'px';
+    m.style.top  = yPix + 'px';
+    const lineH = Math.max(0, yPix - (offY + ca.top));
+    m.innerHTML = `<div class="cm-line" style="height:${lineH}px"></div>`;
+    m.dataset.pct = p.pct.toFixed(2);
+    m.dataset.t   = p.t;
+    m.addEventListener('mouseenter', () => showMarkerPop(m, name, p));
+    m.addEventListener('mouseleave', hideMarkerPop);
+    wrap.appendChild(m);
+  });
+  lastMarkerCtx = {data, times, name, tf};
+}
+
+let popHideTimer = null;
+function showMarkerPop(markerEl, name, p){
+  const pop = document.getElementById('cChartPop');
+  if(!pop) return;
+  clearTimeout(popHideTimer);
+  const d = new Date(p.t);
+  const IST = {timeZone:'Asia/Kolkata'};
+  const dateStr = d.toLocaleDateString('en-IN',{...IST,day:'numeric',month:'short',year:'numeric'});
+  const ymd = d.toISOString().slice(0,10);
+  const cls = p.pct >= 0 ? 'up' : 'down';
+  const sign = p.pct >= 0 ? '▲' : '▼';
+  const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(name+' news '+dateStr)}&tbm=nws`;
+  pop.innerHTML = `<div class="cmp-date">${dateStr}</div>`+
+    `<div class="cmp-move ${cls}">${sign} ${Math.abs(p.pct).toFixed(2)}% (single-day)</div>`+
+    `<div class="cmp-news cmp-load">Looking for news…</div>`;
+  // Position popup above the marker; flip below if it would clip.
+  const wrap = document.getElementById('cChartMarkers').parentElement;
+  const mx = parseFloat(markerEl.style.left);
+  const my = parseFloat(markerEl.style.top);
+  pop.classList.add('show');
+  // Measure then position
+  requestAnimationFrame(()=>{
+    const pw = pop.offsetWidth, ph = pop.offsetHeight;
+    const ww = wrap.clientWidth, wh = wrap.clientHeight;
+    let left = Math.max(8, Math.min(ww - pw - 8, mx - pw/2));
+    let top  = my - ph - 14;
+    if (top < 8) top = my + 14;
+    pop.style.left = left + 'px';
+    pop.style.top  = top  + 'px';
+  });
+  // Fetch news async; update only if popup still showing this marker.
+  pop.dataset.markerT = p.t;
+  fetchNewsForDate(name, p.t).then(items => {
+    if(pop.dataset.markerT != p.t) return;
+    const newsEl = pop.querySelector('.cmp-news');
+    if(!newsEl) return;
+    if(items && items.length){
+      newsEl.classList.remove('cmp-load');
+      newsEl.innerHTML = items.map(it => {
+        const t = String(it.title||'').replace(/\s+-\s+[^-]+$/,'').replace(/</g,'&lt;');
+        const src = it.source ? ' · '+it.source : '';
+        return `<div style="margin-bottom:5px"><a href="${it.link||'#'}" target="_blank" rel="noopener">${t}</a><span style="color:var(--text-mute);font-size:10.5px">${src}</span></div>`;
+      }).join('') + `<div style="margin-top:6px"><a href="${searchUrl}" target="_blank" rel="noopener">More on Google News →</a></div>`;
+    } else {
+      newsEl.classList.remove('cmp-load');
+      newsEl.innerHTML = `Older than the live-news window — <a href="${searchUrl}" target="_blank" rel="noopener">search Google News for this date →</a>`;
+    }
+  });
+}
+function hideMarkerPop(){
+  const pop = document.getElementById('cChartPop');
+  if(!pop) return;
+  popHideTimer = setTimeout(()=>{ pop.classList.remove('show'); pop.dataset.markerT=''; }, 80);
+}
+
+// Reposition markers when the window resizes (chart re-lays-out).
+window.addEventListener('resize', ()=>{
+  if(lastMarkerCtx) requestAnimationFrame(()=>paintMarkers(lastMarkerCtx.data, lastMarkerCtx.times, lastMarkerCtx.name, lastMarkerCtx.tf));
+});
 
 // Wire the segmented timeframe selector. Each click re-fetches at the
 // new range while keeping the currently-selected company.
