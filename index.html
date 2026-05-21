@@ -3312,17 +3312,22 @@ async function fetchNewsForDate(name, ts){
   const d = new Date(ts);
   const key = `${name}|${d.toISOString().slice(0,10)}`;
   if(newsByDate[key] !== undefined) return newsByDate[key];
-  // Google News only reliably returns results for recent dates through
-  // the RSS feed. For older dates, return null and let the popup fall
-  // back to a "Search news →" link.
-  const daysAgo = (Date.now() - ts) / 864e5;
-  if(daysAgo > 35){ newsByDate[key] = null; return null; }
-  const after  = new Date(ts - 1*864e5).toISOString().slice(0,10);
-  const before = new Date(ts + 2*864e5).toISOString().slice(0,10);
-  const q = `"${name}" (share OR stock OR results OR profit OR guidance OR order OR deal OR upgrade OR downgrade) after:${after} before:${before}`;
+  // Google News RSS only reliably returns results from the last ~14
+  // days. The after:/before: operators return a 500 through rss2json,
+  // so we use when:Nd (which works) and filter client-side by pubDate.
+  const daysAgo = Math.ceil((Date.now() - ts) / 864e5);
+  if(daysAgo > 14 || daysAgo < 0){ newsByDate[key] = null; return null; }
+  const win = Math.max(2, daysAgo + 1);
+  const q = `"${name}" (share OR stock OR results OR profit OR order OR deal OR guidance) when:${win}d`;
   try{
     const items = await newsViaProxy(q);
-    newsByDate[key] = (items && items.length) ? items.slice(0,3) : [];
+    if(!items || !items.length){ newsByDate[key] = []; return []; }
+    // Keep items pub-dated within ±2 days of the target marker.
+    const filtered = items.filter(it => {
+      const ms = Date.parse(it.pubDate);
+      return !isNaN(ms) && Math.abs(ms - ts) <= 2*864e5;
+    });
+    newsByDate[key] = filtered.slice(0,3);
     return newsByDate[key];
   }catch(e){ newsByDate[key] = null; return null; }
 }
@@ -3387,7 +3392,7 @@ function showMarkerPop(markerEl, name, p){
   const cls = p.pct >= 0 ? 'up' : 'down';
   const sign = p.pct >= 0 ? '▲' : '▼';
   pop.innerHTML = `<div class="cmp-date">${dateStr}</div>`+
-    `<div class="cmp-move ${cls}">${sign} ${Math.abs(p.pct).toFixed(2)}% (single-day)</div>`+
+    `<div class="cmp-move ${cls}">${sign} ${Math.abs(p.pct).toFixed(2)}%</div>`+
     `<div class="cmp-news cmp-load">Looking for news…</div>`;
   // Position popup above the marker; flip below if it would clip.
   const wrap = document.getElementById('cChartMarkers').parentElement;
@@ -3411,14 +3416,18 @@ function showMarkerPop(markerEl, name, p){
     const newsEl = pop.querySelector('.cmp-news');
     if(!newsEl) return;
     newsEl.classList.remove('cmp-load');
-    if(items && items.length){
+    if(items === null){
+      // Date is older than the ~14-day Google News window — no free
+      // historical news source is available from a browser.
+      newsEl.textContent = 'Older than the live-news window (last 14 days).';
+    } else if(items.length){
       // One clean sentence — strip publisher suffix and entity-decode.
       let s = String(items[0].title||'').replace(/\s+-\s+[^-]+$/,'').trim()
         .replace(/&amp;/g,'&').replace(/&#39;|&apos;/g,"'").replace(/&quot;/g,'"');
       if(s && !/[.!?]$/.test(s)) s += '.';
       newsEl.textContent = s;
     } else {
-      newsEl.textContent = 'No specific news identified for this date.';
+      newsEl.textContent = 'No company-specific headlines on this date.';
     }
   });
 }
