@@ -3006,7 +3006,22 @@ function renderCompanyChart(data, times, sym, tf){
         plugins:{legend:{display:false},
           tooltip:{backgroundColor:'#11151c', borderColor:'#252c39', borderWidth:1,
             titleColor:'#646c7c', bodyColor:'#e9e6dd', padding:11, displayColors:false,
-            callbacks:{title:items=>items[0]&&items[0].label||'',
+            // Tooltip title reads the full timestamp (day + month + year,
+            // plus HH:mm on intraday timeframes) from the parallel _times
+            // array — the x-axis labels are sparse "May '26" style which
+            // wouldn't tell you the exact date on a 10Y chart.
+            callbacks:{title:items=>{
+                if(!items||!items[0]) return '';
+                const t = companyChart._times && companyChart._times[items[0].dataIndex];
+                if(!t) return items[0].label||'';
+                const d=new Date(t), IST={timeZone:'Asia/Kolkata'};
+                const date=d.toLocaleDateString('en-IN',{...IST,day:'numeric',month:'short',year:'numeric'});
+                if(companyChart._intraday){
+                  const time=d.toLocaleTimeString('en-IN',{...IST,hour:'2-digit',minute:'2-digit',hour12:false});
+                  return date+' · '+time;
+                }
+                return date;
+              },
               label:cc=>'  '+companyChart._ccy+cc.parsed.y.toFixed(2)}}},
         scales:{x:{display:true, grid:{display:false}, border:{display:false},
           ticks:{color:'#646c7c', font:{family:'IBM Plex Mono',size:10},
@@ -3021,6 +3036,8 @@ function renderCompanyChart(data, times, sym, tf){
     });
   }
   companyChart._ccy = ccy;
+  companyChart._times = times;
+  companyChart._intraday = (tf==='1D' || tf==='1W');
   const fmt = fmtTickFor(tf);
   companyChart.data.labels = times.map(fmt);
   companyChart.data.datasets[0].data = data;
