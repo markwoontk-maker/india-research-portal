@@ -735,8 +735,18 @@
       </div>
       <div class="card reveal">
         <div class="card-h">
-          <div><h3 id="cChartTitle">10-Year Price Chart</h3>
-          <p id="cChartSub">Select a company or sector above to load price history (Yahoo Finance · monthly close)</p></div>
+          <div><h3 id="cChartTitle">Price Chart</h3>
+          <p id="cChartSub">Select a company or sector above to load price history (Yahoo Finance · daily bar)</p></div>
+          <div class="seg" id="cRangeSeg">
+            <button data-r="1D">1D</button>
+            <button data-r="1W">1W</button>
+            <button data-r="1M">1M</button>
+            <button data-r="YTD">YTD</button>
+            <button data-r="1Y">1Y</button>
+            <button data-r="3Y">3Y</button>
+            <button data-r="5Y">5Y</button>
+            <button data-r="10Y" class="on">10Y</button>
+          </div>
         </div>
         <div class="chart-box"><canvas id="cChart"></canvas></div>
         <p id="cChartMsg" style="color:var(--text-mute);font-size:11px;text-align:center;margin-top:10px;display:none"></p>
@@ -2857,31 +2867,82 @@ function yahooSymFor(name){
   return s + '.NS';
 }
 
+// Per-timeframe Yahoo Finance parameters. All charts use 1-day bars
+// except 1D (5-min intraday, since a single daily bar wouldn't be a
+// chart) and 1W (30-min, gives a readable week view).
+const TF_DEF = {
+  '1D' : {days: 1,         interval: '5m'},
+  '1W' : {days: 7,         interval: '30m'},
+  '1M' : {days: 31,        interval: '1d'},
+  'YTD': {ytd: true,       interval: '1d'},
+  '1Y' : {days: 366,       interval: '1d'},
+  '3Y' : {days: 366*3,     interval: '1d'},
+  '5Y' : {days: 366*5,     interval: '1d'},
+  '10Y': {days: 366*10,    interval: '1d'},
+};
+function fmtTickFor(tf){
+  // X-axis label formatter for each timeframe.
+  const IST={timeZone:'Asia/Kolkata'};
+  return t => {
+    const d = new Date(t);
+    if (tf==='1D') return d.toLocaleTimeString('en-IN',{...IST,hour:'2-digit',minute:'2-digit',hour12:false});
+    if (tf==='1W') return d.toLocaleDateString('en-IN',{...IST,weekday:'short'})+' '+
+                          d.toLocaleTimeString('en-IN',{...IST,hour:'2-digit',minute:'2-digit',hour12:false});
+    if (tf==='1M' || tf==='YTD') return d.toLocaleDateString('en-IN',{...IST,day:'numeric',month:'short'});
+    if (tf==='1Y' || tf==='3Y') return d.toLocaleDateString('en-IN',{...IST,month:'short',year:'2-digit'});
+    return d.toLocaleDateString('en-IN',{...IST,month:'short',year:'2-digit'}); // 5Y / 10Y
+  };
+}
+
 let companyChart=null;
-async function loadCompanyChart(name){
-  const sym = yahooSymFor(name);
+let currentCompany=null;
+let currentTf='10Y';
+
+async function loadCompanyChart(name, tf){
+  if (name) currentCompany = name;
+  if (tf) currentTf = tf;
+  // Sync the segmented control highlight to the current timeframe.
+  document.querySelectorAll('#cRangeSeg button').forEach(b=>{
+    b.classList.toggle('on', b.dataset.r===currentTf);
+  });
   const msgEl = document.getElementById('cChartMsg');
   const titleEl = document.getElementById('cChartTitle');
   const subEl = document.getElementById('cChartSub');
+  if(!currentCompany){
+    msgEl.style.display='block';
+    msgEl.textContent = 'Select a company or sector above to load the chart.';
+    return;
+  }
+  const sym = yahooSymFor(currentCompany);
   if(!sym){
-    titleEl.textContent = name;
+    titleEl.textContent = currentCompany;
     subEl.textContent = 'No Yahoo Finance ticker mapped for this notebook';
     if(companyChart){ companyChart.data.labels=[]; companyChart.data.datasets[0].data=[]; companyChart.update(); }
     msgEl.style.display='none';
     return;
   }
-  titleEl.textContent = name + ' — 10Y price';
-  subEl.textContent = `Yahoo Finance · ${sym} · monthly close`;
+  const def = TF_DEF[currentTf] || TF_DEF['10Y'];
+  const intervalLabel = def.interval==='1d' ? 'daily' : def.interval+' intraday';
+  titleEl.textContent = `${currentCompany} — ${currentTf}`;
+  subEl.textContent = `Yahoo Finance · ${sym} · ${intervalLabel} bars`;
   msgEl.style.display='none';
+  // Build period1 / period2 in unix seconds so we cover the exact window
+  // (Yahoo's named ranges don't include 3Y).
+  const now = Math.floor(Date.now()/1000);
+  const start = def.ytd
+    ? Math.floor(new Date(new Date().getFullYear(),0,1).getTime()/1000)
+    : now - def.days*86400;
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}`+
+    `?period1=${start}&period2=${now}&interval=${def.interval}`;
   try{
-    const j = await getJSON(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?range=10y&interval=1mo`);
+    const j = await getJSON(url);
     const res = j && j.chart && j.chart.result && j.chart.result[0];
     const cl = res && res.indicators && res.indicators.quote && res.indicators.quote[0] && res.indicators.quote[0].close;
     const ts = res && res.timestamp;
     if(!cl || !ts || !ts.length) throw new Error('no data');
     const pairs = cl.map((v,i)=>({v, t: ts[i]*1000})).filter(p=>p.v!=null);
     if(!pairs.length) throw new Error('no data');
-    renderCompanyChart(pairs.map(p=>p.v), pairs.map(p=>p.t), sym);
+    renderCompanyChart(pairs.map(p=>p.v), pairs.map(p=>p.t), sym, currentTf);
   }catch(e){
     if(companyChart){ companyChart.data.labels=[]; companyChart.data.datasets[0].data=[]; companyChart.update(); }
     msgEl.style.display='block';
@@ -2889,20 +2950,16 @@ async function loadCompanyChart(name){
   }
 }
 
-function renderCompanyChart(data, times, sym){
+function renderCompanyChart(data, times, sym, tf){
   const c = document.getElementById('cChart');
   if(!c) return;
-  // Y-axis currency prefix: ₹ for NSE, $ for the US ADRs
   const ccy = (sym==='MMYT' || sym==='RNW') ? '$' : '₹';
   if(!companyChart){
-    const gc = c.getContext('2d').createLinearGradient(0,0,0,300);
-    gc.addColorStop(0,'rgba(233,162,59,.32)');
-    gc.addColorStop(1,'rgba(233,162,59,0)');
     companyChart = new Chart(c, {
-      type:'line',
-      data:{labels:[], datasets:[{data:[], borderColor:'#e9a23b', borderWidth:1.5,
-        fill:true, backgroundColor:gc, tension:.18, pointRadius:0, pointHoverRadius:5,
-        pointHoverBackgroundColor:'#e9a23b', borderJoinStyle:'round'}]},
+      type:'bar',
+      data:{labels:[], datasets:[{data:[], backgroundColor:'#e9a23b',
+        borderWidth:0, borderRadius:0,
+        barPercentage:1.0, categoryPercentage:1.0}]},
       options:{responsive:true, maintainAspectRatio:false,
         devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
         plugins:{legend:{display:false},
@@ -2919,13 +2976,19 @@ function renderCompanyChart(data, times, sym){
     });
   }
   companyChart._ccy = ccy;
-  companyChart.data.labels = times.map(t=>{
-    const d = new Date(t);
-    return d.toLocaleDateString('en-IN',{timeZone:'Asia/Kolkata',month:'short',year:'2-digit'});
-  });
+  const fmt = fmtTickFor(tf);
+  companyChart.data.labels = times.map(fmt);
   companyChart.data.datasets[0].data = data;
   companyChart.update();
 }
+
+// Wire the segmented timeframe selector. Each click re-fetches at the
+// new range while keeping the currently-selected company.
+(function(){
+  document.querySelectorAll('#cRangeSeg button').forEach(b=>{
+    b.addEventListener('click', ()=>loadCompanyChart(null, b.dataset.r));
+  });
+})();
 
 function loadScreener(){
   const status=document.getElementById('nbStatus');
