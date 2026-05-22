@@ -1,67 +1,87 @@
-// One-shot repair for double-encoded UTF-8 ("mojibake") in index.html.
-// Happens when something interpreted UTF-8 bytes as Windows-1252 then
-// re-saved as UTF-8 — e.g. an editor with the wrong default encoding.
+// General repair for double-encoded UTF-8 ("mojibake") in index.html.
+// Happens when UTF-8 bytes get interpreted as Windows-1252 and re-saved
+// as UTF-8 — e.g. an editor with the wrong default encoding.
 //
-// Each fix maps the 7-8 corrupted UTF-8 bytes back to the 3-byte
-// original UTF-8 character. Done via Buffer.indexOf so visually-
-// identical sequences (e.g. "â€"" for em-dash vs en-dash) don't
-// collide.
+// This is NOT a hand-listed set of fixes: it scans for UTF-8 lead bytes
+// (0xC2-0xF4) that were mis-decoded into Windows-1252 characters, gathers
+// the matching continuation bytes, and decodes the original character.
+// So it repairs ▲ ▼ ₹ − — … © · etc. without naming them individually.
 
 const fs = require('fs');
 const path = process.argv[2] || 'C:/Users/admin/India-Research-Portal/index.html';
-let buf = fs.readFileSync(path);
 
-// Common prefix bytes for "â€" = C3 A2 E2 82 AC
-const PFX = [0xC3, 0xA2, 0xE2, 0x82, 0xAC];
+// Windows-1252 0x80-0x9F special chars -> Unicode codepoints. The other
+// byte ranges (0x00-0x7F, 0xA0-0xFF) are identity-mapped (= Latin-1).
+const CP1252_HIGH = {
+  0x80: 0x20AC, 0x82: 0x201A, 0x83: 0x0192, 0x84: 0x201E, 0x85: 0x2026,
+  0x86: 0x2020, 0x87: 0x2021, 0x88: 0x02C6, 0x89: 0x2030, 0x8A: 0x0160,
+  0x8B: 0x2039, 0x8C: 0x0152, 0x8E: 0x017D, 0x91: 0x2018, 0x92: 0x2019,
+  0x93: 0x201C, 0x94: 0x201D, 0x95: 0x2022, 0x96: 0x2013, 0x97: 0x2014,
+  0x98: 0x02DC, 0x99: 0x2122, 0x9A: 0x0161, 0x9B: 0x203A, 0x9C: 0x0153,
+  0x9E: 0x017E, 0x9F: 0x0178,
+};
 
-const fixes = [
-  // tail E2 80 9D ("”")  → em dash  (UTF-8 E2 80 94)
-  { from: [...PFX, 0xE2, 0x80, 0x9D],  to: [0xE2, 0x80, 0x94], label: '— em dash' },
-  // tail E2 80 9C ("“")  → en dash  (UTF-8 E2 80 93)
-  { from: [...PFX, 0xE2, 0x80, 0x9C],  to: [0xE2, 0x80, 0x93], label: '– en dash' },
-  // tail E2 84 A2 (™)         → right single quote (UTF-8 E2 80 99)
-  { from: [...PFX, 0xE2, 0x84, 0xA2],  to: [0xE2, 0x80, 0x99], label: "' right single quote" },
-  // tail C2 A6 (¦)            → ellipsis (UTF-8 E2 80 A6)
-  { from: [...PFX, 0xC2, 0xA6],        to: [0xE2, 0x80, 0xA6], label: '… ellipsis' },
-  // tail C2 A2 (¢)            → bullet   (UTF-8 E2 80 A2)
-  { from: [...PFX, 0xC2, 0xA2],        to: [0xE2, 0x80, 0xA2], label: '• bullet' },
-  // tail C2 B9 (¹)            → ‹        (UTF-8 E2 80 B9)
-  { from: [...PFX, 0xC2, 0xB9],        to: [0xE2, 0x80, 0xB9], label: '‹ single angle quote' },
-];
-
-for (const f of fixes) {
-  const from = Buffer.from(f.from), to = Buffer.from(f.to);
-  let count = 0, pos = 0;
-  const out = [];
-  while (true) {
-    const idx = buf.indexOf(from, pos);
-    if (idx === -1) { out.push(buf.slice(pos)); break; }
-    out.push(buf.slice(pos, idx), to);
-    pos = idx + from.length;
-    count++;
+// Unicode codepoint -> Windows-1252 byte (single-byte-encodable chars only).
+const toByte = new Map();
+for (let b = 0; b <= 0xFF; b++) {
+  if (b >= 0x80 && b <= 0x9F) {
+    if (CP1252_HIGH[b] !== undefined) toByte.set(CP1252_HIGH[b], b);
+  } else {
+    toByte.set(b, b);
   }
-  buf = Buffer.concat(out);
-  console.log(`  ${f.label.padEnd(28)} ${count.toString().padStart(4)} replaced`);
 }
 
-// Second pass: drop spurious leading Â (C3 82) before any Latin-1
-// supplement char (C2 XX). Mojibake for "·" is "Â·" (= C3 82 C2 B7),
-// for "©" is "Â©", etc. The fix is just to strip the leading C3 82.
-{
-  const out = [];
-  let i = 0, stripped = 0;
-  while (i < buf.length) {
-    if (i + 2 < buf.length && buf[i] === 0xC3 && buf[i+1] === 0x82 && buf[i+2] === 0xC2) {
-      i += 2;  // skip the spurious Â
-      stripped++;
+const decoder = new TextDecoder('utf-8', { fatal: true });
+const isCont = (b) => b !== undefined && b >= 0x80 && b <= 0xBF;
+
+// One repair pass over a string. Returns { text, count }.
+function repair(text) {
+  const chars = Array.from(text);
+  let out = '', count = 0;
+  for (let i = 0; i < chars.length; ) {
+    const lead = toByte.get(chars[i].codePointAt(0));
+    // A genuine mojibake unit starts with a UTF-8 lead byte (0xC2-0xF4).
+    if (lead === undefined || lead < 0xC2 || lead > 0xF4) {
+      out += chars[i];
+      i++;
       continue;
     }
-    out.push(buf[i]);
+    const len = lead < 0xE0 ? 2 : lead < 0xF0 ? 3 : 4;
+    const bytes = [lead];
+    let ok = i + len <= chars.length;
+    for (let k = 1; ok && k < len; k++) {
+      const b = toByte.get(chars[i + k].codePointAt(0));
+      if (!isCont(b)) { ok = false; break; }
+      bytes.push(b);
+    }
+    if (ok) {
+      try {
+        const decoded = decoder.decode(Buffer.from(bytes));
+        // Valid mojibake decodes to exactly one non-ASCII codepoint.
+        if (Array.from(decoded).length === 1 && decoded.codePointAt(0) > 0x7F) {
+          out += decoded;
+          count++;
+          i += len;
+          continue;
+        }
+      } catch { /* not valid UTF-8 — leave as-is */ }
+    }
+    out += chars[i];
     i++;
   }
-  buf = Buffer.from(out);
-  console.log(`  Â stripped before Latin-1   ${stripped.toString().padStart(4)} times`);
+  return { text: out, count };
 }
 
-fs.writeFileSync(path, buf);
-console.log(`Done. Wrote ${buf.length} bytes to ${path}`);
+let text = fs.readFileSync(path, 'utf8');
+let total = 0, pass = 0;
+// Loop in case of triple-encoding; converges quickly.
+while (pass < 4) {
+  const r = repair(text);
+  console.log(`  pass ${++pass}: ${r.count.toString().padStart(4)} sequences repaired`);
+  total += r.count;
+  text = r.text;
+  if (r.count === 0) break;
+}
+
+fs.writeFileSync(path, text, 'utf8');
+console.log(`Done. ${total} mojibake sequences fixed. Wrote ${Buffer.byteLength(text)} bytes to ${path}`);
