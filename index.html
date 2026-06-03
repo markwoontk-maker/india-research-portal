@@ -1118,33 +1118,90 @@
       </div>
       <script>
         (function(){
-          var rows=document.querySelectorAll('#viewStrategy table.strat tbody tr');
+          // Shared MAMG view: data/mamg-views.json is the cross-device baseline (read-only on a
+          // static site). localStorage holds the local DRAFT — only keys that differ from the
+          // shared baseline are stored, so a draft equal to shared leaves nothing behind. Empty
+          // string "" is a legitimate draft meaning "blank out a value the shared file sets".
+          var SHARED={};
+          var rows=Array.prototype.slice.call(document.querySelectorAll('#viewStrategy table.strat tbody tr'));
+          var sels={}; // sector -> <select>
+          var statusEl=document.getElementById('mamgStatus');
+          var pubBtn=document.getElementById('mamgPub');
+          var lsKey='mamgViewDraft'; // single JSON blob of overrides
+
+          function loadDraft(){ try{ return JSON.parse(localStorage.getItem(lsKey)||'{}')||{}; }catch(e){ return {}; } }
+          function saveDraft(d){ try{ localStorage.setItem(lsKey, JSON.stringify(d)); }catch(e){} }
+
+          function effective(sector){
+            var d=loadDraft();
+            if(Object.prototype.hasOwnProperty.call(d,sector)) return d[sector];
+            return SHARED[sector]||'';
+          }
+          function paint(sel){
+            sel.classList.remove('ow','uw','n');
+            if(sel.value==='OW') sel.classList.add('ow');
+            else if(sel.value==='UW') sel.classList.add('uw');
+            else if(sel.value==='N') sel.classList.add('n');
+          }
+          function refreshStatus(){
+            var d=loadDraft(); var n=0;
+            for(var k in d){ if(Object.prototype.hasOwnProperty.call(d,k) && d[k]!==(SHARED[k]||'')) n++; }
+            if(n>0){
+              statusEl.textContent=n+' unpublished change'+(n>1?'s':'')+' — publish to share across devices.';
+              statusEl.classList.add('dirty'); pubBtn.disabled=false;
+            }else{
+              statusEl.textContent='MAMG view in sync with the shared file.';
+              statusEl.classList.remove('dirty'); pubBtn.disabled=true;
+            }
+          }
+
           rows.forEach(function(tr){
             var secCell=tr.querySelector('td.sec'); if(!secCell) return;
             var sector=secCell.textContent.trim();
-            var key='mamgView:'+sector;
             var td=document.createElement('td'); td.className='mamg';
             var sel=document.createElement('select'); sel.className='mamg-sel';
             sel.setAttribute('aria-label','MAMG view — '+sector);
             [['','—'],['OW','OW'],['UW','UW'],['N','N']].forEach(function(o){
               var op=document.createElement('option'); op.value=o[0]; op.textContent=o[1]; sel.appendChild(op);
             });
-            function paint(){
-              sel.classList.remove('ow','uw','n');
-              if(sel.value==='OW') sel.classList.add('ow');
-              else if(sel.value==='UW') sel.classList.add('uw');
-              else if(sel.value==='N') sel.classList.add('n');
-            }
-            var saved=null; try{ saved=localStorage.getItem(key); }catch(e){}
-            if(saved){ sel.value=saved; }
-            paint();
             sel.addEventListener('change',function(){
-              try{ if(sel.value) localStorage.setItem(key,sel.value); else localStorage.removeItem(key); }catch(e){}
-              paint();
+              var d=loadDraft();
+              if(sel.value===(SHARED[sector]||'')) delete d[sector]; // back in sync → drop override
+              else d[sector]=sel.value;
+              saveDraft(d); paint(sel); refreshStatus();
             });
             td.appendChild(sel);
             tr.insertBefore(td, tr.firstChild);
+            sels[sector]=sel;
           });
+
+          function applyAll(){
+            for(var sector in sels){ var sel=sels[sector]; sel.value=effective(sector); paint(sel); }
+            refreshStatus();
+          }
+
+          pubBtn.addEventListener('click',function(){
+            // Build the full publishable map = every non-empty effective value.
+            var out={};
+            for(var sector in sels){ var v=effective(sector); if(v) out[sector]=v; }
+            var json=JSON.stringify(out,null,2)+'\n';
+            // 1) clipboard, 2) file download — paste/commit to data/mamg-views.json.
+            if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(json).catch(function(){}); }
+            try{
+              var blob=new Blob([json],{type:'application/json'});
+              var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+              a.download='mamg-views.json'; document.body.appendChild(a); a.click();
+              setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },0);
+            }catch(e){}
+            statusEl.textContent='Copied + downloaded mamg-views.json — commit it to data/ to share.';
+            statusEl.classList.remove('dirty');
+          });
+
+          fetch('data/mamg-views.json',{cache:'no-store'})
+            .then(function(r){ return r.ok?r.json():{}; })
+            .then(function(j){ SHARED=j&&typeof j==='object'?j:{}; })
+            .catch(function(){ SHARED={}; })
+            .then(function(){ applyAll(); });
         })();
       </script>
     </div>
