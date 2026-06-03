@@ -16,6 +16,13 @@
 - Because it is static, every feature has a **client-side public-proxy fallback** (`corsproxy.io` → `allorigins.win`); server functions are primary only when the Netlify path happens to be live.
 - Never introduce a paid/keyed API. No secrets in code or chat (Netlify token/Site ID, if ever needed, live only in GitHub Actions secrets).
 
+## India Macro Snapshot card (News/Markets tab)
+- Three data layers, all in `index.html` (see `MACRO_REPORTS`, `MACRO_LIVE`, `loadMacro()`):
+  1. **Curated broker rows** (`MACRO_REPORTS`) — hand-pulled from the `India Macro` PDF library; each has a stable `id`. Primary/always-shown.
+  2. **DBnomics live rows** (`MACRO_LIVE`) — keyless, CORS-ok IMF/BIS aggregator (`api.db.nomics.world/v22/series/<id>?observations=1`, proxy fallback via `fetchText`). Appended below the broker rows, tagged `IMF/BIS · live`, rendered only if the fetch succeeds (no stale hardcoded fallback). **Caveat: these series lag ~12 months** (e.g. as of Jun 2026 the latest IMF/BIS print is Jun 2025), so the period column shows the true as-of month — they complement, never override, the fresher broker rows.
+  3. **`data/macro.json` overlay** (`applyMacroOverlay()`) — fresh official MoSPI prints (IIP/CPI) written **server-side** by the macro-refresher routine using a keyed data.gov.in API. Overlays a broker row by `id`. The API key lives only in the routine secret, never in this bundle.
+- **Macro refresher routine:** not yet created. Prompt + one-time setup (register data.gov.in key, store as routine secret `DATA_GOV_KEY`, paste prompt, enable) in `docs/macro-refresher-prompt.md`. Suggested cron `0 2 13-16 * *` (mid-month, after the ~12th IIP/CPI release).
+
 ## Research Notes tab
 - "Latest Research Notes" = single-row digest grouped by research house: **date | company | clickable headline | colour-coded call chip**. The NotebookLM per-company list was removed from this tab (the `NOTEBOOKS` map still feeds the Screener tab).
 - Two data sources: (1) **local PDF library** under `C:\Users\admin\Desktop\India Related Reports\` — parsed by filename pattern `[YYMMDD] [House] Folder - Thesis.pdf`, parent folder name matches NOTEBOOKS entries; (2) **external broker calls** (Motilal Oswal, ICICI Securities, Morgan Stanley, Citi, UBS, Nuvama, Axis, HDFC Securities, etc.) refreshed by the routine below into `data/research.json`.

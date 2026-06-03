@@ -3955,6 +3955,16 @@ fetch('data/pdfmap.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=
   renderResearchNotes();
   if(typeof renderCompanyResearch==='function') renderCompanyResearch();
 }).catch(()=>{});
+// Trendlyne broker-coverage scrape (scripts/fetch-trendlyne-coverage.js).
+// Schema: { "<NOTEBOOKS company name>": [{broker,date,headline,url,tp,rating}, ...] }
+// Used by renderCompanyResearch to populate the Broker Coverage card for
+// companies that aren't in the local PDF library.
+window.TRENDLYNE_COVERAGE=null;
+fetch('data/trendlyne-coverage.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
+  if(!j||typeof j!=='object') return;
+  window.TRENDLYNE_COVERAGE=j;
+  if(typeof renderCompanyResearch==='function') renderCompanyResearch();
+}).catch(()=>{});
 let screenerLoaded=false;
 // Sector notebooks vs company notebooks — sectors are the "India(n) X"
 // thematic workspaces (Banks, IT, Pharma, etc.). Anything else is a
@@ -4011,13 +4021,22 @@ const SECTOR_TICKERS={
   'Indian Steel':'^CNXMETAL'
 };
 // Resolve a notebook name to its Yahoo Finance symbol (with .NS for NSE).
+// Resolution order:
+//   1. inline COMPANY_TICKERS / SECTOR_TICKERS (hand-curated common cases)
+//   2. window.COMPANIES[name].ticker from data/companies.json
+//      — tickers there already carry their exchange suffix (e.g. ".NS")
+//      so any entry added to companies.json with a ticker field gets a
+//      chart for free, no inline edit required.
 function yahooSymFor(name){
   let s = COMPANY_TICKERS[name] || SECTOR_TICKERS[name];
-  if(!s) return null;
-  // ^ prefix → index; MMYT / RNW are NASDAQ; everything else gets .NS
-  if(s.startsWith('^')) return s;
-  if(s==='MMYT' || s==='RNW') return s;
-  return s + '.NS';
+  if(!s){
+    const e = (window.COMPANIES||{})[name];
+    if(e && e.ticker) return e.ticker;
+    return null;
+  }
+  if(s.startsWith('^')) return s;            // ^ prefix → index
+  if(s==='MMYT' || s==='RNW') return s;      // NASDAQ tickers
+  return s + '.NS';                          // default: NSE
 }
 
 // Per-timeframe Yahoo Finance parameters. All charts use 1-day bars
@@ -4056,7 +4075,17 @@ let currentTf='10Y';
 window.COMPANIES=null;
 fetch('data/companies.json',{cache:'no-store'})
   .then(r=>r.ok?r.json():null)
-  .then(j=>{ if(j) window.COMPANIES=j; updateCoDesc(); })
+  .then(j=>{
+    if(!j) return;
+    window.COMPANIES=j;
+    updateCoDesc();
+    // If a company was selected before COMPANIES loaded, its chart
+    // might have shown "No Yahoo Finance ticker mapped" because the
+    // fallback lookup needs COMPANIES. Retry now.
+    if (currentCompany && typeof loadCompanyChart==='function') {
+      loadCompanyChart(currentCompany, currentTf);
+    }
+  })
   .catch(()=>{});
 function updateCoDesc(){
   const card=document.getElementById('cDescCard');
@@ -4107,6 +4136,21 @@ function renderCompanyResearch(){
     .map(n=>[n[0],n[1],n[2],n[3],null]);
   const target=currentCompany.toLowerCase();
   const all=[...cur,...pri].filter(r=>String(r[2]).toLowerCase()===target);
+  // Append Trendlyne per-company broker calls (data/trendlyne-coverage.json).
+  // Format "Rating · TP ₹X — Headline" so the existing TP/call parsers
+  // in renderResearchNotes pick up the rating and target out of the
+  // headline. URL points at Trendlyne's PDF cache endpoint.
+  const TL = (window.TRENDLYNE_COVERAGE||{})[currentCompany];
+  if(Array.isArray(TL)){
+    TL.forEach(r=>{
+      if(!r||!r.broker||!r.date) return;
+      const cap = r.rating ? (r.rating.charAt(0).toUpperCase()+r.rating.slice(1).toLowerCase()) : '';
+      const tpPart = r.tp ? ' · TP ₹'+r.tp : '';
+      const sep = r.headline ? ' — ' : '';
+      const headline = cap ? cap+tpPart+sep+(r.headline||'') : (r.headline||'');
+      all.push([r.broker, r.date, currentCompany, headline, r.url||null]);
+    });
+  }
   card.hidden=false;
   if(!all.length){
     if(sub) sub.textContent='No broker reports found for this company in the local dataset.';
