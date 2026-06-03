@@ -254,6 +254,26 @@
   #wlHold td,#wlCov td,#wlWatch td{padding:6px 0}
   #wlHold .sym,#wlCov .sym,#wlWatch .sym{display:inline}
   .wl-tk{font-family:'IBM Plex Mono';font-size:11px;color:var(--text-mute);margin-left:8px}
+  /* watchlist add bar (in card header) */
+  .wl-add{display:flex;gap:8px;align-items:center;flex:none}
+  .wl-add input{background:var(--panel);color:var(--text);
+    border:1px solid rgba(255,255,255,.14);border-radius:8px;
+    padding:8px 11px;font-size:13px;font-family:inherit;width:200px}
+  .wl-add input:focus{outline:none;border-color:var(--saffron)}
+  .wl-add button{background:var(--saffron-soft);color:var(--saffron);
+    border:1px solid rgba(233,162,59,.22);border-radius:8px;
+    padding:8px 13px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .wl-add button:hover{background:rgba(233,162,59,.18)}
+  /* watchlist drag handle (company name) + delete button */
+  #wlHold .sym,#wlCov .sym,#wlWatch .sym{cursor:grab}
+  #wlHold tr.wl-drag,#wlCov tr.wl-drag,#wlWatch tr.wl-drag{opacity:.4}
+  #wlHold tr.wl-over td,#wlCov tr.wl-over td,#wlWatch tr.wl-over td{
+    box-shadow:inset 0 2px 0 var(--saffron)}
+  .wl-del{background:none;border:none;color:var(--text-mute);cursor:pointer;
+    font-size:15px;line-height:1;padding:2px 4px;border-radius:6px;opacity:0;transition:opacity .12s,color .12s}
+  #wlHold tr:hover .wl-del,#wlCov tr:hover .wl-del,#wlWatch tr:hover .wl-del{opacity:1}
+  .wl-del:hover{color:var(--down)}
+  td.wl-actions{width:1%;text-align:right;white-space:nowrap}
   /* earnings / corporate feed (email-style, no links) */
   .ec-tk{font-family:'IBM Plex Mono';font-weight:700;font-size:12.5px;margin-right:9px;
     white-space:nowrap}
@@ -786,39 +806,41 @@
     </div>
 
     <div id="viewWatchlist" hidden>
+      <datalist id="wlCompanyList"></datalist>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Current Holdings</h3><p>Live prices · NSE</p></div></div>
-        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th></tr></thead>
+        <div class="card-h"><div><h3>Current Holdings</h3><p>Live prices · NSE</p></div>
+          <div class="wl-add"><input list="wlCompanyList" id="wlAddHold" placeholder="Add stock…" autocomplete="off"><button data-sec="hold">Add</button></div></div>
+        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
           <tbody id="wlHold"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Coverage</h3><p>Live prices · NSE</p></div></div>
-        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th></tr></thead>
+        <div class="card-h"><div><h3>Coverage</h3><p>Live prices · NSE</p></div>
+          <div class="wl-add"><input list="wlCompanyList" id="wlAddCov" placeholder="Add stock…" autocomplete="off"><button data-sec="cov">Add</button></div></div>
+        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
           <tbody id="wlCov"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Watchlist</h3><p>Live prices · NSE</p></div></div>
-        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th></tr></thead>
+        <div class="card-h"><div><h3>Watchlist</h3><p>Live prices · NSE</p></div>
+          <div class="wl-add"><input list="wlCompanyList" id="wlAddWatch" placeholder="Add stock…" autocomplete="off"><button data-sec="watch">Add</button></div></div>
+        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
           <tbody id="wlWatch"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
     </div>
 
     <div id="viewScreener" hidden>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Company NotebookLM Notebooks</h3><p id="nbSub">Select a company or sector to open its NotebookLM notebook</p></div></div>
+        <div class="card-h"><div><h3>Company &amp; Sector Selector</h3><p id="nbSub">Pick a company or sector to drive the chart and About-the-Company card</p></div></div>
         <div class="scr-row">
           <span class="scr-lbl">Company</span>
           <select id="nbSelectCo" class="scr-dd">
             <option value="">Select a company…</option>
           </select>
-          <a id="nbOpenCo" class="scr-btn" href="#" target="_blank" rel="noopener" style="display:none">Open notebook ↗</a>
         </div>
         <div class="scr-row">
           <span class="scr-lbl">Sector</span>
           <select id="nbSelectSec" class="scr-dd">
             <option value="">Select a sector…</option>
           </select>
-          <a id="nbOpenSec" class="scr-btn" href="#" target="_blank" rel="noopener" style="display:none">Open notebook ↗</a>
         </div>
         <p id="nbStatus" style="color:var(--text-mute);font-size:12px;line-height:1.7;margin-top:14px"></p>
       </div>
@@ -3226,25 +3248,110 @@ const WL_WATCH=[
   ["National Aluminium","NATIONALUM.NS"],["Narayana Hrudayalaya","NH.NS"],
   ["Schneider Electric","SCHNEIDER.NS"]
 ];
+// User edits (add / delete / reorder) persist in localStorage; fall back to defaults.
+const WL_LS='irp_watchlists_v1';
+function wlLoad(){
+  try{ const s=JSON.parse(localStorage.getItem(WL_LS));
+    if(s&&Array.isArray(s.hold)&&Array.isArray(s.cov)&&Array.isArray(s.watch)) return s; }catch(e){}
+  return {hold:WL_HOLD.map(r=>r.slice()),cov:WL_COV.map(r=>r.slice()),watch:WL_WATCH.map(r=>r.slice())};
+}
+let WL=wlLoad();
+function wlSave(){ try{ localStorage.setItem(WL_LS,JSON.stringify(WL)); }catch(e){} }
+let wlMap={};
+const WL_TBODY={hold:'wlHold',cov:'wlCov',watch:'wlWatch'};
 function wlPct(v){
   if(v==null||isNaN(v)) return '<td class="r"><span style="color:var(--text-mute)">—</span></td>';
   const up=v>=0;
   return `<td class="r"><span class="${up?'up':'down'}">${up?'+':''}${v.toFixed(2)}%</span></td>`;
 }
-function wlRows(list,map){
-  return list.map(([nm,sy])=>{
+function wlRows(list,map,sec){
+  if(!list.length) return '<tr><td class="pol-empty" colspan="7">No stocks yet — add one above.</td></tr>';
+  return list.map(([nm,sy],i)=>{
     const cands=sy.split('|');
     const hit=cands.find(c=>map[c]&&map[c].p!=null)||cands.find(c=>map[c]);
     const d=hit?map[hit]:null;
     const tk=(hit||cands[0]).replace('.NS','');
     const px=d&&d.p!=null?'₹'+inr(d.p):'<span style="color:var(--text-mute)">—</span>';
-    return `<tr><td><span class="sym">${nm}</span><span class="wl-tk">${tk}</span></td>
+    return `<tr data-sec="${sec}" data-i="${i}"><td><span class="sym" draggable="true" title="Drag to reorder">${nm}</span><span class="wl-tk">${tk}</span></td>
       <td class="r px">${px}</td>
-      ${wlPct(d&&d.d1)}${wlPct(d&&d.w1)}${wlPct(d&&d.m1)}${wlPct(d&&d.ytd)}</tr>`;
+      ${wlPct(d&&d.d1)}${wlPct(d&&d.w1)}${wlPct(d&&d.m1)}${wlPct(d&&d.ytd)}
+      <td class="wl-actions"><button class="wl-del" title="Remove ${nm}" aria-label="Remove ${nm}">✕</button></td></tr>`;
   }).join('');
 }
+function wlRender(){
+  for(const sec in WL_TBODY){
+    const tb=document.getElementById(WL_TBODY[sec]);
+    if(tb) tb.innerHTML=wlRows(WL[sec],wlMap,sec);
+  }
+}
+// Resolve a typed query (company name or ticker) to a [name, "TICKER.NS"] pair.
+function wlResolve(q){
+  q=(q||'').trim(); if(!q) return null;
+  const ql=q.toLowerCase();
+  for(const tk in NAMES){ if(NAMES[tk].toLowerCase()===ql) return [NAMES[tk],tk+'.NS']; }
+  const up=q.toUpperCase().replace(/\.NS$/,'');
+  if(NAMES[up]) return [NAMES[up],up+'.NS'];
+  for(const tk in NAMES){ if(NAMES[tk].toLowerCase().includes(ql)) return [NAMES[tk],tk+'.NS']; }
+  if(/^[A-Za-z0-9&.\- ]+$/.test(q)) return [q,up+'.NS'];
+  return null;
+}
+function wlAdd(sec,q){
+  const item=wlResolve(q);
+  if(!item){ alert('No matching stock for "'+q+'".'); return false; }
+  const sym=item[1].split('|')[0].toUpperCase();
+  if(WL[sec].some(r=>r[1].split('|').some(c=>c.toUpperCase()===sym))) return false; // already present
+  WL[sec].push(item); wlSave(); wlRender(); loadWatchlist();
+  return true;
+}
+function wlDelete(sec,i){ WL[sec].splice(i,1); wlSave(); wlRender(); }
+function wlMove(sec,from,to){
+  if(from===to||from==null||to==null) return;
+  const a=WL[sec]; const [it]=a.splice(from,1); a.splice(to,0,it);
+  wlSave(); wlRender();
+}
+let wlInited=false;
+function wlInit(){
+  if(wlInited) return; wlInited=true;
+  const dl=document.getElementById('wlCompanyList');
+  if(dl) dl.innerHTML=Object.keys(NAMES).map(tk=>`<option value="${NAMES[tk]}">${tk}</option>`).join('');
+  document.querySelectorAll('.wl-add').forEach(box=>{
+    const inp=box.querySelector('input'), btn=box.querySelector('button'), sec=btn.dataset.sec;
+    const go=()=>{ if(wlAdd(sec,inp.value)) inp.value=''; };
+    btn.addEventListener('click',go);
+    inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); go(); } });
+  });
+  for(const sec in WL_TBODY){
+    const tb=document.getElementById(WL_TBODY[sec]); if(!tb) continue;
+    tb.addEventListener('click',e=>{
+      const b=e.target.closest('.wl-del'); if(!b) return;
+      const tr=b.closest('tr'); wlDelete(tr.dataset.sec,+tr.dataset.i);
+    });
+    let from=null;
+    tb.addEventListener('dragstart',e=>{
+      const sym=e.target.closest('.sym'); if(!sym){ e.preventDefault(); return; }
+      const tr=sym.closest('tr'); from=+tr.dataset.i; tr.classList.add('wl-drag');
+      e.dataTransfer.effectAllowed='move'; try{ e.dataTransfer.setData('text/plain',String(from)); }catch(_){}
+    });
+    tb.addEventListener('dragover',e=>{
+      if(from==null) return; e.preventDefault(); e.dataTransfer.dropEffect='move';
+      const tr=e.target.closest('tr');
+      tb.querySelectorAll('tr.wl-over').forEach(r=>r.classList.remove('wl-over'));
+      if(tr&&!tr.classList.contains('wl-drag')) tr.classList.add('wl-over');
+    });
+    tb.addEventListener('drop',e=>{
+      if(from==null) return; e.preventDefault();
+      const tr=e.target.closest('tr'); if(tr) wlMove(sec,from,+tr.dataset.i);
+      from=null;
+    });
+    tb.addEventListener('dragend',()=>{
+      tb.querySelectorAll('.wl-drag,.wl-over').forEach(r=>r.classList.remove('wl-drag','wl-over'));
+      from=null;
+    });
+  }
+}
 async function loadWatchlist(){
-  const all=[...WL_HOLD,...WL_COV,...WL_WATCH];
+  wlInit();
+  const all=[...WL.hold,...WL.cov,...WL.watch];
   const syms=[...new Set(all.flatMap(x=>x[1].split('|')))];
   const map={};
   async function pull(tfKey,field,withPrice){
@@ -3264,9 +3371,8 @@ async function loadWatchlist(){
     await pull('1D','d1',true);
     await Promise.all([pull('1W','w1'),pull('1M','m1'),pull('YTD','ytd')]);
   }catch(e){}
-  document.getElementById('wlHold').innerHTML=wlRows(WL_HOLD,map);
-  document.getElementById('wlCov').innerHTML=wlRows(WL_COV,map);
-  document.getElementById('wlWatch').innerHTML=wlRows(WL_WATCH,map);
+  wlMap=map;
+  wlRender();
 }
 
 /* ---------- Companies tab ---------- */
