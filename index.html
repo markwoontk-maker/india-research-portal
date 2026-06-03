@@ -897,6 +897,16 @@
         <div id="cBrokerNotes"></div>
         <p class="co-desc-src">Latest = newest report we have on the selected name from each broker (local PDF library + Trendlyne broker calls). Curr TP / Curr Call come from the PDF body where parseable, else the headline; Prev TP / Prev Call come from the same broker's prior report. "—" = no parseable signal.</p>
       </div>
+      <!-- Latest news on the selected company: free Google News RSS,
+           same proxy/cache pipeline as the movers "why did it move?" modal. -->
+      <div class="card reveal" id="cNewsCard" hidden>
+        <div class="card-h">
+          <div><h3>Latest News</h3>
+          <p id="cNewsSub">Most recent headlines on the selected company</p></div>
+        </div>
+        <div id="cNewsBody"></div>
+        <p class="co-desc-src">Free Google News (India) feed, refreshed on selection. Headlines link to the source publisher; no key, no paywall. Cached 5 min per company.</p>
+      </div>
     </div>
 
     <div id="viewSoon" hidden>
@@ -3153,13 +3163,18 @@ function fmtPeriod(p){
 // in the local "India Macro" library (Desktop\India Related Reports\India Macro).
 // Update these values when newer reports land in that folder.
 const MACRO_REPORTS=[
+  {label:'Real GDP growth', note:'YoY · JPM est, data due 5 Jun', value:'+7.5%', period:'1Q26e', tone:'pos', src:'JPM · 29 May 26'},
   {label:'Industrial production (IIP)', note:'YoY · new 2022-23 series', value:'+4.9%', period:'Apr 2026', tone:'pos', src:'CLSA · 2 Jun 26'},
   {label:'Manufacturing output', note:'YoY · IIP, weight 76%', value:'+6.2%', period:'Apr 2026', tone:'pos', src:'CLSA · 2 Jun 26'},
+  {label:'Manufacturing PMI', note:'index · >50 = expansion', value:'54.3', period:'May 2026', tone:'pos', src:'JPM · 22 May 26'},
+  {label:'Core sector IP', note:'YoY · 8 core industries', value:'+1.7%', period:'Apr 2026', tone:'pos', src:'JPM · 22 May 26'},
+  {label:'CPI inflation', note:'FY27 est · RBI 4.6%, El Niño risk', value:'~5.0%', period:'FY27e', tone:'', src:'JPM · 29 May 26'},
   {label:'Gross GST receipts', note:'YoY in brackets · 1st fall in 6m', value:'₹1.94tn (−3.4%)', period:'May 2026', tone:'neg', src:'CLSA · 1 Jun 26'},
   {label:'Net GST receipts', note:'YoY in brackets · ex-refunds', value:'₹1.70tn (−4.0%)', period:'May 2026', tone:'neg', src:'CLSA · 1 Jun 26'},
   {label:'Fiscal deficit', note:'% of GDP · FY26 target met', value:'4.4%', period:'FY26', tone:'', src:'CLSA · 1 Jun 26'},
   {label:'RBI repo rate', note:'MPC 5 Jun · CLSA sees no hike', value:'On hold', period:'Jun 2026', tone:'', src:'CLSA · 1 Jun 26'},
-  {label:'INR / USD', note:'spot · ~10% weaker YTD', value:'~95', period:'Jun 2026', tone:'neg', src:'CLSA · 1 Jun 26'}
+  {label:'INR / USD', note:'spot · ~10% weaker YTD', value:'~95', period:'Jun 2026', tone:'neg', src:'CLSA · 1 Jun 26'},
+  {label:'SW monsoon (IMD)', note:'% of LPA · 60% chance deficient', value:'90%', period:'2026 f\'cast', tone:'neg', src:'CLSA · 29 May 26'}
 ];
 function renderMacroReports(){
   const head=`<tr><th class="mi">Indicator</th><th>Latest</th><th>Period</th><th>Source</th></tr>`;
@@ -4116,13 +4131,49 @@ function renderCompanyResearch(){
   el.innerHTML=header+rows;
 }
 
+// Latest-news segment for the selected company. Reuses newsViaProxy
+// (Google News RSS via free CORS proxy, cached + throttled). A request
+// token guards against a stale fetch overwriting a newer selection.
+let _coNewsReq=0;
+async function renderCompanyNews(name){
+  const card=document.getElementById('cNewsCard');
+  const body=document.getElementById('cNewsBody');
+  const sub=document.getElementById('cNewsSub');
+  if(!card || !body) return;
+  if(!name){ card.hidden=true; return; }
+  const my=++_coNewsReq;
+  card.hidden=false;
+  if(sub) sub.textContent='Most recent headlines on '+name;
+  body.innerHTML='<div class="nm-empty">Fetching latest headlines…</div>';
+  try{
+    const q=`"${name}" (share OR stock OR results OR order OR profit)`;
+    let items=await newsViaProxy(q+' when:7d');
+    if(!items||!items.length) items=await newsViaProxy(q);   // widen window
+    if(my!==_coNewsReq) return;                              // a newer selection won
+    if(!items||!items.length){
+      body.innerHTML='<div class="nm-empty">No recent company-specific headlines on the free feed. Try again shortly, or check the Broker Coverage above.</div>';
+      return;
+    }
+    body.innerHTML=items.slice(0,8).map(it=>{
+      const title=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').replace(/</g,'&lt;');
+      const tm=it.pubDate?relTime(Date.parse(it.pubDate)/1000):'';
+      const src=it.source?(' · '+String(it.source).replace(/</g,'&lt;')):'';
+      return `<a class="nm-item" href="${it.link||'#'}" target="_blank" rel="noopener">
+        <h4>${title}</h4><div class="meta">${tm}${src}</div></a>`;
+    }).join('');
+  }catch(e){
+    if(my!==_coNewsReq) return;
+    body.innerHTML='<div class="nm-empty">Couldn’t load headlines (free news feed unreachable). Try again shortly.</div>';
+  }
+}
+
 async function loadCompanyChart(name, tf){
   if (name) currentCompany = name;
   if (tf) currentTf = tf;
   // Refresh the company description and broker-coverage card below the
   // chart whenever the selection changes (no-op until COMPANIES /
   // notesExt / PDFDATA have loaded).
-  if (name) { updateCoDesc(); renderCompanyResearch(); }
+  if (name) { updateCoDesc(); renderCompanyResearch(); renderCompanyNews(name); }
   // Sync the segmented control highlight to the current timeframe.
   document.querySelectorAll('#cRangeSeg button').forEach(b=>{
     b.classList.toggle('on', b.dataset.r===currentTf);
