@@ -320,6 +320,8 @@
   .macro-tbl td.lat{color:var(--text);font-weight:600;background:var(--saffron-soft);
     border-left:1px solid rgba(233,162,59,.3)}
   .macro-tbl td.neg{color:var(--down)} .macro-tbl td.lat.neg{color:var(--down)}
+  .macro-tbl td.pos{color:var(--up)} .macro-tbl td.lat.pos{color:var(--up)}
+  .macro-tbl td.msrc{color:var(--text-mute);font-size:10px;font-weight:400}
 
   /* news modal */
   .nm-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;
@@ -806,7 +808,7 @@
       </div>
       <div class="card reveal">
         <div class="card-h"><div><h3>India Macro Snapshot</h3>
-          <p id="macroSub">Monthly indicators · last 10 months (latest at right)</p></div></div>
+          <p id="macroSub">Latest readings from the India Macro research library</p></div></div>
         <div class="macro-wrap"><table class="macro-tbl" id="macroTbl"><tbody><tr><td class="macro-empty">Loading monthly macro data…</td></tr></tbody></table></div>
       </div>
     </div>
@@ -3147,91 +3149,33 @@ function fmtPeriod(p){
   const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return mon[(+m[2])-1]+' ’'+m[1].slice(2);
 }
-function macroNum(v,unit){
-  if(unit==='pct') return v.toFixed(2)+'%';
-  // IMF IFS USD series are reported in US$ millions -> show US$ billions
-  const b=v/1000, s=b<0?'−':'';
-  return s+'$'+Math.abs(b).toFixed(1)+'B';
-}
-function renderMacro(j){
-  const cols=Math.max(...j.items.map(it=>it.points.length),1);
-  const head=`<tr><th class="mi">Indicator</th>`+
-    Array.from({length:cols},(_,i)=>`<th>${i===cols-1?'Latest':('M-'+(cols-1-i))}</th>`).join('')+`</tr>`;
-  const rows=j.items.map(it=>{
-    const pad=cols-it.points.length;
-    const cells=Array.from({length:pad},()=>`<td>·</td>`).join('')+
-      it.points.map((p,i)=>{
-        const last=i===it.points.length-1, neg=p.value<0;
-        return `<td class="${last?'lat':''} ${neg?'neg':''}" title="${fmtPeriod(p.period)}">${macroNum(p.value,it.unit)}</td>`;
-      }).join('');
+// India Macro Snapshot — latest readings hand-pulled from the broker reports
+// in the local "India Macro" library (Desktop\India Related Reports\India Macro).
+// Update these values when newer reports land in that folder.
+const MACRO_REPORTS=[
+  {label:'Industrial production (IIP)', note:'YoY · new 2022-23 series', value:'+4.9%', period:'Apr 2026', tone:'pos', src:'CLSA · 2 Jun 26'},
+  {label:'Manufacturing output', note:'YoY · IIP, weight 76%', value:'+6.2%', period:'Apr 2026', tone:'pos', src:'CLSA · 2 Jun 26'},
+  {label:'Gross GST receipts', note:'YoY in brackets · 1st fall in 6m', value:'₹1.94tn (−3.4%)', period:'May 2026', tone:'neg', src:'CLSA · 1 Jun 26'},
+  {label:'Net GST receipts', note:'YoY in brackets · ex-refunds', value:'₹1.70tn (−4.0%)', period:'May 2026', tone:'neg', src:'CLSA · 1 Jun 26'},
+  {label:'Fiscal deficit', note:'% of GDP · FY26 target met', value:'4.4%', period:'FY26', tone:'', src:'CLSA · 1 Jun 26'},
+  {label:'RBI repo rate', note:'MPC 5 Jun · CLSA sees no hike', value:'On hold', period:'Jun 2026', tone:'', src:'CLSA · 1 Jun 26'},
+  {label:'INR / USD', note:'spot · ~10% weaker YTD', value:'~95', period:'Jun 2026', tone:'neg', src:'CLSA · 1 Jun 26'}
+];
+function renderMacroReports(){
+  const head=`<tr><th class="mi">Indicator</th><th>Latest</th><th>Period</th><th>Source</th></tr>`;
+  const rows=MACRO_REPORTS.map(it=>{
+    const cls=it.tone==='neg'?'neg':(it.tone==='pos'?'pos':'');
     return `<tr><th class="mi"><span class="ml">${it.label}</span>`+
-      `<span class="mas">as of ${fmtPeriod(it.latest.period)}</span></th>${cells}</tr>`;
+      `<span class="mas">${it.note}</span></th>`+
+      `<td class="lat ${cls}">${it.value}</td>`+
+      `<td>${it.period}</td>`+
+      `<td class="msrc">${it.src}</td></tr>`;
   }).join('');
   document.querySelector('#macroTbl').innerHTML=`<thead>${head}</thead><tbody>${rows}</tbody>`;
   document.getElementById('macroSub').textContent=
-    `Monthly · ${j.source} · last 10 months · IMF/IFS publishes with a lag, so the latest reported month may be in the prior year (shown per row)`;
+    'Latest readings from the India Macro research library · indicator · latest · period · broker & report date';
 }
-
-// Client fallback for the macro function (DBnomics is CORS-enabled;
-// also try the public proxy if a direct call is blocked).
-const MACRO_SERIES=[
-  {key:'cpi',label:'CPI inflation (YoY)',unit:'pct',id:'IMF/IFS/M.IN.PCPI_IX',yoy:true},
-  {key:'exports',label:'Exports (goods, FOB)',unit:'usdb',id:'IMF/IFS/M.IN.TXG_FOB_USD'},
-  {key:'imports',label:'Imports (goods, CIF)',unit:'usdb',id:'IMF/IFS/M.IN.TMG_CIF_USD'},
-  {key:'reserves',label:'FX reserves (total)',unit:'usdb',id:'IMF/IFS/M.IN.RAFA_USD'},
-  {key:'repo',label:'Policy rate (RBI)',unit:'pct',id:'BIS/WS_CBPOL/M.IN'}
-];
-async function dbSeries(id){
-  const url=`https://api.db.nomics.world/v22/series/${id}?observations=1`;
-  let txt=null;
-  try{ const r=await fetch(url,{cache:'no-store'}); if(r.ok) txt=await r.text(); }catch(e){}
-  if(!txt){ try{ txt=await fetchText(url); }catch(e){} }
-  if(!txt) return null;
-  let j; try{ j=JSON.parse(txt); }catch(e){ return null; }
-  const d=j&&j.series&&j.series.docs&&j.series.docs[0];
-  if(!d||!d.period||!d.value) return null;
-  const pts=[];
-  for(let i=0;i<d.period.length;i++){
-    const v=d.value[i];
-    if(v==null||v==='NA'||!isFinite(Number(v))) continue;
-    pts.push({period:d.period[i],value:Number(v)});
-  }
-  pts.sort((a,b)=>a.period<b.period?-1:1);
-  return pts;
-}
-async function buildMacroClient(){
-  const raw=await Promise.all(MACRO_SERIES.map(s=>dbSeries(s.id)));
-  const byKey={}, items=[];
-  MACRO_SERIES.forEach((s,idx)=>{
-    let pts=raw[idx]; if(!pts||!pts.length) return;
-    if(s.yoy){ const y=[]; for(let i=12;i<pts.length;i++){ const pv=pts[i-12];
-      if(pv&&pv.value) y.push({period:pts[i].period,value:(pts[i].value/pv.value-1)*100}); } pts=y; }
-    if(!pts.length) return;
-    const last=pts.slice(-10); byKey[s.key]=last;
-    items.push({key:s.key,label:s.label,unit:s.unit,points:last,latest:last[last.length-1]});
-  });
-  if(byKey.exports&&byKey.imports){
-    const imp={}; byKey.imports.forEach(p=>imp[p.period]=p.value);
-    const tb=byKey.exports.filter(p=>imp[p.period]!=null)
-      .map(p=>({period:p.period,value:p.value-imp[p.period]})).slice(-10);
-    if(tb.length){ const lt=tb[tb.length-1];
-      items.splice(3,0,{key:'tradeBal',label:lt.value<0?'Trade deficit (goods)':'Trade surplus (goods)',
-        unit:'usdb',points:tb,latest:lt}); }
-  }
-  return items.length?{source:'DBnomics · IMF IFS / BIS (client)',items}:null;
-}
-async function loadMacro(){
-  const tb=document.querySelector('#macroTbl tbody');
-  try{
-    const r=await fetch('/api/macro',{cache:'no-store'});
-    if(r.ok){ const j=await r.json(); if(j&&j.items&&j.items.length){ renderMacro(j); return; } }
-  }catch(e){}
-  try{
-    const j=await buildMacroClient();
-    if(j){ renderMacro(j); return; }
-  }catch(e){}
-  tb.innerHTML='<tr><td class="macro-empty">Monthly macro data unavailable (free feed unreachable). Try again shortly.</td></tr>';
-}
+function loadMacro(){ renderMacroReports(); }
 
 /* ---------- Watchlist tab (holdings / coverage / watchlist) ---------- */
 const WL_HOLD=[
