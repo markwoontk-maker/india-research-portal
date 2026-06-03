@@ -325,6 +325,14 @@
   .macro-tbl td.pos{color:var(--up)} .macro-tbl td.lat.pos{color:var(--up)}
   .macro-tbl td.msrc{color:var(--text-mute);font-size:10px;font-weight:400}
   .macro-tbl td.munit{color:var(--text-mute);font-size:11px;font-weight:400}
+  /* drag-to-reorder rows */
+  .macro-tbl tbody tr{cursor:grab}
+  .macro-tbl tbody tr.dragging{opacity:.45;cursor:grabbing}
+  .macro-tbl tbody tr.drop-above{box-shadow:inset 0 2px 0 0 var(--saffron)}
+  .macro-tbl tbody tr.drop-below{box-shadow:inset 0 -2px 0 0 var(--saffron)}
+  .macro-tbl .mi .mh{color:var(--text-mute);opacity:0;margin-right:6px;font-size:11px;
+    transition:opacity .12s;cursor:grab;user-select:none}
+  .macro-tbl tbody tr:hover .mi .mh{opacity:.55}
 
   /* news modal */
   .nm-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;
@@ -826,6 +834,13 @@
         #viewStrategy .mamg-sel.uw{background:var(--down-soft);border-color:rgba(240,106,106,.45);border-style:solid;color:var(--down)}
         #viewStrategy .mamg-sel.n{background:var(--saffron-soft);border-color:rgba(233,162,59,.45);border-style:solid;color:var(--saffron)}
         #viewStrategy .mamg-sel option{background:var(--ink-2);color:var(--text)}
+        #viewStrategy .mamg-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:2px 0 12px}
+        #viewStrategy .mamg-status{font-size:11.5px;color:var(--text-dim)}
+        #viewStrategy .mamg-status.dirty{color:var(--saffron);font-weight:600}
+        #viewStrategy .mamg-pub{font-size:11.5px;font-weight:600;padding:6px 13px;border-radius:8px;border:1px solid rgba(233,162,59,.40);
+          background:var(--saffron-soft);color:var(--saffron);cursor:pointer}
+        #viewStrategy .mamg-pub:hover:not(:disabled){background:rgba(233,162,59,.22)}
+        #viewStrategy .mamg-pub:disabled{opacity:.4;cursor:default;background:transparent;color:var(--text-mute);border-color:var(--line)}
         #viewStrategy table.strat td.sec{text-align:left;font-size:12px;font-weight:600;color:var(--text);padding:0 10px;line-height:1.2}
         #viewStrategy table.strat td.cell{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;
           padding:5px 4px;border-radius:6px;border:1px solid var(--line);color:var(--text-mute);cursor:default}
@@ -876,6 +891,10 @@
           <span><i class="swatch sw-n"></i>Neutral / mixed (N)</span>
           <span><i class="swatch sw-na"></i>No view (—)</span>
           <span>* = inferred from earnings-momentum / thematic commentary (not a formal model-portfolio call)</span>
+        </div>
+        <div class="mamg-bar">
+          <span class="mamg-status" id="mamgStatus">MAMG view loaded from the shared file.</span>
+          <button type="button" class="mamg-pub" id="mamgPub" disabled>Publish changes</button>
         </div>
         <div class="grid-wrap">
           <table class="strat">
@@ -3544,18 +3563,71 @@ function macroRowHtml(it){
   const cls=it.tone==='neg'?'neg':(it.tone==='pos'?'pos':'');
   const tip=it.note?` title="${macroAttr(it.note)}"`:'';
   const lcls=it.note?'ml tip':'ml';
-  return `<tr><th class="mi"><span class="${lcls}"${tip}>${it.label}</span></th>`+
+  return `<tr draggable="true" data-id="${macroAttr(it.id)}"><th class="mi">`+
+    `<span class="mh" title="Drag to reorder">⠿</span>`+
+    `<span class="${lcls}"${tip}>${it.label}</span></th>`+
     `<td class="munit">${it.unit}</td>`+
     `<td class="lat ${cls}">${it.value}</td>`+
     `<td>${it.period}</td>`+
     `<td class="msrc">${it.src}</td></tr>`;
+}
+// Persisted custom row order (drag-to-reorder). localStorage holds an array of ids.
+const MACRO_ORDER_KEY='macroOrder';
+function applyMacroOrder(){
+  let saved=null;
+  try{ saved=JSON.parse(localStorage.getItem(MACRO_ORDER_KEY)||'null'); }catch(e){}
+  if(!Array.isArray(saved)||!saved.length) return;
+  const rank=new Map(saved.map((id,i)=>[id,i]));
+  // Stable sort: known ids by saved rank, unknown (new) ids keep their relative order at the end.
+  MACRO_REPORTS.sort((a,b)=>{
+    const ra=rank.has(a.id)?rank.get(a.id):Infinity;
+    const rb=rank.has(b.id)?rank.get(b.id):Infinity;
+    return ra-rb;
+  });
+}
+function saveMacroOrder(){
+  try{ localStorage.setItem(MACRO_ORDER_KEY,JSON.stringify(MACRO_REPORTS.map(r=>r.id))); }catch(e){}
+}
+function wireMacroDnD(){
+  const tbody=document.querySelector('#macroTbl tbody'); if(!tbody) return;
+  let dragId=null;
+  const clearMarks=()=>tbody.querySelectorAll('tr').forEach(r=>r.classList.remove('drop-above','drop-below'));
+  tbody.addEventListener('dragstart',e=>{
+    const tr=e.target.closest('tr'); if(!tr) return;
+    dragId=tr.dataset.id; tr.classList.add('dragging');
+    e.dataTransfer.effectAllowed='move';
+    try{ e.dataTransfer.setData('text/plain',dragId); }catch(_){}
+  });
+  tbody.addEventListener('dragend',()=>{ clearMarks(); tbody.querySelectorAll('tr.dragging').forEach(r=>r.classList.remove('dragging')); dragId=null; });
+  tbody.addEventListener('dragover',e=>{
+    e.preventDefault(); e.dataTransfer.dropEffect='move';
+    const tr=e.target.closest('tr'); if(!tr||tr.dataset.id===dragId) return;
+    clearMarks();
+    const rect=tr.getBoundingClientRect();
+    tr.classList.add(e.clientY < rect.top+rect.height/2 ? 'drop-above':'drop-below');
+  });
+  tbody.addEventListener('drop',e=>{
+    e.preventDefault();
+    const tr=e.target.closest('tr'); if(!tr||!dragId||tr.dataset.id===dragId){ clearMarks(); return; }
+    const rect=tr.getBoundingClientRect();
+    const before=e.clientY < rect.top+rect.height/2;
+    const from=MACRO_REPORTS.findIndex(r=>r.id===dragId);
+    if(from<0){ clearMarks(); return; }
+    const moved=MACRO_REPORTS.splice(from,1)[0];
+    let to=MACRO_REPORTS.findIndex(r=>r.id===tr.dataset.id);
+    if(!before) to+=1;
+    MACRO_REPORTS.splice(to,0,moved);
+    saveMacroOrder();
+    renderMacroReports();
+  });
 }
 function renderMacroReports(extra){
   const head=`<tr><th class="mi">Indicator</th><th>Unit</th><th>Latest</th><th>Period</th><th>Source</th></tr>`;
   const rows=MACRO_REPORTS.concat(extra||[]).map(macroRowHtml).join('');
   document.querySelector('#macroTbl').innerHTML=`<thead>${head}</thead><tbody>${rows}</tbody>`;
   document.getElementById('macroSub').textContent=
-    'Latest readings from the India Macro research library · indicator · latest · period · broker & report date';
+    'Latest readings from the India Macro research library · drag a row to reorder · indicator · latest · period · broker & report date';
+  wireMacroDnD();
 }
 // data/macro.json overlay: { indicators: { <id>: {value,period,src,tone} } }
 // Written server-side by the macro-refresher routine (keyed MoSPI API) so the
@@ -3577,6 +3649,7 @@ async function applyMacroOverlay(){
 }
 async function loadMacro(){
   await applyMacroOverlay();   // fresh official prints (MoSPI routine) overlay broker rows
+  applyMacroOrder();           // restore the user's saved drag order, if any
   renderMacroReports();
 }
 
