@@ -322,6 +322,7 @@
   .macro-tbl td.neg{color:var(--down)} .macro-tbl td.lat.neg{color:var(--down)}
   .macro-tbl td.pos{color:var(--up)} .macro-tbl td.lat.pos{color:var(--up)}
   .macro-tbl td.msrc{color:var(--text-mute);font-size:10px;font-weight:400}
+  .macro-tbl td.munit{color:var(--text-mute);font-size:11px;font-weight:400}
 
   /* news modal */
   .nm-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;
@@ -3163,23 +3164,24 @@ function fmtPeriod(p){
 // in the local "India Macro" library (Desktop\India Related Reports\India Macro).
 // Update these values when newer reports land in that folder.
 const MACRO_REPORTS=[
-  {label:'Real GDP growth (YoY)', value:'+7.5%', period:'1Q26e', tone:'pos', src:'JPM · 29 May 26'},
-  {label:'IIP (YoY)', value:'+4.9%', period:'Apr 2026', tone:'pos', src:'CLSA · 2 Jun 26'},
-  {label:'Manufacturing output (YoY)', value:'+6.2%', period:'Apr 2026', tone:'pos', src:'CLSA · 2 Jun 26'},
-  {label:'Manufacturing PMI (index)', value:'54.3', period:'May 2026', tone:'pos', src:'JPM · 22 May 26'},
-  {label:'Core sector IP (YoY)', value:'+1.7%', period:'Apr 2026', tone:'pos', src:'JPM · 22 May 26'},
-  {label:'CPI inflation (YoY)', value:'~5.0%', period:'FY27e', tone:'', src:'JPM · 29 May 26'},
-  {label:'Gross GST receipts (₹tn, YoY)', value:'₹1.94tn (−3.4%)', period:'May 2026', tone:'neg', src:'CLSA · 1 Jun 26'},
-  {label:'Net GST receipts (₹tn, YoY)', value:'₹1.70tn (−4.0%)', period:'May 2026', tone:'neg', src:'CLSA · 1 Jun 26'},
-  {label:'Fiscal deficit (% of GDP)', value:'4.4%', period:'FY26', tone:'', src:'CLSA · 1 Jun 26'},
-  {label:'RBI repo rate (%)', value:'On hold', period:'Jun 2026', tone:'', src:'CLSA · 1 Jun 26'},
-  {label:'SW monsoon (% of LPA)', value:'90%', period:'2026 f\'cast', tone:'neg', src:'CLSA · 29 May 26'}
+  {label:'Real GDP growth', unit:'YoY', value:'+7.5%', period:'1Q26e', tone:'pos', src:'JPM · 29 May 26'},
+  {label:'IIP', unit:'YoY', value:'+4.9%', period:'Apr 2026', tone:'pos', src:'CLSA · 2 Jun 26'},
+  {label:'Manufacturing output', unit:'YoY', value:'+6.2%', period:'Apr 2026', tone:'pos', src:'CLSA · 2 Jun 26'},
+  {label:'Manufacturing PMI', unit:'index', value:'54.3', period:'May 2026', tone:'pos', src:'JPM · 22 May 26'},
+  {label:'Core sector IP', unit:'YoY', value:'+1.7%', period:'Apr 2026', tone:'pos', src:'JPM · 22 May 26'},
+  {label:'CPI inflation', unit:'YoY', value:'~5.0%', period:'FY27e', tone:'', src:'JPM · 29 May 26'},
+  {label:'Gross GST receipts', unit:'₹tn, YoY', value:'₹1.94tn (−3.4%)', period:'May 2026', tone:'neg', src:'CLSA · 1 Jun 26'},
+  {label:'Net GST receipts', unit:'₹tn, YoY', value:'₹1.70tn (−4.0%)', period:'May 2026', tone:'neg', src:'CLSA · 1 Jun 26'},
+  {label:'Fiscal deficit', unit:'% of GDP', value:'4.4%', period:'FY26', tone:'', src:'CLSA · 1 Jun 26'},
+  {label:'RBI repo rate', unit:'%', value:'On hold', period:'Jun 2026', tone:'', src:'CLSA · 1 Jun 26'},
+  {label:'SW monsoon', unit:'% of LPA', value:'90%', period:'2026 f\'cast', tone:'neg', src:'CLSA · 29 May 26'}
 ];
 function renderMacroReports(){
-  const head=`<tr><th class="mi">Indicator</th><th>Latest</th><th>Period</th><th>Source</th></tr>`;
+  const head=`<tr><th class="mi">Indicator</th><th>Unit</th><th>Latest</th><th>Period</th><th>Source</th></tr>`;
   const rows=MACRO_REPORTS.map(it=>{
     const cls=it.tone==='neg'?'neg':(it.tone==='pos'?'pos':'');
     return `<tr><th class="mi"><span class="ml">${it.label}</span></th>`+
+      `<td class="munit">${it.unit}</td>`+
       `<td class="lat ${cls}">${it.value}</td>`+
       `<td>${it.period}</td>`+
       `<td class="msrc">${it.src}</td></tr>`;
