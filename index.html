@@ -400,6 +400,8 @@
   .scr-btn:hover{background:rgba(233,162,59,.18)}
   /* Company description block (under the price chart) */
   .co-desc{font-size:13.5px;line-height:1.7;color:var(--text-dim);margin-top:4px}
+  #cDescTitle a{color:inherit;text-decoration:none;border-bottom:1px dashed var(--text-mute)}
+  #cDescTitle a:hover{color:var(--text);border-bottom-color:var(--text-dim)}
   .co-desc-src{font-size:11px;color:var(--text-mute);margin-top:12px;
     padding-top:10px;border-top:1px solid var(--line-soft);font-style:italic}
   /* Company chart: period return display + abnormal-move markers */
@@ -853,7 +855,7 @@
           <p id="cDescMeta">Sector · Ticker</p></div>
         </div>
         <p id="cDesc" class="co-desc"></p>
-        <p class="co-desc-src">Business profile only — sourced from the company's website and its latest annual report. For the broker view, see the Research Notes tab.</p>
+        <p class="co-desc-src">Business profile only — sourced from the company's website and its latest annual report. Click the company name above to open the local offline reports folder. For the broker view, see the Research Notes tab.</p>
       </div>
     </div>
 
@@ -3881,7 +3883,17 @@ function updateCoDesc(){
   const e=window.COMPANIES[currentCompany];
   if(!e || !e.desc){ card.hidden=true; return; }
   card.hidden=false;
-  title.textContent=currentCompany;
+  // Link the company name to the local offline-reports folder
+  // (C:\Users\admin\Desktop\India Related Reports\<Company>\). The
+  // folder name matches the NOTEBOOKS entry by convention. Opens in
+  // a new tab; only works when the dashboard itself is opened from
+  // disk — browsers block file:// from https:// origins.
+  const folderUrl = 'file:///C:/Users/admin/Desktop/India%20Related%20Reports/' +
+    encodeURIComponent(currentCompany) + '/';
+  const safeName = currentCompany.replace(/[&<>"]/g,c=>(
+    {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  title.innerHTML = '<a href="'+folderUrl+'" target="_blank" rel="noopener" '+
+    'title="Open offline reports folder">'+safeName+'</a>';
   meta.textContent=[e.sector, e.ticker].filter(Boolean).join(' · ');
   body.textContent=e.desc;
 }
