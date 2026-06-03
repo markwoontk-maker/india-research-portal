@@ -4282,9 +4282,7 @@ window.addEventListener('resize', ()=>{
 function loadScreener(){
   const status=document.getElementById('nbStatus');
   const coSel  = document.getElementById('nbSelectCo');
-  const coBtn  = document.getElementById('nbOpenCo');
   const secSel = document.getElementById('nbSelectSec');
-  const secBtn = document.getElementById('nbOpenSec');
   const companies=[], sectors=[];
   NOTEBOOKS.forEach(n=>{ (SECTOR_NAMES.has(n.name)?sectors:companies).push(n); });
   companies.sort((a,b)=>a.name.localeCompare(b.name));
@@ -4293,28 +4291,24 @@ function loadScreener(){
     list.forEach((n,i)=>{
       const o=document.createElement('option');
       o.value=String(i);
-      o.textContent=n.url?n.name:n.name+'  · notebook pending';
+      o.textContent=n.name;
       sel.appendChild(o);
     });
   }
   fill(coSel,  companies);
   fill(secSel, sectors);
-  function bind(sel, btn, otherSel, list){
+  function bind(sel, otherSel, list){
     function refresh(){
       const i=sel.value, n=i===''?null:list[+i];
-      if(n && n.url){ btn.href=nbHref(n); btn.style.display='inline-block'; }
-      else { btn.style.display='none'; btn.removeAttribute('href'); }
       // Selecting in one dropdown clears the other so the chart is
       // unambiguous about which entity it's showing.
       if(n){ if(otherSel) otherSel.value=''; loadCompanyChart(n.name); }
     }
     sel.addEventListener('change',refresh);
   }
-  bind(coSel,  coBtn,  secSel, companies);
-  bind(secSel, secBtn, coSel,  sectors);
-  const live=NOTEBOOKS.filter(n=>n.url).length;
-  status.textContent=`${companies.length} companies · ${sectors.length} sectors · `+
-    `${live} of ${NOTEBOOKS.length} notebooks live · ${NOTEBOOKS.length-live} pending creation`;
+  bind(coSel,  secSel, companies);
+  bind(secSel, coSel,  sectors);
+  status.textContent=`${companies.length} companies · ${sectors.length} sectors`;
 }
 /* ---------- Sidebar tab routing ---------- */
 (function(){
