@@ -813,12 +813,12 @@
         #viewStrategy .sw-n{background:var(--saffron-soft);border-color:rgba(233,162,59,.45)}
         #viewStrategy .sw-na{background:transparent;border-color:var(--line)}
         #viewStrategy .grid-wrap{overflow-x:auto}
-        #viewStrategy table.strat{width:100%;border-collapse:separate;border-spacing:4px;min-width:760px;table-layout:fixed}
-        #viewStrategy table.strat th{font-size:11.5px;font-weight:600;color:var(--text-dim);text-align:center;padding:8px 6px;letter-spacing:.02em;width:13%}
+        #viewStrategy table.strat{width:100%;border-collapse:separate;border-spacing:4px 3px;min-width:760px;table-layout:fixed}
+        #viewStrategy table.strat th{font-size:11.5px;font-weight:600;color:var(--text-dim);text-align:center;padding:4px 6px;letter-spacing:.02em;width:13%}
         #viewStrategy table.strat th.sec{text-align:left;width:22%}
-        #viewStrategy table.strat td.sec{text-align:left;font-size:12.5px;font-weight:600;color:var(--text);padding:0 10px;line-height:1.25}
-        #viewStrategy table.strat td.cell{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;
-          padding:11px 4px;border-radius:8px;border:1px solid var(--line);color:var(--text-mute);cursor:default}
+        #viewStrategy table.strat td.sec{text-align:left;font-size:12px;font-weight:600;color:var(--text);padding:0 10px;line-height:1.2}
+        #viewStrategy table.strat td.cell{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;
+          padding:5px 4px;border-radius:6px;border:1px solid var(--line);color:var(--text-mute);cursor:default}
         #viewStrategy table.strat td.cell.ow{background:var(--up-soft);border-color:rgba(63,199,138,.40);color:var(--up)}
         #viewStrategy table.strat td.cell.uw{background:var(--down-soft);border-color:rgba(240,106,106,.40);color:var(--down)}
         #viewStrategy table.strat td.cell.n{background:var(--saffron-soft);border-color:rgba(233,162,59,.40);color:var(--saffron)}
@@ -836,6 +836,25 @@
         #viewStrategy .chip.none{background:transparent;color:var(--text-mute);border-color:var(--line)}
         #viewStrategy .note{font-size:11.5px;color:var(--text-mute);line-height:1.55;margin-top:14px;
           border-top:1px solid var(--line-soft);padding-top:12px}
+        #viewStrategy table.cons{width:100%;border-collapse:collapse;margin-top:4px}
+        #viewStrategy table.cons th{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-mute);
+          text-align:left;font-weight:600;padding:6px 10px;border-bottom:1px solid var(--line)}
+        #viewStrategy table.cons td{padding:7px 10px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+        #viewStrategy table.cons td.nm{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap}
+        #viewStrategy table.cons td.sc{font-size:11.5px;color:var(--text-dim);white-space:nowrap}
+        #viewStrategy table.cons td.bk{text-align:right}
+        #viewStrategy .cnt{display:inline-block;min-width:18px;text-align:center;font-family:'IBM Plex Mono',monospace;
+          font-size:11px;font-weight:700;padding:1px 5px;border-radius:5px;margin-right:4px}
+        #viewStrategy .cnt.buy{background:var(--up-soft);color:var(--up)}
+        #viewStrategy .cnt.sell{background:var(--down-soft);color:var(--down)}
+        #viewStrategy .bchip{font-size:10.5px;padding:2px 7px;border-radius:5px;margin-left:4px;white-space:nowrap;
+          border:1px solid var(--line)}
+        #viewStrategy .bchip.buy{background:var(--up-soft);color:var(--up);border-color:rgba(63,199,138,.30)}
+        #viewStrategy .bchip.sell{background:var(--down-soft);color:var(--down);border-color:rgba(240,106,106,.30)}
+        #viewStrategy .cons-h{font-size:12.5px;font-weight:700;letter-spacing:.02em;margin:18px 0 2px;display:flex;align-items:center;gap:8px}
+        #viewStrategy .cons-h:first-child{margin-top:4px}
+        #viewStrategy .cons-h .dot{width:9px;height:9px;border-radius:50%}
+        #viewStrategy .cons-h .dot.g{background:var(--up)} #viewStrategy .cons-h .dot.r{background:var(--down)} #viewStrategy .cons-h .dot.y{background:var(--saffron)}
       </style>
       <div class="card reveal">
         <div class="card-h"><div><h3>House Strategy — Sector Conviction Grid</h3>
@@ -1015,6 +1034,57 @@
           </div>
 
         </div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-h"><div><h3>Cross-Broker Consensus</h3>
+          <p class="strat-sub">Stocks where more than one house agrees — and where they clash. Recommending / non-recommending brokers shown on the right.
+          Buy side = JPMorgan / Nomura top picks &amp; overweights, CLSA High-Conviction Outperform, Kotak KIE Buy. Sell side = CLSA Underperform, Kotak KIE Sell.</p></div></div>
+
+        <div class="cons-h"><span class="dot g"></span>Buy / Overweight — favoured by 2+ brokers</div>
+        <table class="cons">
+          <thead><tr><th style="width:30%">Stock</th><th style="width:22%">GICS Sector</th><th style="text-align:right">Recommending brokers</th></tr></thead>
+          <tbody>
+            <tr><td class="nm">Coforge</td><td class="sc">Information Technology</td><td class="bk"><span class="cnt buy">3</span><span class="bchip buy">Nomura</span><span class="bchip buy">CLSA</span><span class="bchip buy">Kotak</span></td></tr>
+            <tr><td class="nm">Eternal</td><td class="sc">Consumer Discretionary</td><td class="bk"><span class="cnt buy">3</span><span class="bchip buy">JPMorgan</span><span class="bchip buy">CLSA</span><span class="bchip buy">Kotak</span></td></tr>
+            <tr><td class="nm">Bajaj Finance</td><td class="sc">Financials</td><td class="bk"><span class="cnt buy">2</span><span class="bchip buy">JPMorgan</span><span class="bchip buy">Nomura</span></td></tr>
+            <tr><td class="nm">SBI Life</td><td class="sc">Financials</td><td class="bk"><span class="cnt buy">2</span><span class="bchip buy">JPMorgan</span><span class="bchip buy">Nomura</span></td></tr>
+            <tr><td class="nm">Mahindra &amp; Mahindra</td><td class="sc">Consumer Discretionary</td><td class="bk"><span class="cnt buy">2</span><span class="bchip buy">JPMorgan</span><span class="bchip buy">Nomura</span></td></tr>
+            <tr><td class="nm">Maruti Suzuki</td><td class="sc">Consumer Discretionary</td><td class="bk"><span class="cnt buy">2</span><span class="bchip buy">JPMorgan</span><span class="bchip buy">Kotak</span></td></tr>
+            <tr><td class="nm">ICICI Bank</td><td class="sc">Financials</td><td class="bk"><span class="cnt buy">2</span><span class="bchip buy">JPMorgan</span><span class="bchip buy">Kotak</span></td></tr>
+            <tr><td class="nm">Kotak Mahindra Bank</td><td class="sc">Financials</td><td class="bk"><span class="cnt buy">2</span><span class="bchip buy">Nomura</span><span class="bchip buy">CLSA</span></td></tr>
+            <tr><td class="nm">Shriram Finance</td><td class="sc">Financials</td><td class="bk"><span class="cnt buy">2</span><span class="bchip buy">Nomura</span><span class="bchip buy">Kotak</span></td></tr>
+            <tr><td class="nm">UltraTech Cement</td><td class="sc">Materials</td><td class="bk"><span class="cnt buy">2</span><span class="bchip buy">Nomura</span><span class="bchip buy">CLSA</span></td></tr>
+            <tr><td class="nm">Indus Towers</td><td class="sc">Communication Services</td><td class="bk"><span class="cnt buy">2</span><span class="bchip buy">CLSA</span><span class="bchip buy">Kotak</span></td></tr>
+          </tbody>
+        </table>
+
+        <div class="cons-h"><span class="dot r"></span>Sell / Underweight — avoided by 2+ brokers</div>
+        <table class="cons">
+          <thead><tr><th style="width:30%">Stock</th><th style="width:22%">GICS Sector</th><th style="text-align:right">Non-recommending brokers</th></tr></thead>
+          <tbody>
+            <tr><td class="nm">Voltas</td><td class="sc">Consumer Discretionary</td><td class="bk"><span class="cnt sell">2</span><span class="bchip sell">CLSA · U-PF</span><span class="bchip sell">Kotak · Sell</span></td></tr>
+          </tbody>
+        </table>
+
+        <div class="cons-h"><span class="dot y"></span>Split calls — one house Buy, another Sell</div>
+        <table class="cons">
+          <thead><tr><th style="width:24%">Stock</th><th style="width:20%">GICS Sector</th><th style="text-align:right">Buy / OW &nbsp;·&nbsp; Sell / UW</th></tr></thead>
+          <tbody>
+            <tr><td class="nm">CG Power</td><td class="sc">Industrials</td><td class="bk"><span class="bchip buy">JPMorgan</span><span class="bchip buy">Nomura</span><span class="bchip sell">Kotak</span></td></tr>
+            <tr><td class="nm">Axis Bank</td><td class="sc">Financials</td><td class="bk"><span class="bchip buy">JPMorgan</span><span class="bchip buy">Nomura</span><span class="bchip sell">Kotak</span></td></tr>
+            <tr><td class="nm">Hero MotoCorp</td><td class="sc">Consumer Discretionary</td><td class="bk"><span class="bchip buy">JPMorgan</span><span class="bchip buy">CLSA</span><span class="bchip sell">Kotak</span></td></tr>
+            <tr><td class="nm">NTPC</td><td class="sc">Utilities</td><td class="bk"><span class="bchip buy">JPMorgan</span><span class="bchip sell">Kotak</span></td></tr>
+            <tr><td class="nm">Polycab</td><td class="sc">Industrials</td><td class="bk"><span class="bchip buy">JPMorgan</span><span class="bchip sell">Kotak</span></td></tr>
+            <tr><td class="nm">Vedanta</td><td class="sc">Materials</td><td class="bk"><span class="bchip buy">JPMorgan</span><span class="bchip sell">Kotak</span></td></tr>
+            <tr><td class="nm">ONGC</td><td class="sc">Energy</td><td class="bk"><span class="bchip buy">CLSA</span><span class="bchip sell">Kotak</span></td></tr>
+            <tr><td class="nm">Dr Reddy's</td><td class="sc">Health Care</td><td class="bk"><span class="bchip buy">Nomura</span><span class="bchip sell">Kotak</span></td></tr>
+            <tr><td class="nm">Sona BLW Precision</td><td class="sc">Consumer Discretionary</td><td class="bk"><span class="bchip buy">Nomura</span><span class="bchip sell">Kotak</span></td></tr>
+            <tr><td class="nm">Ramco Cements</td><td class="sc">Materials</td><td class="bk"><span class="bchip buy">Kotak</span><span class="bchip sell">CLSA</span></td></tr>
+          </tbody>
+        </table>
+
+        <p class="note"><strong>Method.</strong> Only the four houses that name stocks are counted (Jefferies &amp; Bernstein give thematic views only). Buy/OW = a house's top pick, model-portfolio overweight or Buy/High-Conviction-Outperform rating; Sell/UW = CLSA Underperform or Kotak KIE Sell. JPMorgan and Nomura don't publish stock-level sell lists, so the sell side draws on CLSA and Kotak. Mahindra &amp; Mahindra is a Kotak <em>Reduce</em> (not a full Sell) so it is not flagged against the two buys.</p>
       </div>
     </div>
 
