@@ -315,6 +315,8 @@
     text-transform:uppercase;letter-spacing:.08em;font-weight:600}
   .macro-tbl .mi{text-align:left;position:sticky;left:0;background:var(--panel);min-width:170px}
   .macro-tbl .mi .ml{display:block;font-family:'Manrope';font-size:13px;font-weight:600;color:var(--text)}
+  .macro-tbl .mi .ml.tip{cursor:help;text-decoration:underline dotted var(--text-mute);
+    text-decoration-thickness:1px;text-underline-offset:3px}
   .macro-tbl .mi .mas{display:block;font-size:10px;color:var(--text-mute);margin-top:3px}
   .macro-tbl tbody td{color:var(--text-dim)}
   .macro-tbl td.lat{color:var(--text);font-weight:600;background:var(--saffron-soft);
@@ -3167,17 +3169,17 @@ function fmtPeriod(p){
 // macro-refresher routine using the keyed MoSPI / data.gov.in API) can target a
 // row by id to push in a fresher official figure without touching this bundle.
 const MACRO_REPORTS=[
-  {id:'gdp',     label:'Real GDP growth',     unit:'YoY',        value:'+7.5%',          period:'1Q26e',      tone:'pos', src:'JPM · 29 May 26'},
-  {id:'iip',     label:'IIP',                 unit:'YoY',        value:'+4.9%',          period:'Apr 2026',   tone:'pos', src:'CLSA · 2 Jun 26'},
-  {id:'mfg',     label:'Manufacturing output',unit:'YoY',        value:'+6.2%',          period:'Apr 2026',   tone:'pos', src:'CLSA · 2 Jun 26'},
-  {id:'pmi',     label:'Manufacturing PMI',   unit:'index',      value:'54.3',           period:'May 2026',   tone:'pos', src:'JPM · 22 May 26'},
-  {id:'core',    label:'Core sector IP',      unit:'YoY',        value:'+1.7%',          period:'Apr 2026',   tone:'pos', src:'JPM · 22 May 26'},
-  {id:'cpi',     label:'CPI inflation',       unit:'YoY',        value:'~5.0%',          period:'FY27e',      tone:'',    src:'JPM · 29 May 26'},
-  {id:'gst_g',   label:'Gross GST receipts',  unit:'₹tn, YoY',   value:'₹1.94tn (−3.4%)',period:'May 2026',   tone:'neg', src:'CLSA · 1 Jun 26'},
-  {id:'gst_n',   label:'Net GST receipts',    unit:'₹tn, YoY',   value:'₹1.70tn (−4.0%)',period:'May 2026',   tone:'neg', src:'CLSA · 1 Jun 26'},
-  {id:'fisc',    label:'Fiscal deficit',      unit:'% of GDP',   value:'4.4%',           period:'FY26',       tone:'',    src:'CLSA · 1 Jun 26'},
-  {id:'repo',    label:'RBI repo rate',       unit:'%',          value:'On hold',        period:'Jun 2026',   tone:'',    src:'CLSA · 1 Jun 26'},
-  {id:'monsoon', label:'SW monsoon',          unit:'% of LPA',   value:'90%',            period:'2026 f\'cast',tone:'neg', src:'CLSA · 29 May 26'}
+  {id:'gdp',     label:'Real GDP growth',     unit:'YoY',        value:'+7.5%',          period:'1Q26e',      tone:'pos', src:'JPM · 29 May 26', note:'Inflation-adjusted GDP growth vs the year-ago quarter. JPM estimate for 1Q FY26.'},
+  {id:'iip',     label:'IIP',                 unit:'YoY',        value:'+4.9%',          period:'Apr 2026',   tone:'pos', src:'CLSA · 2 Jun 26', note:'Index of Industrial Production — overall industrial output growth vs a year ago.'},
+  {id:'mfg',     label:'Manufacturing output',unit:'YoY',        value:'+6.2%',          period:'Apr 2026',   tone:'pos', src:'CLSA · 2 Jun 26', note:'Factory output growth (IIP manufacturing sub-index) vs a year ago.'},
+  {id:'pmi',     label:'Manufacturing PMI',   unit:'index',      value:'54.3',           period:'May 2026',   tone:'pos', src:'JPM · 22 May 26', note:'Purchasing Managers’ Index — above 50 signals expansion, below 50 contraction.'},
+  {id:'core',    label:'Core sector IP',      unit:'YoY',        value:'+1.7%',          period:'Apr 2026',   tone:'pos', src:'JPM · 22 May 26', note:'Output of the eight core infrastructure industries (~40% of IIP) vs a year ago.'},
+  {id:'cpi',     label:'CPI inflation',       unit:'YoY',        value:'~5.0%',          period:'FY27e',      tone:'',    src:'JPM · 29 May 26', note:'Consumer Price Index inflation vs a year ago. JPM FY27 forecast; RBI target 4% (±2%).'},
+  {id:'gst_g',   label:'Gross GST receipts',  unit:'₹tn, YoY',   value:'₹1.94tn (−3.4%)',period:'May 2026',   tone:'neg', src:'CLSA · 1 Jun 26', note:'Total GST collected for the month before refunds; YoY change in brackets.'},
+  {id:'gst_n',   label:'Net GST receipts',    unit:'₹tn, YoY',   value:'₹1.70tn (−4.0%)',period:'May 2026',   tone:'neg', src:'CLSA · 1 Jun 26', note:'GST collections after refunds; YoY change in brackets.'},
+  {id:'fisc',    label:'Fiscal deficit',      unit:'% of GDP',   value:'4.4%',           period:'FY26',       tone:'',    src:'CLSA · 1 Jun 26', note:'Central government fiscal deficit as a share of GDP. FY26 budget target.'},
+  {id:'repo',    label:'RBI repo rate',       unit:'%',          value:'On hold',        period:'Jun 2026',   tone:'',    src:'CLSA · 1 Jun 26', note:'RBI’s benchmark policy lending rate; “On hold” = no change expected at the June meeting.'},
+  {id:'monsoon', label:'SW monsoon',          unit:'% of LPA',   value:'90%',            period:'2026 f\'cast',tone:'neg', src:'CLSA · 29 May 26', note:'Forecast southwest-monsoon rainfall vs the long-period average; below ~96% is below-normal.'}
 ];
 // DBnomics live "official actual" rows (keyless, CORS-ok, IMF/BIS aggregator).
 // These are ~lagged official prints, appended below the broker rows and rendered
@@ -3186,18 +3188,21 @@ const MACRO_REPORTS=[
 // (a stale constant would rot); if both the API and the proxy fail, the rows
 // simply don't appear and the broker table stands on its own.
 const MACRO_LIVE=[
-  {id:'fxres', label:'FX reserves', unit:'USD bn', dbId:'IMF/IFS/M.IN.RAFA_USD', kind:'usdb'},
-  {id:'cpi_a', label:'CPI — official', unit:'YoY', dbId:'IMF/IFS/M.IN.PCPI_IX', kind:'yoy'},
-  {id:'repo_a',label:'Policy rate — official', unit:'%', dbId:'BIS/WS_CBPOL/M.IN', kind:'pct'}
+  {id:'fxres', label:'FX reserves', unit:'USD bn', dbId:'IMF/IFS/M.IN.RAFA_USD', kind:'usdb', note:'India’s total foreign-exchange reserves (IMF IFS). Live feed lags ~12 months — see the period column.'},
+  {id:'cpi_a', label:'CPI — official', unit:'YoY', dbId:'IMF/IFS/M.IN.PCPI_IX', kind:'yoy', note:'Official CPI inflation vs a year ago (IMF IFS). Live feed lags ~12 months — see the period column.'},
+  {id:'repo_a',label:'Policy rate — official', unit:'%', dbId:'BIS/WS_CBPOL/M.IN', kind:'pct', note:'Official central-bank policy rate (BIS). Live feed lags ~12 months — see the period column.'}
 ];
 function macroMonLabel(p){ // 'YYYY-MM' -> "Jun 2025"
   const m=/^(\d{4})-(\d{2})/.exec(p||''); if(!m) return p||'';
   const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return mon[(+m[2])-1]+' '+m[1];
 }
+function macroAttr(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 function macroRowHtml(it){
   const cls=it.tone==='neg'?'neg':(it.tone==='pos'?'pos':'');
-  return `<tr><th class="mi"><span class="ml">${it.label}</span></th>`+
+  const tip=it.note?` title="${macroAttr(it.note)}"`:'';
+  const lcls=it.note?'ml tip':'ml';
+  return `<tr><th class="mi"><span class="${lcls}"${tip}>${it.label}</span></th>`+
     `<td class="munit">${it.unit}</td>`+
     `<td class="lat ${cls}">${it.value}</td>`+
     `<td>${it.period}</td>`+
@@ -3244,6 +3249,7 @@ async function applyMacroOverlay(){
     if(o.period) row.period=o.period;
     if(o.src) row.src=o.src;
     if(o.tone!=null) row.tone=o.tone;
+    if(o.note!=null) row.note=o.note;
   });
 }
 // Fetch the DBnomics live rows and build display rows from whatever returns.
@@ -3264,7 +3270,7 @@ async function buildMacroLive(){
       tone=yoy>=4?'neg':'';
     }
     out.push({id:cfg.id,label:cfg.label,unit:cfg.unit,value,
-      period:macroMonLabel(last.period),tone,src:'IMF/BIS · live'});
+      period:macroMonLabel(last.period),tone,src:'IMF/BIS · live',note:cfg.note});
   }
   return out;
 }
