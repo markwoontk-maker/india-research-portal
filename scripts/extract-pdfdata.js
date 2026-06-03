@@ -29,7 +29,18 @@ const NORM = {
 const normCall = c => (NORM[c.toUpperCase()] || c.toUpperCase());
 
 // "₹1,400" / "Rs 1400" / "INR 1,400.50" / "$60.00" / "US$1,200" / "USD 750"
-const NUM = "([\\d,]+(?:\\.\\d+)?)";
+// The trailing guard rejects revenue / TAM / market-size shorthand like
+// "27.1bn", "1.3b", "5k", "300m". For "INR27.1bn" the engine first tries
+// to match "27.1" then sees "b" and would happily backtrack to "27"
+// (with "." next, which is not a letter) — so the guard has to ALSO
+// reject "X" when "X.<digit>" follows, otherwise we'd silently capture
+// the integer portion of a billion-rupee revenue figure as a TP.
+//   ([\d,]+(?:\.\d+)?)         numeric core (commas + optional decimal)
+//   (?!\d|\.\d|[A-Za-z])       next char isn't another digit, isn't a
+//                              "." followed by a digit, isn't a letter
+// Hit by Sun Pharma's Jefferies "NA" template (no TP) where the body
+// flowed "INR27.1bn" right after the PRICE TARGET cell.
+const NUM = "([\\d,]+(?:\\.\\d+)?)(?!\\d|\\.\\d|[A-Za-z])";
 const RS = "(?:₹|Rs\\.?|INR|US\\$|USD|\\$)\\s*";
 
 function extractCurrTP(text) {
@@ -69,11 +80,14 @@ function extractCurrTP(text) {
     // CLSA "Recommendation history" table — latest row gives current TP.
     /Recommendation\s+history[\s\S]{0,400}?\d{1,2}\s+\w{3,9}\s+\d{4}\s+(?:BUY|SELL|HOLD|HLD|O[- ]?PF|U[- ]?PF|HC\s+O[- ]?PF|HC\s+U[- ]?PF)\s+([\d,]+(?:\.\d+)?)/i,
     // Generic: "12M price target Rs324.00" / "Target Price Rs 1400"
-    new RegExp("(?:12M\\s+price\\s+target|target\\s+price)\\s*(?:of\\s*)?(?::)?\\s*" + RS + NUM, "i"),
+    // (?![A-Za-z]) guards against "USD1b" / "Rs5k" being mis-captured as 1/5.
+    new RegExp("(?:12M\\s+price\\s+target|target\\s+price)\\s*(?:of\\s*)?(?::)?\\s*" + RS + NUM + "(?![A-Za-z])", "i"),
     // JPMorgan prose: "raising PT to Rs5050" / "PT down to $60"
-    new RegExp("\\bPT\\b\\s+(?:raised|cut|revised|up|down)?\\s*(?:to|at)\\s*" + RS + NUM, "i"),
-    // Standalone "Target: Rs1400"
-    new RegExp("\\btarget\\b\\s*:?\\s*" + RS + NUM, "i"),
+    new RegExp("\\bPT\\b\\s+(?:raised|cut|revised|up|down)?\\s*(?:to|at)\\s*" + RS + NUM + "(?![A-Za-z])", "i"),
+    // Standalone "Target: Rs1400" — same trailing-letter guard to avoid
+    // matching "Target: USD1b run rate" (a forward-looking $1b revenue
+    // goal that has nothing to do with the broker's TP).
+    new RegExp("\\btarget\\b\\s*:?\\s*" + RS + NUM + "(?![A-Za-z])", "i"),
   ];
   for (const re of patterns) {
     const m = text.match(re);
@@ -264,7 +278,10 @@ function listPdfs() {
     if (!fs.statSync(dir).isDirectory()) continue;
     for (const f of fs.readdirSync(dir)) {
       if (!f.toLowerCase().endsWith(".pdf")) continue;
-      const m = f.match(/^\[(\d{6})\]\s*\[([^\]]+)\]\s*(.+?)\s*-\s*(.+)\.pdf$/i);
+      // Filename: "[YYMMDD] [House] Folder - Title.pdf". Separator MUST
+      // be " - " (space-dash-space) so embedded hyphens in folder names
+      // ("India Autos, May-2026 volumes") aren't taken as the split.
+      const m = f.match(/^\[(\d{6})\]\s+\[([^\]]+)\]\s+(.+?)\s+-\s+(.+)\.pdf$/i);
       if (!m) continue;
       const [, date, house, , titleRaw] = m;
       if (date < cutoff) continue;
