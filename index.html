@@ -2996,6 +2996,13 @@ async function loadNews(){
     {cat:'ECON', q:'India (inflation OR CPI OR WPI OR repo OR "interest rate" OR "rate cut" OR "rate hike" OR RBI OR "monetary policy" OR GDP OR IIP OR "industrial production" OR "fiscal deficit" OR "current account" OR FII OR FDI OR rupee OR "USD-INR" OR "bond yield" OR "10-year") when:1d'},
     {cat:'EARN', q:'India (Q4 results OR Q1 results OR quarterly results OR earnings OR "net profit" OR "profit after tax" OR PAT OR revenue OR EBITDA) when:1d'},
     {cat:'CORP', q:'India (merger OR acquisition OR "stake sale" OR demerger OR "open offer" OR buyback OR "board approves" OR resigns OR "steps down" OR "appointed as" OR "new CEO" OR "new MD" OR restructuring OR "joint venture" OR QIP OR "fund raise" OR "order win") when:1d'},
+    // Wire-service bucket: pulls India macro/markets coverage straight from
+    // the global wires (Reuters, Bloomberg, AP) via Google News' site:
+    // operator. There's no direct Reuters/TradingView feed reachable from a
+    // static page (no open CORS API, paywall + anti-scrape ToS), so this is
+    // how Reuters-origin stories get guaranteed representation; their
+    // publisher shows as the source label. Filtered like ECON below.
+    {cat:'WIRE', q:'(site:reuters.com OR site:bloomberg.com OR site:apnews.com) India (economy OR markets OR stocks OR shares OR rupee OR RBI OR Sensex OR Nifty OR inflation OR GDP OR earnings OR results OR trade OR tariff) when:1d'},
   ];
   // Reject anything that isn't a clear, present-tense FACT.
   // Filters in three layers (any one rejects):
@@ -3028,7 +3035,7 @@ async function loadNews(){
   }
   const results=await Promise.all(queries.map(async ({cat,q})=>{
     let items=await pull(q);
-    if(cat==='POL' || cat==='ECON') items=marketRelevant(items);
+    if(cat==='POL' || cat==='ECON' || cat==='WIRE') items=marketRelevant(items);
     else if(cat==='EARN') items=(items||[]).filter(it=>{const t=String(it.title||'');return EARN_RE.test(t)&&!EARN_EXCL.test(t)&&!SOC_RE.test(t);});
     else items=(items||[]).filter(it=>{const t=String(it.title||'');return CORP_RE.test(t)&&!GOVT_RE.test(t)&&!SOC_RE.test(t);});
     // Universal fact-only filter — drop listicle/preview structure,
@@ -3082,7 +3089,7 @@ async function loadNews(){
   // Political decisions and macro indicators set the day's tone, so
   // they sit above individual-company headlines. Within each tier,
   // newest first.
-  const PRI={POL:0, ECON:1, EARN:2, CORP:2};
+  const PRI={POL:0, ECON:1, WIRE:1, EARN:2, CORP:2};
   merged.sort((a,b)=>{
     const pa=PRI[a.cat]??3, pb=PRI[b.cat]??3;
     if(pa!==pb) return pa-pb;
