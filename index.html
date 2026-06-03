@@ -1546,16 +1546,7 @@ const notesPrior = [
   ["Prabhudas Lilladhar","260516","NCC","Buy · TP ₹195 — Strong fundamentals, but FY27E caution persists"],
   ["Prabhudas Lilladhar","260516","Carborundum Universal","Sell · TP ₹986 — Mixed Q4, subsidiaries recovery remains key"],
   ["Prabhudas Lilladhar","260516","Steel Authority of India","Accumulate · TP ₹209 — Higher steel pricing drive Q4; stepped up capex"],
-];
-
-// External broker calls sourced from trendlyne.com/research-reports/all/
-// — last 2 days, filename date ≥ today−2d. Schema: [house,date,folder,
-// headline,url]. The "Buy/Sell/Hold/Accumulate/Reduce/Neutral" in the
-// headline feeds the chip via the existing CALL/BARE regexes; the URL
-// makes the headline clickable to the actual Trendlyne report.
-// Refreshed manually 2026-05-20; the scheduled refresher routine
-// overlays this with a fresh pull each weekday morning.
-let notesExt = [
+  // Trendlyne (parked from notesExt — dates 260518-260519)
   ["Anand Rathi","260519","Global Health (Medanta)","Buy · TP ₹1,400 — Above par show, ramp-up of new units to drive earnings; maintain BUY","https://trendlyne.com/get-document/post/pdf/5647430/"],
   ["Anand Rathi","260519","Jupiter Life Line Hospitals","Buy · TP ₹1,560 — Steady performance, ramp-up of Dombivli unit remain key; maintain BUY","https://trendlyne.com/get-document/post/pdf/5647409/"],
   ["Anand Rathi","260519","Greenpanel Industries","Buy · TP ₹320 — In-line show, outlook positive as cycle bottomed out; maintain BUY","https://trendlyne.com/get-document/post/pdf/5647408/"],
@@ -1615,6 +1606,24 @@ let notesExt = [
   ["Deven Choksey","260518","Balkrishna Industries","Accumulate · TP ₹2,350 — Record volumes marred by margin compression","https://trendlyne.com/get-document/post/pdf/5643619/"],
   ["Deven Choksey","260518","Godrej Consumer Products","Buy · TP ₹1,344 — Multiple growth engines entering inflection phase","https://trendlyne.com/get-document/post/pdf/5643618/"],
   ["Deven Choksey","260518","Dr Reddy's Labs","Accumulate · TP ₹1,445 — Outlook","https://trendlyne.com/get-document/post/pdf/5643403/"],
+];
+
+// External broker calls sourced from trendlyne.com/research-reports/all/
+// — last 2 days, filename date ≥ today−2d. Schema: [house,date,folder,
+// headline,url]. The "Buy/Sell/Hold/Accumulate/Reduce/Neutral" in the
+// headline feeds the chip via the existing CALL/BARE regexes; the URL
+// makes the headline clickable to the actual Trendlyne report.
+// Refreshed manually 2026-05-20; the scheduled refresher routine
+// overlays this with a fresh pull each weekday morning.
+let notesExt = [
+  ["Motilal Oswal","260602","Shriram Finance","Buy · TP ₹1,175 — Capital strength and NIM expansion to accelerate earnings growth","https://trendlyne.com/get-document/post/pdf/5676381/"],
+  ["Motilal Oswal","260602","ITC","Neutral · TP ₹300 — Cigarette earnings under a cloud; remain cautious","https://trendlyne.com/get-document/post/pdf/5676379/"],
+  ["Emkay","260602","Ipca Laboratories","Buy · TP ₹1,800 — Sharp price-value disconnect emerging","https://trendlyne.com/get-document/post/pdf/5676375/"],
+  ["IDBI Capital","260602","NMDC","Buy · TP ₹102 — Technical pick update, consolidation breakout","https://trendlyne.com/get-document/post/pdf/5675960/"],
+  ["Axis Direct","260602","Ahluwalia Contracts","Buy · TP ₹915 — Result update, estimates rolled to FY28","https://trendlyne.com/get-document/post/pdf/5675952/"],
+  ["Prabhudas Lilladhar","260602","KNR Constructions","Hold · TP ₹119 — Q4FY26, execution recovery deferred to FY28","https://trendlyne.com/get-document/post/pdf/5675944/"],
+  ["Prabhudas Lilladhar","260602","NMDC","Accumulate · TP ₹97 — Q4FY26, stepping up capex; higher pricing","https://trendlyne.com/get-document/post/pdf/5675943/"],
+  ["Prabhudas Lilladhar","260602","Ipca Laboratories","Buy · TP ₹1,800 — Q4FY26, strong FY27 guidance","https://trendlyne.com/get-document/post/pdf/5675942/"],
 ];
 
 /* ---------- Render ticker ---------- */
