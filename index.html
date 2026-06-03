@@ -309,12 +309,12 @@
   /* macro monthly table */
   .macro-wrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:10px}
   .macro-tbl{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono';font-size:12px}
-  .macro-tbl th,.macro-tbl td{padding:10px 12px;text-align:right;white-space:nowrap;
+  .macro-tbl th,.macro-tbl td{padding:5px 12px;text-align:right;white-space:nowrap;
     border-top:1px solid var(--line-soft)}
   .macro-tbl thead th{border-top:none;color:var(--text-mute);font-size:10px;
     text-transform:uppercase;letter-spacing:.08em;font-weight:600}
   .macro-tbl .mi{text-align:left;position:sticky;left:0;background:var(--panel);min-width:170px}
-  .macro-tbl .mi .ml{display:block;font-family:'Manrope';font-size:13px;font-weight:600;color:var(--text)}
+  .macro-tbl .mi .ml{display:inline;font-family:'Manrope';font-size:12px;font-weight:600;color:var(--text)}
   .macro-tbl .mi .ml.tip{cursor:help;text-decoration:underline dotted var(--text-mute);
     text-decoration-thickness:1px;text-underline-offset:3px}
   .macro-tbl .mi .mas{display:block;font-size:10px;color:var(--text-mute);margin-top:3px}
@@ -872,6 +872,10 @@
           font-size:11px;font-weight:700;padding:1px 5px;border-radius:5px;margin-right:4px}
         #viewStrategy .cnt.buy{background:var(--up-soft);color:var(--up)}
         #viewStrategy .cnt.sell{background:var(--down-soft);color:var(--down)}
+        #viewStrategy .cnt.flat{background:var(--saffron-soft);color:var(--saffron)}
+        #viewStrategy table.cons th.num{text-align:center}
+        #viewStrategy table.cons td.num{text-align:center}
+        #viewStrategy table.cons td.num .cnt{margin-right:0}
         #viewStrategy .bchip{font-size:10.5px;padding:2px 7px;border-radius:5px;margin-left:4px;white-space:nowrap;
           border:1px solid var(--line)}
         #viewStrategy .bchip.buy{background:var(--up-soft);color:var(--up);border-color:rgba(63,199,138,.30)}
@@ -1269,7 +1273,7 @@
         </div>
         <p id="nbStatus" style="color:var(--text-mute);font-size:12px;line-height:1.7;margin-top:14px"></p>
       </div>
-      <div class="card reveal">
+      <div class="card reveal" id="cChartCard">
         <div class="card-h">
           <div><h3 id="cChartTitle">Price Chart</h3>
           <p id="cChartSub">Select a company or sector above to load price history (Yahoo Finance · daily close)</p></div>
@@ -1303,6 +1307,17 @@
         </div>
         <p id="cDesc" class="co-desc"></p>
         <p class="co-desc-src">Business profile only — sourced from the company's website and its latest annual report. Click the company name above to open the local offline reports folder.</p>
+      </div>
+      <!-- Sector view: when the selection is a sector, replace the chart
+           and broker-table with a paragraph that summarises each
+           broker's latest take on the sector. -->
+      <div class="card reveal" id="cSectorCard" hidden>
+        <div class="card-h">
+          <div><h3 id="cSectorTitle">Sector Views</h3>
+          <p id="cSectorSub">Latest take from each broker covering this sector</p></div>
+        </div>
+        <p id="cSectorSummary" class="co-desc"></p>
+        <p class="co-desc-src">One sentence per broker, ordered by most-recent report. Pulled from headlines plus PDF body summaries where parseable.</p>
       </div>
       <!-- Broker coverage on the selected company: one row per research house,
            latest TP/call + prior TP/call side-by-side. -->
@@ -4366,6 +4381,7 @@ fetch('data/research.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(
   if(Array.isArray(j.ext)) notesExt=j.ext;
   renderResearchNotes();
   if(typeof renderCompanyResearch==='function') renderCompanyResearch();
+  if(typeof renderSectorSummary==='function') renderSectorSummary();
 }).catch(()=>{});
 // Extracted broker-stated TP / Call from the PDF body (via pdftotext +
 // regex in scripts/extract-pdfdata.js). Schema:
@@ -4378,6 +4394,7 @@ fetch('data/pdfdata.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j
   window.PDFDATA=j;
   renderResearchNotes();
   if(typeof renderCompanyResearch==='function') renderCompanyResearch();
+  if(typeof renderSectorSummary==='function') renderSectorSummary();
 }).catch(()=>{});
 // pdfmap.json: same key scheme, value is the absolute path to the local
 // PDF. Used by urlFor() to point each headline straight at its file://
@@ -4388,6 +4405,7 @@ fetch('data/pdfmap.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=
   window.PDFMAP=j;
   renderResearchNotes();
   if(typeof renderCompanyResearch==='function') renderCompanyResearch();
+  if(typeof renderSectorSummary==='function') renderSectorSummary();
 }).catch(()=>{});
 // Trendlyne broker-coverage scrape (scripts/fetch-trendlyne-coverage.js).
 // Schema: { "<NOTEBOOKS company name>": [{broker,date,headline,url,tp,rating}, ...] }
@@ -4398,6 +4416,7 @@ fetch('data/trendlyne-coverage.json',{cache:'no-store'}).then(r=>r.ok?r.json():n
   if(!j||typeof j!=='object') return;
   window.TRENDLYNE_COVERAGE=j;
   if(typeof renderCompanyResearch==='function') renderCompanyResearch();
+  if(typeof renderSectorSummary==='function') renderSectorSummary();
 }).catch(()=>{});
 let screenerLoaded=false;
 // Sector notebooks vs company notebooks — sectors are the "India(n) X"
@@ -4558,6 +4577,10 @@ function renderCompanyResearch(){
   const sub=document.getElementById('cBrokerSub');
   if(!card || !el) return;
   if(!currentCompany){ card.hidden=true; return; }
+  // Sectors get the Sector Views paragraph instead of the broker table.
+  if (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany)){
+    card.hidden=true; el.innerHTML=''; return;
+  }
   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const fmtD=d=>{ const mm=+d.slice(2,4), dd=+d.slice(4,6); return `${dd} ${MON[mm-1]||''}`; };
@@ -4737,13 +4760,84 @@ async function renderCompanyNews(name){
   }
 }
 
+// Sector Views: one paragraph summarising each broker's latest take on
+// the selected sector. Replaces the chart + About + Broker Coverage
+// cards when the selection is a sector. Pool = local PDFs (NOTES) +
+// Trendlyne snapshot (notesExt) + historical snapshot (notesPrior);
+// the per-stock Trendlyne coverage doesn't cover sectors so it isn't
+// merged here.
+function renderSectorSummary(){
+  const card=document.getElementById('cSectorCard');
+  const el=document.getElementById('cSectorSummary');
+  const sub=document.getElementById('cSectorSub');
+  if(!card || !el) return;
+  if(!currentCompany || typeof SECTOR_NAMES==='undefined' || !SECTOR_NAMES.has(currentCompany)){
+    card.hidden=true; return;
+  }
+  card.hidden=false;
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const fmtD=d=>{ const mm=+d.slice(2,4), dd=+d.slice(4,6); return `${dd} ${MON[mm-1]||''}`; };
+  // Pool everything we have on this sector.
+  const cur=[...(typeof notes==='undefined'?[]:notes),
+             ...(typeof notesExt==='undefined'?[]:notesExt)]
+    .filter(n=>n && n.length>=4).map(n=>[n[0],n[1],n[2],n[3],n[4]||null]);
+  const pri=(typeof notesPrior==='undefined'?[]:notesPrior)
+    .map(n=>[n[0],n[1],n[2],n[3],null]);
+  const target=currentCompany.toLowerCase();
+  const all=[...cur,...pri].filter(r=>String(r[2]).toLowerCase()===target);
+  if(!all.length){
+    if(sub) sub.textContent='No broker reports found for this sector in the local dataset.';
+    el.textContent='';
+    return;
+  }
+  // Latest report per broker.
+  all.sort((a,b)=>b[1].localeCompare(a[1]));
+  const byHouse={};
+  all.forEach(r=>{ if(!byHouse[r[0]]) byHouse[r[0]]=r; });
+  const houses=Object.keys(byHouse)
+    .sort((a,b)=>byHouse[b][1].localeCompare(byHouse[a][1]));
+  // PDFDATA gives a richer body summary where parseable; fall back to headline.
+  const PD=(typeof PDFDATA==='undefined'||!PDFDATA)?null:PDFDATA;
+  const pdKey=(h,d,co,ti)=>`${h}|${d}|${co}|${String(ti).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'')}`;
+  // Trim a long summary down to roughly one sentence.
+  function oneSentence(s, cap){
+    s=String(s||'').replace(/\s+/g,' ').trim();
+    if(!s) return '';
+    const mEnd=s.slice(0, cap+40).match(/[.!?](?:\s|$)/);
+    if(mEnd && mEnd.index < cap+1) s=s.slice(0, mEnd.index+1);
+    if(s.length>cap) s=s.slice(0, cap).replace(/[\s,;:]+\S*$/,'')+'…';
+    if(!/[.!?…]$/.test(s)) s+='.';
+    return s;
+  }
+  const sentences=houses.map(h=>{
+    const r=byHouse[h];
+    const d=r[1], co=r[2], ti=r[3];
+    const pd=PD?PD[pdKey(h,d,co,ti)]:null;
+    const view=oneSentence((pd && pd.summary) || ti, 240);
+    return `<b>${esc(h)}</b> (${fmtD(d)}): ${esc(view)}`;
+  });
+  if(sub) sub.textContent=`${houses.length} broker${houses.length>1?'s':''} covering this sector · ${all.length} report${all.length>1?'s':''} in the pool`;
+  el.innerHTML=sentences.join(' ');
+}
+
 async function loadCompanyChart(name, tf){
   if (name) currentCompany = name;
   if (tf) currentTf = tf;
+  // Sector vs company routing: sectors don't have a price chart or a
+  // company description — replace those with a Sector Views paragraph
+  // that summarises each broker's latest take. SECTOR_NAMES drives the
+  // split (same set the sector dropdown is built from).
+  const isSector = currentCompany && (typeof SECTOR_NAMES!=='undefined') && SECTOR_NAMES.has(currentCompany);
+  const chartCard = document.getElementById('cChartCard');
+  const sectorCard = document.getElementById('cSectorCard');
+  if (chartCard)  chartCard.hidden  = !!isSector;
+  if (sectorCard) sectorCard.hidden = !isSector;
   // Refresh the company description and broker-coverage card below the
   // chart whenever the selection changes (no-op until COMPANIES /
   // notesExt / PDFDATA have loaded).
-  if (name) { updateCoDesc(); renderCompanyResearch(); renderCompanyNews(name); }
+  if (name) { updateCoDesc(); renderCompanyResearch(); renderCompanyNews(name); renderSectorSummary(); }
+  if (isSector) return;       // sectors: skip the Yahoo chart fetch
   // Sync the segmented control highlight to the current timeframe.
   document.querySelectorAll('#cRangeSeg button').forEach(b=>{
     b.classList.toggle('on', b.dataset.r===currentTf);
