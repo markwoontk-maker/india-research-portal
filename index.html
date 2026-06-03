@@ -4145,11 +4145,19 @@ async function renderCompanyNews(name){
   card.hidden=false;
   if(sub) sub.textContent='Most recent headlines on '+name;
   body.innerHTML='<div class="nm-empty">Fetching latest headlines…</div>';
+  // The shared newsViaProxy queue can stall on a slow free proxy (no
+  // network timeout in that pipeline), so cap the wait — the card must
+  // settle into a message rather than hang on "Fetching…".
+  const withTimeout=(p,ms)=>Promise.race([p,new Promise(r=>setTimeout(()=>r('__timeout'),ms))]);
   try{
     const q=`"${name}" (share OR stock OR results OR order OR profit)`;
-    let items=await newsViaProxy(q+' when:7d');
-    if(!items||!items.length) items=await newsViaProxy(q);   // widen window
+    let items=await withTimeout(newsViaProxy(q+' when:7d'),11000);
+    if(items!=='__timeout' && (!items||!items.length)) items=await withTimeout(newsViaProxy(q),9000);
     if(my!==_coNewsReq) return;                              // a newer selection won
+    if(items==='__timeout'){
+      body.innerHTML='<div class="nm-empty">The free news feed is slow right now. Reselect the company in a moment to retry.</div>';
+      return;
+    }
     if(!items||!items.length){
       body.innerHTML='<div class="nm-empty">No recent company-specific headlines on the free feed. Try again shortly, or check the Broker Coverage above.</div>';
       return;
