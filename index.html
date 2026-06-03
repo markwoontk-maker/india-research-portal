@@ -274,6 +274,12 @@
   #wlHold tr:hover .wl-del,#wlCov tr:hover .wl-del,#wlWatch tr:hover .wl-del{opacity:1}
   .wl-del:hover{color:var(--down)}
   td.wl-actions{width:1%;text-align:right;white-space:nowrap}
+  .wl-move{background:var(--panel);color:var(--text-dim);
+    border:1px solid rgba(255,255,255,.14);border-radius:6px;font-size:11px;
+    font-family:inherit;padding:2px 4px;margin-right:6px;cursor:pointer;
+    opacity:0;transition:opacity .12s;vertical-align:middle}
+  #wlHold tr:hover .wl-move,#wlCov tr:hover .wl-move,#wlWatch tr:hover .wl-move{opacity:1}
+  .wl-move:focus{opacity:1;outline:none;border-color:var(--saffron)}
   /* earnings / corporate feed (email-style, no links) */
   .ec-tk{font-family:'IBM Plex Mono';font-weight:700;font-size:12.5px;margin-right:9px;
     white-space:nowrap}
@@ -877,7 +883,17 @@
           <p id="cDescMeta">Sector · Ticker</p></div>
         </div>
         <p id="cDesc" class="co-desc"></p>
-        <p class="co-desc-src">Business profile only — sourced from the company's website and its latest annual report. Click the company name above to open the local offline reports folder. For the broker view, see the Research Notes tab.</p>
+        <p class="co-desc-src">Business profile only — sourced from the company's website and its latest annual report. Click the company name above to open the local offline reports folder.</p>
+      </div>
+      <!-- Broker coverage on the selected company: one row per research house,
+           latest TP/call + prior TP/call side-by-side. -->
+      <div class="card reveal" id="cBrokerCard" hidden>
+        <div class="card-h">
+          <div><h3>Broker Coverage</h3>
+          <p id="cBrokerSub">Latest call from each research house with the prior call alongside</p></div>
+        </div>
+        <div id="cBrokerNotes"></div>
+        <p class="co-desc-src">Latest = newest report we have on the selected name from each broker (local PDF library + Trendlyne broker calls). Curr TP / Curr Call come from the PDF body where parseable, else the headline; Prev TP / Prev Call come from the same broker's prior report. "—" = no parseable signal.</p>
       </div>
     </div>
 
@@ -3259,6 +3275,7 @@ let WL=wlLoad();
 function wlSave(){ try{ localStorage.setItem(WL_LS,JSON.stringify(WL)); }catch(e){} }
 let wlMap={};
 const WL_TBODY={hold:'wlHold',cov:'wlCov',watch:'wlWatch'};
+const WL_LABEL={hold:'Holdings',cov:'Coverage',watch:'Watchlist'};
 function wlPct(v){
   if(v==null||isNaN(v)) return '<td class="r"><span style="color:var(--text-mute)">—</span></td>';
   const up=v>=0;
@@ -3275,7 +3292,7 @@ function wlRows(list,map,sec){
     return `<tr data-sec="${sec}" data-i="${i}"><td><span class="sym" draggable="true" title="Drag to reorder">${nm}</span><span class="wl-tk">${tk}</span></td>
       <td class="r px">${px}</td>
       ${wlPct(d&&d.d1)}${wlPct(d&&d.w1)}${wlPct(d&&d.m1)}${wlPct(d&&d.ytd)}
-      <td class="wl-actions"><button class="wl-del" title="Remove ${nm}" aria-label="Remove ${nm}">✕</button></td></tr>`;
+      <td class="wl-actions">${wlMoveSel(sec)}<button class="wl-del" title="Remove ${nm}" aria-label="Remove ${nm}">✕</button></td></tr>`;
   }).join('');
 }
 function wlRender(){
@@ -3309,6 +3326,18 @@ function wlMove(sec,from,to){
   const a=WL[sec]; const [it]=a.splice(from,1); a.splice(to,0,it);
   wlSave(); wlRender();
 }
+function wlMoveSection(fromSec,i,toSec){
+  if(fromSec===toSec) return;
+  const [it]=WL[fromSec].splice(i,1); if(!it) return;
+  const sym=it[1].split('|')[0].toUpperCase();
+  if(!WL[toSec].some(r=>r[1].split('|').some(c=>c.toUpperCase()===sym))) WL[toSec].push(it);
+  wlSave(); wlRender();
+}
+function wlMoveSel(sec){
+  const opts=Object.keys(WL_TBODY).filter(s=>s!==sec)
+    .map(s=>`<option value="${s}">→ ${WL_LABEL[s]}</option>`).join('');
+  return `<select class="wl-move" title="Move to another list"><option value="">Move…</option>${opts}</select>`;
+}
 let wlInited=false;
 function wlInit(){
   if(wlInited) return; wlInited=true;
@@ -3325,6 +3354,10 @@ function wlInit(){
     tb.addEventListener('click',e=>{
       const b=e.target.closest('.wl-del'); if(!b) return;
       const tr=b.closest('tr'); wlDelete(tr.dataset.sec,+tr.dataset.i);
+    });
+    tb.addEventListener('change',e=>{
+      const sel=e.target.closest('.wl-move'); if(!sel||!sel.value) return;
+      const tr=sel.closest('tr'); wlMoveSection(tr.dataset.sec,+tr.dataset.i,sel.value);
     });
     let from=null;
     tb.addEventListener('dragstart',e=>{
@@ -3855,6 +3888,7 @@ fetch('data/research.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(
   if(Array.isArray(j.notes)) notes=j.notes;
   if(Array.isArray(j.ext)) notesExt=j.ext;
   renderResearchNotes();
+  if(typeof renderCompanyResearch==='function') renderCompanyResearch();
 }).catch(()=>{});
 // Extracted broker-stated TP / Call from the PDF body (via pdftotext +
 // regex in scripts/extract-pdfdata.js). Schema:
@@ -3866,6 +3900,7 @@ fetch('data/pdfdata.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j
   if(!j||typeof j!=='object') return;
   window.PDFDATA=j;
   renderResearchNotes();
+  if(typeof renderCompanyResearch==='function') renderCompanyResearch();
 }).catch(()=>{});
 // pdfmap.json: same key scheme, value is the absolute path to the local
 // PDF. Used by urlFor() to point each headline straight at its file://
@@ -3875,6 +3910,7 @@ fetch('data/pdfmap.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=
   if(!j||typeof j!=='object') return;
   window.PDFMAP=j;
   renderResearchNotes();
+  if(typeof renderCompanyResearch==='function') renderCompanyResearch();
 }).catch(()=>{});
 let screenerLoaded=false;
 // Sector notebooks vs company notebooks — sectors are the "India(n) X"
@@ -4004,12 +4040,145 @@ function updateCoDesc(){
   body.textContent=e.desc;
 }
 
+// Broker-coverage table for the selected company: one row per research
+// house, latest TP/call + prior TP/call. Reuses the same data sources
+// as the Research Notes tab (NOTES + notesExt + notesPrior + PDFDATA +
+// PDFMAP) but filters down to currentCompany only. Renders into
+// #cBrokerNotes using the same .n-header / .note / .n-tp / .n-call
+// classes so layout matches the Research tab.
+function renderCompanyResearch(){
+  const card=document.getElementById('cBrokerCard');
+  const el=document.getElementById('cBrokerNotes');
+  const sub=document.getElementById('cBrokerSub');
+  if(!card || !el) return;
+  if(!currentCompany){ card.hidden=true; return; }
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const fmtD=d=>{ const mm=+d.slice(2,4), dd=+d.slice(4,6); return `${dd} ${MON[mm-1]||''}`; };
+  // Pool current + external + prior reports, keep only this company.
+  const cur=[...(typeof notes==='undefined'?[]:notes),
+             ...(typeof notesExt==='undefined'?[]:notesExt)]
+    .filter(n=>n && n.length>=4)
+    .map(n=>[n[0],n[1],n[2],n[3],n[4]||null]);
+  const pri=(typeof notesPrior==='undefined'?[]:notesPrior)
+    .map(n=>[n[0],n[1],n[2],n[3],null]);
+  const target=currentCompany.toLowerCase();
+  const all=[...cur,...pri].filter(r=>String(r[2]).toLowerCase()===target);
+  card.hidden=false;
+  if(!all.length){
+    if(sub) sub.textContent='No broker reports found for this company in the local dataset.';
+    el.innerHTML='';
+    return;
+  }
+  // Dedupe + sort newest-first, then group by house (each house keeps
+  // its full sorted list so we can find a prior report for the latest).
+  const normT=t=>String(t).replace(/\s*\(\d+\)\s*$/,'').trim().toLowerCase();
+  all.sort((a,b)=>b[1].localeCompare(a[1]));
+  const seen=new Set();
+  const byHouse={};
+  all.forEach(r=>{
+    const k=r[0]+'|'+r[1]+'|'+normT(r[3]);
+    if(seen.has(k)) return; seen.add(k);
+    (byHouse[r[0]]=byHouse[r[0]]||[]).push(r);
+  });
+  const houses=Object.keys(byHouse)
+    .sort((a,b)=>byHouse[b][0][1].localeCompare(byHouse[a][0][1]));
+  // --- helpers (mirror renderResearchNotes so behaviour stays in sync) -
+  const TP_RE=/(?:TP\s*)?(?:₹|Rs\.?|INR)\s*([\d,]+(?:\.\d+)?)/i;
+  const TP_RE2=/TP\s*to\s*Rs\s*([\d,]+)/i;
+  const tpOf=s=>{ if(!s) return null; let m=s.match(TP_RE2)||s.match(TP_RE); return m?'₹'+m[1]:null; };
+  const NEG=/\b(miss|misses|missed|weak|weakening|headwinds?|lacklustre|lackluster|soft(?:er)?|concerns?|pressure|hazy|delays?|cautious|defensive|impacted|pares)\b|not out of the woods|may not last/i;
+  const POS=/\b(beat|beats|upgrade|outperform|strong|robust|relief|blockbuster|exemplary|positive|improving|improved|improvement|accelerate|accelerating|tailwind|momentum|ahead|exceeded|retained)\b|stay ow|turn positive|higher than/i;
+  const clause=s=>NEG.test(s)?'sell':POS.test(s)?'buy':'hold';
+  const tag=title=>{
+    const parts=title.split(/\b(?:but|however|although|though|despite)\b/i);
+    if(parts.length>1){ const t=clause(parts[parts.length-1]); if(t!=='hold') return t; }
+    return clause(title);
+  };
+  const CALL_RE=/\b(?:stay(?:s|ing)?|upgrade(?:s|d)? to|downgrade(?:s|d)? to|reiterate(?:s|d)?|maintain(?:s|ed)?|initiate(?:s|d)?(?:\s+with)?)\s+(BUY|SELL|HOLD|OW|UW|EW|NEUTRAL|OVERWEIGHT|UNDERWEIGHT|EQUAL[- ]?WEIGHT|OUTPERFORM|UNDERPERFORM|ADD|REDUCE|ACCUMULATE)\b/i;
+  const BARE_RE=/\b(OW|UW|EW|BUY|SELL|HOLD|NEUTRAL|OUTPERFORM|UNDERPERFORM|ADD|REDUCE|ACCUMULATE|OVERWEIGHT|UNDERWEIGHT)\b/i;
+  const normCall=c=>({OVERWEIGHT:'OW',UNDERWEIGHT:'UW','EQUAL-WEIGHT':'EW','EQUAL WEIGHT':'EW',OUTPERFORM:'OP',UNDERPERFORM:'UP'})[c]||c;
+  const CT={BUY:'buy',OP:'buy',OW:'buy',ADD:'buy',ACCUMULATE:'buy',SELL:'sell',UP:'sell',UW:'sell',REDUCE:'sell',HOLD:'hold',NEUTRAL:'hold',EW:'hold',MP:'hold'};
+  const callOf=title=>{
+    let m=title.match(CALL_RE)||title.match(BARE_RE);
+    if(m){ const c=normCall((m[1]||m[0]).toUpperCase()); return {label:c, cls:CT[c]||tag(title)}; }
+    const t=tag(title);
+    return {label:t==='buy'?'Positive':t==='sell'?'Negative':'Neutral', cls:t};
+  };
+  const PD=(typeof PDFDATA==='undefined'||!PDFDATA)?null:PDFDATA;
+  const PM=(typeof PDFMAP==='undefined'||!PDFMAP)?null:PDFMAP;
+  const pdKey=(h,d,co,ti)=>`${h}|${d}|${co}|${String(ti).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'')}`;
+  const fileUrl=p=>'file:///'+p.replace(/\\/g,'/').split('/').map(encodeURIComponent).join('/');
+  const NB={}; (typeof NOTEBOOKS==='undefined'?[]:NOTEBOOKS).forEach(n=>{ if(n&&n.url) NB[n.name]=n.url; });
+  const urlFor=(folder,h,ti,d,u)=>{
+    if(u) return u;
+    if(PM){
+      const tk=String(ti).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
+      const p=PM[`${h}|${d}|${folder}|${tk}`];
+      if(p) return fileUrl(p);
+    }
+    if(NB[folder]){ const u2=NB[folder]; return u2+(u2.includes('?')?'&':'?')+'authuser=markworktk%40gmail.com'; }
+    return 'https://www.google.com/search?q='+encodeURIComponent(`${h} ${folder} ${ti}`);
+  };
+  const tpNum=s=>{ if(!s) return null; const m=String(s).replace(/[,₹\s]/g,'').match(/^([\d.]+)/); return m?parseFloat(m[1]):null; };
+  // ---- render ---------------------------------------------------------
+  const header=
+    `<div class="n-header">`+
+      `<span class="n-date">Date</span>`+
+      `<span class="n-co">House</span>`+
+      `<span class="n-ti">Headline</span>`+
+      `<span class="n-tp">Curr TP</span>`+
+      `<span class="n-call-h">Curr</span>`+
+      `<span class="n-tp prev">Prev TP</span>`+
+      `<span class="n-call-h">Prev</span>`+
+    `</div>`;
+  const rows=houses.map(h=>{
+    const arr=byHouse[h];           // already sorted newest-first
+    const latest=arr[0];
+    const prior =arr.find(r=>r[1]<latest[1])||null;
+    const d=latest[1], co=latest[2], ti=latest[3], u=latest[4];
+    const href=urlFor(co,h,ti,d,u);
+    const pd=PD?PD[pdKey(h,d,co,ti)]:null;
+    const currTP=(pd&&pd.currTP)||tpOf(ti);
+    const c=(pd&&pd.currCall)
+      ? {label:pd.currCall, cls:CT[pd.currCall]||'hold'}
+      : callOf(ti);
+    const priorPd=(PD&&prior)?PD[pdKey(prior[0],prior[1],prior[2],prior[3])]:null;
+    const prevTP=(pd&&pd.prevTP)||(priorPd&&priorPd.currTP)||(prior?tpOf(prior[3]):null);
+    const prevCallStr=(pd&&pd.prevCall)||(priorPd&&priorPd.currCall);
+    const prevC=prevCallStr
+      ? {label:prevCallStr, cls:CT[prevCallStr]||'hold'}
+      : (prior?callOf(prior[3]):null);
+    const cN=tpNum(currTP), pN=tpNum(prevTP);
+    const arrow=(cN!=null&&pN!=null&&cN!==pN)
+      ? (cN>pN ? `<span class="tp-arrow up" title="Raised from ₹${esc(prevTP)}">▲</span>`
+               : `<span class="tp-arrow down" title="Cut from ₹${esc(prevTP)}">▼</span>`)
+      : '';
+    const tpCurrCell=currTP ? `<span class="n-tp">₹${esc(currTP)}${arrow}</span>` : `<span class="n-tp muted">—</span>`;
+    const tpPrevCell=prevTP ? `<span class="n-tp prev">₹${esc(prevTP)}</span>`     : `<span class="n-tp prev muted">—</span>`;
+    const callCurrCell=`<span class="n-call ${c.cls}">${esc(c.label)}</span>`;
+    const callPrevCell=prevC ? `<span class="n-call prev ${prevC.cls}">${esc(prevC.label)}</span>`
+                             : `<span class="n-call prev empty">—</span>`;
+    return `<div class="note">`+
+      `<span class="n-date">${fmtD(d)}</span>`+
+      `<span class="n-co" title="${esc(h)}">${esc(h)}</span>`+
+      `<a class="n-ti" href="${esc(href)}" target="_blank" rel="noopener"`+
+        (pd && pd.summary ? ` data-summary="${esc(pd.summary)}"` : '')+
+        ` title="${esc(ti)}">${esc(ti)}</a>`+
+      tpCurrCell+callCurrCell+tpPrevCell+callPrevCell+
+    `</div>`;
+  }).join('');
+  if(sub) sub.textContent=`${houses.length} broker${houses.length>1?'s':''} covering this name · sorted by most-recent report`;
+  el.innerHTML=header+rows;
+}
+
 async function loadCompanyChart(name, tf){
   if (name) currentCompany = name;
   if (tf) currentTf = tf;
-  // Refresh the company description below the chart whenever the
-  // selection changes (no-op if COMPANIES hasn't loaded yet).
-  if (name) updateCoDesc();
+  // Refresh the company description and broker-coverage card below the
+  // chart whenever the selection changes (no-op until COMPANIES /
+  // notesExt / PDFDATA have loaded).
+  if (name) { updateCoDesc(); renderCompanyResearch(); }
   // Sync the segmented control highlight to the current timeframe.
   document.querySelectorAll('#cRangeSeg button').forEach(b=>{
     b.classList.toggle('on', b.dataset.r===currentTf);
