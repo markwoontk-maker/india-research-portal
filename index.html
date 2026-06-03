@@ -813,9 +813,19 @@
         #viewStrategy .sw-n{background:var(--saffron-soft);border-color:rgba(233,162,59,.45)}
         #viewStrategy .sw-na{background:transparent;border-color:var(--line)}
         #viewStrategy .grid-wrap{overflow-x:auto}
-        #viewStrategy table.strat{width:100%;border-collapse:separate;border-spacing:4px 3px;min-width:760px;table-layout:fixed}
-        #viewStrategy table.strat th{font-size:11.5px;font-weight:600;color:var(--text-dim);text-align:center;padding:4px 6px;letter-spacing:.02em;width:13%}
-        #viewStrategy table.strat th.sec{text-align:left;width:22%}
+        #viewStrategy table.strat{width:100%;border-collapse:separate;border-spacing:4px 3px;min-width:840px;table-layout:fixed}
+        #viewStrategy table.strat th{font-size:11.5px;font-weight:600;color:var(--text-dim);text-align:center;padding:4px 6px;letter-spacing:.02em;width:11.6%}
+        #viewStrategy table.strat th.sec{text-align:left;width:20%}
+        #viewStrategy table.strat th.mamg{width:10%;color:var(--saffron)}
+        #viewStrategy table.strat td.mamg{padding:2px}
+        #viewStrategy .mamg-sel{width:100%;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;
+          text-align:center;text-align-last:center;padding:5px 2px;border-radius:6px;border:1px dashed var(--line);
+          background:var(--ink-2);color:var(--text-mute);cursor:pointer;-webkit-appearance:none;appearance:none}
+        #viewStrategy .mamg-sel:hover{border-color:var(--saffron)}
+        #viewStrategy .mamg-sel.ow{background:var(--up-soft);border-color:rgba(63,199,138,.45);border-style:solid;color:var(--up)}
+        #viewStrategy .mamg-sel.uw{background:var(--down-soft);border-color:rgba(240,106,106,.45);border-style:solid;color:var(--down)}
+        #viewStrategy .mamg-sel.n{background:var(--saffron-soft);border-color:rgba(233,162,59,.45);border-style:solid;color:var(--saffron)}
+        #viewStrategy .mamg-sel option{background:var(--ink-2);color:var(--text)}
         #viewStrategy table.strat td.sec{text-align:left;font-size:12px;font-weight:600;color:var(--text);padding:0 10px;line-height:1.2}
         #viewStrategy table.strat td.cell{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;
           padding:5px 4px;border-radius:6px;border:1px solid var(--line);color:var(--text-mute);cursor:default}
@@ -870,6 +880,7 @@
         <div class="grid-wrap">
           <table class="strat">
             <thead><tr>
+              <th class="mamg" title="Your house view — editable">MAMG view</th>
               <th class="sec">GICS Sector</th>
               <th>JPMorgan</th><th>Nomura</th><th>CLSA</th><th>Jefferies</th><th>Bernstein</th><th>Kotak</th>
             </tr></thead>
@@ -1086,6 +1097,37 @@
 
         <p class="note"><strong>Method.</strong> Only the four houses that name stocks are counted (Jefferies &amp; Bernstein give thematic views only). Buy/OW = a house's top pick, model-portfolio overweight or Buy/High-Conviction-Outperform rating; Sell/UW = CLSA Underperform or Kotak KIE Sell. JPMorgan and Nomura don't publish stock-level sell lists, so the sell side draws on CLSA and Kotak. Mahindra &amp; Mahindra is a Kotak <em>Reduce</em> (not a full Sell) so it is not flagged against the two buys.</p>
       </div>
+      <script>
+        (function(){
+          var rows=document.querySelectorAll('#viewStrategy table.strat tbody tr');
+          rows.forEach(function(tr){
+            var secCell=tr.querySelector('td.sec'); if(!secCell) return;
+            var sector=secCell.textContent.trim();
+            var key='mamgView:'+sector;
+            var td=document.createElement('td'); td.className='mamg';
+            var sel=document.createElement('select'); sel.className='mamg-sel';
+            sel.setAttribute('aria-label','MAMG view — '+sector);
+            [['','—'],['OW','OW'],['UW','UW'],['N','N']].forEach(function(o){
+              var op=document.createElement('option'); op.value=o[0]; op.textContent=o[1]; sel.appendChild(op);
+            });
+            function paint(){
+              sel.classList.remove('ow','uw','n');
+              if(sel.value==='OW') sel.classList.add('ow');
+              else if(sel.value==='UW') sel.classList.add('uw');
+              else if(sel.value==='N') sel.classList.add('n');
+            }
+            var saved=null; try{ saved=localStorage.getItem(key); }catch(e){}
+            if(saved){ sel.value=saved; }
+            paint();
+            sel.addEventListener('change',function(){
+              try{ if(sel.value) localStorage.setItem(key,sel.value); else localStorage.removeItem(key); }catch(e){}
+              paint();
+            });
+            td.appendChild(sel);
+            tr.insertBefore(td, tr.firstChild);
+          });
+        })();
+      </script>
     </div>
 
     <div id="viewMarkets" hidden>
