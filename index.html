@@ -2503,10 +2503,28 @@ function renderResearchNotes(groupBy){
   // pdfmap.json: { "house|date|folder|alphanum-title": "C:\\path\\to\\file.pdf" }
   // Loaded by the fetch at the bottom of the file; null until then.
   const PM = (typeof PDFMAP==='undefined' || !PDFMAP) ? null : PDFMAP;
-  // C:\path\file.pdf  ->  file:///C:/path/file.pdf  (browsers open this
-  // in their built-in PDF viewer when the dashboard is opened from disk).
+  // Where the local PDF server (scripts/pdf-server.js) is listening, and
+  // what disk root it's serving. Anything under that root becomes
+  // http://127.0.0.1:8788/<relative-path>; anything outside falls back
+  // to file:// (only useful when the dashboard itself is loaded from disk).
+  const PDF_DISK_ROOT  = 'C:/Users/admin/Desktop/India Related Reports/';
+  const PDF_HTTP_ROOT  = 'http://127.0.0.1:8788/';
+  const onFileOrigin   = (typeof location!=='undefined') && location.protocol==='file:';
   function fileUrl(p){
-    return 'file:///' + p.replace(/\\/g,'/').split('/').map(encodeURIComponent).join('/');
+    const norm = String(p).replace(/\\/g,'/');
+    const lc   = norm.toLowerCase();
+    const root = PDF_DISK_ROOT.toLowerCase();
+    // Prefer the localhost server (works from any origin, including the
+    // live HTTPS site — browsers explicitly allow http://localhost as a
+    // potentially-trustworthy origin).
+    if (lc.startsWith(root)) {
+      const rel = norm.slice(PDF_DISK_ROOT.length);
+      return PDF_HTTP_ROOT + rel.split('/').map(encodeURIComponent).join('/');
+    }
+    // Outside the served root — only reachable when the dashboard is
+    // opened directly from disk (file:// origin).
+    if (onFileOrigin) return 'file:///' + norm.split('/').map(encodeURIComponent).join('/');
+    return null;
   }
   // Click target priority:
   //   1. explicit notesExt URL (Trendlyne PDF for external broker calls)
@@ -2531,7 +2549,7 @@ function renderResearchNotes(groupBy){
       // Lenient title key: strip trailing " (N)" suffix and non-alnum chars.
       const tk = String(headline).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
       const p = PM[`${house}|${date}|${folder}|${tk}`];
-      if(p) return fileUrl(p);
+      if(p){ const u = fileUrl(p); if(u) return u; }
     }
     return 'https://www.google.com/search?q='+
       encodeURIComponent(`${house} ${folder} ${headline}`);
@@ -5044,18 +5062,30 @@ function renderCompanyResearch(){
   const PD=(typeof PDFDATA==='undefined'||!PDFDATA)?null:PDFDATA;
   const PM=(typeof PDFMAP==='undefined'||!PDFMAP)?null:PDFMAP;
   const pdKey=(h,d,co,ti)=>`${h}|${d}|${co}|${String(ti).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'')}`;
-  const fileUrl=p=>'file:///'+p.replace(/\\/g,'/').split('/').map(encodeURIComponent).join('/');
+  // See fileUrl() in renderResearchNotes — local PDFs are served via
+  // http://127.0.0.1:8788 (scripts/pdf-server.js) so clicks work even on
+  // the live HTTPS site. Falls back to file:// only when the dashboard
+  // itself is loaded from disk and the file is outside the served root.
+  const PDF_DISK_ROOT_2 = 'C:/Users/admin/Desktop/India Related Reports/';
+  const PDF_HTTP_ROOT_2 = 'http://127.0.0.1:8788/';
+  const onFileOrigin_2  = (typeof location!=='undefined') && location.protocol==='file:';
+  const fileUrl=p=>{
+    const norm=String(p).replace(/\\/g,'/');
+    if (norm.toLowerCase().startsWith(PDF_DISK_ROOT_2.toLowerCase())) {
+      return PDF_HTTP_ROOT_2 + norm.slice(PDF_DISK_ROOT_2.length).split('/').map(encodeURIComponent).join('/');
+    }
+    if (onFileOrigin_2) return 'file:///'+norm.split('/').map(encodeURIComponent).join('/');
+    return null;
+  };
   const NB={}; (typeof NOTEBOOKS==='undefined'?[]:NOTEBOOKS).forEach(n=>{ if(n&&n.url) NB[n.name]=n.url; });
-  // Title link → local PDF via PDFMAP. NotebookLM is NOT used as a
-  // fallback; clicks should always target the actual PDF. Browsers block
-  // file:// navigation from http(s):// origins, so open index.html from
-  // disk (file:// origin) for the click to actually navigate.
+  // Title link → local PDF via PDFMAP (served by the localhost PDF
+  // server). NotebookLM is NOT used as a fallback.
   const urlFor=(folder,h,ti,d,u)=>{
     if(u) return u;
     if(PM){
       const tk=String(ti).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
       const p=PM[`${h}|${d}|${folder}|${tk}`];
-      if(p) return fileUrl(p);
+      if(p){ const url = fileUrl(p); if(url) return url; }
     }
     return 'https://www.google.com/search?q='+encodeURIComponent(`${h} ${folder} ${ti}`);
   };
