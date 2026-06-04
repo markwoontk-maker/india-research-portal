@@ -50,7 +50,12 @@
   ::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
   ::-webkit-scrollbar-track{background:transparent}
 
-  .mono{font-family:'IBM Plex Mono',monospace;font-feature-settings:"tnum"}
+  /* Disable IBM Plex Mono's slashed/dotted zero glyph everywhere —
+     the slash through 0 is hard to tell apart from 8 or O at small
+     sizes. `"zero" 0` turns the feature off; `"tnum"` keeps digits
+     equal-width on tables and chart axes. */
+  body{font-feature-settings:"zero" 0}
+  .mono{font-family:'IBM Plex Mono',monospace;font-feature-settings:"tnum","zero" 0}
   .up{color:var(--up)} .down{color:var(--down)}
 
   /* ---------- Shell ---------- */
