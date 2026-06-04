@@ -470,6 +470,35 @@
     margin-left:2px;white-space:nowrap;border-bottom:1px dotted transparent}
   .thesis-cite:hover{color:var(--text-dim);border-bottom-color:var(--text-mute)}
   @media (max-width:760px){ .thesis-grid{grid-template-columns:1fr} }
+  /* Financial summary card */
+  .fin-row{display:grid;grid-template-columns:24px 1fr;gap:8px;padding:10px 0;
+    border-bottom:1px solid var(--line-soft);align-items:center;cursor:pointer}
+  .fin-row:last-child{border-bottom:none}
+  .fin-row:hover{background:rgba(255,255,255,.015)}
+  .fin-arrow{font-size:11px;color:var(--text-mute);user-select:none;transition:transform .15s}
+  .fin-row.open .fin-arrow{transform:rotate(90deg)}
+  .fin-label{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--text);
+    margin-right:auto}
+  .fin-fy-row{display:flex;flex-wrap:wrap;gap:18px;font-family:'IBM Plex Mono',monospace;
+    font-size:12px;color:var(--text-dim)}
+  .fin-fy{white-space:nowrap}
+  .fin-fy .fy-tag{font-size:10px;color:var(--text-mute);margin-left:2px}
+  .fin-fy.actual .fy-tag{color:var(--up)}
+  .fin-fy.est .fy-tag{color:var(--saffron)}
+  .fin-fy .v{font-weight:600;color:var(--text)}
+  .fin-expand{grid-column:1/-1;display:none;padding:8px 0 4px;
+    border-top:1px solid var(--line-soft);margin-top:8px}
+  .fin-row.open .fin-expand{display:block}
+  table.fin-tbl{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:11.5px}
+  table.fin-tbl th{padding:6px 8px;border-bottom:1px solid var(--line);color:var(--text-mute);
+    text-align:right;font-weight:500;letter-spacing:.04em;text-transform:uppercase;font-size:9.5px}
+  table.fin-tbl th:first-child{text-align:left}
+  table.fin-tbl td{padding:5px 8px;border-bottom:1px solid var(--line-soft);text-align:right;
+    color:var(--text-dim);white-space:nowrap}
+  table.fin-tbl td:first-child{text-align:left;color:var(--text)}
+  table.fin-tbl td a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--text-mute)}
+  table.fin-tbl td a:hover{border-bottom-color:var(--text)}
+  table.fin-tbl tr.avg td{font-weight:600;color:var(--text);border-top:1px solid var(--line)}
   /* Sector tab: per-broker view blocks + earnings-season list */
   .sec-view-block{padding:12px 0;border-top:1px solid var(--line-soft)}
   .sec-view-block:first-child{border-top:none;padding-top:4px}
@@ -1402,6 +1431,17 @@
           </div>
         </div>
         <p class="co-desc-src">Bull = positive-rated reports (Buy/Add/OW/Outperform). Bear = negative-rated reports (Sell/Reduce/UW/Underperform) plus cautious Hold/Neutral notes where flagged. Citations open the local PDF when available, the Trendlyne report PDF otherwise.</p>
+      </div>
+      <!-- Financial summary distilled from each broker's latest estimate
+           table — averages plus a click-to-expand per-broker breakdown
+           per fiscal year. -->
+      <div class="card reveal" id="cFinCard" hidden>
+        <div class="card-h">
+          <div><h3>Financial Summary</h3>
+          <p id="cFinSub">Annual figures + average broker forecast per fiscal year — click ▶ to see per-broker breakdown</p></div>
+        </div>
+        <div id="cFinBody"></div>
+        <p class="co-desc-src">Sourced from each broker's most recent report on the company (PDF estimate tables, layout-extracted via pdftotext). Numbers normalised to ₹ crore. Where a broker uses a different unit/convention, this normalisation may be off — see the per-broker breakdown for raw values.</p>
       </div>
       <!-- Broker coverage on the selected company: one row per research house,
            latest TP/call + prior TP/call side-by-side. -->
@@ -4651,6 +4691,14 @@ fetch('data/theses.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=
   if(!j||typeof j!=='object') return;
   window.THESES=j;
   if(typeof renderCompanyThesis==='function') renderCompanyThesis();
+}).catch(()=>{});
+// Financial summary per company (Revenue / EBITDA / Net Profit by FY)
+// built by scripts/build-financials.js from each broker's latest report.
+window.FINANCIALS=null;
+fetch('data/financials.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
+  if(!j||typeof j!=='object') return;
+  window.FINANCIALS=j;
+  if(typeof renderCompanyFinancials==='function') renderCompanyFinancials();
 }).catch(()=>{});
 let screenerLoaded=false;
 // Sector notebooks vs company notebooks — sectors are the "India(n) X"
