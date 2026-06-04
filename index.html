@@ -1391,12 +1391,12 @@
         <div id="secPosBox" style="overflow-x:auto">
           <table id="secPosTbl" style="width:100%;border-collapse:collapse;min-width:560px;font-size:12.5px">
             <thead>
-              <tr style="color:var(--text-mute);font-size:10px;letter-spacing:.1em;text-transform:uppercase">
-                <th style="text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)">Sector</th>
-                <th style="text-align:right;padding:8px 10px;border-bottom:1px solid var(--line)">Net flow (this mo)</th>
-                <th style="text-align:right;padding:8px 10px;border-bottom:1px solid var(--line)">Prev mo</th>
-                <th style="text-align:center;padding:8px 10px;border-bottom:1px solid var(--line)">OW/UW vs N500</th>
-                <th style="text-align:center;padding:8px 10px;border-bottom:1px solid var(--line)">Δ MoM</th>
+              <tr style="color:var(--text-mute);font-size:10px;letter-spacing:.1em;text-transform:uppercase;user-select:none">
+                <th data-key="name" data-label="Sector" title="Click to sort" style="cursor:pointer;text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)">Sector</th>
+                <th data-key="flow" data-label="Net flow (this mo)" title="Click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">Net flow (this mo)</th>
+                <th data-key="flowPrev" data-label="Prev mo" title="Click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">Prev mo</th>
+                <th data-key="ow" data-label="OW/UW vs N500" title="Click to sort" style="cursor:pointer;text-align:center;padding:6px 10px;border-bottom:1px solid var(--line)">OW/UW vs N500</th>
+                <th data-key="dmom" data-label="Δ MoM" title="Click to sort" style="cursor:pointer;text-align:center;padding:6px 10px;border-bottom:1px solid var(--line)">Δ MoM</th>
               </tr>
             </thead>
             <tbody id="secPosBody"><tr><td colspan="5" style="padding:24px;text-align:center;color:var(--text-mute)">Loading sector positioning…</td></tr></tbody>
@@ -6078,33 +6078,57 @@ async function loadPositioning(){
 
 /* ---------- Positioning tab · FPI sector positioning ---------- */
 function secCr(v){ const s=v<0?'−':'+'; return s+'₹'+Math.abs(Math.round(v)).toLocaleString('en-IN'); }
+let secPosData=null, secPosSort={key:null,dir:-1};   // dir: 1 asc, -1 desc
+function secPosVal(s,k){ return k==='dmom' ? (s.owPrev==null?0:+(s.ow-s.owPrev).toFixed(3)) : s[k]; }
+function secPosRender(){
+  const body=document.getElementById('secPosBody'); if(!body||!secPosData) return;
+  const rows=secPosData.slice();
+  if(secPosSort.key){ const k=secPosSort.key, dir=secPosSort.dir;
+    rows.sort((a,b)=> k==='name' ? dir*String(a.name).localeCompare(String(b.name)) : dir*(secPosVal(a,k)-secPosVal(b,k))); }
+  const maxAbs=Math.max(1,...secPosData.map(s=>Math.abs(s.flow)));
+  const td='padding:3px 10px;border-bottom:1px solid var(--line-soft)';
+  body.innerHTML=rows.map(s=>{
+    const up=s.flow>=0, col=up?'var(--up)':'var(--down)';
+    const w=Math.round(Math.abs(s.flow)/maxAbs*100);
+    const bar=`<div style="height:4px;border-radius:3px;margin-top:2px;background:${col};width:${w}%;margin-left:${up?'auto':'0'}"></div>`;
+    const owUp=s.ow>=0; const owTxt=(owUp?'+':'−')+Math.abs(s.ow).toFixed(1)+'% '+(owUp?'OW':'UW');
+    const owChip=`<span style="font-family:'IBM Plex Mono';font-size:11px;font-weight:600;padding:1px 7px;border-radius:6px;border:1px solid ${owUp?'rgba(63,199,138,.40)':'rgba(240,106,106,.40)'};background:${owUp?'var(--up-soft)':'var(--down-soft)'};color:${owUp?'var(--up)':'var(--down)'}">${owTxt}</span>`;
+    const dOw=(s.owPrev==null)?0:+(s.ow-s.owPrev).toFixed(1);
+    const dTxt=dOw===0?'·':(dOw>0?'▲ +':'▼ ')+dOw.toFixed(1);
+    const dCol=dOw===0?'var(--text-mute)':(dOw>0?'var(--up)':'var(--down)');
+    return `<tr>
+      <td style="${td};font-weight:600">${s.name}</td>
+      <td style="${td};text-align:right;font-family:'IBM Plex Mono';color:${col}">${secCr(s.flow)}${bar}</td>
+      <td style="${td};text-align:right;font-family:'IBM Plex Mono';color:var(--text-mute)">${secCr(s.flowPrev)}</td>
+      <td style="${td};text-align:center">${owChip}</td>
+      <td style="${td};text-align:center;font-family:'IBM Plex Mono';font-size:11px;color:${dCol}">${dTxt}</td>
+    </tr>`;
+  }).join('');
+  document.querySelectorAll('#secPosTbl th[data-key]').forEach(th=>{
+    const act=secPosSort.key===th.dataset.key, arr=secPosSort.dir>0?'▲':'▼';
+    th.innerHTML=th.dataset.label+(act?' <span style="color:var(--saffron)">'+arr+'</span>':'');
+  });
+}
 async function loadSectorPositioning(){
   const body=document.getElementById('secPosBody'); if(!body) return;
   try{
     const res=await fetch('data/fpi_sectors.json',{cache:'no-store'});
     if(!res.ok) throw new Error('http '+res.status);
     const d=await res.json();
-    const maxAbs=Math.max(1,...d.sectors.map(s=>Math.abs(s.flow)));
+    secPosData=d.sectors;
     const mon=iso=>{ const [y,m]=iso.split('-'); return new Date(y,m-1,1).toLocaleDateString('en-IN',{month:'short',year:'numeric'}); };
     document.getElementById('secPosSub').textContent=
-      'Net FPI flow by sector · ₹ Cr · '+mon(d.asOf)+' vs '+mon(d.prevAsOf)+' · OW/UW vs '+(d.benchmark||'Nifty 500');
-    body.innerHTML=d.sectors.map(s=>{
-      const up=s.flow>=0, col=up?'var(--up)':'var(--down)';
-      const w=Math.round(Math.abs(s.flow)/maxAbs*100);
-      const bar=`<div style="height:5px;border-radius:3px;margin-top:4px;background:${col};width:${w}%;margin-left:${up?'auto':'0'}"></div>`;
-      const owUp=s.ow>=0; const owTxt=(owUp?'+':'−')+Math.abs(s.ow).toFixed(1)+'% '+(owUp?'OW':'UW');
-      const owChip=`<span style="font-family:'IBM Plex Mono';font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;border:1px solid ${owUp?'rgba(63,199,138,.40)':'rgba(240,106,106,.40)'};background:${owUp?'var(--up-soft)':'var(--down-soft)'};color:${owUp?'var(--up)':'var(--down)'}">${owTxt}</span>`;
-      const dOw=(s.owPrev==null)?0:+(s.ow-s.owPrev).toFixed(1);
-      const dTxt=dOw===0?'·':(dOw>0?'▲ +':'▼ ')+dOw.toFixed(1);
-      const dCol=dOw===0?'var(--text-mute)':(dOw>0?'var(--up)':'var(--down)');
-      return `<tr>
-        <td style="padding:9px 10px;border-bottom:1px solid var(--line-soft);font-weight:600">${s.name}</td>
-        <td style="padding:9px 10px;border-bottom:1px solid var(--line-soft);text-align:right;font-family:'IBM Plex Mono';color:${col}">${secCr(s.flow)}${bar}</td>
-        <td style="padding:9px 10px;border-bottom:1px solid var(--line-soft);text-align:right;font-family:'IBM Plex Mono';color:var(--text-mute)">${secCr(s.flowPrev)}</td>
-        <td style="padding:9px 10px;border-bottom:1px solid var(--line-soft);text-align:center">${owChip}</td>
-        <td style="padding:9px 10px;border-bottom:1px solid var(--line-soft);text-align:center;font-family:'IBM Plex Mono';font-size:11px;color:${dCol}">${dTxt}</td>
-      </tr>`;
-    }).join('');
+      'Net FPI flow by sector · ₹ Cr · '+mon(d.asOf)+' vs '+mon(d.prevAsOf)+' · OW/UW vs '+(d.benchmark||'Nifty 500')+' · click a header to sort';
+    const tbl=document.getElementById('secPosTbl');
+    if(tbl && !tbl.dataset.sortWired){ tbl.dataset.sortWired='1';
+      tbl.querySelectorAll('th[data-key]').forEach(th=>th.addEventListener('click',()=>{
+        const k=th.dataset.key;
+        if(secPosSort.key===k) secPosSort.dir=-secPosSort.dir;
+        else { secPosSort.key=k; secPosSort.dir=(k==='name'?1:-1); }
+        secPosRender();
+      }));
+    }
+    secPosRender();
   }catch(e){
     body.innerHTML='<tr><td colspan="5" style="padding:24px;text-align:center;color:var(--text-mute)">Sector positioning unavailable — could not load <code>data/fpi_sectors.json</code>.</td></tr>';
   }
