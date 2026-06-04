@@ -184,6 +184,8 @@
     border-radius:8px;cursor:pointer;transition:background .15s}
   .sector:hover{background:var(--panel-2)}
   .sector:hover .nm{color:var(--saffron)}
+  .sector.active{background:var(--panel-2)}
+  .sector.active .nm{color:var(--saffron)}
   .back{background:var(--ink-2);border:1px solid var(--line);color:var(--text-dim);
     font-family:'Roboto Mono';font-size:11.5px;padding:6px 11px;border-radius:8px;
     cursor:pointer;margin-bottom:14px;transition:.15s}
@@ -198,8 +200,11 @@
   .dd{background:var(--ink-2);border:1px solid var(--line);color:var(--text-dim);
     font-family:'Roboto Mono';font-size:14px;padding:8px 12px;border-radius:8px;cursor:pointer;outline:none}
   .dd:hover{color:var(--text);border-color:var(--saffron)}
-  #secDetail{display:none}
-  .sd-chart{height:152px;margin:2px 0 18px;position:relative}
+  #secDetail{display:none;margin:6px -8px 12px;padding:14px 14px 8px;
+    background:var(--ink-2);border:1px solid var(--line-soft);
+    border-left:3px solid var(--saffron);border-radius:8px}
+  #secDetail .back{margin-bottom:10px}
+  .sd-chart{height:152px;margin:2px 0 14px;position:relative}
   .sd-lists{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   .mv-note{font-size:12.5px;line-height:1.65;color:var(--text-dim);background:var(--ink-2);
     border:1px solid var(--line-soft);border-left:3px solid var(--saffron);
@@ -3284,7 +3289,6 @@ function drawSecChart(data){
 async function loadSectorDetail(name,tf){
   const sec=sectors.find(s=>s[0]===name); if(!sec) return;
   const [r,i]=TF[tf];
-  document.getElementById('secCaption').textContent=`${name} · ${tf} return`;
   try{
     const j=await getJSON(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sec[1])}?range=${r}&interval=${i}`);
     const res=j.chart&&j.chart.result&&j.chart.result[0];
@@ -3309,26 +3313,45 @@ async function loadSectorDetail(name,tf){
   document.getElementById('secBot').innerHTML=fmt(rows.slice(-5).reverse());
 }
 
-function refreshSector(){
+// Move #secDetail inline under the active sector row (or detach it). Called
+// after every renderSectors() so the panel survives bar re-renders on TF change.
+function placeSectorDetail(){
   const bars=document.getElementById('sectors');
   const det=document.getElementById('secDetail');
-  if(curSec){
-    bars.style.display='none'; det.style.display='block';
-    loadSectorDetail(curSec,curTF);
-  }else{
-    det.style.display='none'; bars.style.display='block';
-    document.getElementById('secCaption').textContent=`NSE sectoral indices · ${curTF} return`;
-    loadSectorBars(curTF);
+  // strip prior active highlight
+  bars.querySelectorAll('.sector.active').forEach(r=>r.classList.remove('active'));
+  if(!curSec){
+    det.style.display='none';
+    // park the detail back at its original location (sibling after #sectors)
+    if(det.parentElement!==bars.parentElement) bars.parentElement.appendChild(det);
+    return;
   }
+  const row=bars.querySelector(`.sector[data-sec="${CSS.escape(curSec)}"]`);
+  if(!row){ det.style.display='none'; return; }
+  row.classList.add('active');
+  row.insertAdjacentElement('afterend', det);
+  det.style.display='block';
+}
+
+function refreshSector(){
+  document.getElementById('secCaption').textContent=`NSE sectoral indices · ${curTF} return`;
+  loadSectorBars(curTF).then(()=>{
+    placeSectorDetail();
+    if(curSec) loadSectorDetail(curSec,curTF);
+  });
 }
 
 (function(){
   document.getElementById('tfSel').onchange=e=>{ curTF=e.target.value; refreshSector(); };
   document.getElementById('sectors').addEventListener('click',e=>{
     const row=e.target.closest('.sector'); if(!row) return;
-    curSec=row.dataset.sec; refreshSector();
+    const clicked=row.dataset.sec;
+    // toggle off if same sector clicked again
+    curSec = (curSec===clicked) ? '' : clicked;
+    placeSectorDetail();
+    if(curSec) loadSectorDetail(curSec,curTF);
   });
-  document.getElementById('secBack').onclick=()=>{ curSec=''; refreshSector(); };
+  document.getElementById('secBack').onclick=()=>{ curSec=''; placeSectorDetail(); };
 })();
 
 /* ---------- Ticker -> company name (best-effort, falls back to ticker) ---------- */
