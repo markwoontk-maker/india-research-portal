@@ -111,15 +111,23 @@ whole file) with each covered house's formal MODEL PORTFOLIO, if it publishes on
 in the selected reports. This powers the "Model Portfolio Summary" card and is
 kept separate from data/model_portfolios.json (which a remote routine owns).
 
-Include ONLY houses that publish a genuine model portfolio / focus list:
-- JPMorgan & Nomura: SECTOR-level model portfolios → entries are GICS sector
-  names with `"ticker":""` (so the card shows "—" for return).
-- CLSA: its India Focus Portfolio — use the stated SECTOR tilts (ticker:"").
-  Stock-level holdings are login-gated; do NOT fabricate them.
-- Kotak Alphabet quant: STOCK-level concentrated factor portfolio → real stock
-  names WITH Yahoo tickers (e.g. "ONGC.NS","TITAN.NS") so returns render.
+Entries must be INDIVIDUAL STOCKS (never sector names). Include ONLY houses that
+publish a genuine model portfolio / focus list / top-pick list:
+- JPMorgan & Nomura: list their model-portfolio / top-pick STOCKS with Yahoo
+  tickers. They do NOT publish per-stock weights → set `"wt":""` (card shows "—").
+- CLSA: its India Focus Portfolio / High-Conviction Outperform names as stocks
+  with tickers. Per-stock weights are login-gated → `"wt":""`. Don't fabricate weights.
+- Kotak Alphabet quant: the Concentrated factor portfolio STOCKS with their
+  published factor weights → `"wt":<number>` (e.g. 29.06) and Yahoo tickers.
+- Any other covered house that prints a stock-level model portfolio with weights:
+  include the stocks and their `wt` numbers.
 - Bernstein, Jefferies, and Kotak's ownership/macro notes: usually NO model
   portfolio → omit them entirely. Never invent positions or weights.
+
+`wt` = absolute portfolio weight as a NUMBER (percent) where the house prints
+per-stock weights; otherwise the empty string `""`. Use correct Yahoo NSE tickers
+(e.g. "LT.NS","ICICIBANK.NS","M&M.NS"); leave `"ticker":""` only if you can't
+determine it (name still shows, return shows "—").
 
 Schema (valid JSON; keep the leading "_note"):
 ```json
@@ -127,10 +135,10 @@ Schema (valid JSON; keep the leading "_note"):
   "_note": "Mined from the local India Strategy PDFs; separate from model_portfolios.json so the remote refresher can't clobber it.",
   "asOf": "YYYY-MM",
   "houses": [
-    { "broker": "JPMorgan", "asOf": "YYYY-MM", "benchmark": "MSCI India",
-      "note": "Sector model portfolio (...report...).",
-      "overweight": [ { "stock": "Industrials", "ticker": "", "change": "raised|held|trimmed|new|removed|", "note": "why" } ],
-      "underweight": [ { "stock": "Information Technology", "ticker": "", "change": "held", "note": "why" } ] }
+    { "broker": "Kotak — Alphabet Quant (factor)", "asOf": "YYYY-MM", "benchmark": "Nifty 50",
+      "note": "Concentrated factor portfolio.",
+      "overweight": [ { "stock": "Bharti Airtel", "ticker": "BHARTIARTL.NS", "wt": 29.06, "change": "", "note": "why" } ],
+      "underweight": [] }
   ]
 }
 ```

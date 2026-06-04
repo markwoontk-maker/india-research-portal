@@ -1,52 +1,53 @@
 {
-  "_note": "Model portfolios mined from the local India Strategy PDF library (the six covered houses). Kept separate from model_portfolios.json (which the remote India Positioning Data Refresher regenerates from public sources) so the two never clobber each other. Sector-level houses use ticker:'' so the 1-month return shows '—'.",
+  "_note": "Model portfolios mined from the local India Strategy PDFs (the covered houses). Kept separate from model_portfolios.json (which the remote India Positioning Data Refresher regenerates from public sources) so the two never clobber each other. 'wt' = absolute portfolio weight % where the house publishes per-stock weights; '' renders '—' (JPMorgan/Nomura/CLSA give top-pick lists without per-stock weights).",
   "asOf": "2026-06",
   "houses": [
     {
       "broker": "JPMorgan",
       "asOf": "2026-06",
       "benchmark": "MSCI India",
-      "note": "Sector model portfolio (India Equity Strategy, 4QFY26 Earnings Dissector + May wrap).",
+      "note": "Top picks from JPMorgan's sector model portfolio (4QFY26 Earnings Dissector). No per-stock weights published.",
       "overweight": [
-        { "stock": "Industrials", "ticker": "", "change": "raised", "note": "Upgraded to OW from Neutral — infra capex, electrification/grid, defence, manufacturing" },
-        { "stock": "Financials", "ticker": "", "change": "held", "note": "Banks/NBFCs/insurers" },
-        { "stock": "Materials", "ticker": "", "change": "held", "note": "Positive earnings revisions (metals)" },
-        { "stock": "Consumer Discretionary", "ticker": "", "change": "held", "note": "High-growth domestic cyclicals, autos" },
-        { "stock": "Health Care — Hospitals", "ticker": "", "change": "held", "note": "Hospitals OW (Pharma UW)" }
+        { "stock": "Larsen & Toubro", "ticker": "LT.NS", "wt": "", "change": "held", "note": "Industrials OW" },
+        { "stock": "Bharat Electronics", "ticker": "BEL.NS", "wt": "", "change": "held", "note": "Industrials/Defence OW" },
+        { "stock": "CG Power", "ticker": "CGPOWER.NS", "wt": "", "change": "held", "note": "Industrials OW" },
+        { "stock": "ICICI Bank", "ticker": "ICICIBANK.NS", "wt": "", "change": "held", "note": "Financials OW" },
+        { "stock": "Apollo Hospitals", "ticker": "APOLLOHOSP.NS", "wt": "", "change": "held", "note": "Hospitals OW" },
+        { "stock": "JSW Steel", "ticker": "JSWSTEEL.NS", "wt": "", "change": "held", "note": "Materials OW" },
+        { "stock": "Mahindra & Mahindra", "ticker": "M&M.NS", "wt": "", "change": "held", "note": "Consumer Discretionary OW" },
+        { "stock": "Maruti Suzuki", "ticker": "MARUTI.NS", "wt": "", "change": "held", "note": "Consumer Discretionary OW" }
       ],
-      "underweight": [
-        { "stock": "Information Technology", "ticker": "", "change": "held", "note": "Weak demand, pricing, AI disruption" },
-        { "stock": "Health Care — Pharma", "ticker": "", "change": "held", "note": "Pharma underweight" }
-      ]
+      "underweight": []
     },
     {
       "broker": "Nomura",
       "asOf": "2026-06",
       "benchmark": "",
-      "note": "Sector model portfolio (India Equity Strategy, 4QFY26 review, Fig. 101). Native labels Bullish/Neutral/Bearish → OW/N/UW.",
+      "note": "Top picks from Nomura's 4QFY26 review (Fig. 101/103). No per-stock weights published.",
       "overweight": [
-        { "stock": "Financials", "ticker": "", "change": "held", "note": "Bullish" },
-        { "stock": "Industrials — Capital Goods/Defence", "ticker": "", "change": "raised", "note": "Raised to Bullish on power-equipment demand" },
-        { "stock": "Information Technology", "ticker": "", "change": "held", "note": "Bullish — attractive valuations, AI-implementation upside" }
+        { "stock": "Bajaj Finance", "ticker": "BAJFINANCE.NS", "wt": "", "change": "held", "note": "Financials — Bullish" },
+        { "stock": "Axis Bank", "ticker": "AXISBANK.NS", "wt": "", "change": "held", "note": "Financials — Bullish" },
+        { "stock": "Kotak Mahindra Bank", "ticker": "KOTAKBANK.NS", "wt": "", "change": "held", "note": "Financials — Bullish" },
+        { "stock": "Shriram Finance", "ticker": "SHRIRAMFIN.NS", "wt": "", "change": "held", "note": "Financials — Bullish" },
+        { "stock": "SBI Life", "ticker": "SBILIFE.NS", "wt": "", "change": "held", "note": "Financials — Bullish" },
+        { "stock": "Coforge", "ticker": "COFORGE.NS", "wt": "", "change": "held", "note": "IT Services — Bullish" },
+        { "stock": "CG Power", "ticker": "CGPOWER.NS", "wt": "", "change": "held", "note": "Capital Goods — Bullish" },
+        { "stock": "UltraTech Cement", "ticker": "ULTRACEMCO.NS", "wt": "", "change": "held", "note": "Top pick" }
       ],
-      "underweight": [
-        { "stock": "Consumer Discretionary", "ticker": "", "change": "trimmed", "note": "Cut to Bearish on an earnings-growth slowdown (durables + autos)" },
-        { "stock": "Consumer Staples", "ticker": "", "change": "held", "note": "Bearish" },
-        { "stock": "Energy — Oil & Gas", "ticker": "", "change": "held", "note": "Bearish — FY27 PAT decline, marketing-loss risk" },
-        { "stock": "Utilities — Power", "ticker": "", "change": "held", "note": "Bearish/cautious" }
-      ]
+      "underweight": []
     },
     {
       "broker": "CLSA",
-      "asOf": "2026-05",
+      "asOf": "2026-06",
       "benchmark": "Nifty",
-      "note": "India Focus Portfolio sector tilts (running since Jan'21; +126ppt cumulative vs Nifty). Stock-level holdings are login-gated, so only the stated sector tilts are shown.",
+      "note": "CLSA High-Conviction Outperform / focus names (4Q strategy). The India Focus Portfolio's per-stock weights are login-gated, so weights aren't shown.",
       "overweight": [
-        { "stock": "Consumer Discretionary", "ticker": "", "change": "", "note": "Focus-portfolio overweight" },
-        { "stock": "Autos", "ticker": "", "change": "", "note": "Focus-portfolio overweight" },
-        { "stock": "Real Estate", "ticker": "", "change": "", "note": "Focus-portfolio overweight" },
-        { "stock": "Consumer Staples", "ticker": "", "change": "", "note": "Focus-portfolio overweight" },
-        { "stock": "Financials — Banks", "ticker": "", "change": "", "note": "Largest portfolio weight" }
+        { "stock": "Hero MotoCorp", "ticker": "HEROMOTOCO.NS", "wt": "", "change": "raised", "note": "Upgraded to O-PF" },
+        { "stock": "Kotak Mahindra Bank", "ticker": "KOTAKBANK.NS", "wt": "", "change": "raised", "note": "Upgraded to O-PF" },
+        { "stock": "Varun Beverages", "ticker": "VBL.NS", "wt": "", "change": "held", "note": "Focus-portfolio holding" },
+        { "stock": "Avenue Supermarts (DMart)", "ticker": "DMART.NS", "wt": "", "change": "held", "note": "Focus-portfolio holding" },
+        { "stock": "Sun TV", "ticker": "SUNTV.NS", "wt": "", "change": "raised", "note": "Upgraded to O-PF" },
+        { "stock": "Credit Access Grameen", "ticker": "CREDITACC.NS", "wt": "", "change": "raised", "note": "Upgraded to O-PF" }
       ],
       "underweight": []
     },
@@ -54,13 +55,13 @@
       "broker": "Kotak — Alphabet Quant (factor)",
       "asOf": "2026-06",
       "benchmark": "Nifty 50",
-      "note": "Alphabet 'Concentrated All-Season' multi-factor portfolio (quant, not fundamental KIE views). Sector tilt: OW Utilities & Energy, UW Financials.",
+      "note": "Alphabet 'Concentrated All-Season' multi-factor portfolio (quant, not fundamental KIE views), Jun 2026. Weights are the published factor-score allocations.",
       "overweight": [
-        { "stock": "ONGC", "ticker": "ONGC.NS", "change": "", "note": "Concentrated All-Season factor holding" },
-        { "stock": "Titan", "ticker": "TITAN.NS", "change": "", "note": "Concentrated All-Season factor holding" },
-        { "stock": "Grasim Industries", "ticker": "GRASIM.NS", "change": "", "note": "Concentrated All-Season factor holding" },
-        { "stock": "Nestlé India", "ticker": "NESTLEIND.NS", "change": "", "note": "Concentrated All-Season factor holding" },
-        { "stock": "Bharti Airtel", "ticker": "BHARTIARTL.NS", "change": "", "note": "Concentrated All-Season factor holding" }
+        { "stock": "Bharti Airtel", "ticker": "BHARTIARTL.NS", "wt": 29.06, "change": "", "note": "Concentrated All-Season holding" },
+        { "stock": "Nestlé India", "ticker": "NESTLEIND.NS", "wt": 23.61, "change": "", "note": "Concentrated All-Season holding" },
+        { "stock": "Grasim Industries", "ticker": "GRASIM.NS", "wt": 18.45, "change": "", "note": "Concentrated All-Season holding" },
+        { "stock": "Titan", "ticker": "TITAN.NS", "wt": 16.36, "change": "", "note": "Concentrated All-Season holding" },
+        { "stock": "ONGC", "ticker": "ONGC.NS", "wt": 12.52, "change": "", "note": "Concentrated All-Season holding" }
       ],
       "underweight": []
     }
