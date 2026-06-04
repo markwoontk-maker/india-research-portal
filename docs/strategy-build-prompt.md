@@ -117,8 +117,12 @@ publish a genuine model portfolio / focus list / top-pick list:
   tickers. They do NOT publish per-stock weights → set `"wt":""` (card shows "—").
 - CLSA: its India Focus Portfolio / High-Conviction Outperform names as stocks
   with tickers. Per-stock weights are login-gated → `"wt":""`. Don't fabricate weights.
-- Kotak Alphabet quant: the Concentrated factor portfolio STOCKS with their
-  published factor weights → `"wt":<number>` (e.g. 29.06) and Yahoo tickers.
+- Kotak Alphabet quant: the **All-Season multifactor BROAD portfolio** STOCKS —
+  the ~15-stock "Broad Portfolio (%)" column in the All-Season constituents table
+  (e.g. Exhibit 6, "All-Season portfolio constituents") — with their published
+  broad weights → `"wt":<number>` (e.g. 11.51) and Yahoo tickers. Use the **BROAD**
+  configuration, NOT the Concentrated (top-5) one. Append the KIE analyst rating
+  (BUY/ADD/REDUCE/SELL/NR) into each stock's `note`.
 - Any other covered house that prints a stock-level model portfolio with weights:
   include the stocks and their `wt` numbers.
 - Bernstein, Jefferies, and Kotak's ownership/macro notes: usually NO model
@@ -141,10 +145,10 @@ Schema (valid JSON; keep the leading "_note"):
   "_note": "Mined from the local India Strategy PDFs; separate from model_portfolios.json so the remote refresher can't clobber it.",
   "asOf": "YYYY-MM",
   "houses": [
-    { "broker": "Kotak — Alphabet Quant (factor)", "asOf": "YYYY-MM", "benchmark": "Nifty 50",
+    { "broker": "Kotak — Alphabet All-Season (broad)", "asOf": "YYYY-MM", "benchmark": "Nifty 50",
       "report": "India Strategy/[260601] [Kotak] Quant Research - (no title).pdf",
-      "note": "Concentrated factor portfolio.",
-      "overweight": [ { "stock": "Bharti Airtel", "ticker": "BHARTIARTL.NS", "wt": 29.06, "change": "", "note": "why" } ],
+      "note": "All-Season multifactor BROAD portfolio (top-15 by factor score).",
+      "overweight": [ { "stock": "ICICI Bank", "ticker": "ICICIBANK.NS", "wt": 11.51, "change": "", "note": "KIE BUY" } ],
       "underweight": [] }
   ]
 }
