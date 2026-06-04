@@ -440,9 +440,11 @@
   .ud-card.down .ud-h{color:var(--down)}
   .ud-h .cnt{font-weight:400;color:var(--text-mute);letter-spacing:0;
     text-transform:none;font-size:10.5px}
+  /* Re-balanced: shrink Company / House / Call, hand the room to Target
+     so the "₹PREV → ₹CURR (±X.X%)" string isn't clipped on the right. */
   .ud-header,.ud-row{display:grid;
-    grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.5fr) minmax(0,1.3fr);
-    gap:10px;align-items:baseline}
+    grid-template-columns:minmax(0,1.1fr) minmax(0,0.7fr) minmax(0,1.2fr) minmax(0,2fr);
+    gap:8px;align-items:baseline}
   .ud-header{padding:4px 0 5px;font-family:'Roboto Mono';font-size:9.5px;
     color:var(--text-mute);letter-spacing:.04em;text-transform:uppercase;
     border-bottom:1px solid var(--line-soft)}
