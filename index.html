@@ -4150,24 +4150,38 @@ const MACRO_REPORTS=[
   {id:'monsoon', label:'SW monsoon',          unit:'% of LPA',   value:'90%',            period:'2026 f\'cast',tone:'neg', src:'CLSA · 29 May 26', note:'Forecast southwest-monsoon rainfall vs the long-period average; below ~96% is below-normal.'}
 ];
 function macroAttr(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
-function macroRowHtml(it){
+// Newest-first history of {value,period} for a row. Prefers an explicit `hist`
+// array (the macro routine appends a new entry each month and NEVER deletes old
+// ones, so the table keeps a running time series); falls back to value/period
+// (+ the legacy `prev` "<value> (<period>)" string) so rows without history
+// still render with a single Latest column.
+function macroHist(it){
+  if(Array.isArray(it.hist)&&it.hist.length) return it.hist;
+  const h=[{value:it.value,period:it.period||''}];
+  if(it.prev){ const m=/^\s*(.*?)\s*\(([^)]+)\)\s*$/.exec(it.prev); h.push(m?{value:m[1],period:m[2]}:{value:it.prev,period:''}); }
+  return h;
+}
+function macroOrd(n){ const s=['th','st','nd','rd'],v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+// One column per history period — same format throughout (value over a
+// minimised period). Newest = "Latest" (highlighted + tone-coloured) on the
+// left; older months are pushed right. Rows with fewer periods pad with blanks.
+function macroRowHtml(it,maxCols){
   const cls=it.tone==='neg'?'neg':(it.tone==='pos'?'pos':'');
   const tip=it.note?` title="${macroAttr(it.note)}"`:'';
   const lcls=it.note?'ml tip':'ml';
-  // Latest and Previous are separate columns with the SAME format: the value
-  // on top, the period in a minimised font beneath. `prev` is stored as
-  // "<value> (<period>)" (filled by the macro routine; blank until then) — we
-  // split the trailing parenthetical so the previous period renders small too.
-  const latSub=it.period?`<span class="latsub">${it.period}</span>`:'';
-  let prevVal='', prevPer='';
-  if(it.prev){ const m=/^\s*(.*?)\s*\(([^)]+)\)\s*$/.exec(it.prev); if(m){ prevVal=m[1]; prevPer=m[2]; } else { prevVal=it.prev; } }
-  const prevCell=prevVal?`<span class="prevval">${prevVal}</span>${prevPer?`<span class="latsub">${prevPer}</span>`:''}`:'';
+  const hist=macroHist(it);
+  let cells='';
+  for(let i=0;i<maxCols;i++){
+    const e=hist[i];
+    const sub=(e&&e.period)?`<span class="latsub">${e.period}</span>`:'';
+    if(i===0) cells+=`<td class="lat ${cls}">${e?`<span class="latval">${e.value}</span>${sub}`:''}</td>`;
+    else cells+=`<td class="prev">${e?`<span class="prevval">${e.value}</span>${sub}`:''}</td>`;
+  }
   return `<tr draggable="true" data-id="${macroAttr(it.id)}"><th class="mi">`+
     `<span class="mh" title="Drag to reorder">⠿</span>`+
     `<span class="${lcls}"${tip}>${it.label}</span></th>`+
     `<td class="munit">${it.unit}</td>`+
-    `<td class="lat ${cls}"><span class="latval">${it.value}</span>${latSub}</td>`+
-    `<td class="prev">${prevCell}</td>`+
+    cells+
     `<td class="msrc">${it.src}</td></tr>`;
 }
 // Persisted custom row order (drag-to-reorder). localStorage holds an array of ids.
@@ -4221,17 +4235,24 @@ function wireMacroDnD(){
   });
 }
 function renderMacroReports(extra){
-  const head=`<tr><th class="mi">Indicator</th><th>Unit</th><th>Latest</th><th>Previous</th><th>Source</th></tr>`;
-  const rows=MACRO_REPORTS.concat(extra||[]).map(macroRowHtml).join('');
+  const rowsData=MACRO_REPORTS.concat(extra||[]);
+  // Width = the longest history across rows, so the table grows a column each
+  // time a new month is appended. Header: Latest, Previous, then 3rd, 4th, …
+  const maxCols=Math.max(1,...rowsData.map(it=>macroHist(it).length));
+  let colHead='<th>Latest</th>';
+  for(let i=1;i<maxCols;i++) colHead+=`<th>${i===1?'Previous':macroOrd(i+1)}</th>`;
+  const head=`<tr><th class="mi">Indicator</th><th>Unit</th>${colHead}<th>Source</th></tr>`;
+  const rows=rowsData.map(it=>macroRowHtml(it,maxCols)).join('');
   document.querySelector('#macroTbl').innerHTML=`<thead>${head}</thead><tbody>${rows}</tbody>`;
   document.getElementById('macroSub').textContent=
-    'Latest readings from the India Macro research library · drag a row to reorder · indicator · latest · previous · broker & report date';
+    'Latest readings from the India Macro research library · drag a row to reorder · newest at left, history grows right →';
   wireMacroDnD();
 }
-// data/macro.json overlay: { indicators: { <id>: {value,prev,period,src,tone} } }
-// Written server-side by the macro routine so fresh prints (and the previous
-// reading) land without putting any API key in this bundle. `prev` = the prior
-// period's reading, shown small under the latest value.
+// data/macro.json overlay. Preferred shape per id:
+//   { history:[{value,period}, …newest-first], src, tone, note }
+// The macro routine maintains `history` (prepends each new month, never deletes)
+// so the table keeps a running series. Legacy shape {value,prev,period,…} is
+// still accepted for backward compatibility. No API key ever lives in this bundle.
 async function applyMacroOverlay(){
   let txt=null;
   try{ const r=await fetch('data/macro.json',{cache:'no-store'}); if(r.ok) txt=await r.text(); }catch(e){}
@@ -4240,9 +4261,14 @@ async function applyMacroOverlay(){
   const ind=j&&j.indicators; if(!ind) return;
   MACRO_REPORTS.forEach(row=>{
     const o=ind[row.id]; if(!o) return;
-    if(o.value!=null) row.value=o.value;
-    if(o.prev!=null) row.prev=o.prev;
-    if(o.period) row.period=o.period;
+    if(Array.isArray(o.history)&&o.history.length){
+      row.hist=o.history.slice();
+      row.value=o.history[0].value; row.period=o.history[0].period; // keep latest in sync
+    }else{
+      if(o.value!=null) row.value=o.value;
+      if(o.prev!=null) row.prev=o.prev;
+      if(o.period) row.period=o.period;
+    }
     if(o.src) row.src=o.src;
     if(o.tone!=null) row.tone=o.tone;
     if(o.note!=null) row.note=o.note;

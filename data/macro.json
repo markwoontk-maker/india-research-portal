@@ -2,67 +2,76 @@
   "updated": "2026-06-04T03:05:00Z",
   "indicators": {
     "gdp": {
-      "value": "+7.6%",
-      "prev": "+6.5% (FY2025)",
-      "period": "FY2026",
       "src": "MoSPI NSO · 29 May 26",
-      "tone": "pos"
+      "tone": "pos",
+      "history": [
+        { "value": "+7.6%", "period": "FY2026" },
+        { "value": "+6.5%", "period": "FY2025" }
+      ]
     },
     "iip": {
-      "value": "+4.9%",
-      "prev": "+4.1% (Mar 2026)",
-      "period": "Apr 2026",
       "src": "MoSPI · 01 Jun 26",
-      "tone": "pos"
+      "tone": "pos",
+      "history": [
+        { "value": "+4.9%", "period": "Apr 2026" },
+        { "value": "+4.1%", "period": "Mar 2026" }
+      ]
     },
     "mfg": {
-      "value": "+6.2%",
-      "prev": "+4.3% (Mar 2026)",
-      "period": "Apr 2026",
       "src": "MoSPI · 01 Jun 26",
-      "tone": "pos"
+      "tone": "pos",
+      "history": [
+        { "value": "+6.2%", "period": "Apr 2026" },
+        { "value": "+4.3%", "period": "Mar 2026" }
+      ]
     },
     "pmi": {
-      "value": "55.0",
-      "prev": "54.7 (Apr 2026)",
-      "period": "May 2026",
       "src": "S&P Global/HSBC · 02 Jun 26",
-      "tone": "pos"
+      "tone": "pos",
+      "history": [
+        { "value": "55.0", "period": "May 2026" },
+        { "value": "54.7", "period": "Apr 2026" }
+      ]
     },
     "core": {
-      "value": "+1.7%",
-      "prev": "−0.4% (Mar 2026)",
-      "period": "Apr 2026",
       "src": "DPIIT/OEA · 30 May 26",
-      "tone": "pos"
+      "tone": "pos",
+      "history": [
+        { "value": "+1.7%", "period": "Apr 2026" },
+        { "value": "−0.4%", "period": "Mar 2026" }
+      ]
     },
     "cpi": {
-      "value": "3.48%",
-      "prev": "3.40% (Mar 2026)",
-      "period": "Apr 2026",
       "src": "MoSPI · 12 May 26",
-      "tone": ""
+      "tone": "",
+      "history": [
+        { "value": "3.48%", "period": "Apr 2026" },
+        { "value": "3.40%", "period": "Mar 2026" }
+      ]
     },
     "fisc": {
-      "value": "4.4% of GDP",
-      "prev": "4.8% of GDP (FY2025)",
-      "period": "FY2026",
       "src": "CGA/MoF · 01 Jun 26",
-      "tone": "pos"
+      "tone": "pos",
+      "history": [
+        { "value": "4.4% of GDP", "period": "FY2026" },
+        { "value": "4.8% of GDP", "period": "FY2025" }
+      ]
     },
     "repo": {
-      "value": "5.25%",
-      "prev": "5.50% (Dec 2025)",
-      "period": "Apr 2026",
       "src": "RBI MPC · 08 Apr 26",
-      "tone": ""
+      "tone": "",
+      "history": [
+        { "value": "5.25%", "period": "Apr 2026" },
+        { "value": "5.50%", "period": "Dec 2025" }
+      ]
     },
     "monsoon": {
-      "value": "90% of LPA",
-      "prev": "95% of LPA (Apr 2026)",
-      "period": "Jun–Sep 2026",
       "src": "IMD · 29 May 26",
-      "tone": "neg"
+      "tone": "neg",
+      "history": [
+        { "value": "90% of LPA", "period": "Jun–Sep 2026" },
+        { "value": "95% of LPA", "period": "Apr 2026" }
+      ]
     }
   }
 }
