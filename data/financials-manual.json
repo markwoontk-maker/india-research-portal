@@ -1,0 +1,59 @@
+{
+  "_README": "Hand-verified financial tables transcribed from specific broker reports. scripts/build-financials.js merges these on top of its auto-extracted output, so an entry here OVERRIDES whatever the pdftotext scan produced for that company. Values are in INR crore (mn / 10). Schema must match the build script's output exactly.",
+  "Adani Enterprises": {
+    "currency": "₹ cr",
+    "metrics": {
+      "revenue": {
+        "FY23": {"tag":"A","avg":127539.5,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":127539.5}]},
+        "FY24": {"tag":"A","avg":96421.0,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":96421.0}]},
+        "FY25": {"tag":"A","avg":97894.8,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":97894.8}]},
+        "FY26": {"tag":"A","avg":100468.6,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":100468.6}]},
+        "FY27": {"tag":"E","avg":148921.9,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":148921.9}]},
+        "FY28": {"tag":"E","avg":164156.8,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":164156.8}]}
+      },
+      "ebitda": {
+        "FY23": {"tag":"A","avg":10012.3,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":10012.3}]},
+        "FY24": {"tag":"A","avg":13237.1,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":13237.1}]},
+        "FY25": {"tag":"A","avg":16722.4,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":16722.4}]},
+        "FY26": {"tag":"A","avg":16463.8,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":16463.8}]},
+        "FY27": {"tag":"E","avg":21056.4,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":21056.4}]},
+        "FY28": {"tag":"E","avg":24988.1,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":24988.1}]}
+      },
+      "netProfit": {
+        "FY23": {"tag":"A","avg":2833.3,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":2833.3}]},
+        "FY24": {"tag":"A","avg":3954.9,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":3954.9}]},
+        "FY25": {"tag":"A","avg":3166.2,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":3166.2}]},
+        "FY26": {"tag":"A","avg":1782.9,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":1782.9}]},
+        "FY27": {"tag":"E","avg":3981.6,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":3981.6}]},
+        "FY28": {"tag":"E","avg":4679.7,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":4679.7}]}
+      }
+    },
+    "segments": {
+      "Jefferies": {
+        "date": "260602",
+        "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+        "source": "Exhibit 41 — AEL Segmentwise Projections (pages 21-22)",
+        "metrics": {
+          "revenue": {
+            "Trading/Mining":      {"FY23":106014.8,"FY24":70847.1,"FY25":50030.8,"FY26":38450.6,"FY27":42161.8,"FY28":40486.1},
+            "ANIL":                {"FY23":3537.0,  "FY24":8571.0, "FY25":13965.4,"FY26":15399.0,"FY27":17716.0,"FY28":25290.4},
+            "Airport":             {"FY23":5986.0,  "FY24":8061.5, "FY25":10223.0,"FY26":13215.4,"FY27":16198.9,"FY28":18603.9},
+            "Road":                {"FY23":4907.3,  "FY24":7177.1, "FY25":9694.1, "FY26":6347.2, "FY27":6664.5, "FY28":6997.8},
+            "Copper":              {"FY23":null,    "FY24":null,   "FY25":2291.3, "FY26":15284.3,"FY27":53820.0,"FY28":59800.0},
+            "Others":              {"FY23":7094.4,  "FY24":1764.4, "FY25":11690.1,"FY26":11772.0,"FY27":12360.6,"FY28":12978.7},
+            "Total":               {"FY23":127539.5,"FY24":96421.0,"FY25":97894.8,"FY26":100468.6,"FY27":148921.9,"FY28":164156.8}
+          },
+          "ebitda": {
+            "Trading/Mining":      {"FY23":5971.0,  "FY24":7247.0, "FY25":6180.0, "FY26":4332.0, "FY27":5234.9, "FY28":5287.8},
+            "ANIL":                {"FY23":412.0,   "FY24":2297.0, "FY25":4776.0, "FY26":4532.0, "FY27":4798.1, "FY28":6404.0},
+            "Airport":             {"FY23":1682.0,  "FY24":2437.0, "FY25":3480.0, "FY26":5394.0, "FY27":6623.9, "FY28":8016.2},
+            "Road":                {"FY23":1983.0,  "FY24":1231.0, "FY25":1769.0, "FY26":1362.0, "FY27":2292.6, "FY28":2493.2},
+            "Copper":              {"FY23":null,    "FY24":null,   "FY25":null,   "FY26":260.0,  "FY27":1494.0, "FY28":1867.5},
+            "Others (incl Defence)":{"FY23":-22.7,  "FY24":25.1,   "FY25":517.4,  "FY26":583.7,  "FY27":612.9,  "FY28":919.4},
+            "Total":               {"FY23":10025.3, "FY24":13237.1,"FY25":16722.4,"FY26":16463.8,"FY27":21056.4,"FY28":24988.1}
+          }
+        }
+      }
+    }
+  }
+}

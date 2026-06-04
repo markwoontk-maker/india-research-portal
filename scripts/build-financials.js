@@ -269,6 +269,28 @@ function main(){
 
   console.log(`\nOK: ${ok}   no data: ${miss}   skipped: ${skipped}`);
 
+  // Merge hand-verified overrides on top. Any company present in
+  // data/financials-manual.json wholly REPLACES whatever the auto
+  // extractor produced for that company — the manual file is the
+  // source of truth (use it for names where pdftotext column-alignment
+  // mis-fires, or to add segment-breakdown that the auto pass doesn't
+  // know how to handle).
+  const MANUAL_PATH = path.join(ROOT, 'data', 'financials-manual.json');
+  if (fs.existsSync(MANUAL_PATH)){
+    try {
+      const manual = JSON.parse(fs.readFileSync(MANUAL_PATH, 'utf8'));
+      let overridden = 0;
+      for (const [co, entry] of Object.entries(manual)){
+        if (co.startsWith('_')) continue;          // skip _README keys
+        out[co] = entry;
+        overridden++;
+      }
+      console.log(`Manual overrides applied: ${overridden} (from data/financials-manual.json)`);
+    } catch (e){
+      console.log('Manual overrides skipped — failed to parse:', e.message);
+    }
+  }
+
   const keys = Object.keys(out).sort();
   const lines = keys.map(k => '  ' + JSON.stringify(k) + ': ' + JSON.stringify(out[k]));
   fs.writeFileSync(OUT, '{\n' + lines.join(',\n') + '\n}\n');

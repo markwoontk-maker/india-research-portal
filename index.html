@@ -557,6 +557,22 @@
     border-bottom:none}
   table.fin-tbl sup.fy-tag-actual{color:var(--up);font-size:9px;margin-left:1px}
   table.fin-tbl sup.fy-tag-est{color:var(--saffron);font-size:9px;margin-left:1px}
+  .fin-seg-divider{height:1px;background:var(--line);margin:22px 0 16px}
+  .fin-seg-h{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--text);
+    letter-spacing:.02em;margin-bottom:10px;text-transform:uppercase;font-size:11px;
+    color:var(--text-mute);letter-spacing:.12em}
+  .fin-seg-block{margin-top:14px;padding:12px 14px;border:1px solid var(--line-soft);
+    border-radius:8px;background:var(--ink-2)}
+  .fin-seg-block:first-of-type{margin-top:0}
+  .fin-seg-block-h{font-size:12.5px;color:var(--text-dim);margin-bottom:6px}
+  .fin-seg-block-h b{font-family:'Fraunces',serif;color:var(--text);font-weight:600;font-size:13.5px}
+  .fin-seg-src{font-size:10.5px;color:var(--text-mute);margin-left:6px}
+  .fin-seg-src a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--text-mute)}
+  .fin-seg-src a:hover{border-bottom-color:var(--text-dim)}
+  .fin-seg-metric{margin-top:10px}
+  .fin-seg-metric:first-child{margin-top:4px}
+  .fin-seg-metric-h{font-size:11px;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--text-mute);margin-bottom:4px}
   /* Sector tab: per-broker view blocks + earnings-season list */
   .sec-view-block{padding:12px 0;border-top:1px solid var(--line-soft)}
   .sec-view-block:first-child{border-top:none;padding-top:4px}
@@ -1678,8 +1694,8 @@
           <p id="secPicksSub">Consensus from broker ratings across the sector's coverage universe</p></div>
         </div>
         <div class="thesis-grid">
-          <div class="thesis-col bull"><h4>Most liked</h4><p id="secLikes" class="co-desc"></p></div>
-          <div class="thesis-col bear"><h4>Most disliked</h4><p id="secDislikes" class="co-desc"></p></div>
+          <div class="thesis-col bull"><h4>Most liked</h4><div id="secLikes" class="co-desc"></div></div>
+          <div class="thesis-col bear"><h4>Most disliked</h4><div id="secDislikes" class="co-desc"></div></div>
         </div>
         <p class="co-desc-src">Aggregates the latest call per broker per stock across the sector's universe (local PDF library + Trendlyne per-stock coverage). Liked = stock with the most Buy/Add/OW ratings; disliked = stock with the most Sell/Reduce/UW ratings. Stock names link to the Company tab.</p>
       </div>
@@ -5651,8 +5667,8 @@ function renderSectorPicks(){
     if(!items.length) return '<span class="empty">No clear consensus from the pool.</span>';
     return items.map(it=>{
       const url=`#open-${encodeURIComponent(it.name)}`;
-      return `<a class="thesis-cite sec-pick" data-co="${SEC_ESC(it.name)}" href="${url}">${SEC_ESC(it.name)}</a> <span class="sec-pick-count">${it.buy}B / ${it.sell}S</span>`;
-    }).join(', ') + '.';
+      return `<div class="sec-pick-row"><a class="thesis-cite sec-pick" data-co="${SEC_ESC(it.name)}" href="${url}">${SEC_ESC(it.name)}</a> <span class="sec-pick-count">${it.buy}B / ${it.sell}S</span></div>`;
+    }).join('');
   }
   const sorted=cos.map(co=>{
     const s=stats[co]||{buy:0,sell:0,brokers:new Set(),latest:''};
@@ -5881,10 +5897,62 @@ function renderCompanyFinancials(){
       </table>
     </div>`;
   }).join('');
+
+  // Segment breakdown (optional): when a broker's report carries a
+  // segment-wise revenue / EBITDA / PAT table, F.segments[brokerName]
+  // holds it. Render one block per broker (in order of newest report),
+  // each block containing one table per metric (rows = segments,
+  // columns = the same FY range as the main tables).
+  if (F.segments && Object.keys(F.segments).length){
+    const segBrokers = Object.keys(F.segments).sort((a,b)=>String(F.segments[b].date||'').localeCompare(String(F.segments[a].date||'')));
+    const segBlocks = segBrokers.map(broker=>{
+      const block = F.segments[broker];
+      const metricBlocks = Object.entries(block.metrics||{}).map(([mk, segMap])=>{
+        const mLabel = mk==='revenue' ? 'Revenue' :
+                       mk==='ebitda'  ? 'EBITDA'  :
+                       mk==='netProfit' ? 'Net Profit' : mk;
+        // Year range = same FYS we picked for the main tables, but only
+        // years that actually have a value in this segment block.
+        const segFYs = FYS.filter(fy => Object.values(segMap).some(row => row && row[fy]!=null));
+        if (!segFYs.length) return '';
+        const segHead = `<tr><th class="bk">Segment</th>${segFYs.map(fy=>`<th>${esc(fy)}</th>`).join('')}</tr>`;
+        const segRows = Object.entries(segMap).map(([seg, vals])=>{
+          const isTotal = /total/i.test(seg);
+          const cells = segFYs.map(fy=>{
+            const v = vals && vals[fy];
+            return `<td>${v==null ? '<span class="muted">—</span>' : esc(fmt(v))}</td>`;
+          }).join('');
+          return `<tr${isTotal?' class="avg"':''}><td class="bk">${esc(seg)}</td>${cells}</tr>`;
+        }).join('');
+        return `<div class="fin-seg-metric">
+          <div class="fin-seg-metric-h">${esc(mLabel)}</div>
+          <table class="fin-tbl">
+            <thead>${segHead}</thead>
+            <tbody>${segRows}</tbody>
+          </table>
+        </div>`;
+      }).join('');
+      const link = block.url
+        ? `<a href="${esc(block.url)}" target="_blank" rel="noopener">${esc(block.date?fmtD(block.date):broker)}</a>`
+        : esc(block.date?fmtD(block.date):broker);
+      const srcLabel = block.source ? ` · ${esc(block.source)}` : '';
+      return `<div class="fin-seg-block">
+        <div class="fin-seg-block-h"><b>${esc(broker)}</b> — segment-wise projections <span class="fin-seg-src">${link}${srcLabel}</span></div>
+        ${metricBlocks}
+      </div>`;
+    }).join('');
+    body.insertAdjacentHTML('beforeend', `
+      <div class="fin-seg-divider"></div>
+      <div class="fin-seg-h">Segment-wise Projections</div>
+      ${segBlocks}
+    `);
+  }
+
   if(sub){
     const brokerCount=new Set();
     Object.values(F.metrics).forEach(o=>Object.values(o).forEach(fy=>fy.brokers.forEach(b=>brokerCount.add(b.name))));
-    sub.textContent=`${brokerCount.size} broker${brokerCount.size===1?'':'s'} parsed · figures in ${F.currency||'₹ cr'} · superscript A = actual, E = estimate · click a Source date to open the PDF`;
+    const segCount=F.segments?Object.keys(F.segments).length:0;
+    sub.textContent=`${brokerCount.size} broker${brokerCount.size===1?'':'s'} parsed · figures in ${F.currency||'₹ cr'} · superscript A = actual, E = estimate${segCount?` · ${segCount} broker${segCount===1?'':'s'} provide segment breakdown`:''} · click a Source date to open the PDF`;
   }
 }
 
