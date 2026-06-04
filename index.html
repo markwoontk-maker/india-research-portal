@@ -1449,12 +1449,14 @@
                 <th data-key="name" data-label="Sector" title="Click to sort" style="cursor:pointer;text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)">Sector</th>
                 <th data-key="flow" data-label="Net flow (this mo)" title="Click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">Net flow (this mo)</th>
                 <th data-key="flowPrev" data-label="Prev mo" title="Click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">Prev mo</th>
+                <th data-key="ytd" data-label="YTD" title="Calendar year-to-date net flow · click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">YTD</th>
+                <th data-key="oneY" data-label="1Y" title="Trailing 12-month net flow · click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">1Y</th>
                 <th data-key="fpiWt" data-label="Weightage (FPI·N500)" title="Click to sort" style="cursor:pointer;text-align:center;padding:6px 10px;border-bottom:1px solid var(--line)">Weightage (FPI·N500)</th>
                 <th data-key="ow" data-label="OW/UW vs N500" title="Click to sort" style="cursor:pointer;text-align:center;padding:6px 10px;border-bottom:1px solid var(--line)">OW/UW vs N500</th>
                 <th data-key="dmom" data-label="Δ MoM" title="Click to sort" style="cursor:pointer;text-align:center;padding:6px 10px;border-bottom:1px solid var(--line)">Δ MoM</th>
               </tr>
             </thead>
-            <tbody id="secPosBody"><tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text-mute)">Loading sector positioning…</td></tr></tbody>
+            <tbody id="secPosBody"><tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-mute)">Loading sector positioning…</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -6267,7 +6269,12 @@ async function loadPositioning(){
 /* ---------- Positioning tab · FPI sector positioning ---------- */
 function secCr(v){ const s=v<0?'−':'+'; return s+'₹'+Math.abs(Math.round(v)).toLocaleString('en-IN'); }
 let secPosData=null, secPosMonths=[], secPosSort={key:null,dir:-1}, secPosExpanded=null, secHistChart=null;   // dir: 1 asc, -1 desc
-function secPosVal(s,k){ return k==='dmom' ? (s.owPrev==null?0:+(s.ow-s.owPrev).toFixed(3)) : s[k]; }
+function secSumHist(s,filterFn){ if(!Array.isArray(s.hist)) return null; let sum=0,any=false;
+  s.hist.forEach((v,i)=>{ if(v!=null && filterFn(secPosMonths[i]||'',i)){ sum+=v; any=true; } }); return any?Math.round(sum):null; }
+function secYtd(s){ const y=(secPosMonths[secPosMonths.length-1]||'').slice(0,4); return secSumHist(s,(m)=>m.slice(0,4)===y); }
+function secOneY(s){ return secSumHist(s,()=>true); }
+function secPosVal(s,k){ if(k==='dmom') return s.owPrev==null?0:+(s.ow-s.owPrev).toFixed(3);
+  if(k==='ytd') return secYtd(s)??0; if(k==='oneY') return secOneY(s)??0; return s[k]; }
 function secMonLbl(iso){ const [y,m]=iso.split('-'); return new Date(y,m-1,1).toLocaleDateString('en-IN',{month:'short'})+" '"+y.slice(2); }
 function secHistDraw(sec){
   const cv=document.getElementById('secHistChart'); if(!cv) return;
@@ -6300,10 +6307,12 @@ function secPosRender(){
     const dOw=(s.owPrev==null)?0:+(s.ow-s.owPrev).toFixed(1);
     const dTxt=dOw===0?'·':(dOw>0?'▲ +':'▼ ')+dOw.toFixed(1);
     const dCol=dOw===0?'var(--text-mute)':(dOw>0?'var(--up)':'var(--down)');
+    const ytd=secYtd(s), oy=secOneY(s);
+    const moneyTd=(v)=>`<td style="${td};text-align:right;font-family:'IBM Plex Mono';color:${v==null?'var(--text-mute)':(v>=0?'var(--up)':'var(--down)')}">${v==null?'—':secCr(v)}</td>`;
     const open=secPosExpanded===s.name;
     const caret=`<span style="color:var(--text-mute);font-size:9px;margin-left:5px">${open?'▾':'▸'}</span>`;
     const hasHist=s.hist&&s.hist.some(v=>v!=null);
-    const exp = open ? `<tr class="secexp"><td colspan="6" style="padding:4px 10px 14px;border-bottom:1px solid var(--line-soft)">
+    const exp = open ? `<tr class="secexp"><td colspan="8" style="padding:4px 10px 14px;border-bottom:1px solid var(--line-soft)">
         <div style="font-size:11px;color:var(--text-mute);margin:2px 0 6px">${s.name} — monthly net FPI flow (₹ Cr) · last 12 months · green buy / red sell</div>
         ${ hasHist ? '<div class="chart-box" style="height:190px"><canvas id="secHistChart"></canvas></div>' : '<div style="color:var(--text-mute);font-size:11.5px;padding:10px 0">Monthly history unavailable for this sector.</div>' }
       </td></tr>` : '';
@@ -6311,6 +6320,8 @@ function secPosRender(){
       <td class="secname" data-name="${s.name.replace(/"/g,'&quot;')}" title="Show monthly flow chart" style="${td};font-weight:600;cursor:pointer">${s.name}${caret}</td>
       <td style="${td};text-align:right;font-family:'IBM Plex Mono';color:${col}">${secCr(s.flow)}${bar}</td>
       <td style="${td};text-align:right;font-family:'IBM Plex Mono';color:var(--text-mute)">${secCr(s.flowPrev)}</td>
+      ${moneyTd(ytd)}
+      ${moneyTd(oy)}
       <td style="${td};text-align:center;font-family:'IBM Plex Mono';font-size:11px"><span style="color:var(--text)">${s.fpiWt!=null?s.fpiWt.toFixed(1)+'%':'—'}</span> <span style="color:var(--text-mute)">· ${s.idxWt!=null?s.idxWt.toFixed(1)+'%':'—'}</span></td>
       <td style="${td};text-align:center">${owChip}</td>
       <td style="${td};text-align:center;font-family:'IBM Plex Mono';font-size:11px;color:${dCol}">${dTxt}</td>
@@ -6348,7 +6359,7 @@ async function loadSectorPositioning(){
     }
     secPosRender();
   }catch(e){
-    body.innerHTML='<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text-mute)">Sector positioning unavailable — could not load <code>data/fpi_sectors.json</code>.</td></tr>';
+    body.innerHTML='<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-mute)">Sector positioning unavailable — could not load <code>data/fpi_sectors.json</code>.</td></tr>';
   }
 }
 /* ---------- Strategy tab · multi-house model portfolios ---------- */
