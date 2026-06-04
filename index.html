@@ -589,6 +589,18 @@
   .sec-pick-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;
     padding:5px 0;border-bottom:1px solid var(--line-soft)}
   .sec-pick-row:last-child{border-bottom:none}
+  /* Sector selector: clickable sentiment-coloured boxes (replaces the dropdown) */
+  .sec-chip-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+  .sec-chip{font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;line-height:1.2;
+    color:var(--text-dim);background:var(--ink-2);border:1px solid var(--line-soft);
+    border-radius:8px;padding:8px 13px;cursor:pointer;transition:border-color .15s ease,background .15s ease,color .15s ease}
+  .sec-chip:hover{border-color:var(--text-mute);color:var(--text)}
+  .sec-chip.pos{color:var(--up);border-color:rgba(63,199,138,.35);background:rgba(63,199,138,.08)}
+  .sec-chip.neg{color:var(--down);border-color:rgba(240,106,106,.35);background:rgba(240,106,106,.08)}
+  .sec-chip.active{border-color:var(--saffron);box-shadow:0 0 0 1px var(--saffron) inset}
+  .sec-chip-legend{font-size:11px;color:var(--text-mute);margin-top:12px;line-height:1.7}
+  .sec-leg{font-weight:600}
+  .sec-leg.pos{color:var(--up)} .sec-leg.neg{color:var(--down)}
   /* Company chart: period return display + abnormal-move markers */
   .cm-return-row{display:flex;align-items:baseline;gap:12px;margin:4px 0 14px}
   .cm-return{font-family:'Roboto Mono';font-size:24px;font-weight:600;color:var(--text-mute)}
@@ -1667,13 +1679,9 @@
     <div id="viewSector" hidden>
       <div class="card reveal">
         <div class="card-h"><div><h3>Sector Selector</h3><p id="secSub">Pick a sector to drive the broker views, earnings season summary and likes/dislikes</p></div></div>
-        <div class="scr-row">
-          <span class="scr-lbl">Sector</span>
-          <select id="secSelect" class="scr-dd">
-            <option value="">Select a sector…</option>
-          </select>
-        </div>
-        <p id="secStatus" style="color:var(--text-mute);font-size:12px;line-height:1.7;margin-top:14px"></p>
+        <div id="secChips" class="sec-chip-grid"></div>
+        <p class="sec-chip-legend"><span class="sec-leg pos">Green</span> = net Buy-tilted broker coverage · <span class="sec-leg neg">Red</span> = net Sell-tilted · grey = balanced or no clear tilt.</p>
+        <p id="secStatus" style="color:var(--text-mute);font-size:12px;line-height:1.7;margin-top:10px"></p>
       </div>
       <div class="card reveal" id="secViewsCard" hidden>
         <div class="card-h">
@@ -5609,22 +5617,11 @@ function renderSectorEarnings(){
 
 // Card 3: Stocks brokers like / dislike — aggregate broker ratings across
 // the sector's coverage universe (companies.json sector field matches).
-function renderSectorPicks(){
-  const card=document.getElementById('secPicksCard');
-  const likesEl=document.getElementById('secLikes');
-  const dislikesEl=document.getElementById('secDislikes');
-  const sub=document.getElementById('secPicksSub');
-  if(!card||!likesEl||!dislikesEl) return;
-  if(!currentSector || !window.COMPANIES){ card.hidden=true; return; }
-  const re = SECTOR_FILTER[currentSector];
-  if(!re){ card.hidden=true; return; }
-  // Find companies whose `sector` field matches.
-  const cos = Object.keys(window.COMPANIES).filter(k=>{
-    const e=window.COMPANIES[k]; if(!e||!e.sector) return false;
-    return re.test(e.sector);
-  });
-  if(!cos.length){ card.hidden=true; return; }
-  // For each company, aggregate broker ratings across local + Trendlyne pool.
+// Aggregate the latest broker rating per (company, broker) across the
+// local + external + Trendlyne pool, for the given list of company keys.
+// Returns a map: companyKey → {buy, sell, brokers:Set, latest}. Shared by
+// the Likes/Dislikes card and the sector-chip sentiment colouring.
+function secComputeStats(cos){
   const PD=(typeof PDFDATA==='undefined'||!PDFDATA)?null:PDFDATA;
   const BUY={BUY:1,OP:1,OW:1,ADD:1,ACCUMULATE:1,OUTPERFORM:1,OVERWEIGHT:1};
   const SELL={SELL:1,UP:1,UW:1,REDUCE:1,UNDERPERFORM:1,UNDERWEIGHT:1};
@@ -5636,7 +5633,6 @@ function renderSectorPicks(){
   function tally(co, h, d, headline){
     if(!stats[co]) stats[co]={buy:0,sell:0,brokers:new Set(),latest:''};
     // Latest rating per broker (newest wins).
-    const key=co+'|'+h;
     if(!stats[co]._seen) stats[co]._seen={};
     if(stats[co]._seen[h] && stats[co]._seen[h] >= d) return;
     stats[co]._seen[h]=d;
@@ -5650,7 +5646,6 @@ function renderSectorPicks(){
     stats[co].brokers.add(h);
     if(!stats[co].latest || stats[co].latest<d) stats[co].latest=d;
   }
-  // Iterate the broker pool for each company.
   const allRows=[...(typeof notes==='undefined'?[]:notes),
                  ...(typeof notesExt==='undefined'?[]:notesExt),
                  ...(typeof notesPrior==='undefined'?[]:notesPrior)]
@@ -5666,6 +5661,30 @@ function renderSectorPicks(){
       tally(co, r.broker, r.date, headline);
     });
   });
+  return stats;
+}
+
+// Company keys whose companies.json `sector` field matches a sector's filter.
+function secCompaniesIn(sector){
+  const re = SECTOR_FILTER[sector];
+  if(!re || !window.COMPANIES) return [];
+  return Object.keys(window.COMPANIES).filter(k=>{
+    const e=window.COMPANIES[k]; return e && e.sector && re.test(e.sector);
+  });
+}
+
+function renderSectorPicks(){
+  const card=document.getElementById('secPicksCard');
+  const likesEl=document.getElementById('secLikes');
+  const dislikesEl=document.getElementById('secDislikes');
+  const sub=document.getElementById('secPicksSub');
+  if(!card||!likesEl||!dislikesEl) return;
+  if(!currentSector || !window.COMPANIES){ card.hidden=true; return; }
+  const re = SECTOR_FILTER[currentSector];
+  if(!re){ card.hidden=true; return; }
+  const cos = secCompaniesIn(currentSector);
+  if(!cos.length){ card.hidden=true; return; }
+  const stats = secComputeStats(cos);
   function fmtList(items){
     if(!items.length) return '<span class="empty">No clear consensus from the pool.</span>';
     return items.map(it=>{
@@ -5705,9 +5724,32 @@ function renderSectorPicks(){
 // Master refresh for the Sector tab (called on selector change + when
 // data sources finish loading).
 function renderSectorTab(){
+  colorSectorChips();
   renderSectorViews();
   renderSectorEarnings();
   renderSectorPicks();
+}
+
+// Colour each sector chip by its net broker rating tilt across the sector's
+// coverage universe: more Buy-type ratings → green (.pos), more Sell-type →
+// red (.neg), tied/none or catch-all sectors (India Macro/Strategy) → grey.
+function colorSectorChips(){
+  const wrap=document.getElementById('secChips');
+  if(!wrap || !window.COMPANIES) return;
+  const stats=secComputeStats(Object.keys(window.COMPANIES));
+  wrap.querySelectorAll('.sec-chip').forEach(btn=>{
+    const sector=btn.getAttribute('data-sector');
+    btn.classList.remove('pos','neg');
+    const re=SECTOR_FILTER[sector];
+    if(!re || re.source==='.*') return;          // catch-all → neutral
+    let buy=0, sell=0;
+    secCompaniesIn(sector).forEach(co=>{
+      const s=stats[co]; if(s){ buy+=s.buy; sell+=s.sell; }
+    });
+    if(buy>sell) btn.classList.add('pos');
+    else if(sell>buy) btn.classList.add('neg');
+    if(buy||sell) btn.title=`${buy} Buy-type vs ${sell} Sell-type broker ratings across the sector`;
+  });
 }
 
 // Back-compat shim — older data-load callbacks call renderSectorSummary().
@@ -6264,21 +6306,26 @@ function loadScreener(){
 let currentSector=null;
 function loadSectorPicker(){
   const status=document.getElementById('secStatus');
-  const sel=document.getElementById('secSelect');
+  const wrap=document.getElementById('secChips');
+  if(!wrap) return;
   const sectors=[];
   NOTEBOOKS.forEach(n=>{ if(SECTOR_NAMES.has(n.name)) sectors.push(n); });
   sectors.sort((a,b)=>a.name.localeCompare(b.name));
-  sectors.forEach((n,i)=>{
-    const o=document.createElement('option');
-    o.value=String(i); o.textContent=n.name;
-    sel.appendChild(o);
-  });
-  sel.addEventListener('change',()=>{
-    const i=sel.value;
-    currentSector = i==='' ? null : sectors[+i].name;
-    renderSectorTab();
+  wrap.innerHTML=sectors.map(n=>
+    `<button type="button" class="sec-chip" data-sector="${SEC_ESC(n.name)}">${SEC_ESC(n.name)}</button>`
+  ).join('');
+  wrap.querySelectorAll('.sec-chip').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const sec=btn.getAttribute('data-sector');
+      const wasActive=btn.classList.contains('active');
+      wrap.querySelectorAll('.sec-chip').forEach(b=>b.classList.remove('active'));
+      if(wasActive){ currentSector=null; }       // click again to clear
+      else { btn.classList.add('active'); currentSector=sec; }
+      renderSectorTab();
+    });
   });
   status.textContent=`${sectors.length} sectors with broker coverage`;
+  colorSectorChips();
 }
 /* ---------- Positioning tab · FII/DII daily flows ---------- */
 let fiiFlowChart=null, diiFlowChart=null;
