@@ -76,20 +76,33 @@ Ascending-by-date array of daily records:
   relative fetch of a committed file needs no proxy.
 
 ### 4. Backfill (one-time, at build)
-- Seed `data/fii_dii.json` from `MrChartist/fii-dii-data` raw `data/history.json`
+**Target: a true 1-Jan-2026 start.**
+- Seed the bulk of `data/fii_dii.json` from `MrChartist/fii-dii-data` raw
+  `data/history.json`
   (<https://raw.githubusercontent.com/MrChartist/fii-dii-data/main/data/history.json>),
   which carries **100 daily records, 14-Jan-2026 → present**, each with
   `date` / `fii_net` / `dii_net`. Map to the schema above, sorted ascending.
-- Attempt to fill **1–13 Jan 2026** trading days from a secondary source
-  (niftytrader `webapi`, or NSE archive). If unreachable, start the series at the
-  first available date and note the gap in the card sub-text / commit message.
-  (Public holidays in that window — e.g. 26 Jan is later — mean only a handful of
-  sessions are involved.)
+- **Fill the 1–13 Jan 2026 sessions** (the ~8 trading days
+  Jan 1,2,5,6,7,8,9,12,13 — weekends Jan 3-4 & 10-11 excluded; verify each against
+  the NSE 2026 trading-holiday list) from a deeper-history source. Candidate
+  sources to try in order during implementation:
+  1. Trendlyne FII/DII history (already used elsewhere in the portal) —
+     `trendlyne.com/macro-data/fii-dii/...`.
+  2. Moneycontrol `fii_dii_activity` historical (via the proxy helper if a direct
+     fetch is blocked).
+  3. Other public daily FII/DII datasets / NSE provisional archive PDFs.
+- Cross-check any Jan 1–13 values that overlap a second source before committing.
+- **Only if every source for that window fails** do we start the series at the
+  earliest available date, and we note the gap explicitly in the commit message
+  and card sub-text. The default expectation is a complete 1-Jan series.
 
 ### 5. Daily refresh routine (new scheduled remote agent)
 - Same family as the existing research/highs refreshers.
-- **Cron:** just after the NSE provisional release on trading days — target
-  ~7:30 pm IST (≈ `0 14 * * 1-5` UTC; exact value set when creating the routine).
+- **Cron:** **9:30 AM Malaysia time (MYT, UTC+8) on weekdays → `30 1 * * 1-5`
+  UTC.** By that hour the prior day's provisional print (published ~7 pm IST the
+  evening before) is final, and it lines up with the portal's other ~09:3x MYT
+  morning routines. A Monday run picks up Friday's print; the idempotent
+  catch-up (below) appends any dates missed over weekends/holidays.
 - **Each run:** fetch the latest trading day's FII/DII cash net (niftytrader
   `webapi/Resource/fii-dii-activity-data` JSON, fields `created_at`,
   `fii_net_value`, `dii_net_value`; MrChartist raw file as fallback). If that
