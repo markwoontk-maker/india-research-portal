@@ -106,7 +106,14 @@ Step "build-theses" { & $node "scripts\build-theses.js" }
 #    the slowest -- usually 5-10 min depending on library size.
 Step "build-financials" { & $node "scripts\build-financials.js" }
 
-# 8. Commit + push if there are any changes. No-op on a quiet day.
+# 8. Refresh the Strategy tab from new India strategy PDFs (gated: only runs the
+#    Claude headless miner when a new strategy report appeared; reverts on any
+#    validation failure). Always exits 0 so it never aborts the refresh.
+Step "build-strategy" {
+  & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-strategy.ps1"
+}
+
+# 9. Commit + push if there are any changes. No-op on a quiet day.
 Step "git stage" {
   & git add data/pdfdata.json data/pdfmap.json data/theses.json data/financials.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
 }
