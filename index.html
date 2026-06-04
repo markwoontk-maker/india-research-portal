@@ -334,13 +334,14 @@
   .macro-tbl td.pos{color:var(--up)} .macro-tbl td.lat.pos{color:var(--up)}
   .macro-tbl td.msrc{color:var(--text-mute);font-size:10px;font-weight:400}
   .macro-tbl td.munit{color:var(--text-mute);font-size:11px;font-weight:400}
-  /* latest cell: value over a small "prev · period" sub-line */
+  /* latest & previous cells: value over a small period sub-line (same format) */
   .macro-tbl td.lat .latval{display:block}
   .macro-tbl .latsub{display:block;font-size:9px;font-weight:400;color:var(--text-mute);
     margin-top:1px;letter-spacing:0}
-  .macro-tbl .latsub .lprev{color:var(--text-dim)}
-  .macro-tbl thead .lhsub{display:block;font-size:8px;font-weight:400;color:var(--text-mute);
-    text-transform:none;letter-spacing:0;margin-top:1px}
+  /* previous column mirrors the latest format (value + small period) but muted,
+     with no saffron highlight so the latest figure still stands out */
+  .macro-tbl td.prev{color:var(--text-dim);font-weight:600}
+  .macro-tbl td.prev .prevval{display:block}
   /* drag-to-reorder rows */
   .macro-tbl tbody tr{cursor:grab}
   .macro-tbl tbody tr.dragging{opacity:.45;cursor:grabbing}
@@ -424,6 +425,52 @@
   .tp-arrow{margin-left:4px;font-size:10px;vertical-align:baseline}
   .tp-arrow.up{color:var(--up)}
   .tp-arrow.down{color:var(--down)}
+  /* Upgrade / downgrade summary cards at the top of the Research tab.
+     Two side-by-side cards (stack on mobile), each lists the names where
+     the broker either raised the TP, cut it, upgraded the call, or
+     downgraded it within the last-2-day window. */
+  .ud-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:0 0 22px}
+  .ud-card{border:1px solid var(--line-soft);border-radius:8px;padding:11px 14px 13px}
+  .ud-card.up{border-color:rgba(46,160,67,.32);box-shadow:inset 3px 0 0 var(--up)}
+  .ud-card.down{border-color:rgba(248,81,73,.32);box-shadow:inset 3px 0 0 var(--down)}
+  .ud-h{display:flex;align-items:baseline;justify-content:space-between;
+    font-family:'Roboto Mono';font-size:11px;font-weight:600;letter-spacing:.06em;
+    text-transform:uppercase;margin-bottom:8px}
+  .ud-card.up .ud-h{color:var(--up)}
+  .ud-card.down .ud-h{color:var(--down)}
+  .ud-h .cnt{font-weight:400;color:var(--text-mute);letter-spacing:0;
+    text-transform:none;font-size:10.5px}
+  .ud-header,.ud-row{display:grid;
+    grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.5fr) minmax(0,1.3fr);
+    gap:10px;align-items:baseline}
+  .ud-header{padding:4px 0 5px;font-family:'Roboto Mono';font-size:9.5px;
+    color:var(--text-mute);letter-spacing:.04em;text-transform:uppercase;
+    border-bottom:1px solid var(--line-soft)}
+  .ud-row{padding:6px 0;font-size:12px;border-bottom:1px solid var(--line-soft);
+    white-space:nowrap;overflow:hidden}
+  .ud-row:last-child{border-bottom:none}
+  .ud-co{min-width:0;font-weight:600;color:var(--text);text-decoration:none;
+    overflow:hidden;text-overflow:ellipsis;display:block}
+  .ud-co:hover{color:var(--saffron);text-decoration:underline}
+  .ud-house{color:var(--text-mute);font-family:'Roboto Mono';font-size:10.5px;
+    min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .ud-call{display:flex;gap:4px;align-items:center;min-width:0;
+    font-family:'Roboto Mono';font-size:10px;overflow:hidden}
+  .ud-call .n-call{flex:none;width:auto;min-width:34px;padding:2px 6px;font-size:10px}
+  .ud-call .ar{color:var(--text-mute);font-size:10px;flex:none}
+  .ud-tp{font-family:'Roboto Mono';font-size:10.5px;color:var(--text-dim);
+    min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .ud-tp .pct{margin-left:4px;font-weight:600}
+  .ud-tp .pct.up{color:var(--up)}
+  .ud-tp .pct.down{color:var(--down)}
+  .ud-empty{color:var(--text-mute);font-size:11px;font-style:italic;padding:6px 0}
+  @media (max-width:840px){
+    .ud-grid{grid-template-columns:1fr}
+    .ud-header{display:none}
+    .ud-row{grid-template-columns:1fr 1fr;gap:4px 10px;padding:7px 0}
+    .ud-co{grid-column:1/-1}
+    .ud-tp{text-align:right}
+  }
   /* News-You-Need-to-Know category chip */
   .news-cat{flex:none;font-family:'Roboto Mono';font-size:9.5px;font-weight:600;
     padding:3px 7px;border-radius:4px;letter-spacing:.06em;white-space:nowrap;
@@ -4092,7 +4139,7 @@ function renderMacroReports(extra){
   const rows=MACRO_REPORTS.concat(extra||[]).map(macroRowHtml).join('');
   document.querySelector('#macroTbl').innerHTML=`<thead>${head}</thead><tbody>${rows}</tbody>`;
   document.getElementById('macroSub').textContent=
-    'Latest readings from the India Macro research library · drag a row to reorder · indicator · latest (vs previous · period) · broker & report date';
+    'Latest readings from the India Macro research library · drag a row to reorder · indicator · latest · previous · broker & report date';
   wireMacroDnD();
 }
 // data/macro.json overlay: { indicators: { <id>: {value,prev,period,src,tone} } }
