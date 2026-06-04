@@ -62,10 +62,20 @@ capture its top overweight / underweight names and each name's month-over-month
 change. **Skip a house if nothing fresh is found — do not carry stale data or
 invent holdings.** A 2-3 house summary of real data is the goal.
 
+For every house also record:
+- `url` — the **public source link you actually fetched the portfolio from**
+  (the report PDF or article URL). The dashboard turns the house name into a
+  clickable link to it. Use the real fetched URL; if you genuinely have no public
+  URL for that house, set `url` to `""` (the name renders unlinked).
+- `wt` (per stock) — the stock's **absolute portfolio weight as a number** (percent)
+  when the house prints per-stock weights; otherwise `""` (the card shows "—").
+
 - **Axis Securities** — monthly "Top Picks" PDF (e.g.
-  `simplehai.axisdirect.in`, signed note); states adds/exits explicitly.
+  `simplehai.axisdirect.in`, signed note); states adds/exits explicitly. Set
+  `url` to that note's public link.
 - **Motilal Oswal** — model-portfolio note / media coverage (whalesbook.com,
-  motilaloswal.com news) with OW/UW sectors + stock weight changes.
+  motilaloswal.com news) with OW/UW sectors + stock weight changes. Set `url`
+  to the article/report you used.
 - Also try **Nuvama, ICICI Securities, Kotak (KIE)** — but their institutional
   model portfolios are often login-gated; include only if a fresh constituent
   list is genuinely public.
@@ -76,11 +86,12 @@ If a name is unlisted (no clean NSE/Yahoo symbol), set `ticker` to `""` (the pag
 shows "—" for its price) rather than a wrong ticker.
 
 Write `data/model_portfolios.json` (UTF-8 no BOM):
-`{ "asOf":"YYYY-MM", "houses":[{ "broker", "asOf":"YYYY-MM", "benchmark",
-"overweight":[{ "stock","ticker","change","note" }], "underweight":[…] }] }`
+`{ "asOf":"YYYY-MM", "houses":[{ "broker", "asOf":"YYYY-MM", "benchmark", "url",
+"overweight":[{ "stock","ticker","wt","change","note" }], "underweight":[…] }] }`
 where `change` ∈ `new | raised | trimmed | removed | held` and each side caps
 ~8 names. Carry the prior file's positioning into the new `note`/`change` where
-you can infer the MoM move.
+you can infer the MoM move. Preserve a house's existing `url` if its source page
+is unchanged.
 
 ## 3. Validate, commit, push
 
