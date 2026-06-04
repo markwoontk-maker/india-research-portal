@@ -257,6 +257,15 @@ function direction(headline, pd){
 }
 
 // ---------- 6) pool reports per company --------------------------------
+// 2-year freshness window: drop anything older than (today - 730 days).
+// Bull/bear theses surface "what the brokers are saying", which gets
+// misleading fast — a 3-year-old "Buy at ₹X" is rarely still operative.
+const today = new Date();
+const cutoffDate = new Date(today.getTime() - 730 * 86400000);
+const CUTOFF_YYMMDD = String(cutoffDate.getFullYear()).slice(-2) +
+  String(cutoffDate.getMonth() + 1).padStart(2, '0') +
+  String(cutoffDate.getDate()).padStart(2, '0');
+
 function poolFor(company){
   const out = [];
   // Local + Trendlyne snapshot (notesExt) + historical (notesPrior).
@@ -265,6 +274,7 @@ function poolFor(company){
       if (!r || r.length < 4) return;
       const [house, date, co, headline] = r;
       if (String(co) !== company) return;
+      if (String(date) < CUTOFF_YYMMDD) return;     // > 2 years old → drop
       const explicit = r[4] || null;
       const pd = (PDFDATA||{})[pdKey(house, date, co, headline)] || null;
       out.push({ house, date, headline, explicit, pd, source: fromExt ? 'ext' : 'local' });
@@ -277,6 +287,7 @@ function poolFor(company){
   const tl = (TLCOV||{})[company] || [];
   tl.forEach(r => {
     if (!r || !r.broker || !r.date) return;
+    if (String(r.date) < CUTOFF_YYMMDD) return;     // > 2 years old → drop
     // Format the same way fetch-trendlyne-coverage.js does:
     //   "Rating · TP ₹X — Headline"
     const cap = r.rating ? (r.rating.charAt(0).toUpperCase() + r.rating.slice(1).toLowerCase()) : '';
@@ -360,6 +371,7 @@ for (const name of Object.keys(COMPANIES).sort()){
   else if (t.bear.length) withBearOnly++;
 }
 console.log(`Total companies in companies.json: ${Object.keys(COMPANIES).length}`);
+console.log(`Freshness window: reports newer than ${CUTOFF_YYMMDD} (last 2 years)`);
 console.log(`With bull + bear: ${withBoth}`);
 console.log(`Bull only:        ${withBullOnly}`);
 console.log(`Bear only:        ${withBearOnly}`);

@@ -1,14 +1,19 @@
 # Daily research portal refresh.
 #
 # Runs Mon-Fri at 09:35 Malaysia time (= local time on this PC) via
-# Windows Task Scheduler. End-to-end
-# workflow:
+# Windows Task Scheduler. Assumes a separate upstream step has
+# already renamed and sorted any new PDFs into the
+# India Related Reports library on disk.
+#
+# End-to-end workflow:
 #   1. Rebuild data/pdfmap.json from the local PDF library on disk.
 #   2. Run pdftotext over every PDF, regex-extract TP/call into pdfdata.json.
 #   3. Rebuild the notes[] (last 2 days) and notesPrior[] (older) arrays
 #      from the current PDF library and patch them into index.html.
 #   4. Pull fresh external broker calls from Trendlyne, refresh notesExt.
-#   5. Commit + push to GitHub (auto-publishes via Pages).
+#   5. Rebuild data/theses.json (bull/bear theses, 2-yr freshness window).
+#   6. Rebuild data/financials.json (per-broker Revenue/EBITDA/Net Profit).
+#   7. Commit + push to GitHub (auto-publishes via Pages).
 #
 # Install / reinstall the scheduled task with:
 #   powershell -ExecutionPolicy Bypass -File scripts\install-scheduled-task.ps1
@@ -92,9 +97,18 @@ Step "patch-notes-into-html" { & $node "scripts\patch-notes-into-html.js" }
 # 5. Refresh notesExt from Trendlyne (free, no auth -- first batch only).
 Step "refresh-trendlyne" { & $node "scripts\refresh-trendlyne.js" }
 
-# 6. Commit + push if there are any changes. No-op on a quiet day.
+# 6. Rebuild bull/bear theses (depends on pdfdata.json + notes arrays).
+#    2-year freshness window enforced inside the script.
+Step "build-theses" { & $node "scripts\build-theses.js" }
+
+# 7. Rebuild financial summary (per-broker Revenue/EBITDA/Net Profit).
+#    Re-runs pdftotext on each broker's latest report, so this step is
+#    the slowest -- usually 5-10 min depending on library size.
+Step "build-financials" { & $node "scripts\build-financials.js" }
+
+# 8. Commit + push if there are any changes. No-op on a quiet day.
 Step "git stage" {
-  & git add data/pdfdata.json data/pdfmap.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
+  & git add data/pdfdata.json data/pdfmap.json data/theses.json data/financials.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
 }
 Step "git commit + push" {
   $cached = & git diff --cached --stat
