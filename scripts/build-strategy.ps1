@@ -15,7 +15,7 @@ $strategyDir = "C:\Users\admin\Desktop\India Related Reports\India Strategy"
 $html        = Join-Path $repo "index.html"
 $promptFile  = Join-Path $repo "docs\strategy-build-prompt.md"
 $stateFile   = Join-Path $repo "scripts\.strategy-state.json"
-$claude      = "C:\Users\admin\.local\bin\claude"
+$claude      = "C:\Users\admin\.local\bin\claude.exe"
 $model       = "sonnet"          # matches the routine convention; cheap + capable
 $timeoutSec  = 900               # 15 min hard cap on the headless run
 

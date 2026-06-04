@@ -1,0 +1,68 @@
+{
+  "_note": "Model portfolios mined from the local India Strategy PDF library (the six covered houses). Kept separate from model_portfolios.json (which the remote India Positioning Data Refresher regenerates from public sources) so the two never clobber each other. Sector-level houses use ticker:'' so the 1-month return shows '—'.",
+  "asOf": "2026-06",
+  "houses": [
+    {
+      "broker": "JPMorgan",
+      "asOf": "2026-06",
+      "benchmark": "MSCI India",
+      "note": "Sector model portfolio (India Equity Strategy, 4QFY26 Earnings Dissector + May wrap).",
+      "overweight": [
+        { "stock": "Industrials", "ticker": "", "change": "raised", "note": "Upgraded to OW from Neutral — infra capex, electrification/grid, defence, manufacturing" },
+        { "stock": "Financials", "ticker": "", "change": "held", "note": "Banks/NBFCs/insurers" },
+        { "stock": "Materials", "ticker": "", "change": "held", "note": "Positive earnings revisions (metals)" },
+        { "stock": "Consumer Discretionary", "ticker": "", "change": "held", "note": "High-growth domestic cyclicals, autos" },
+        { "stock": "Health Care — Hospitals", "ticker": "", "change": "held", "note": "Hospitals OW (Pharma UW)" }
+      ],
+      "underweight": [
+        { "stock": "Information Technology", "ticker": "", "change": "held", "note": "Weak demand, pricing, AI disruption" },
+        { "stock": "Health Care — Pharma", "ticker": "", "change": "held", "note": "Pharma underweight" }
+      ]
+    },
+    {
+      "broker": "Nomura",
+      "asOf": "2026-06",
+      "benchmark": "",
+      "note": "Sector model portfolio (India Equity Strategy, 4QFY26 review, Fig. 101). Native labels Bullish/Neutral/Bearish → OW/N/UW.",
+      "overweight": [
+        { "stock": "Financials", "ticker": "", "change": "held", "note": "Bullish" },
+        { "stock": "Industrials — Capital Goods/Defence", "ticker": "", "change": "raised", "note": "Raised to Bullish on power-equipment demand" },
+        { "stock": "Information Technology", "ticker": "", "change": "held", "note": "Bullish — attractive valuations, AI-implementation upside" }
+      ],
+      "underweight": [
+        { "stock": "Consumer Discretionary", "ticker": "", "change": "trimmed", "note": "Cut to Bearish on an earnings-growth slowdown (durables + autos)" },
+        { "stock": "Consumer Staples", "ticker": "", "change": "held", "note": "Bearish" },
+        { "stock": "Energy — Oil & Gas", "ticker": "", "change": "held", "note": "Bearish — FY27 PAT decline, marketing-loss risk" },
+        { "stock": "Utilities — Power", "ticker": "", "change": "held", "note": "Bearish/cautious" }
+      ]
+    },
+    {
+      "broker": "CLSA",
+      "asOf": "2026-05",
+      "benchmark": "Nifty",
+      "note": "India Focus Portfolio sector tilts (running since Jan'21; +126ppt cumulative vs Nifty). Stock-level holdings are login-gated, so only the stated sector tilts are shown.",
+      "overweight": [
+        { "stock": "Consumer Discretionary", "ticker": "", "change": "", "note": "Focus-portfolio overweight" },
+        { "stock": "Autos", "ticker": "", "change": "", "note": "Focus-portfolio overweight" },
+        { "stock": "Real Estate", "ticker": "", "change": "", "note": "Focus-portfolio overweight" },
+        { "stock": "Consumer Staples", "ticker": "", "change": "", "note": "Focus-portfolio overweight" },
+        { "stock": "Financials — Banks", "ticker": "", "change": "", "note": "Largest portfolio weight" }
+      ],
+      "underweight": []
+    },
+    {
+      "broker": "Kotak — Alphabet Quant (factor)",
+      "asOf": "2026-06",
+      "benchmark": "Nifty 50",
+      "note": "Alphabet 'Concentrated All-Season' multi-factor portfolio (quant, not fundamental KIE views). Sector tilt: OW Utilities & Energy, UW Financials.",
+      "overweight": [
+        { "stock": "ONGC", "ticker": "ONGC.NS", "change": "", "note": "Concentrated All-Season factor holding" },
+        { "stock": "Titan", "ticker": "TITAN.NS", "change": "", "note": "Concentrated All-Season factor holding" },
+        { "stock": "Grasim Industries", "ticker": "GRASIM.NS", "change": "", "note": "Concentrated All-Season factor holding" },
+        { "stock": "Nestlé India", "ticker": "NESTLEIND.NS", "change": "", "note": "Concentrated All-Season factor holding" },
+        { "stock": "Bharti Airtel", "ticker": "BHARTIARTL.NS", "change": "", "note": "Concentrated All-Season factor holding" }
+      ],
+      "underweight": []
+    }
+  ]
+}

@@ -1395,11 +1395,12 @@
                 <th data-key="name" data-label="Sector" title="Click to sort" style="cursor:pointer;text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)">Sector</th>
                 <th data-key="flow" data-label="Net flow (this mo)" title="Click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">Net flow (this mo)</th>
                 <th data-key="flowPrev" data-label="Prev mo" title="Click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">Prev mo</th>
+                <th data-key="fpiWt" data-label="Weightage (FPI·N500)" title="Click to sort" style="cursor:pointer;text-align:center;padding:6px 10px;border-bottom:1px solid var(--line)">Weightage (FPI·N500)</th>
                 <th data-key="ow" data-label="OW/UW vs N500" title="Click to sort" style="cursor:pointer;text-align:center;padding:6px 10px;border-bottom:1px solid var(--line)">OW/UW vs N500</th>
                 <th data-key="dmom" data-label="Δ MoM" title="Click to sort" style="cursor:pointer;text-align:center;padding:6px 10px;border-bottom:1px solid var(--line)">Δ MoM</th>
               </tr>
             </thead>
-            <tbody id="secPosBody"><tr><td colspan="5" style="padding:24px;text-align:center;color:var(--text-mute)">Loading sector positioning…</td></tr></tbody>
+            <tbody id="secPosBody"><tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text-mute)">Loading sector positioning…</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -4020,17 +4021,20 @@ function macroRowHtml(it){
   const cls=it.tone==='neg'?'neg':(it.tone==='pos'?'pos':'');
   const tip=it.note?` title="${macroAttr(it.note)}"`:'';
   const lcls=it.note?'ml tip':'ml';
-  // 3rd column stacks the current value over a small sub-line carrying the
-  // previous reading (filled by the macro routine; blank until then) and the
-  // period. Period font is intentionally minimised.
-  const prevBit=it.prev?`<span class="lprev">prev ${it.prev}</span>`:'';
-  const sep=(it.prev&&it.period)?' · ':'';
-  const sub=(it.prev||it.period)?`<span class="latsub">${prevBit}${sep}${it.period||''}</span>`:'';
+  // Latest and Previous are separate columns with the SAME format: the value
+  // on top, the period in a minimised font beneath. `prev` is stored as
+  // "<value> (<period>)" (filled by the macro routine; blank until then) — we
+  // split the trailing parenthetical so the previous period renders small too.
+  const latSub=it.period?`<span class="latsub">${it.period}</span>`:'';
+  let prevVal='', prevPer='';
+  if(it.prev){ const m=/^\s*(.*?)\s*\(([^)]+)\)\s*$/.exec(it.prev); if(m){ prevVal=m[1]; prevPer=m[2]; } else { prevVal=it.prev; } }
+  const prevCell=prevVal?`<span class="prevval">${prevVal}</span>${prevPer?`<span class="latsub">${prevPer}</span>`:''}`:'';
   return `<tr draggable="true" data-id="${macroAttr(it.id)}"><th class="mi">`+
     `<span class="mh" title="Drag to reorder">⠿</span>`+
     `<span class="${lcls}"${tip}>${it.label}</span></th>`+
     `<td class="munit">${it.unit}</td>`+
-    `<td class="lat ${cls}"><span class="latval">${it.value}</span>${sub}</td>`+
+    `<td class="lat ${cls}"><span class="latval">${it.value}</span>${latSub}</td>`+
+    `<td class="prev">${prevCell}</td>`+
     `<td class="msrc">${it.src}</td></tr>`;
 }
 // Persisted custom row order (drag-to-reorder). localStorage holds an array of ids.
@@ -4084,7 +4088,7 @@ function wireMacroDnD(){
   });
 }
 function renderMacroReports(extra){
-  const head=`<tr><th class="mi">Indicator</th><th>Unit</th><th>Latest <span class="lhsub">vs prev · period</span></th><th>Source</th></tr>`;
+  const head=`<tr><th class="mi">Indicator</th><th>Unit</th><th>Latest</th><th>Previous</th><th>Source</th></tr>`;
   const rows=MACRO_REPORTS.concat(extra||[]).map(macroRowHtml).join('');
   document.querySelector('#macroTbl').innerHTML=`<thead>${head}</thead><tbody>${rows}</tbody>`;
   document.getElementById('macroSub').textContent=
@@ -6100,6 +6104,7 @@ function secPosRender(){
       <td style="${td};font-weight:600">${s.name}</td>
       <td style="${td};text-align:right;font-family:'IBM Plex Mono';color:${col}">${secCr(s.flow)}${bar}</td>
       <td style="${td};text-align:right;font-family:'IBM Plex Mono';color:var(--text-mute)">${secCr(s.flowPrev)}</td>
+      <td style="${td};text-align:center;font-family:'IBM Plex Mono';font-size:11px"><span style="color:var(--text)">${s.fpiWt!=null?s.fpiWt.toFixed(1)+'%':'—'}</span> <span style="color:var(--text-mute)">· ${s.idxWt!=null?s.idxWt.toFixed(1)+'%':'—'}</span></td>
       <td style="${td};text-align:center">${owChip}</td>
       <td style="${td};text-align:center;font-family:'IBM Plex Mono';font-size:11px;color:${dCol}">${dTxt}</td>
     </tr>`;
@@ -6130,7 +6135,7 @@ async function loadSectorPositioning(){
     }
     secPosRender();
   }catch(e){
-    body.innerHTML='<tr><td colspan="5" style="padding:24px;text-align:center;color:var(--text-mute)">Sector positioning unavailable — could not load <code>data/fpi_sectors.json</code>.</td></tr>';
+    body.innerHTML='<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--text-mute)">Sector positioning unavailable — could not load <code>data/fpi_sectors.json</code>.</td></tr>';
   }
 }
 /* ---------- Strategy tab · multi-house model portfolios ---------- */
@@ -6155,9 +6160,21 @@ function mpBadge(change){
 async function loadModelPortfolios(){
   const wrap=document.getElementById('mpHouses'); if(!wrap) return;
   try{
-    const res=await fetch('data/model_portfolios.json',{cache:'no-store'});
-    if(!res.ok) throw new Error('http '+res.status);
-    const d=await res.json();
+    // Two layers: public model portfolios (model_portfolios.json, kept fresh by the
+    // remote positioning-data refresher) + the covered houses' portfolios mined from
+    // the local India Strategy PDFs (model_portfolios_house.json). Merge both; either
+    // may be missing without failing the card.
+    const [pubR,houseR]=await Promise.allSettled([
+      fetch('data/model_portfolios.json',{cache:'no-store'}),
+      fetch('data/model_portfolios_house.json',{cache:'no-store'})
+    ]);
+    let pub=null, hf=null;
+    if(pubR.status==='fulfilled' && pubR.value.ok) pub=await pubR.value.json();
+    if(houseR.status==='fulfilled' && houseR.value.ok) hf=await houseR.value.json();
+    if(!pub && !hf) throw new Error('no model-portfolio data');
+    const asOf=(pub&&pub.asOf)||(hf&&hf.asOf);
+    const houses=[...((pub&&pub.houses)||[]), ...((hf&&hf.houses)||[])];
+    const d={ asOf, houses };
     const mon=iso=>{ const [y,m]=iso.split('-'); return new Date(y,m-1,1).toLocaleDateString('en-IN',{month:'short',year:'numeric'}); };
     if(d.asOf) document.getElementById('mpSub').textContent="Each house's latest model portfolio ("+mon(d.asOf)+") vs its prior one · positioning change + 1-month price move.";
     const sideHtml=(title,arr,col)=>`<div class="pk-label" style="color:${col}">${title}</div>`+
