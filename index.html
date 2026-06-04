@@ -965,6 +965,23 @@
         #viewStrategy .cons-h:first-child{margin-top:4px}
         #viewStrategy .cons-h .dot{width:9px;height:9px;border-radius:50%}
         #viewStrategy .cons-h .dot.g{background:var(--up)} #viewStrategy .cons-h .dot.r{background:var(--down)} #viewStrategy .cons-h .dot.y{background:var(--saffron)}
+        #viewStrategy .changes{margin-top:16px;border-top:1px solid var(--line-soft);padding-top:14px}
+        #viewStrategy .ch-h{font-size:13px;font-weight:700;letter-spacing:.02em;margin-bottom:8px}
+        #viewStrategy .ch-h .ch-sub{display:block;font-size:11px;font-weight:400;color:var(--text-mute);letter-spacing:0;margin-top:2px}
+        #viewStrategy .ch-house{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--line-soft);align-items:flex-start}
+        #viewStrategy .ch-house:last-of-type{border-bottom:none}
+        #viewStrategy .ch-name{flex:0 0 86px;font-size:12.5px;font-weight:700;color:var(--text);padding-top:2px}
+        #viewStrategy .ch-list{flex:1;display:flex;flex-direction:column;gap:7px;list-style:none;margin:0;padding:0}
+        #viewStrategy .ch-list li{display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:12px}
+        #viewStrategy .ch-sec{font-weight:600;color:var(--text);flex:0 0 178px}
+        #viewStrategy .ch-move{display:inline-flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700}
+        #viewStrategy .ch-move .arr{color:var(--text-mute);font-weight:700}
+        #viewStrategy .rt{display:inline-block;min-width:26px;text-align:center;padding:1px 6px;border-radius:5px;border:1px solid var(--line);color:var(--text-mute)}
+        #viewStrategy .rt.ow{background:var(--up-soft);color:var(--up);border-color:rgba(63,199,138,.40)}
+        #viewStrategy .rt.uw{background:var(--down-soft);color:var(--down);border-color:rgba(240,106,106,.40)}
+        #viewStrategy .rt.n{background:var(--saffron-soft);color:var(--saffron);border-color:rgba(233,162,59,.40)}
+        #viewStrategy .ch-why{font-size:11px;color:var(--text-mute)}
+        #viewStrategy .ch-note{font-size:11px;color:var(--text-mute);line-height:1.55;margin-top:11px}
       </style>
       <div class="card reveal">
         <div class="card-h"><div><h3>House Strategy — Sector Conviction Grid</h3>
@@ -1070,6 +1087,28 @@
           </table>
         </div>
         <p class="note"><strong>Reading the grid.</strong> JPMorgan and Nomura state formal top-down sector allocations. CLSA and Bernstein cells (marked *) are inferred from their earnings-momentum and thematic commentary — neither published a model-portfolio sector weighting in the current note. Jefferies' two strategy notes here (INR Pressure; JEI#41) are macro/flows pieces with no sector positioning, and Kotak's reports are a flows/ownership study plus stock-level KIE ratings — so their sector columns are left blank and their views captured in the cards below.</p>
+
+        <div class="changes">
+          <div class="ch-h">Recent Conviction Changes
+            <span class="ch-sub">Sector-weighting moves each house made in its current India strategy note vs the prior one (18 May – 2 Jun 2026).</span>
+          </div>
+          <div class="ch-house">
+            <span class="ch-name">JPMorgan</span>
+            <ul class="ch-list">
+              <li><span class="ch-sec">Industrials</span><span class="ch-move"><span class="rt n">N</span><span class="arr">→</span><span class="rt ow">OW</span></span><span class="ch-why">upgraded on infra capex, electrification/grid, defence &amp; manufacturing</span></li>
+            </ul>
+          </div>
+          <div class="ch-house">
+            <span class="ch-name">Nomura</span>
+            <ul class="ch-list">
+              <li><span class="ch-sec">Industrials · Capital Goods/Defence</span><span class="ch-move"><span class="rt uw">UW</span><span class="arr">→</span><span class="rt ow">OW</span></span><span class="ch-why">raised on strong power-equipment demand offsetting higher costs</span></li>
+              <li><span class="ch-sec">Consumer Discretionary · Durables</span><span class="ch-move"><span class="rt ow">OW</span><span class="arr">→</span><span class="rt uw">UW</span></span><span class="ch-why">cut on an expected earnings-growth slowdown</span></li>
+              <li><span class="ch-sec">Consumer Discretionary · Autos</span><span class="ch-move"><span class="rt n">N</span><span class="arr">→</span><span class="rt uw">UW</span></span><span class="ch-why">cut on an expected earnings-growth slowdown</span></li>
+              <li><span class="ch-sec">Materials · Cement</span><span class="ch-move"><span class="rt ow">OW</span><span class="arr">→</span><span class="rt n">N</span></span><span class="ch-why">trimmed on cost-pressure earnings risk</span></li>
+            </ul>
+          </div>
+          <p class="ch-note"><strong>Nomura</strong> labels its stances Bullish / Neutral / Bearish — mapped here to OW / N / UW to match the grid. <strong>CLSA, Kotak, Jefferies &amp; Bernstein</strong> announced no formal sector-weighting changes this cycle: CLSA's moves were stock-level rating changes (e.g. Hero MotoCorp, Kotak Bank up to O-PF; Dabur, Coal India down to U-PF), while Kotak, Jefferies and Bernstein give thematic / bottom-up views only.</p>
+        </div>
       </div>
 
       <div class="card reveal">
