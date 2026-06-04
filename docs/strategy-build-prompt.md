@@ -156,10 +156,45 @@ Schema (valid JSON; keep the leading "_note"):
 Use `change` values: `new`/`raised`/`trimmed`/`removed`/`held`, or `""` when the
 prior stance is unknown (renders a neutral dot). Validate the file parses as JSON.
 
+# ALSO REWRITE data/mf_sectors.json (mutual-fund sector tilt)
+If the selected reports include a **Kotak "KS-Ownership Navigator"** note (filename
+contains "Ownership Navigator"), refresh `data/mf_sectors.json` from the LATEST one.
+Otherwise leave the file untouched (do NOT invent or carry stale dates).
+
+This powers the "MF Sector Positioning" card on the Positioning tab. It is a
+QUALITATIVE mutual-fund holdings tilt (overweight/underweight vs Nifty 500), NOT
+flows. From the report's body text (use `pdftotext -layout` on the PDF), extract:
+- the explicit MF sector OW/UW list, e.g. "MFs overweight on automobiles &
+  components, banks and pharmaceuticals; underweight on consumer staples, metals &
+  mining and oil, gas & consumable fuels" → set each named sector's `stance` to
+  `OW`/`UW`. Sectors with no explicit call get `stance:""`.
+- the latest-quarter MF buy/sell direction, e.g. "MF bought banks and IT services;
+  sold metals & mining" → set `move` to `bought`/`sold` for those sectors, else `""`.
+- the MF share of the Nifty 500 (e.g. 11.9%) → `mfOwnershipPct`.
+- the report's as-of quarter (e.g. "Mar 2026 quarter") → `asOf`.
+
+Do NOT fabricate per-sector magnitudes (the precise OW/UW bps live in chart images
+that don't parse cleanly) — qualitative `stance`/`move` only. Map sector names to
+the FPI table's taxonomy: Banks→"Financial Services", Automobiles & Components→
+"Automobile", Pharmaceuticals→"Healthcare", Consumer Staples→"FMCG", Oil, Gas &
+Consumable Fuels→"Energy", IT Services→"Information Technology", Metals & Mining
+unchanged. KEEP the existing `_note`, `benchmark`, `disclaimer`, `source`, `report`
+fields (update `report` to the Ownership Navigator filename you used, and `asOf`).
+Schema:
+```json
+{ "_note":"…keep…", "asOf":"Mar 2026 quarter", "benchmark":"Nifty 500",
+  "mfOwnershipPct":11.9, "source":"Kotak — KS-Ownership Navigator (<date>)",
+  "report":"India Strategy/[YYMMDD] [Kotak] … Ownership Navigator … .pdf",
+  "disclaimer":"…keep the not-clean wording…",
+  "sectors":[ { "name":"Financial Services", "stance":"OW", "move":"bought", "note":"why" } ] }
+```
+Validate it parses as JSON with a non-empty `sectors[]`.
+
 # FINISH
 After editing, run `grep -n "STRAT:" index.html` and confirm all 5 marker pairs
-are still present, and confirm `data/model_portfolios_house.json` is valid JSON
-(`node -e "JSON.parse(require('fs').readFileSync('data/model_portfolios_house.json'))"`).
+are still present, and confirm `data/model_portfolios_house.json` and
+`data/mf_sectors.json` are valid JSON
+(`node -e "JSON.parse(require('fs').readFileSync('data/model_portfolios_house.json'));JSON.parse(require('fs').readFileSync('data/mf_sectors.json'))"`).
 Print exactly one line:
 `STRATEGY UPDATED: <n_reports> reports, asof <date>` (or
 `STRATEGY UNCHANGED` if no selected report was newer than what the grid already

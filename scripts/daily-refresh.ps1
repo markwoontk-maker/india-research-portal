@@ -115,7 +115,7 @@ Step "build-strategy" {
 
 # 9. Commit + push if there are any changes. No-op on a quiet day.
 Step "git stage" {
-  & git add data/pdfdata.json data/pdfmap.json data/theses.json data/financials.json data/model_portfolios_house.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
+  & git add data/pdfdata.json data/pdfmap.json data/theses.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
 }
 Step "git commit + push" {
   $cached = & git diff --cached --stat
