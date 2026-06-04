@@ -325,6 +325,13 @@
   .macro-tbl td.pos{color:var(--up)} .macro-tbl td.lat.pos{color:var(--up)}
   .macro-tbl td.msrc{color:var(--text-mute);font-size:10px;font-weight:400}
   .macro-tbl td.munit{color:var(--text-mute);font-size:11px;font-weight:400}
+  /* latest cell: value over a small "prev · period" sub-line */
+  .macro-tbl td.lat .latval{display:block}
+  .macro-tbl .latsub{display:block;font-size:9px;font-weight:400;color:var(--text-mute);
+    margin-top:1px;letter-spacing:0}
+  .macro-tbl .latsub .lprev{color:var(--text-dim)}
+  .macro-tbl thead .lhsub{display:block;font-size:8px;font-weight:400;color:var(--text-mute);
+    text-transform:none;letter-spacing:0;margin-top:1px}
   /* drag-to-reorder rows */
   .macro-tbl tbody tr{cursor:grab}
   .macro-tbl tbody tr.dragging{opacity:.45;cursor:grabbing}
@@ -3325,13 +3332,19 @@ async function openNews(ticker,name){
     body.innerHTML='<div class="nm-empty">Couldn’t load headlines (free news feed unreachable). Try again shortly.</div>';
   }
 }
+// On a static host (GitHub Pages) the /api/news Netlify function doesn't
+// exist, so the first probe 404s. Latch that once and never probe again —
+// otherwise every query and every mover popup pays a wasted round-trip.
+let _fnDead=false;
 async function newsViaFunction(q){
+  if(_fnDead) return null;
   try{
     const r=await fetch('/api/news?q='+encodeURIComponent(q),{cache:'no-store'});
+    if(r.status===404){ _fnDead=true; return null; }
     if(!r.ok) return null;
     const j=await r.json();
     return (j&&j.items)||null;
-  }catch(e){ return null; }
+  }catch(e){ _fnDead=true; return null; }
 }
 // --- Throttle for rss2json (free tier rate-limits aggressively) ---
 // Serializes ALL news fetches through one queue with a min gap so
@@ -3389,6 +3402,26 @@ async function newsViaProxy(q){
     return _rawNewsViaProxy(q);
   });
   _newsQueue=task.catch(()=>{});         // don't poison the chain on rejection
+  _newsInflight.set(q, task);
+  let items=null;
+  try{ items=await task; }catch(e){ items=null; }
+  _newsInflight.delete(q);
+  if(items && items.length) _newsCache.set(q,{items,time:Date.now()});
+  return items;
+}
+// Fast lane for the user-initiated News tab: shares the cache, in-flight
+// dedupe and 429 backoff, but does NOT sit behind the global mover queue or
+// the 800ms inter-request gap. Only the 5 News-tab buckets use it, so it
+// stays well under rss2json's rate limit while firing them in parallel.
+async function newsViaProxyFast(q){
+  const cached=_newsCache.get(q);
+  if(cached && Date.now()-cached.time < NEWS_TTL) return cached.items;
+  if(_newsInflight.has(q)) return _newsInflight.get(q);
+  const task=(async()=>{
+    const wait=_backoffUntil-Date.now();          // respect an active cool-off only
+    if(wait>0) await new Promise(r=>setTimeout(r,wait));
+    return _rawNewsViaProxy(q);
+  })();
   _newsInflight.set(q, task);
   let items=null;
   try{ items=await task; }catch(e){ items=null; }
@@ -3502,21 +3535,11 @@ async function loadNews(segment){
   // Only reject titles that START with a question word (a trailing "?"
   // on otherwise-factual leads is left to summariseNews to strip).
   const QUESTION_RE=/^\s*(?:will|why|how|what|does|should|can|could|would|are|is|do|did)\s+/i;
-  async function pull(q){
-    try{
-      const r=await fetch('/api/news?q='+encodeURIComponent(q)+'&n=20',{cache:'no-store'});
-      if(r.ok){ const j=await r.json(); if(j&&Array.isArray(j.items)&&j.items.length) return j.items; }
-    }catch(e){}
-    try{ return (await newsViaProxy(q))||[]; }catch(e){ return []; }
-  }
-  const results=await Promise.all(queries.map(async ({cat,q})=>{
-    let items=await pull(q);
+  // Per-bucket category filter, then the universal fact-only filter.
+  function filterBucket(cat, items){
     if(cat==='POL' || cat==='ECON' || cat==='WIRE') items=marketRelevant(items);
     else if(cat==='EARN') items=(items||[]).filter(it=>{const t=String(it.title||'');return EARN_RE.test(t)&&!EARN_EXCL.test(t)&&!SOC_RE.test(t);});
     else items=(items||[]).filter(it=>{const t=String(it.title||'');return CORP_RE.test(t)&&!GOVT_RE.test(t)&&!SOC_RE.test(t);});
-    // Universal fact-only filter — drop listicle/preview structure,
-    // named-person punditry (multi-word or single name + opinion verb),
-    // and any question-form headline.
     items=(items||[]).filter(it=>{
       const t=String(it.title||'');
       if(NEWS_EXCL.test(t)) return false;
@@ -3525,18 +3548,8 @@ async function loadNews(segment){
       return true;
     });
     return items.map(it=>({...it,cat}));
-  }));
-  const all=[].concat(...results);
-  // Sort by pubDate desc so when we dedupe by company below, the
-  // NEWEST headline per company wins.
-  all.sort((a,b)=>(Date.parse(b.pubDate||0)||0)-(Date.parse(a.pubDate||0)||0));
-  // 24-hour clamp measured from the newest item (robust to sandbox /
-  // source clock skew — same pattern used by the movers "why" line).
-  let newest=0;
-  for(const it of all){ const ms=Date.parse(it.pubDate||0); if(!isNaN(ms)&&ms>newest) newest=ms; }
-  // Dedupe by company first (ticker if matchable, else lead-company
-  // name). Macro headlines without a specific company fall back to
-  // title-key so they still dedup against duplicates of themselves.
+  }
+  // Dedupe key: ticker → lead-company name → title.
   function newsKey(it){
     const t=String(it.title||'');
     const tk=pickTicker(t);
@@ -3548,30 +3561,80 @@ async function loadNews(segment){
     }
     return 'ti:'+t.toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,60);
   }
-  const seen=new Set(); const merged=[];
-  for(const it of all){
-    const ms=Date.parse(it.pubDate||0);
-    if(newest && !isNaN(ms) && (newest-ms) > clampMs) continue; // older than window vs newest
-    const k=newsKey(it);
-    if(!k||seen.has(k)) continue;
-    seen.add(k); merged.push(it);
-    if(merged.length>=20) break;
+  // Build the ordered/deduped/window-clamped/capped list from a pool of items.
+  // Tiered order: POL → ECON/WIRE → company-specific (EARN+CORP); newest first
+  // within a tier. Clamp measured from the newest item (clock-skew safe).
+  function buildMerged(pool){
+    const all=pool.slice();
+    all.sort((a,b)=>(Date.parse(b.pubDate||0)||0)-(Date.parse(a.pubDate||0)||0));
+    let newest=0;
+    for(const it of all){ const ms=Date.parse(it.pubDate||0); if(!isNaN(ms)&&ms>newest) newest=ms; }
+    const seen=new Set(); const merged=[];
+    for(const it of all){
+      const ms=Date.parse(it.pubDate||0);
+      if(newest && !isNaN(ms) && (newest-ms) > clampMs) continue;
+      const k=newsKey(it);
+      if(!k||seen.has(k)) continue;
+      seen.add(k); merged.push(it);
+      if(merged.length>=20) break;
+    }
+    const PRI={POL:0, ECON:1, WIRE:1, EARN:2, CORP:2};
+    merged.sort((a,b)=>{
+      const pa=PRI[a.cat]??3, pb=PRI[b.cat]??3;
+      if(pa!==pb) return pa-pb;
+      return (Date.parse(b.pubDate||0)||0)-(Date.parse(a.pubDate||0)||0);
+    });
+    return merged;
   }
+  // Token guards overlapping loads (rapid segment-dropdown switches): only the
+  // newest loadNews() call is allowed to paint into the list.
+  const myToken=(loadNews._t=(loadNews._t||0)+1);
+  function paint(items){
+    if(loadNews._t!==myToken) return;
+    if(items&&items.length) el.innerHTML=fmtNewsItems(items);
+  }
+  let painted=false;
+  // 1) Instant paint from the last render saved to localStorage (<24h old).
+  const LS_KEY='newsRender:'+SEG;
+  try{
+    const c=JSON.parse(localStorage.getItem(LS_KEY)||'null');
+    if(c&&Array.isArray(c.items)&&c.items.length&&(Date.now()-(c.time||0))<864e5){ paint(c.items); painted=true; }
+  }catch(e){}
+  // 2) Instant paint from pre-baked data/news.json (built daily by the routine).
+  try{
+    const r=await fetch('data/news.json',{cache:'no-store'});
+    if(r.ok){ const j=await r.json(); const arr=j&&j.segments&&j.segments[SEG];
+      if(Array.isArray(arr)&&arr.length){ paint(arr); painted=true; } }
+  }catch(e){}
+  // 3) Live refresh — fast parallel lane (skips the global mover queue and its
+  //    800ms gap) with progressive repaint, so the first results show in ~1s
+  //    instead of after all five buckets serialise. The dead /api/news probe
+  //    is tried once then latched off via _fnDead.
+  async function pullFast(q){
+    if(!_fnDead){
+      try{
+        const r=await fetch('/api/news?q='+encodeURIComponent(q)+'&n=20',{cache:'no-store'});
+        if(r.status===404){ _fnDead=true; }
+        else if(r.ok){ const j=await r.json(); if(j&&Array.isArray(j.items)&&j.items.length) return j.items; }
+      }catch(e){ _fnDead=true; }
+    }
+    try{ return (await newsViaProxyFast(q))||[]; }catch(e){ return []; }
+  }
+  const collected=[];
+  await Promise.all(queries.map(async ({cat,q})=>{
+    const items=filterBucket(cat, await pullFast(q));
+    collected.push(...items);
+    const m=buildMerged(collected);
+    if(m.length) paint(m);                       // progressive
+  }));
+  if(loadNews._t!==myToken) return;              // superseded by a newer load
+  const merged=buildMerged(collected);
   if(!merged.length){
-    el.innerHTML='<li class="pol-empty">No news right now (free feed). The CORS proxy may be rate-limited — try again in a minute.</li>';
+    if(!painted) el.innerHTML='<li class="pol-empty">No news right now (free feed). The CORS proxy may be rate-limited — try again in a minute.</li>';
     return;
   }
-  // Tiered order: POL → ECON → company-specific (EARN+CORP).
-  // Political decisions and macro indicators set the day's tone, so
-  // they sit above individual-company headlines. Within each tier,
-  // newest first.
-  const PRI={POL:0, ECON:1, WIRE:1, EARN:2, CORP:2};
-  merged.sort((a,b)=>{
-    const pa=PRI[a.cat]??3, pb=PRI[b.cat]??3;
-    if(pa!==pb) return pa-pb;
-    return (Date.parse(b.pubDate||0)||0)-(Date.parse(a.pubDate||0)||0);
-  });
-  el.innerHTML=fmtNewsItems(merged);
+  paint(merged);
+  try{ localStorage.setItem(LS_KEY, JSON.stringify({time:Date.now(), items:merged})); }catch(e){}
 }
 // Rule-based 1-sentence summary of a news headline. No LLM — strips
 // publisher / clickbait clauses, takes the first sentence, normalises
@@ -3669,12 +3732,17 @@ function macroRowHtml(it){
   const cls=it.tone==='neg'?'neg':(it.tone==='pos'?'pos':'');
   const tip=it.note?` title="${macroAttr(it.note)}"`:'';
   const lcls=it.note?'ml tip':'ml';
+  // 3rd column stacks the current value over a small sub-line carrying the
+  // previous reading (filled by the macro routine; blank until then) and the
+  // period. Period font is intentionally minimised.
+  const prevBit=it.prev?`<span class="lprev">prev ${it.prev}</span>`:'';
+  const sep=(it.prev&&it.period)?' · ':'';
+  const sub=(it.prev||it.period)?`<span class="latsub">${prevBit}${sep}${it.period||''}</span>`:'';
   return `<tr draggable="true" data-id="${macroAttr(it.id)}"><th class="mi">`+
     `<span class="mh" title="Drag to reorder">⠿</span>`+
     `<span class="${lcls}"${tip}>${it.label}</span></th>`+
     `<td class="munit">${it.unit}</td>`+
-    `<td class="lat ${cls}">${it.value}</td>`+
-    `<td>${it.period}</td>`+
+    `<td class="lat ${cls}"><span class="latval">${it.value}</span>${sub}</td>`+
     `<td class="msrc">${it.src}</td></tr>`;
 }
 // Persisted custom row order (drag-to-reorder). localStorage holds an array of ids.
@@ -3728,16 +3796,17 @@ function wireMacroDnD(){
   });
 }
 function renderMacroReports(extra){
-  const head=`<tr><th class="mi">Indicator</th><th>Unit</th><th>Latest</th><th>Period</th><th>Source</th></tr>`;
+  const head=`<tr><th class="mi">Indicator</th><th>Unit</th><th>Latest <span class="lhsub">vs prev · period</span></th><th>Source</th></tr>`;
   const rows=MACRO_REPORTS.concat(extra||[]).map(macroRowHtml).join('');
   document.querySelector('#macroTbl').innerHTML=`<thead>${head}</thead><tbody>${rows}</tbody>`;
   document.getElementById('macroSub').textContent=
-    'Latest readings from the India Macro research library · drag a row to reorder · indicator · latest · period · broker & report date';
+    'Latest readings from the India Macro research library · drag a row to reorder · indicator · latest (vs previous · period) · broker & report date';
   wireMacroDnD();
 }
-// data/macro.json overlay: { indicators: { <id>: {value,period,src,tone} } }
-// Written server-side by the macro-refresher routine (keyed MoSPI API) so the
-// official IIP/CPI prints land without ever putting the API key in this bundle.
+// data/macro.json overlay: { indicators: { <id>: {value,prev,period,src,tone} } }
+// Written server-side by the macro routine so fresh prints (and the previous
+// reading) land without putting any API key in this bundle. `prev` = the prior
+// period's reading, shown small under the latest value.
 async function applyMacroOverlay(){
   let txt=null;
   try{ const r=await fetch('data/macro.json',{cache:'no-store'}); if(r.ok) txt=await r.text(); }catch(e){}
@@ -3747,6 +3816,7 @@ async function applyMacroOverlay(){
   MACRO_REPORTS.forEach(row=>{
     const o=ind[row.id]; if(!o) return;
     if(o.value!=null) row.value=o.value;
+    if(o.prev!=null) row.prev=o.prev;
     if(o.period) row.period=o.period;
     if(o.src) row.src=o.src;
     if(o.tone!=null) row.tone=o.tone;
