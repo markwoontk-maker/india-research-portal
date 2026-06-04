@@ -152,6 +152,10 @@
   }
   .seg button.on{background:var(--saffron);color:#1a1206;font-weight:600}
   .chart-box{height:248px;position:relative}
+  /* Positioning view: flex column for card spacing, but the [hidden]
+     attribute must still win (an inline display:flex would override it). */
+  #viewPositioning{display:flex;flex-direction:column;gap:18px}
+  #viewPositioning[hidden]{display:none}
 
   /* Tighter rows + room for the left-side checkbox + color swatch. */
   .stat-row{display:flex;align-items:center;gap:9px;padding:6px;
@@ -1287,16 +1291,24 @@
       </script>
     </div>
 
-    <div id="viewPositioning" hidden style="display:flex;flex-direction:column;gap:18px">
+    <div id="viewPositioning" hidden>
       <div class="card reveal">
         <div class="card-h">
           <div>
             <h3>Net FII Flows</h3>
             <p id="posSub">Cash-market provisional net · ₹ Cr · daily, since 1 Jan 2026</p>
           </div>
-          <div style="text-align:right;flex:none">
-            <div style="font-size:9px;letter-spacing:.12em;color:var(--text-mute);text-transform:uppercase">YTD cumulative</div>
-            <div class="mono" id="fiiCum" style="font-size:19px;font-weight:700;margin-top:2px">—</div>
+          <div style="display:flex;gap:14px;align-items:flex-start;flex:none">
+            <div class="seg" id="posSeg" title="Period — also drives the DII chart below">
+              <button data-p="MTD">MTD</button>
+              <button data-p="QTD">QTD</button>
+              <button data-p="YTD" class="on">YTD</button>
+              <button data-p="ALL">All</button>
+            </div>
+            <div style="text-align:right">
+              <div id="fiiCumLbl" style="font-size:9px;letter-spacing:.12em;color:var(--text-mute);text-transform:uppercase">YTD cumulative</div>
+              <div class="mono" id="fiiCum" style="font-size:19px;font-weight:700;margin-top:2px">—</div>
+            </div>
           </div>
         </div>
         <div class="chart-box" id="fiiBox"><canvas id="fiiChart"></canvas></div>
@@ -1305,17 +1317,17 @@
         <div class="card-h">
           <div>
             <h3>Net DII Flows</h3>
-            <p>Cash-market provisional net · ₹ Cr · daily, since 1 Jan 2026</p>
+            <p>Cash-market provisional net · ₹ Cr · daily · follows the period selector above</p>
           </div>
           <div style="text-align:right;flex:none">
-            <div style="font-size:9px;letter-spacing:.12em;color:var(--text-mute);text-transform:uppercase">YTD cumulative</div>
+            <div id="diiCumLbl" style="font-size:9px;letter-spacing:.12em;color:var(--text-mute);text-transform:uppercase">YTD cumulative</div>
             <div class="mono" id="diiCum" style="font-size:19px;font-weight:700;margin-top:2px">—</div>
           </div>
         </div>
         <div class="chart-box" id="diiBox"><canvas id="diiChart"></canvas></div>
       </div>
       <p style="font-size:11px;color:var(--text-mute);text-align:center">
-        Bars = each session's net cash flow (green buy / red sell). Line = running YTD cumulative.
+        Bars = each session's net cash flow (green buy / red sell). Line = cumulative over the selected period.
         Hover any bar for the exact figure. Source: NSE/BSE provisional · fatafatniftylevels.in.
       </p>
     </div>
@@ -5374,6 +5386,112 @@ function renderCompanyThesis(){
   }
 }
 
+// Financial Summary card — Revenue / EBITDA / Net Profit by FY,
+// each row expandable to a per-broker breakdown table. Data comes
+// from data/financials.json (scripts/build-financials.js).
+function renderCompanyFinancials(){
+  const card=document.getElementById('cFinCard');
+  const body=document.getElementById('cFinBody');
+  const sub=document.getElementById('cFinSub');
+  if(!card||!body) return;
+  if(!currentCompany ||
+     (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany))){
+    card.hidden=true; return;
+  }
+  const F=(window.FINANCIALS||{})[currentCompany];
+  if(!F || !F.metrics){ card.hidden=true; return; }
+  // Hide the card entirely if nothing parseable.
+  const hasAny=Object.values(F.metrics).some(o=>Object.keys(o).length);
+  if(!hasAny){ card.hidden=true; return; }
+  card.hidden=false;
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  // Number formatter: ₹ cr with thousand-separator.
+  const fmt=v=>{
+    if(v==null) return '—';
+    const abs=Math.abs(v);
+    if(abs>=100000) return (v/1000).toFixed(1)+'k';   // > 100k cr → in '000 cr
+    if(abs>=10) return Math.round(v).toLocaleString('en-IN');
+    return v.toFixed(1);
+  };
+  const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const fmtD=d=>{ const yy=d.slice(0,2), mm=+d.slice(2,4), dd=+d.slice(4,6); return `${dd} ${MON[mm-1]||''} '${yy}`; };
+  // Sort fiscal years ascending (FY24, FY25, FY26, ...).
+  function fySort(arr){ return arr.slice().sort((a,b)=>(+a.slice(2))-(+b.slice(2))); }
+  // Build a row per metric.
+  const METRICS=[
+    {key:'revenue',  label:'Revenue'},
+    {key:'ebitda',   label:'EBITDA'},
+    {key:'netProfit',label:'Net Profit'},
+  ];
+  body.innerHTML=METRICS.map(M=>{
+    const fyMap=F.metrics[M.key]||{};
+    const fys=fySort(Object.keys(fyMap));
+    if(!fys.length){
+      return `<div class="fin-row" data-disabled="1">
+        <span class="fin-arrow" style="visibility:hidden">▶</span>
+        <span class="fin-label">${M.label}</span>
+        <span class="fin-fy-row"><span class="fin-fy" style="color:var(--text-mute)">No estimates captured.</span></span>
+      </div>`;
+    }
+    // Summary line: FY: ₹X cr (avg, N brokers).
+    const summary=fys.map(fy=>{
+      const o=fyMap[fy];
+      const cls=o.tag==='A'?'actual':o.tag==='E'?'est':'';
+      const tag=o.tag||'';
+      return `<span class="fin-fy ${cls}"><span class="fy-tag">${esc(fy)}${tag?'<sup>'+tag+'</sup>':''}</span> <span class="v">${esc(fmt(o.avg))}</span></span>`;
+    }).join('');
+    // Expanded broker table.
+    const brokers={};
+    fys.forEach(fy=>{
+      fyMap[fy].brokers.forEach(b=>{
+        if(!brokers[b.name]) brokers[b.name]={date:b.date,url:b.url,vals:{}};
+        if(b.date>brokers[b.name].date) brokers[b.name].date=b.date;
+        brokers[b.name].vals[fy]=b.value;
+      });
+    });
+    const sortedBrokers=Object.keys(brokers).sort();
+    const head=`<tr><th>Broker</th>${fys.map(fy=>`<th>${esc(fy)}</th>`).join('')}<th>Source</th></tr>`;
+    const rows=sortedBrokers.map(b=>{
+      const info=brokers[b];
+      const cells=fys.map(fy=>{
+        const v=info.vals[fy];
+        return `<td>${v==null?'—':esc(fmt(v))}</td>`;
+      }).join('');
+      const link=info.url
+        ? `<a href="${esc(info.url)}" target="_blank" rel="noopener">${esc(fmtD(info.date))}</a>`
+        : esc(fmtD(info.date));
+      return `<tr><td>${esc(b)}</td>${cells}<td>${link}</td></tr>`;
+    }).join('');
+    // Average row at the bottom.
+    const avgRow=`<tr class="avg"><td>Average</td>${fys.map(fy=>`<td>${esc(fmt(fyMap[fy].avg))}</td>`).join('')}<td></td></tr>`;
+    return `<div class="fin-row">
+      <span class="fin-arrow">▶</span>
+      <span class="fin-label">${M.label}</span>
+      <span class="fin-fy-row">${summary}</span>
+      <div class="fin-expand">
+        <table class="fin-tbl">
+          <thead>${head}</thead>
+          <tbody>${rows}${avgRow}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+  // Toggle expansion on row click.
+  body.querySelectorAll('.fin-row').forEach(row=>{
+    if(row.dataset.disabled) return;
+    row.addEventListener('click', e=>{
+      // Don't collapse when clicking a link inside the expanded table.
+      if(e.target.closest('a')) return;
+      row.classList.toggle('open');
+    });
+  });
+  if(sub){
+    const brokerCount=new Set();
+    Object.values(F.metrics).forEach(o=>Object.values(o).forEach(fy=>fy.brokers.forEach(b=>brokerCount.add(b.name))));
+    sub.textContent=`${brokerCount.size} broker${brokerCount.size===1?'':'s'} parsed · figures in ${F.currency||'₹ cr'} · A = actuals, E = estimates · click ▶ to see per-broker breakdown`;
+  }
+}
+
 async function loadCompanyChart(name, tf){
   if (name) currentCompany = name;
   if (tf) currentTf = tf;
@@ -5383,7 +5501,7 @@ async function loadCompanyChart(name, tf){
   const isSector = currentCompany && (typeof SECTOR_NAMES!=='undefined') && SECTOR_NAMES.has(currentCompany);
   const chartCard = document.getElementById('cChartCard');
   if (chartCard) chartCard.hidden = !!isSector;
-  if (name) { updateCoDesc(); renderCompanyResearch(); renderCompanyNews(name); renderCompanyThesis(); }
+  if (name) { updateCoDesc(); renderCompanyResearch(); renderCompanyNews(name); renderCompanyThesis(); renderCompanyFinancials(); }
   if (isSector) return;
   // Sync the segmented control highlight to the current timeframe.
   document.querySelectorAll('#cRangeSeg button').forEach(b=>{
@@ -5770,26 +5888,56 @@ function buildFlowChart(canvasId, labels, daily, cumul, name){
   });
 }
 
+// Full daily history is kept in posRows (never trimmed — so 2026 stays
+// available after we roll into 2027); the selector just windows the view.
+let posRows=[], posPeriod='YTD';
+// Period boundaries are anchored on the most recent data point, not the wall
+// clock, so they stay correct even if the page is opened on a non-trading day.
+function posFilter(rows, period){
+  if(period==='ALL' || rows.length===0) return rows;
+  const [Y,M]=rows[rows.length-1].date.split('-').map(Number);
+  const qtr=m=>Math.floor((m-1)/3);
+  return rows.filter(r=>{
+    const [y,m]=r.date.split('-').map(Number);
+    if(period==='YTD') return y===Y;
+    if(period==='QTD') return y===Y && qtr(m)===qtr(M);
+    if(period==='MTD') return y===Y && m===M;
+    return true;
+  });
+}
+function renderPositioning(){
+  const rows=posFilter(posRows, posPeriod);
+  const labels=rows.map(r=>r.date);
+  const fii=rows.map(r=>+r.fii_net), dii=rows.map(r=>+r.dii_net);
+  const cf=[],cd=[]; let sf=0,sd=0;            // cumulative restarts at each period's first day
+  for(let i=0;i<rows.length;i++){ sf+=fii[i]; cf.push(+sf.toFixed(2)); sd+=dii[i]; cd.push(+sd.toFixed(2)); }
+  if(fiiFlowChart) fiiFlowChart.destroy();
+  if(diiFlowChart) diiFlowChart.destroy();
+  fiiFlowChart=buildFlowChart('fiiChart',labels,fii,cf,'FII');
+  diiFlowChart=buildFlowChart('diiChart',labels,dii,cd,'DII');
+  const f=cf.length?cf[cf.length-1]:0, d=cd.length?cd[cd.length-1]:0;
+  const fe=document.getElementById('fiiCum'), de=document.getElementById('diiCum');
+  fe.textContent=posCr(f); fe.className='mono '+(f>=0?'up':'down');
+  de.textContent=posCr(d); de.className='mono '+(d>=0?'up':'down');
+  const lbl=(posPeriod==='ALL'?'Cumulative':posPeriod+' cumulative');
+  document.getElementById('fiiCumLbl').textContent=lbl;
+  document.getElementById('diiCumLbl').textContent=lbl;
+  document.getElementById('posSub').textContent='Cash-market provisional net · ₹ Cr · daily · '+
+    (rows.length? posDateFull(rows[0].date)+' – '+posDateFull(rows[rows.length-1].date) : 'no data in period');
+  document.querySelectorAll('#posSeg button').forEach(b=>b.classList.toggle('on', b.dataset.p===posPeriod));
+}
 async function loadPositioning(){
   try{
     const res=await fetch('data/fii_dii.json',{cache:'no-store'});
     if(!res.ok) throw new Error('fetch '+res.status);
     const rows=await res.json();
     rows.sort((a,b)=> a.date<b.date?-1:1);
-    const labels=rows.map(r=>r.date);
-    const fii=rows.map(r=>+r.fii_net), dii=rows.map(r=>+r.dii_net);
-    const cf=[],cd=[]; let sf=0,sd=0;
-    for(let i=0;i<rows.length;i++){ sf+=fii[i]; cf.push(+sf.toFixed(2)); sd+=dii[i]; cd.push(+sd.toFixed(2)); }
-    if(fiiFlowChart) fiiFlowChart.destroy();
-    if(diiFlowChart) diiFlowChart.destroy();
-    fiiFlowChart=buildFlowChart('fiiChart',labels,fii,cf,'FII');
-    diiFlowChart=buildFlowChart('diiChart',labels,dii,cd,'DII');
-    const f=cf[cf.length-1], d=cd[cd.length-1];
-    const fe=document.getElementById('fiiCum'), de=document.getElementById('diiCum');
-    fe.textContent=posCr(f); fe.className='mono '+(f>=0?'up':'down');
-    de.textContent=posCr(d); de.className='mono '+(d>=0?'up':'down');
-    document.getElementById('posSub').textContent=
-      'Cash-market provisional net · ₹ Cr · daily · '+posDateFull(rows[0].date)+' – '+posDateFull(rows[rows.length-1].date);
+    posRows=rows;
+    renderPositioning();
+    const seg=document.getElementById('posSeg');
+    if(seg && !seg.dataset.wired){ seg.dataset.wired='1';
+      seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ posPeriod=b.dataset.p; renderPositioning(); }));
+    }
   }catch(e){
     ['fiiBox','diiBox'].forEach(id=>{ const b=document.getElementById(id);
       if(b) b.innerHTML='<p style="color:var(--text-mute);text-align:center;padding:60px 0">FII/DII flow data unavailable — could not load <code>data/fii_dii.json</code>.</p>'; });
