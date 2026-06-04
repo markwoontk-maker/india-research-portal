@@ -5653,10 +5653,27 @@ function posCr(v){ const s=v<0?'−':'+';
 function posShort(v){ const a=Math.abs(v);
   if(a>=1000) return (v<0?'−':'')+(a/1000).toFixed(a>=10000?0:1)+'k';
   return String(Math.round(v)); }
+// Align the zero line of the bar axis (y) and the cumulative axis (y1):
+// share one below/above gridline split (D divisions) across both axes so zero
+// sits at the same vertical fraction, and snap each axis's ticks (stepSize) so
+// zero lands on a real gridline.
+function posZeroAlign(daily, cumul, D){
+  const ext=arr=>({mn:Math.min(0,...arr), mx:Math.max(0,...arr)});
+  const e1=ext(daily), e2=ext(cumul);
+  const ratio=e=>(e.mn<0 && e.mx>0) ? (-e.mn/(e.mx-e.mn)) : null;
+  const rs=[ratio(e1),ratio(e2)].filter(r=>r!=null);
+  const r = rs.length ? Math.max(...rs) : ((e1.mn<0||e2.mn<0)?0.85:0.15);
+  const below=Math.min(D-1, Math.max(1, Math.round(r*D))), above=D-below;
+  const axis=e=>{ const bel=Math.max(0,-e.mn)*1.05, abv=Math.max(0,e.mx)*1.05;
+    const step=Math.max(bel/below, abv/above) || 1;
+    return {min:-below*step, max:above*step, step}; };
+  return {y:axis(e1), y1:axis(e2)};
+}
 
 function buildFlowChart(canvasId, labels, daily, cumul, name){
   const ctx=document.getElementById(canvasId);
   const barColors=daily.map(v=>v>=0?'#3fc78a':'#f06a6a');
+  const zal=posZeroAlign(daily, cumul, 8);
   return new Chart(ctx,{
     data:{labels,datasets:[
       {type:'bar',label:name+' net',data:daily,backgroundColor:barColors,
@@ -5682,14 +5699,18 @@ function buildFlowChart(canvasId, labels, daily, cumul, name){
           ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
             maxRotation:0,autoSkip:true,maxTicksLimit:11,
             callback:function(val){ return posDateShort(this.getLabelForValue(val)); }}},
-        y:{position:'left',grid:{color:'#1f2530'},border:{display:false},grace:'8%',
+        y:{position:'left',border:{display:false},
+          min:zal.y.min,max:zal.y.max,
+          grid:{color:c=>c.tick.value===0?'#3a4252':'#1f2530',
+            lineWidth:c=>c.tick.value===0?1.4:1},
           ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
-            callback:v=>posShort(v)},
+            stepSize:zal.y.step,callback:v=>posShort(v)},
           title:{display:true,text:'Daily net (₹ Cr)',color:'#646c7c',
             font:{family:'IBM Plex Mono',size:9}}},
-        y1:{position:'right',grid:{display:false},border:{display:false},grace:'8%',
+        y1:{position:'right',grid:{display:false},border:{display:false},
+          min:zal.y1.min,max:zal.y1.max,
           ticks:{color:'#e9a23b',font:{family:'IBM Plex Mono',size:10},
-            callback:v=>posShort(v)},
+            stepSize:zal.y1.step,callback:v=>posShort(v)},
           title:{display:true,text:'Cumulative (₹ Cr)',color:'#e9a23b',
             font:{family:'IBM Plex Mono',size:9}}}
       }}
