@@ -528,35 +528,28 @@
     margin-left:2px;white-space:nowrap;border-bottom:1px dotted transparent}
   .thesis-cite:hover{color:var(--text-dim);border-bottom-color:var(--text-mute)}
   @media (max-width:760px){ .thesis-grid{grid-template-columns:1fr} }
-  /* Financial summary card */
-  .fin-row{display:grid;grid-template-columns:24px 1fr;gap:8px;padding:10px 0;
-    border-bottom:1px solid var(--line-soft);align-items:center;cursor:pointer}
-  .fin-row:last-child{border-bottom:none}
-  .fin-row:hover{background:rgba(255,255,255,.015)}
-  .fin-arrow{font-size:11px;color:var(--text-mute);user-select:none;transition:transform .15s}
-  .fin-row.open .fin-arrow{transform:rotate(90deg)}
-  .fin-label{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--text);
-    margin-right:auto}
-  .fin-fy-row{display:flex;flex-wrap:wrap;gap:18px;font-family:'Roboto Mono',monospace;
-    font-size:12px;color:var(--text-dim)}
-  .fin-fy{white-space:nowrap}
-  .fin-fy .fy-tag{font-size:10px;color:var(--text-mute);margin-left:2px}
-  .fin-fy.actual .fy-tag{color:var(--up)}
-  .fin-fy.est .fy-tag{color:var(--saffron)}
-  .fin-fy .v{font-weight:600;color:var(--text)}
-  .fin-expand{grid-column:1/-1;display:none;padding:8px 0 4px;
-    border-top:1px solid var(--line-soft);margin-top:8px}
-  .fin-row.open .fin-expand{display:block}
-  table.fin-tbl{width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:11.5px}
-  table.fin-tbl th{padding:6px 8px;border-bottom:1px solid var(--line);color:var(--text-mute);
-    text-align:right;font-weight:500;letter-spacing:.04em;text-transform:uppercase;font-size:9.5px}
-  table.fin-tbl th:first-child{text-align:left}
-  table.fin-tbl td{padding:5px 8px;border-bottom:1px solid var(--line-soft);text-align:right;
-    color:var(--text-dim);white-space:nowrap}
-  table.fin-tbl td:first-child{text-align:left;color:var(--text)}
+  /* Financial summary card — one table per metric, years across the top,
+     research houses down the left. */
+  .fin-section{margin-top:14px}
+  .fin-section:first-child{margin-top:0}
+  .fin-section-h{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--text);
+    margin-bottom:6px}
+  .fin-empty{font-size:12px;color:var(--text-mute);font-style:italic;padding:4px 0 8px}
+  table.fin-tbl{width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;
+    font-size:11.5px;table-layout:fixed}
+  table.fin-tbl th,table.fin-tbl td{padding:6px 8px;border-bottom:1px solid var(--line-soft);
+    text-align:right;color:var(--text-dim);white-space:nowrap}
+  table.fin-tbl th{color:var(--text-mute);font-weight:500;letter-spacing:.04em;
+    text-transform:uppercase;font-size:9.5px;border-bottom:1px solid var(--line)}
+  table.fin-tbl th.bk,table.fin-tbl td.bk{text-align:left;width:18%;color:var(--text)}
+  table.fin-tbl th.src,table.fin-tbl td.src{text-align:right;width:11%;color:var(--text-mute);font-size:10.5px}
+  table.fin-tbl td .muted{color:var(--text-mute)}
   table.fin-tbl td a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--text-mute)}
   table.fin-tbl td a:hover{border-bottom-color:var(--text)}
-  table.fin-tbl tr.avg td{font-weight:600;color:var(--text);border-top:1px solid var(--line)}
+  table.fin-tbl tr.avg td{font-weight:600;color:var(--text);border-top:1px solid var(--line);
+    border-bottom:none}
+  table.fin-tbl sup.fy-tag-actual{color:var(--up);font-size:9px;margin-left:1px}
+  table.fin-tbl sup.fy-tag-est{color:var(--saffron);font-size:9px;margin-left:1px}
   /* Sector tab: per-broker view blocks + earnings-season list */
   .sec-view-block{padding:12px 0;border-top:1px solid var(--line-soft)}
   .sec-view-block:first-child{border-top:none;padding-top:4px}
@@ -1580,7 +1573,7 @@
       <div class="card reveal" id="cFinCard" hidden>
         <div class="card-h">
           <div><h3>Financial Summary</h3>
-          <p id="cFinSub">Annual figures + average broker forecast per fiscal year — click ▶ to see per-broker breakdown</p></div>
+          <p id="cFinSub">Per-broker Revenue / EBITDA / Net Profit by fiscal year — average shown in the bottom row</p></div>
         </div>
         <div id="cFinBody"></div>
         <p class="co-desc-src">Sourced from each broker's most recent report on the company (PDF estimate tables, layout-extracted via pdftotext). Numbers normalised to ₹ crore. Where a broker uses a different unit/convention, this normalisation may be off — see the per-broker breakdown for raw values.</p>
@@ -5736,80 +5729,82 @@ function renderCompanyFinancials(){
   };
   const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const fmtD=d=>{ const yy=d.slice(0,2), mm=+d.slice(2,4), dd=+d.slice(4,6); return `${dd} ${MON[mm-1]||''} '${yy}`; };
-  // Sort fiscal years ascending (FY24, FY25, FY26, ...).
-  function fySort(arr){ return arr.slice().sort((a,b)=>(+a.slice(2))-(+b.slice(2))); }
-  // Build a row per metric.
   const METRICS=[
     {key:'revenue',  label:'Revenue'},
     {key:'ebitda',   label:'EBITDA'},
     {key:'netProfit',label:'Net Profit'},
   ];
+  // Year columns — anchor on FY25..FY29 plus any actually-captured FY in
+  // FY24..FY30 (sliding window so the table grows when newer data lands).
+  const seen=new Set();
+  Object.values(F.metrics).forEach(o=>Object.keys(o).forEach(fy=>seen.add(fy)));
+  const baseYears=['FY25','FY26','FY27','FY28','FY29'];
+  const extra=[...seen].filter(fy=>!baseYears.includes(fy))
+    .filter(fy=>{ const n=+fy.slice(2); return n>=24 && n<=30; });
+  const FYS=[...baseYears,...extra].sort((a,b)=>(+a.slice(2))-(+b.slice(2)));
+  // Dominant tag per FY (A across metrics → actual, otherwise estimate).
+  function tagFor(fy){
+    let A=0,E=0;
+    for(const m of Object.values(F.metrics)){
+      const o=m[fy]; if(!o) continue;
+      if(o.tag==='A') A++; else if(o.tag==='E') E++;
+    }
+    return A>=E ? (A?'A':(E?'E':'')) : 'E';
+  }
+  function fyHeader(fy){
+    const t=tagFor(fy);
+    const tagHtml=t?`<sup class="fy-tag-${t==='A'?'actual':'est'}">${t}</sup>`:'';
+    return `${esc(fy)}${tagHtml}`;
+  }
   body.innerHTML=METRICS.map(M=>{
     const fyMap=F.metrics[M.key]||{};
-    const fys=fySort(Object.keys(fyMap));
-    if(!fys.length){
-      return `<div class="fin-row" data-disabled="1">
-        <span class="fin-arrow" style="visibility:hidden">▶</span>
-        <span class="fin-label">${M.label}</span>
-        <span class="fin-fy-row"><span class="fin-fy" style="color:var(--text-mute)">No estimates captured.</span></span>
+    if(!Object.keys(fyMap).length){
+      return `<div class="fin-section">
+        <div class="fin-section-h">${esc(M.label)}</div>
+        <div class="fin-empty">No estimates captured for this metric.</div>
       </div>`;
     }
-    // Summary line: FY: ₹X cr (avg, N brokers).
-    const summary=fys.map(fy=>{
-      const o=fyMap[fy];
-      const cls=o.tag==='A'?'actual':o.tag==='E'?'est':'';
-      const tag=o.tag||'';
-      return `<span class="fin-fy ${cls}"><span class="fy-tag">${esc(fy)}${tag?'<sup>'+tag+'</sup>':''}</span> <span class="v">${esc(fmt(o.avg))}</span></span>`;
-    }).join('');
-    // Expanded broker table.
+    // Build {broker: {date, url, vals:{fy:value}}}.
     const brokers={};
-    fys.forEach(fy=>{
-      fyMap[fy].brokers.forEach(b=>{
+    FYS.forEach(fy=>{
+      const o=fyMap[fy]; if(!o) return;
+      o.brokers.forEach(b=>{
         if(!brokers[b.name]) brokers[b.name]={date:b.date,url:b.url,vals:{}};
-        if(b.date>brokers[b.name].date) brokers[b.name].date=b.date;
+        if(b.date>brokers[b.name].date){ brokers[b.name].date=b.date; brokers[b.name].url=b.url; }
         brokers[b.name].vals[fy]=b.value;
       });
     });
-    const sortedBrokers=Object.keys(brokers).sort();
-    const head=`<tr><th>Broker</th>${fys.map(fy=>`<th>${esc(fy)}</th>`).join('')}<th>Source</th></tr>`;
+    // Sort brokers most-recent-first so freshest numbers sit at the top.
+    const sortedBrokers=Object.keys(brokers).sort((a,b)=>brokers[b].date.localeCompare(brokers[a].date));
+    const head=`<tr><th class="bk">Research house</th>${FYS.map(fy=>`<th>${fyHeader(fy)}</th>`).join('')}<th class="src">Source</th></tr>`;
     const rows=sortedBrokers.map(b=>{
       const info=brokers[b];
-      const cells=fys.map(fy=>{
+      const cells=FYS.map(fy=>{
         const v=info.vals[fy];
-        return `<td>${v==null?'—':esc(fmt(v))}</td>`;
+        return `<td>${v==null?'<span class="muted">—</span>':esc(fmt(v))}</td>`;
       }).join('');
       const link=info.url
         ? `<a href="${esc(info.url)}" target="_blank" rel="noopener">${esc(fmtD(info.date))}</a>`
         : esc(fmtD(info.date));
-      return `<tr><td>${esc(b)}</td>${cells}<td>${link}</td></tr>`;
+      return `<tr><td class="bk">${esc(b)}</td>${cells}<td class="src">${link}</td></tr>`;
     }).join('');
-    // Average row at the bottom.
-    const avgRow=`<tr class="avg"><td>Average</td>${fys.map(fy=>`<td>${esc(fmt(fyMap[fy].avg))}</td>`).join('')}<td></td></tr>`;
-    return `<div class="fin-row">
-      <span class="fin-arrow">▶</span>
-      <span class="fin-label">${M.label}</span>
-      <span class="fin-fy-row">${summary}</span>
-      <div class="fin-expand">
-        <table class="fin-tbl">
-          <thead>${head}</thead>
-          <tbody>${rows}${avgRow}</tbody>
-        </table>
-      </div>
+    // Average row: only show a cell where we actually have data for that FY.
+    const avgRow=`<tr class="avg"><td class="bk">Average</td>${FYS.map(fy=>{
+      const o=fyMap[fy];
+      return `<td>${o ? esc(fmt(o.avg)) : '<span class="muted">—</span>'}</td>`;
+    }).join('')}<td class="src"></td></tr>`;
+    return `<div class="fin-section">
+      <div class="fin-section-h">${esc(M.label)}</div>
+      <table class="fin-tbl">
+        <thead>${head}</thead>
+        <tbody>${rows}${avgRow}</tbody>
+      </table>
     </div>`;
   }).join('');
-  // Toggle expansion on row click.
-  body.querySelectorAll('.fin-row').forEach(row=>{
-    if(row.dataset.disabled) return;
-    row.addEventListener('click', e=>{
-      // Don't collapse when clicking a link inside the expanded table.
-      if(e.target.closest('a')) return;
-      row.classList.toggle('open');
-    });
-  });
   if(sub){
     const brokerCount=new Set();
     Object.values(F.metrics).forEach(o=>Object.values(o).forEach(fy=>fy.brokers.forEach(b=>brokerCount.add(b.name))));
-    sub.textContent=`${brokerCount.size} broker${brokerCount.size===1?'':'s'} parsed · figures in ${F.currency||'₹ cr'} · A = actuals, E = estimates · click ▶ to see per-broker breakdown`;
+    sub.textContent=`${brokerCount.size} broker${brokerCount.size===1?'':'s'} parsed · figures in ${F.currency||'₹ cr'} · superscript A = actual, E = estimate · click a Source date to open the PDF`;
   }
 }
 
