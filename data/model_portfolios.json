@@ -1,0 +1,44 @@
+{
+  "asOf": "2026-06",
+  "houses": [
+    {
+      "broker": "Axis Securities",
+      "asOf": "2026-06",
+      "benchmark": "Nifty 50",
+      "source": "Axis Securities 'Top Picks' June 2026 (Uttam K Srimal), prices as of 29 May 2026; Dec'26 Nifty target 27,220",
+      "overweight": [
+        { "stock": "ICICI Bank", "ticker": "ICICIBANK.NS", "change": "new", "note": "Added this month; OW 'industry view', best RoA delivery among peers" },
+        { "stock": "Varun Beverages", "ticker": "VBL.NS", "change": "new", "note": "Added this month into Top Picks; geared for growth" },
+        { "stock": "Bajaj Finance", "ticker": "BAJFINANCE.NS", "change": "held", "note": "OW; asset-quality entering favourable phase, RoA improvement underway" },
+        { "stock": "Bharti Airtel", "ticker": "BHARTIARTL.NS", "change": "held", "note": "OW; highest ARPU in industry, Telecom is a preferred sector" },
+        { "stock": "Eternal", "ticker": "ETERNAL.NS", "change": "held", "note": "OW; quick-commerce + food delivery growth, turning adj-EBITDA positive" },
+        { "stock": "LG Electronics India", "ticker": "LGEINDIA.NS", "change": "held", "note": "OW; consumer-durables leader, localisation/export-led margin story" },
+        { "stock": "Navin Fluorine International", "ticker": "NAVINFLUOR.NS", "change": "held", "note": "OW; synergistic growth across HPP, specialty chem and CDMO" },
+        { "stock": "Minda Corporation", "ticker": "MINDACORP.NS", "change": "held", "note": "OW; premium electronics + EV platforms, record order book" }
+      ],
+      "underweight": [
+        { "stock": "State Bank of India", "ticker": "SBIN.NS", "change": "removed", "note": "Exited this month by booking profits in SBIN" },
+        { "stock": "Max Healthcare", "ticker": "MAXHEALTH.NS", "change": "removed", "note": "Exited from Top Picks this month" }
+      ]
+    },
+    {
+      "broker": "Motilal Oswal",
+      "asOf": "2026-04",
+      "benchmark": "Nifty 50",
+      "source": "Motilal Oswal model-portfolio overhaul, reported 7 Apr 2026; OW autos/PSU banks/diversified financials/manufacturing, UW oil & gas/private banks/staples",
+      "overweight": [
+        { "stock": "State Bank of India", "ticker": "SBIN.NS", "change": "raised", "note": "Weight raised ~100 bps, top banking pick; funded by trimming HDFC Bank" },
+        { "stock": "Infosys", "ticker": "INFY.NS", "change": "raised", "note": "Weight raised ~100 bps despite house staying UW on IT" },
+        { "stock": "Jio Financial Services", "ticker": "JIOFIN.NS", "change": "new", "note": "Added in the overhaul on diversified-financials overweight" },
+        { "stock": "AU Small Finance Bank", "ticker": "AUBANK.NS", "change": "new", "note": "Added in the overhaul" },
+        { "stock": "ICICI Prudential AMC", "ticker": "ICICIPRULI.NS", "change": "new", "note": "ICICI Pru AMC added for rising market share and fund performance (ticker shown for ICICI Pru Life pending AMC listing on Yahoo)" },
+        { "stock": "Hindustan Aeronautics", "ticker": "HAL.NS", "change": "new", "note": "Added; attractive valuations within domestic defence" },
+        { "stock": "Jindal Stainless", "ticker": "JSL.NS", "change": "new", "note": "Added; capacity expansion, value-added mix, market leadership" },
+        { "stock": "Mankind Pharma", "ticker": "MANKIND.NS", "change": "new", "note": "Added on anticipated recovery in domestic formulations" }
+      ],
+      "underweight": [
+        { "stock": "HDFC Bank", "ticker": "HDFCBANK.NS", "change": "trimmed", "note": "Reduced to fund the ~100 bps SBI weight increase; house UW private banks" }
+      ]
+    }
+  ]
+}
