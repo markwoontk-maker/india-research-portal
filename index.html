@@ -1525,11 +1525,11 @@
             <button data-r="1D">1D</button>
             <button data-r="1W">1W</button>
             <button data-r="1M">1M</button>
-            <button data-r="YTD">YTD</button>
+            <button data-r="YTD" class="on">YTD</button>
             <button data-r="1Y">1Y</button>
             <button data-r="3Y">3Y</button>
             <button data-r="5Y">5Y</button>
-            <button data-r="10Y" class="on">10Y</button>
+            <button data-r="10Y">10Y</button>
           </div>
         </div>
         <div class="cm-return-row">
@@ -5119,7 +5119,7 @@ function fmtTickFor(tf){
 
 let companyChart=null;
 let currentCompany=null;
-let currentTf='10Y';
+let currentTf='YTD';
 // Company profile data — ticker + sector + 3-4 sentence business
 // description sourced from each company's website, latest annual
 // report and the broker reports in its NotebookLM workspace.
@@ -5842,7 +5842,7 @@ async function loadCompanyChart(name, tf){
     msgEl.style.display='none';
     return;
   }
-  const def = TF_DEF[currentTf] || TF_DEF['10Y'];
+  const def = TF_DEF[currentTf] || TF_DEF['YTD'];
   const intervalLabel = def.interval==='1d' ? 'daily close' : def.interval+' intraday';
   titleEl.textContent = `${currentCompany} — ${currentTf}`;
   subEl.textContent = `Yahoo Finance · ${sym} · ${intervalLabel}`;
