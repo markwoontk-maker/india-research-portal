@@ -1,6 +1,6 @@
 # Daily research portal refresh.
 #
-# Runs Mon-Fri at 09:30 Malaysia time (= local time on this PC) via
+# Runs Mon-Fri at 09:35 Malaysia time (= local time on this PC) via
 # Windows Task Scheduler. End-to-end
 # workflow:
 #   1. Rebuild data/pdfmap.json from the local PDF library on disk.

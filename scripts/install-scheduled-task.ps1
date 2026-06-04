@@ -1,5 +1,5 @@
 # Install the Windows Task Scheduler entry that runs daily-refresh.ps1
-# every Monday-Friday at 09:30 Malaysia time (UTC+08:00). Triggers fire
+# every Monday-Friday at 09:35 Malaysia time (UTC+08:00). Triggers fire
 # in the PC's local timezone, which is already set to Singapore Standard
 # Time on this machine.
 #
@@ -28,10 +28,10 @@ $action = New-ScheduledTaskAction `
   -Argument ("-NoProfile -ExecutionPolicy Bypass -File `"" + $script + "`"") `
   -WorkingDirectory $repo
 
-# 09:30 local time (= 09:30 MYT), Monday through Friday.
+# 09:35 local time (= 09:35 MYT), Monday through Friday.
 $trigger = New-ScheduledTaskTrigger `
   -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday `
-  -At 9:30am
+  -At 9:35am
 
 # Run under the current user, only when the user is logged on (so git
 # can use cached HTTPS credentials from Windows Credential Manager).
