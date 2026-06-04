@@ -6266,8 +6266,24 @@ async function loadPositioning(){
 
 /* ---------- Positioning tab · FPI sector positioning ---------- */
 function secCr(v){ const s=v<0?'−':'+'; return s+'₹'+Math.abs(Math.round(v)).toLocaleString('en-IN'); }
-let secPosData=null, secPosSort={key:null,dir:-1};   // dir: 1 asc, -1 desc
+let secPosData=null, secPosMonths=[], secPosSort={key:null,dir:-1}, secPosExpanded=null, secHistChart=null;   // dir: 1 asc, -1 desc
 function secPosVal(s,k){ return k==='dmom' ? (s.owPrev==null?0:+(s.ow-s.owPrev).toFixed(3)) : s[k]; }
+function secMonLbl(iso){ const [y,m]=iso.split('-'); return new Date(y,m-1,1).toLocaleDateString('en-IN',{month:'short'})+" '"+y.slice(2); }
+function secHistDraw(sec){
+  const cv=document.getElementById('secHistChart'); if(!cv) return;
+  if(secHistChart){ secHistChart.destroy(); secHistChart=null; }
+  const hist=sec.hist||[], labels=secPosMonths.map(secMonLbl);
+  const colors=hist.map(v=> v==null?'#646c7c' : (v>=0?'#3fc78a':'#f06a6a'));
+  secHistChart=new Chart(cv,{ type:'bar',
+    data:{labels,datasets:[{data:hist.map(v=>v==null?0:v),backgroundColor:colors,borderWidth:0,categoryPercentage:.8,barPercentage:.9}]},
+    options:{responsive:true,maintainAspectRatio:false,devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
+      plugins:{legend:{display:false},
+        tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:10,
+          callbacks:{ label:c=> hist[c.dataIndex]==null?'no data':'  '+secCr(hist[c.dataIndex])+' Cr' }}},
+      scales:{ x:{grid:{display:false},border:{display:false},ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},maxRotation:0,autoSkip:false}},
+        y:{grid:{color:'#1f2530'},border:{display:false},ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},callback:v=>(Math.abs(v)>=1000?(v/1000).toFixed(0)+'k':v)}} } }
+  });
+}
 function secPosRender(){
   const body=document.getElementById('secPosBody'); if(!body||!secPosData) return;
   const rows=secPosData.slice();
@@ -6284,19 +6300,27 @@ function secPosRender(){
     const dOw=(s.owPrev==null)?0:+(s.ow-s.owPrev).toFixed(1);
     const dTxt=dOw===0?'·':(dOw>0?'▲ +':'▼ ')+dOw.toFixed(1);
     const dCol=dOw===0?'var(--text-mute)':(dOw>0?'var(--up)':'var(--down)');
+    const open=secPosExpanded===s.name;
+    const caret=`<span style="color:var(--text-mute);font-size:9px;margin-left:5px">${open?'▾':'▸'}</span>`;
+    const hasHist=s.hist&&s.hist.some(v=>v!=null);
+    const exp = open ? `<tr class="secexp"><td colspan="6" style="padding:4px 10px 14px;border-bottom:1px solid var(--line-soft)">
+        <div style="font-size:11px;color:var(--text-mute);margin:2px 0 6px">${s.name} — monthly net FPI flow (₹ Cr) · last 12 months · green buy / red sell</div>
+        ${ hasHist ? '<div class="chart-box" style="height:190px"><canvas id="secHistChart"></canvas></div>' : '<div style="color:var(--text-mute);font-size:11.5px;padding:10px 0">Monthly history unavailable for this sector.</div>' }
+      </td></tr>` : '';
     return `<tr>
-      <td style="${td};font-weight:600">${s.name}</td>
+      <td class="secname" data-name="${s.name.replace(/"/g,'&quot;')}" title="Show monthly flow chart" style="${td};font-weight:600;cursor:pointer">${s.name}${caret}</td>
       <td style="${td};text-align:right;font-family:'IBM Plex Mono';color:${col}">${secCr(s.flow)}${bar}</td>
       <td style="${td};text-align:right;font-family:'IBM Plex Mono';color:var(--text-mute)">${secCr(s.flowPrev)}</td>
       <td style="${td};text-align:center;font-family:'IBM Plex Mono';font-size:11px"><span style="color:var(--text)">${s.fpiWt!=null?s.fpiWt.toFixed(1)+'%':'—'}</span> <span style="color:var(--text-mute)">· ${s.idxWt!=null?s.idxWt.toFixed(1)+'%':'—'}</span></td>
       <td style="${td};text-align:center">${owChip}</td>
       <td style="${td};text-align:center;font-family:'IBM Plex Mono';font-size:11px;color:${dCol}">${dTxt}</td>
-    </tr>`;
+    </tr>${exp}`;
   }).join('');
   document.querySelectorAll('#secPosTbl th[data-key]').forEach(th=>{
     const act=secPosSort.key===th.dataset.key, arr=secPosSort.dir>0?'▲':'▼';
     th.innerHTML=th.dataset.label+(act?' <span style="color:var(--saffron)">'+arr+'</span>':'');
   });
+  if(secPosExpanded){ const sec=secPosData.find(s=>s.name===secPosExpanded); if(sec && sec.hist && sec.hist.some(v=>v!=null)) secHistDraw(sec); }
 }
 async function loadSectorPositioning(){
   const body=document.getElementById('secPosBody'); if(!body) return;
@@ -6304,10 +6328,10 @@ async function loadSectorPositioning(){
     const res=await fetch('data/fpi_sectors.json',{cache:'no-store'});
     if(!res.ok) throw new Error('http '+res.status);
     const d=await res.json();
-    secPosData=d.sectors;
+    secPosData=d.sectors; secPosMonths=d.months||[];
     const mon=iso=>{ const [y,m]=iso.split('-'); return new Date(y,m-1,1).toLocaleDateString('en-IN',{month:'short',year:'numeric'}); };
     document.getElementById('secPosSub').textContent=
-      'Net FPI flow by sector · ₹ Cr · '+mon(d.asOf)+' vs '+mon(d.prevAsOf)+' · OW/UW vs '+(d.benchmark||'Nifty 500')+' · click a header to sort';
+      'Net FPI flow by sector · ₹ Cr · '+mon(d.asOf)+' vs '+mon(d.prevAsOf)+' · OW/UW vs '+(d.benchmark||'Nifty 500')+' · click a header to sort, a sector name for its monthly chart';
     const tbl=document.getElementById('secPosTbl');
     if(tbl && !tbl.dataset.sortWired){ tbl.dataset.sortWired='1';
       tbl.querySelectorAll('th[data-key]').forEach(th=>th.addEventListener('click',()=>{
@@ -6316,6 +6340,11 @@ async function loadSectorPositioning(){
         else { secPosSort.key=k; secPosSort.dir=(k==='name'?1:-1); }
         secPosRender();
       }));
+      body.addEventListener('click',e=>{ const cell=e.target.closest&&e.target.closest('.secname'); if(!cell) return;
+        const n=cell.dataset.name; secPosExpanded=(secPosExpanded===n?null:n);
+        if(secHistChart){ secHistChart.destroy(); secHistChart=null; }
+        secPosRender();
+      });
     }
     secPosRender();
   }catch(e){
