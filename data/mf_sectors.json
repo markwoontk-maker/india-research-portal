@@ -1,0 +1,18 @@
+{
+  "_note": "Aggregate equity mutual-fund sector POSITIONING (overweight/underweight vs Nifty 500), qualitative — NOT clean flow data. Sourced from Kotak's quarterly KS-Ownership Navigator. There is no authoritative DII/MF sector-wise net-FLOW series (NSDL's sector data is FPI-only); this is a holdings tilt, MF-slice only, lagged ~1 quarter. Stance = OW/UW/N (no explicit call = ''). 'move' = MF buying/selling direction in the latest quarter where stated.",
+  "asOf": "Mar 2026 quarter",
+  "benchmark": "Nifty 500",
+  "mfOwnershipPct": 11.9,
+  "source": "Kotak Institutional Equities — KS-Ownership Navigator (sequential changes in the Mar-2026 quarter, 18 May 2026)",
+  "report": "India Strategy/[260518] [Kotak] India Strategy - KS-Ownership Navigator, sequential changes in March 2026 quarter.pdf",
+  "disclaimer": "Approximate — mutual-fund POSITIONING, not flows. Aggregate equity-MF sector ownership vs Nifty 500 from Kotak's quarterly Ownership Navigator; it is a holdings tilt (over/underweight), covers only the mutual-fund slice of DIIs (not insurance/banks), and lags ~1 quarter. There is no clean DII/MF sector-wise net-flow series, so treat this as indicative, not precise.",
+  "sectors": [
+    { "name": "Financial Services", "stance": "OW", "move": "bought", "note": "MFs overweight banks; banks were a top MF buy in the Mar-2026 quarter" },
+    { "name": "Automobile", "stance": "OW", "move": "", "note": "MFs overweight automobiles & components" },
+    { "name": "Healthcare", "stance": "OW", "move": "", "note": "MFs overweight pharmaceuticals" },
+    { "name": "Information Technology", "stance": "", "move": "bought", "note": "No explicit OW/UW call; MFs added IT-services stocks in the Mar-2026 quarter" },
+    { "name": "FMCG", "stance": "UW", "move": "", "note": "MFs underweight consumer staples" },
+    { "name": "Metals & Mining", "stance": "UW", "move": "sold", "note": "MFs underweight metals & mining; sold in the Mar-2026 quarter" },
+    { "name": "Energy", "stance": "UW", "move": "", "note": "MFs underweight oil, gas & consumable fuels" }
+  ]
+}

@@ -1460,6 +1460,29 @@
           </table>
         </div>
       </div>
+
+      <div class="card reveal">
+        <div class="card-h"><div>
+          <h3>MF Sector Positioning <span style="font-size:9.5px;font-weight:700;color:var(--saffron);border:1px solid rgba(233,162,59,.45);background:var(--saffron-soft);border-radius:5px;padding:1px 6px;vertical-align:middle;letter-spacing:.06em">APPROXIMATE</span></h3>
+          <p id="mfPosSub">Mutual-fund sector tilt vs Nifty 500</p>
+        </div></div>
+        <div style="display:flex;gap:9px;align-items:flex-start;font-size:11px;line-height:1.55;color:var(--text-dim);background:rgba(233,162,59,.08);border:1px solid rgba(233,162,59,.28);border-radius:8px;padding:9px 12px;margin-bottom:14px">
+          <span style="color:var(--saffron);font-size:14px;line-height:1.1">⚠</span>
+          <span id="mfDisclaimerText">Loading…</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;min-width:420px;font-size:12.5px">
+            <thead>
+              <tr style="color:var(--text-mute);font-size:10px;letter-spacing:.1em;text-transform:uppercase">
+                <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)">Sector</th>
+                <th style="text-align:center;padding:6px 10px;border-bottom:1px solid var(--line)">MF stance vs N500</th>
+                <th style="text-align:center;padding:6px 10px;border-bottom:1px solid var(--line)">Latest qtr move</th>
+              </tr>
+            </thead>
+            <tbody id="mfPosBody"><tr><td colspan="3" style="padding:20px;text-align:center;color:var(--text-mute)">Loading MF positioning…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <div id="viewMarkets" hidden>
@@ -6307,6 +6330,7 @@ async function loadPositioning(){
     rows.sort((a,b)=> a.date<b.date?-1:1);
     posRows=rows;
     loadSectorPositioning();
+    loadMfSectors();
     renderPositioning();
     const seg=document.getElementById('posSeg');
     if(seg && !seg.dataset.wired){ seg.dataset.wired='1';
@@ -6414,6 +6438,30 @@ async function loadSectorPositioning(){
     body.innerHTML='<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-mute)">Sector positioning unavailable — could not load <code>data/fpi_sectors.json</code>.</td></tr>';
   }
 }
+/* ---------- Positioning tab · MF sector positioning (qualitative, not flows) ---------- */
+async function loadMfSectors(){
+  const body=document.getElementById('mfPosBody'); if(!body) return;
+  try{
+    const res=await fetch('data/mf_sectors.json',{cache:'no-store'});
+    if(!res.ok) throw new Error('http '+res.status);
+    const d=await res.json();
+    const dt=document.getElementById('mfDisclaimerText'); if(dt) dt.textContent=d.disclaimer||'';
+    const sub=document.getElementById('mfPosSub'); if(sub) sub.textContent=
+      'Mutual-fund sector tilt vs '+(d.benchmark||'Nifty 500')+' · '+(d.asOf||'')+(d.mfOwnershipPct?' · MFs own ~'+d.mfOwnershipPct+'% of the Nifty 500':'')+' · source: Kotak Ownership Navigator';
+    const chip=(st)=>{ const m={OW:['Overweight','var(--up)','rgba(63,199,138,.40)','var(--up-soft)'],UW:['Underweight','var(--down)','rgba(240,106,106,.40)','var(--down-soft)'],N:['Neutral','var(--saffron)','rgba(233,162,59,.40)','var(--saffron-soft)']}[st];
+      return m?`<span style="font-size:11px;font-weight:600;padding:1px 8px;border-radius:6px;border:1px solid ${m[2]};background:${m[3]};color:${m[1]}">${m[0]}</span>`:'<span style="color:var(--text-mute)">— no call</span>'; };
+    const moveTxt=(mv)=> mv==='bought'?'<span style="color:var(--up)">▲ bought</span>':mv==='sold'?'<span style="color:var(--down)">▼ sold</span>':'<span style="color:var(--text-mute)">—</span>';
+    const td='padding:6px 10px;border-bottom:1px solid var(--line-soft)';
+    body.innerHTML=d.sectors.map(s=>`<tr>
+      <td style="${td};font-weight:600" title="${(s.note||'').replace(/"/g,'&quot;')}">${s.name}</td>
+      <td style="${td};text-align:center">${chip(s.stance)}</td>
+      <td style="${td};text-align:center;font-family:'IBM Plex Mono';font-size:11px">${moveTxt(s.move)}</td>
+    </tr>`).join('');
+  }catch(e){
+    body.innerHTML='<tr><td colspan="3" style="padding:20px;text-align:center;color:var(--text-mute)">MF positioning unavailable — could not load <code>data/mf_sectors.json</code>.</td></tr>';
+  }
+}
+
 /* ---------- Strategy tab · multi-house model portfolios ---------- */
 const mpRetCache={};
 async function oneMonthReturn(ticker){
