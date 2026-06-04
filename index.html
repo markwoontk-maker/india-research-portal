@@ -1242,6 +1242,16 @@
         <p class="note"><strong>Method.</strong> Only the four houses that name stocks are counted (Jefferies &amp; Bernstein give thematic views only). Buy/OW = a house's top pick, model-portfolio overweight or Buy/High-Conviction-Outperform rating; Sell/UW = CLSA Underperform or Kotak KIE Sell. JPMorgan and Nomura don't publish stock-level sell lists, so the sell side draws on CLSA and Kotak. For split calls, <strong>Net</strong> = recommending minus non-recommending brokers. Mahindra &amp; Mahindra is a Kotak <em>Reduce</em> (not a full Sell) so it is not flagged against the two buys.</p>
         <!--STRAT:CONS:END-->
       </div>
+      <div class="card reveal">
+        <div class="card-h"><div>
+          <h3>Model Portfolio Summary — house by house</h3>
+          <p class="strat-sub" id="mpSub">Each house's latest model portfolio vs its prior one · positioning change + 1-month price move.</p>
+        </div></div>
+        <div id="mpHouses" class="houses">
+          <div class="house"><div class="stance">Loading model portfolios…</div></div>
+        </div>
+        <p class="ch-note">Source: each house's published model-portfolio note / coverage. A house appears only when a fresh portfolio is available. Prices: Yahoo Finance, 1-month change.</p>
+      </div>
       <script>
         (function(){
           // Shared MAMG view: data/mamg-views.json is the cross-device baseline (read-only on a
@@ -6069,6 +6079,60 @@ async function loadSectorPositioning(){
     body.innerHTML='<tr><td colspan="5" style="padding:24px;text-align:center;color:var(--text-mute)">Sector positioning unavailable — could not load <code>data/fpi_sectors.json</code>.</td></tr>';
   }
 }
+/* ---------- Strategy tab · multi-house model portfolios ---------- */
+const mpRetCache={};
+async function oneMonthReturn(ticker){
+  if(ticker in mpRetCache) return mpRetCache[ticker];
+  const url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(ticker)+'?range=1mo&interval=1d';
+  try{
+    let j;
+    try{ j=await (await fetch(url)).json(); }
+    catch(_){ j=JSON.parse(await (await fetch('https://corsproxy.io/?url='+encodeURIComponent(url))).text()); }
+    const q=j.chart.result[0].indicators.quote[0].close.filter(x=>x!=null);
+    const r=q.length>1 ? (q[q.length-1]/q[0]-1)*100 : null;
+    mpRetCache[ticker]=r; return r;
+  }catch(e){ mpRetCache[ticker]=null; return null; }
+}
+function mpBadge(change){
+  const m={ new:['✚ new','var(--up)'], raised:['▲ raised','var(--up)'], trimmed:['▼ trimmed','var(--down)'],
+            removed:['✕ removed','var(--down)'], held:['= held','var(--text-mute)'] }[change]||['·','var(--text-mute)'];
+  return `<span style="font-size:10px;font-weight:700;color:${m[1]}">${m[0]}</span>`;
+}
+async function loadModelPortfolios(){
+  const wrap=document.getElementById('mpHouses'); if(!wrap) return;
+  try{
+    const res=await fetch('data/model_portfolios.json',{cache:'no-store'});
+    if(!res.ok) throw new Error('http '+res.status);
+    const d=await res.json();
+    const mon=iso=>{ const [y,m]=iso.split('-'); return new Date(y,m-1,1).toLocaleDateString('en-IN',{month:'short',year:'numeric'}); };
+    if(d.asOf) document.getElementById('mpSub').textContent="Each house's latest model portfolio ("+mon(d.asOf)+") vs its prior one · positioning change + 1-month price move.";
+    const sideHtml=(title,arr,col)=>`<div class="pk-label" style="color:${col}">${title}</div>`+
+      `<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">`+
+      (arr.length?arr.map(s=>`<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px">
+          <span style="font-weight:600;color:var(--text)">${s.stock}</span>
+          ${mpBadge(s.change)}
+          <span class="mpret" data-t="${s.ticker||''}" title="${(s.note||'').replace(/"/g,'&quot;')}" style="margin-left:auto;font-family:'IBM Plex Mono';font-size:11px;color:var(--text-mute)">…</span>
+        </div>`).join(''):'<div style="font-size:11.5px;color:var(--text-mute)">—</div>')+`</div>`;
+    wrap.innerHTML=d.houses.map(h=>`<div class="house">
+      <h4>${h.broker}</h4>
+      <div class="src">Model portfolio · ${h.asOf?mon(h.asOf):''}${h.benchmark?' · vs '+h.benchmark:''}</div>
+      <div style="margin-top:10px">
+        ${sideHtml('Overweight',h.overweight||[],'var(--up)')}
+        ${sideHtml('Underweight',h.underweight||[],'var(--down)')}
+      </div>
+    </div>`).join('');
+    const cells=[...wrap.querySelectorAll('.mpret')];
+    for(const cell of cells){
+      const t=cell.dataset.t; if(!t){ cell.textContent='—'; continue; }
+      const r=await oneMonthReturn(t);
+      if(r==null){ cell.textContent='—'; }
+      else{ cell.textContent=(r>=0?'+':'')+r.toFixed(1)+'%'; cell.style.color=r>=0?'var(--up)':'var(--down)'; }
+    }
+  }catch(e){
+    wrap.innerHTML='<div class="house"><div class="stance">Model-portfolio data unavailable — could not load <code>data/model_portfolios.json</code>.</div></div>';
+  }
+}
+
 /* ---------- Sidebar tab routing ---------- */
 (function(){
   const vO=document.getElementById('viewOverview'),
@@ -6081,11 +6145,12 @@ async function loadSectorPositioning(){
         vP=document.getElementById('viewPositioning'),
         vS=document.getElementById('viewSoon'),
         title=document.querySelector('.topbar .title');
-  let marketsLoaded=false, watchlistLoaded=false, positioningLoaded=false, sectorLoaded=false;
+  let marketsLoaded=false, watchlistLoaded=false, positioningLoaded=false, sectorLoaded=false, strategyLoaded=false;
   function showView(v,label){
     vO.hidden=v!=='overview';
     vR.hidden=v!=='research';
     vStrat.hidden=v!=='strategy';
+    if(v==='strategy' && !strategyLoaded){ strategyLoaded=true; loadModelPortfolios(); }
     vM.hidden=v!=='markets';
     vW.hidden=v!=='watchlist';
     vScr.hidden=v!=='screener';
