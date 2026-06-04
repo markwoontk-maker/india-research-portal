@@ -29,6 +29,12 @@
 - Title is clickable → opens the company's NotebookLM workspace (local reports) or the source article (external calls) in a new tab; `authuser=markworktk@gmail.com` appended so the right Google account is selected.
 - Call chip: extracts the broker's explicit rating (Buy/Sell/Hold/OW/UW/EW/Neutral/Add/Reduce/OP/UP) from the headline when stated, otherwise falls back to a sentiment-derived label (Positive/Negative/Neutral). Date is plain, only the call is colour-coded.
 
+## Positioning tab (FII/DII daily flows)
+- Sidebar tab **Positioning** (`data-view="positioning"`, `#viewPositioning`). Two stacked cards — **Net FII Flows** and **Net DII Flows** — each a Chart.js combo: daily net **bars** (green +/red −, left axis) + running YTD **cumulative line** (saffron, right axis). Native tooltips show date · daily net · cumulative. Lazy-loaded once on first tab open via `loadPositioning()`; each card header shows a YTD-cumulative chip.
+- Data: committed **`data/fii_dii.json`** — ascending array of `{date:"YYYY-MM-DD", fii_net, dii_net}` (NSE/BSE **provisional cash-market net**, ₹ Cr, signed), daily since **1 Jan 2026**. The page derives the cumulative client-side. No live fetch (FII/DII is a once-daily post-close print).
+- **Data-source provenance (important):** backfilled from `fatafatniftylevels.in/fii-dii.php` — the only free source found with a complete, *correct* daily series back to 1 Jan. It matches Groww (the reference) and NSE-published daily + monthly figures exactly (e.g. 2 Mar 2026 = FII −3295.64 / DII +8593.87; March total ≈ FII −1.22L cr / DII +1.43L cr vs reported −1.18L / +1.16L). **`MrChartist/fii-dii-data` was rejected** — its Jan–Mar values are wrong (disagreed on 49/78 overlapping days) and it has large gaps. Do **not** swap the source or "correct" historical rows without re-verifying against NSE-published figures.
+- **Refresher routine:** appends new sessions to `data/fii_dii.json` each weekday **9:30 AM MYT** (cron `30 1 * * 1-5` UTC). Primary source fatafatniftylevels, cross-checked vs niftytrader `webapi/Resource/fii-dii-activity-data`. Idempotent (append-only, never rewrites history). Prompt in `docs/fii-dii-refresher-prompt.md` — paste into the routines UI, then enable.
+
 ## Broker abbreviations (use these in citations everywhere)
 Inline citation format: `(<Abbrev>, YYYY/MM/DD)`. Used in `data/companies.json` descriptions and any other research-derived prose.
 

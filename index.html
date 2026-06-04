@@ -597,6 +597,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 12l5-3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
         Strategy
       </div>
+      <div class="nav-item" data-view="positioning" data-title="Positioning">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4v13M7 17l-3-3M7 17l3-3M17 20V7M17 7l-3 3M17 7l3 3"/></svg>
+        Positioning
+      </div>
       <div class="nav-item" data-view="screener" data-title="Company">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         Company
@@ -1215,6 +1219,39 @@
             .then(function(){ applyAll(); });
         })();
       </script>
+    </div>
+
+    <div id="viewPositioning" hidden style="display:flex;flex-direction:column;gap:18px">
+      <div class="card reveal">
+        <div class="card-h">
+          <div>
+            <h3>Net FII Flows</h3>
+            <p id="posSub">Cash-market provisional net · ₹ Cr · daily, since 1 Jan 2026</p>
+          </div>
+          <div style="text-align:right;flex:none">
+            <div style="font-size:9px;letter-spacing:.12em;color:var(--text-mute);text-transform:uppercase">YTD cumulative</div>
+            <div class="mono" id="fiiCum" style="font-size:19px;font-weight:700;margin-top:2px">—</div>
+          </div>
+        </div>
+        <div class="chart-box" id="fiiBox"><canvas id="fiiChart"></canvas></div>
+      </div>
+      <div class="card reveal">
+        <div class="card-h">
+          <div>
+            <h3>Net DII Flows</h3>
+            <p>Cash-market provisional net · ₹ Cr · daily, since 1 Jan 2026</p>
+          </div>
+          <div style="text-align:right;flex:none">
+            <div style="font-size:9px;letter-spacing:.12em;color:var(--text-mute);text-transform:uppercase">YTD cumulative</div>
+            <div class="mono" id="diiCum" style="font-size:19px;font-weight:700;margin-top:2px">—</div>
+          </div>
+        </div>
+        <div class="chart-box" id="diiBox"><canvas id="diiChart"></canvas></div>
+      </div>
+      <p style="font-size:11px;color:var(--text-mute);text-align:center">
+        Bars = each session's net cash flow (green buy / red sell). Line = running YTD cumulative.
+        Hover any bar for the exact figure. Source: NSE/BSE provisional · fatafatniftylevels.in.
+      </p>
     </div>
 
     <div id="viewMarkets" hidden>
@@ -5242,6 +5279,86 @@ function loadScreener(){
   bind(secSel, coSel,  sectors);
   status.textContent=`${companies.length} companies · ${sectors.length} sectors`;
 }
+/* ---------- Positioning tab · FII/DII daily flows ---------- */
+let fiiFlowChart=null, diiFlowChart=null;
+function posDateFull(iso){ const d=new Date(iso+'T00:00:00');
+  return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }
+function posDateShort(iso){ const d=new Date(iso+'T00:00:00');
+  return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'}); }
+function posCr(v){ const s=v<0?'−':'+';
+  return s+'₹'+Math.abs(Math.round(v)).toLocaleString('en-IN')+' Cr'; }
+function posShort(v){ const a=Math.abs(v);
+  if(a>=1000) return (v<0?'−':'')+(a/1000).toFixed(a>=10000?0:1)+'k';
+  return String(Math.round(v)); }
+
+function buildFlowChart(canvasId, labels, daily, cumul, name){
+  const ctx=document.getElementById(canvasId);
+  const barColors=daily.map(v=>v>=0?'#3fc78a':'#f06a6a');
+  return new Chart(ctx,{
+    data:{labels,datasets:[
+      {type:'bar',label:name+' net',data:daily,backgroundColor:barColors,
+        borderWidth:0,order:2,yAxisID:'y',categoryPercentage:.9,barPercentage:.95},
+      {type:'line',label:'Cumulative',data:cumul,borderColor:'#e9a23b',borderWidth:1.6,
+        pointRadius:0,pointHoverRadius:4,pointHoverBackgroundColor:'#e9a23b',
+        tension:.15,fill:false,order:1,yAxisID:'y1'}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:true,position:'bottom',
+          labels:{color:'#a9b0c0',font:{family:'IBM Plex Mono',size:10},
+            boxWidth:14,boxHeight:8,padding:14,usePointStyle:true}},
+        tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,
+          titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:11,displayColors:true,
+          callbacks:{
+            title:items=>items&&items[0]?posDateFull(items[0].label):'',
+            label:c=>'  '+(c.dataset.label||'')+': '+posCr(c.parsed.y)}}},
+      scales:{
+        x:{grid:{display:false},border:{display:false},
+          ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
+            maxRotation:0,autoSkip:true,maxTicksLimit:11,
+            callback:function(val){ return posDateShort(this.getLabelForValue(val)); }}},
+        y:{position:'left',grid:{color:'#1f2530'},border:{display:false},grace:'8%',
+          ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
+            callback:v=>posShort(v)},
+          title:{display:true,text:'Daily net (₹ Cr)',color:'#646c7c',
+            font:{family:'IBM Plex Mono',size:9}}},
+        y1:{position:'right',grid:{display:false},border:{display:false},grace:'8%',
+          ticks:{color:'#e9a23b',font:{family:'IBM Plex Mono',size:10},
+            callback:v=>posShort(v)},
+          title:{display:true,text:'Cumulative (₹ Cr)',color:'#e9a23b',
+            font:{family:'IBM Plex Mono',size:9}}}
+      }}
+  });
+}
+
+async function loadPositioning(){
+  try{
+    const res=await fetch('data/fii_dii.json',{cache:'no-store'});
+    if(!res.ok) throw new Error('fetch '+res.status);
+    const rows=await res.json();
+    rows.sort((a,b)=> a.date<b.date?-1:1);
+    const labels=rows.map(r=>r.date);
+    const fii=rows.map(r=>+r.fii_net), dii=rows.map(r=>+r.dii_net);
+    const cf=[],cd=[]; let sf=0,sd=0;
+    for(let i=0;i<rows.length;i++){ sf+=fii[i]; cf.push(+sf.toFixed(2)); sd+=dii[i]; cd.push(+sd.toFixed(2)); }
+    if(fiiFlowChart) fiiFlowChart.destroy();
+    if(diiFlowChart) diiFlowChart.destroy();
+    fiiFlowChart=buildFlowChart('fiiChart',labels,fii,cf,'FII');
+    diiFlowChart=buildFlowChart('diiChart',labels,dii,cd,'DII');
+    const f=cf[cf.length-1], d=cd[cd.length-1];
+    const fe=document.getElementById('fiiCum'), de=document.getElementById('diiCum');
+    fe.textContent=posCr(f); fe.className='mono '+(f>=0?'up':'down');
+    de.textContent=posCr(d); de.className='mono '+(d>=0?'up':'down');
+    document.getElementById('posSub').textContent=
+      'Cash-market provisional net · ₹ Cr · daily · '+posDateFull(rows[0].date)+' – '+posDateFull(rows[rows.length-1].date);
+  }catch(e){
+    ['fiiBox','diiBox'].forEach(id=>{ const b=document.getElementById(id);
+      if(b) b.innerHTML='<p style="color:var(--text-mute);text-align:center;padding:60px 0">FII/DII flow data unavailable — could not load <code>data/fii_dii.json</code>.</p>'; });
+  }
+}
+
 /* ---------- Sidebar tab routing ---------- */
 (function(){
   const vO=document.getElementById('viewOverview'),
@@ -5250,9 +5367,10 @@ function loadScreener(){
         vM=document.getElementById('viewMarkets'),
         vW=document.getElementById('viewWatchlist'),
         vScr=document.getElementById('viewScreener'),
+        vP=document.getElementById('viewPositioning'),
         vS=document.getElementById('viewSoon'),
         title=document.querySelector('.topbar .title');
-  let marketsLoaded=false, watchlistLoaded=false;
+  let marketsLoaded=false, watchlistLoaded=false, positioningLoaded=false;
   function showView(v,label){
     vO.hidden=v!=='overview';
     vR.hidden=v!=='research';
@@ -5260,7 +5378,9 @@ function loadScreener(){
     vM.hidden=v!=='markets';
     vW.hidden=v!=='watchlist';
     vScr.hidden=v!=='screener';
+    vP.hidden=v!=='positioning';
     vS.hidden=v!=='soon';
+    if(v==='positioning' && !positioningLoaded){ positioningLoaded=true; loadPositioning(); }
     if(v==='soon') document.getElementById('soonTitle').textContent=label;
     if(v==='screener' && !screenerLoaded){ screenerLoaded=true; loadScreener(); }
     if(v==='markets' && !marketsLoaded){
