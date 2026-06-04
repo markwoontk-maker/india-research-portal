@@ -6362,6 +6362,21 @@ async function loadModelPortfolios(){
     const mon=iso=>{ const [y,m]=iso.split('-'); return new Date(y,m-1,1).toLocaleDateString('en-IN',{month:'short',year:'numeric'}); };
     if(d.asOf) document.getElementById('mpSub').textContent="Each house's latest model portfolio ("+mon(d.asOf)+") vs its prior one · absolute weight + 1-month price move.";
     const mpWt=v=>(v==null||v==='')?'—':(typeof v==='number'?v.toFixed(1)+'%':String(v));
+    // House name → link to its source report. Local PDFs are served by
+    // scripts/pdf-server.js at http://127.0.0.1:8788/<path under the reports root>
+    // (file:// fallback when the dashboard is opened from disk); 'url' wins if set.
+    const onFileMp=(typeof location!=='undefined')&&location.protocol==='file:';
+    const reportHref=h=>{
+      if(h.url) return h.url;
+      if(h.report){
+        const rel=String(h.report).replace(/\\/g,'/').split('/').map(encodeURIComponent).join('/');
+        return onFileMp ? 'file:///C:/Users/admin/Desktop/India%20Related%20Reports/'+rel
+                        : 'http://127.0.0.1:8788/'+rel;
+      }
+      return null;
+    };
+    const mpTitle=h=>{ const u=reportHref(h);
+      return u ? `<a href="${u}" target="_blank" rel="noopener" title="Open the source report" style="color:inherit;text-decoration:none;border-bottom:1px dotted var(--text-mute)">${h.broker}</a>` : h.broker; };
     const cap=`<div style="display:flex;gap:8px;font-size:9px;color:var(--text-mute);text-transform:uppercase;letter-spacing:.08em;margin:2px 0">`+
       `<span style="margin-left:auto;min-width:46px;text-align:right">Wt</span><span style="min-width:52px;text-align:right">1M</span></div>`;
     const sideHtml=(title,arr,col)=>`<div class="pk-label" style="color:${col}">${title}</div>`+
@@ -6374,7 +6389,7 @@ async function loadModelPortfolios(){
           <span class="mpret" data-t="${s.ticker||''}" title="${(s.note||'').replace(/"/g,'&quot;')}" style="font-family:'IBM Plex Mono';font-size:11px;color:var(--text-mute);min-width:52px;text-align:right">…</span>
         </div>`).join(''):'<div style="font-size:11.5px;color:var(--text-mute)">—</div>')+`</div>`;
     wrap.innerHTML=d.houses.map(h=>`<div class="house">
-      <h4>${h.broker}</h4>
+      <h4>${mpTitle(h)}</h4>
       <div class="src">Model portfolio · ${h.asOf?mon(h.asOf):''}${h.benchmark?' · vs '+h.benchmark:''}</div>
       <div style="margin-top:10px">
         ${sideHtml('Overweight',h.overweight||[],'var(--up)')}

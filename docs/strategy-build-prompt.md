@@ -129,6 +129,12 @@ per-stock weights; otherwise the empty string `""`. Use correct Yahoo NSE ticker
 (e.g. "LT.NS","ICICIBANK.NS","M&M.NS"); leave `"ticker":""` only if you can't
 determine it (name still shows, return shows "—").
 
+Each house also gets a `"report"` = the path of the source PDF you mined it from,
+relative to the India Related Reports root, e.g.
+`"India Strategy/[260601] [Nomura] India Equity Strategy - 4QFY26 earnings review.pdf"`
+(exact filename, including the `[YYMMDD] [House]` prefix). The card turns the
+house name into a link to it via the local PDF server.
+
 Schema (valid JSON; keep the leading "_note"):
 ```json
 {
@@ -136,6 +142,7 @@ Schema (valid JSON; keep the leading "_note"):
   "asOf": "YYYY-MM",
   "houses": [
     { "broker": "Kotak — Alphabet Quant (factor)", "asOf": "YYYY-MM", "benchmark": "Nifty 50",
+      "report": "India Strategy/[260601] [Kotak] Quant Research - (no title).pdf",
       "note": "Concentrated factor portfolio.",
       "overweight": [ { "stock": "Bharti Airtel", "ticker": "BHARTIARTL.NS", "wt": 29.06, "change": "", "note": "why" } ],
       "underweight": [] }

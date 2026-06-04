@@ -1,11 +1,12 @@
 {
-  "_note": "Model portfolios mined from the local India Strategy PDFs (the covered houses). Kept separate from model_portfolios.json (which the remote India Positioning Data Refresher regenerates from public sources) so the two never clobber each other. 'wt' = absolute portfolio weight % where the house publishes per-stock weights; '' renders '—' (JPMorgan/Nomura/CLSA give top-pick lists without per-stock weights).",
+  "_note": "Model portfolios mined from the local India Strategy PDFs (the covered houses). Kept separate from model_portfolios.json (which the remote India Positioning Data Refresher regenerates from public sources) so the two never clobber each other. 'wt' = absolute portfolio weight % where the house publishes per-stock weights; '' renders '—'. 'report' = path under the India Related Reports root, served by scripts/pdf-server.js at http://127.0.0.1:8788/ (file:// fallback when opened from disk); the house name links to it.",
   "asOf": "2026-06",
   "houses": [
     {
       "broker": "JPMorgan",
       "asOf": "2026-06",
       "benchmark": "MSCI India",
+      "report": "India Strategy/[260518] [JPMorgan] India Equity Strategy - 4QFY26 Earnings Dissector, better-than-expected prints, upgrade Industrials to OW.pdf",
       "note": "Top picks from JPMorgan's sector model portfolio (4QFY26 Earnings Dissector). No per-stock weights published.",
       "overweight": [
         { "stock": "Larsen & Toubro", "ticker": "LT.NS", "wt": "", "change": "held", "note": "Industrials OW" },
@@ -23,6 +24,7 @@
       "broker": "Nomura",
       "asOf": "2026-06",
       "benchmark": "",
+      "report": "India Strategy/[260601] [Nomura] India Equity Strategy - 4QFY26 earnings review.pdf",
       "note": "Top picks from Nomura's 4QFY26 review (Fig. 101/103). No per-stock weights published.",
       "overweight": [
         { "stock": "Bajaj Finance", "ticker": "BAJFINANCE.NS", "wt": "", "change": "held", "note": "Financials — Bullish" },
@@ -40,6 +42,7 @@
       "broker": "CLSA",
       "asOf": "2026-06",
       "benchmark": "Nifty",
+      "report": "India Strategy/[260602] [CLSA] India strategy - Good 4Q but EPS cuts continue.pdf",
       "note": "CLSA High-Conviction Outperform / focus names (4Q strategy). The India Focus Portfolio's per-stock weights are login-gated, so weights aren't shown.",
       "overweight": [
         { "stock": "Hero MotoCorp", "ticker": "HEROMOTOCO.NS", "wt": "", "change": "raised", "note": "Upgraded to O-PF" },
@@ -55,6 +58,7 @@
       "broker": "Kotak — Alphabet Quant (factor)",
       "asOf": "2026-06",
       "benchmark": "Nifty 50",
+      "report": "India Strategy/[260601] [Kotak] Quant Research - (no title).pdf",
       "note": "Alphabet 'Concentrated All-Season' multi-factor portfolio (quant, not fundamental KIE views), Jun 2026. Weights are the published factor-score allocations.",
       "overweight": [
         { "stock": "Bharti Airtel", "ticker": "BHARTIARTL.NS", "wt": 29.06, "change": "", "note": "Concentrated All-Season holding" },
