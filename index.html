@@ -723,16 +723,16 @@
           <div class="meta" id="k500m">Day range 22,930 – 23,201</div>
         </div>
         <div class="kpi reveal" style="animation-delay:.12s">
-          <div class="lbl">Market Breadth <em style="font-style:normal;color:var(--text-mute);font-size:9px;letter-spacing:.1em">· SAMPLE</em></div>
-          <div class="big mono">312 / 169</div>
-          <div class="chg up">Advances lead · 1.85×</div>
-          <div class="meta">No free live feed · indicative</div>
+          <div class="lbl">Market Breadth</div>
+          <div class="big mono" id="kBreadth">— / —</div>
+          <div class="chg" id="kBreadthc">Loading…</div>
+          <div class="meta" id="kBreadthm">Nifty 500 advances vs declines</div>
         </div>
         <div class="kpi reveal" style="animation-delay:.19s">
-          <div class="lbl">FII Net Flow <em style="font-style:normal;color:var(--text-mute);font-size:9px;letter-spacing:.1em">· SAMPLE</em></div>
-          <div class="big mono">+₹2,418 Cr</div>
-          <div class="chg up">▲ Buyers in cash</div>
-          <div class="meta">No free live feed · indicative</div>
+          <div class="lbl">FII Net Flow</div>
+          <div class="big mono" id="kFii">—</div>
+          <div class="chg" id="kFiic">Loading…</div>
+          <div class="meta" id="kFiim">Cash market · NSE/BSE provisional</div>
         </div>
         <div class="kpi reveal" style="animation-delay:.26s">
           <div class="lbl">India VIX</div>
@@ -3325,6 +3325,25 @@ function renderMovers(o){
   document.getElementById('mvSummary').innerHTML=moversSummary(o);
   document.getElementById('mvSub').textContent=
     `Nifty 500 constituents · ${TF_LABEL[o.tf||moversTF]||"today's % move"}`;
+  // Live Market Breadth KPI tile — same adv/dec we just computed.
+  // Only fire for the 1D timeframe; other timeframes aren't a "breadth"
+  // signal in the conventional sense.
+  if ((o.tf||moversTF)==='1D') {
+    const big=document.getElementById('kBreadth');
+    const chg=document.getElementById('kBreadthc');
+    const meta=document.getElementById('kBreadthm');
+    if (big)  big.textContent=`${o.adv} / ${o.dec}`;
+    if (chg) {
+      let txt='Balanced', cls='';
+      if (o.adv>o.dec && o.dec>0) { txt=`Advances lead · ${(o.adv/o.dec).toFixed(2)}×`; cls='up'; }
+      else if (o.dec>o.adv && o.adv>0) { txt=`Declines lead · ${(o.dec/o.adv).toFixed(2)}×`; cls='down'; }
+      else if (o.dec===0 && o.adv>0) { txt='All advancing'; cls='up'; }
+      else if (o.adv===0 && o.dec>0) { txt='All declining'; cls='down'; }
+      chg.textContent=txt;
+      chg.className='chg'+(cls?' '+cls:'');
+    }
+    if (meta) meta.textContent=`${o.count} Nifty 500 names · today`;
+  }
 }
 function statsOf(all){
   all.sort((a,b)=>b.ch-a.ch);
@@ -6035,11 +6054,42 @@ document.getElementById('mvTf').onchange=e=>{
   loadMovers().catch(()=>{});
 };
 
+// Live FII Net Flow KPI — pulls the last row from data/fii_dii.json
+// (same source the Positioning tab uses). Updated each weekday morning
+// by the fii-dii refresher routine.
+async function loadFiiKpi(){
+  try{
+    const r=await fetch('data/fii_dii.json',{cache:'no-store'});
+    if(!r.ok) return;
+    const arr=await r.json();
+    if(!Array.isArray(arr)||!arr.length) return;
+    const last=arr[arr.length-1];
+    const v=Number(last.fii_net);
+    if(!isFinite(v)) return;
+    const big=document.getElementById('kFii');
+    const chg=document.getElementById('kFiic');
+    const meta=document.getElementById('kFiim');
+    const sign=v>=0?'+':'−';
+    const fmt=Math.abs(v).toLocaleString('en-IN',{maximumFractionDigits:0});
+    if(big) big.textContent=`${sign}₹${fmt} Cr`;
+    if(chg){
+      chg.textContent=v>=0?'▲ Net buyers in cash':'▼ Net sellers in cash';
+      chg.className='chg '+(v>=0?'up':'down');
+    }
+    if(meta){
+      const d=new Date(last.date);
+      const dateLabel=isNaN(d)?last.date:d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+      meta.textContent=`${dateLabel} · NSE/BSE provisional`;
+    }
+  }catch(e){}
+}
+
 (async function init(){
   try{ const ok=await loadQuotes(); if(ok){ try{ await liveChart('1D'); }catch(e){} } else setStatus(false); }
   catch(e){ setStatus(false); }
   refreshSector();
   loadMovers().catch(()=>{ document.getElementById('mvSummary').textContent='Nifty 500 movers unavailable — free feed unreachable.'; });
+  loadFiiKpi();
 })();
 setInterval(()=>{ loadQuotes().catch(()=>{}); refreshSector(); }, 60000);
 setInterval(()=>{ loadMovers().catch(()=>{}); }, 300000);
