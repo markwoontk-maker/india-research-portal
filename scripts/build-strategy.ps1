@@ -13,6 +13,7 @@ $ErrorActionPreference = "Continue"
 $repo        = "C:\Users\admin\India-Research-Portal"
 $strategyDir = "C:\Users\admin\Desktop\India Related Reports\India Strategy"
 $html        = Join-Path $repo "index.html"
+$mpFile      = Join-Path $repo "data\model_portfolios_house.json"
 $promptFile  = Join-Path $repo "docs\strategy-build-prompt.md"
 $stateFile   = Join-Path $repo "scripts\.strategy-state.json"
 $claude      = "C:\Users\admin\.local\bin\claude.exe"
@@ -42,7 +43,8 @@ Out-Log ("new strategy report detected (" + $pdfs.Count + " PDFs) - running mine
 
 # --- snapshot for revert ------------------------------------------------------
 Set-Location $repo
-$preHash = (Get-FileHash -LiteralPath $html -Algorithm MD5).Hash
+$preHash   = (Get-FileHash -LiteralPath $html -Algorithm MD5).Hash
+$preHashMp = if (Test-Path -LiteralPath $mpFile) { (Get-FileHash -LiteralPath $mpFile -Algorithm MD5).Hash } else { "" }
 
 # --- run the headless miner with a timeout ------------------------------------
 if (-not (Test-Path -LiteralPath $promptFile)) { Out-Log "prompt file missing - skipping."; exit 0 }
@@ -64,15 +66,16 @@ if (Wait-Job $job -Timeout $timeoutSec) {
 } else {
   Stop-Job $job -ErrorAction SilentlyContinue
   Remove-Job $job -Force -ErrorAction SilentlyContinue
-  Out-Log "miner timed out - reverting index.html."
-  & git checkout -- index.html 2>&1 | Out-Null
+  Out-Log "miner timed out - reverting."
+  & git checkout -- index.html data/model_portfolios_house.json 2>&1 | Out-Null
   exit 0
 }
 Remove-Job $job -Force -ErrorAction SilentlyContinue
 
 # --- did anything change? -----------------------------------------------------
-$postHash = (Get-FileHash -LiteralPath $html -Algorithm MD5).Hash
-if ($postHash -eq $preHash) {
+$postHash   = (Get-FileHash -LiteralPath $html -Algorithm MD5).Hash
+$postHashMp = if (Test-Path -LiteralPath $mpFile) { (Get-FileHash -LiteralPath $mpFile -Algorithm MD5).Hash } else { "" }
+if ($postHash -eq $preHash -and $postHashMp -eq $preHashMp) {
   Out-Log "miner made no change - updating watermark only."
   @{ lastMaxTicks = $maxTicks; asOf = (Get-Date).ToString("s") } | ConvertTo-Json | Set-Content -LiteralPath $stateFile -Encoding utf8
   exit 0
@@ -96,15 +99,22 @@ $failed = $checks.GetEnumerator() | Where-Object { -not $_.Value } | ForEach-Obj
 # the MAMG shared-views data file must never be touched by the miner
 $touchedMamg = (& git diff --name-only -- data/mamg-views.json) -match "mamg-views"
 
-if ($failed -or $touchedMamg) {
-  if ($failed) { Out-Log ("VALIDATION FAILED: " + ($failed -join "; ") + " - reverting.") }
+# model_portfolios_house.json (if the miner rewrote it) must be valid JSON with houses[]
+$mpBad = $false
+if (Test-Path -LiteralPath $mpFile) {
+  try { $mp = Get-Content -LiteralPath $mpFile -Raw | ConvertFrom-Json; if (-not $mp.houses) { $mpBad = $true } }
+  catch { $mpBad = $true }
+}
+
+if ($failed -or $touchedMamg -or $mpBad) {
+  if ($failed)      { Out-Log ("VALIDATION FAILED: " + ($failed -join "; ") + " - reverting.") }
   if ($touchedMamg) { Out-Log "VALIDATION FAILED: data/mamg-views.json was modified - reverting." }
-  & git checkout -- index.html 2>&1 | Out-Null
-  & git checkout -- data/mamg-views.json 2>&1 | Out-Null
+  if ($mpBad)       { Out-Log "VALIDATION FAILED: model_portfolios_house.json is not valid JSON with houses[] - reverting." }
+  & git checkout -- index.html data/mamg-views.json data/model_portfolios_house.json 2>&1 | Out-Null
   exit 0
 }
 
 # --- success: advance the watermark; daily-refresh's git step will commit ------
 @{ lastMaxTicks = $maxTicks; asOf = (Get-Date).ToString("s") } | ConvertTo-Json | Set-Content -LiteralPath $stateFile -Encoding utf8
-Out-Log "Strategy tab updated and validated."
+Out-Log "Strategy tab + house model portfolios updated and validated."
 exit 0

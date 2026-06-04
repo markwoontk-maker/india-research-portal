@@ -105,9 +105,43 @@ Consensus rows (note the `# Brokers` / Net column):
 Split-call Net cell: `<td class="num"><span class="cnt buy">+1</span></td>` when
 net>0, `<td class="num"><span class="cnt flat">0</span></td>` when net=0.
 
+# ALSO REWRITE data/model_portfolios_house.json
+Separately, regenerate the file `data/model_portfolios_house.json` (overwrite the
+whole file) with each covered house's formal MODEL PORTFOLIO, if it publishes one
+in the selected reports. This powers the "Model Portfolio Summary" card and is
+kept separate from data/model_portfolios.json (which a remote routine owns).
+
+Include ONLY houses that publish a genuine model portfolio / focus list:
+- JPMorgan & Nomura: SECTOR-level model portfolios → entries are GICS sector
+  names with `"ticker":""` (so the card shows "—" for return).
+- CLSA: its India Focus Portfolio — use the stated SECTOR tilts (ticker:"").
+  Stock-level holdings are login-gated; do NOT fabricate them.
+- Kotak Alphabet quant: STOCK-level concentrated factor portfolio → real stock
+  names WITH Yahoo tickers (e.g. "ONGC.NS","TITAN.NS") so returns render.
+- Bernstein, Jefferies, and Kotak's ownership/macro notes: usually NO model
+  portfolio → omit them entirely. Never invent positions or weights.
+
+Schema (valid JSON; keep the leading "_note"):
+```json
+{
+  "_note": "Mined from the local India Strategy PDFs; separate from model_portfolios.json so the remote refresher can't clobber it.",
+  "asOf": "YYYY-MM",
+  "houses": [
+    { "broker": "JPMorgan", "asOf": "YYYY-MM", "benchmark": "MSCI India",
+      "note": "Sector model portfolio (...report...).",
+      "overweight": [ { "stock": "Industrials", "ticker": "", "change": "raised|held|trimmed|new|removed|", "note": "why" } ],
+      "underweight": [ { "stock": "Information Technology", "ticker": "", "change": "held", "note": "why" } ] }
+  ]
+}
+```
+Use `change` values: `new`/`raised`/`trimmed`/`removed`/`held`, or `""` when the
+prior stance is unknown (renders a neutral dot). Validate the file parses as JSON.
+
 # FINISH
 After editing, run `grep -n "STRAT:" index.html` and confirm all 5 marker pairs
-are still present. Print exactly one line:
+are still present, and confirm `data/model_portfolios_house.json` is valid JSON
+(`node -e "JSON.parse(require('fs').readFileSync('data/model_portfolios_house.json'))"`).
+Print exactly one line:
 `STRATEGY UPDATED: <n_reports> reports, asof <date>` (or
 `STRATEGY UNCHANGED` if no selected report was newer than what the grid already
 reflects). Do not commit or push — the wrapper handles git.
