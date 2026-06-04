@@ -6,7 +6,7 @@
 <title>India Research Portal — India Equity Desk</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Roboto+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
   :root{
@@ -50,12 +50,12 @@
   ::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
   ::-webkit-scrollbar-track{background:transparent}
 
-  /* Disable IBM Plex Mono's slashed/dotted zero glyph everywhere —
-     the slash through 0 is hard to tell apart from 8 or O at small
-     sizes. `"zero" 0` turns the feature off; `"tnum"` keeps digits
-     equal-width on tables and chart axes. */
-  body{font-feature-settings:"zero" 0}
-  .mono{font-family:'IBM Plex Mono',monospace;font-feature-settings:"tnum","zero" 0}
+  /* Mono font: Roboto Mono. Picked specifically because its default 0
+     glyph is plain — no slash, no centred dot — so it never reads as
+     8 or O at small sizes. (IBM Plex Mono was previously used and
+     had only a dotted-0 glyph with no alt; "zero" 0 was a no-op.)
+     "tnum" keeps digits equal-width on tables and chart axes. */
+  .mono{font-family:'Roboto Mono',monospace;font-feature-settings:"tnum"}
   .up{color:var(--up)} .down{color:var(--down)}
 
   /* ---------- Shell ---------- */
@@ -147,7 +147,7 @@
   .card-h p{font-size:12px;color:var(--text-mute);margin-top:4px}
   .seg{display:flex;gap:2px;background:var(--ink-2);border:1px solid var(--line);border-radius:9px;padding:3px}
   .seg button{
-    background:none;border:none;color:var(--text-mute);font-family:'IBM Plex Mono';
+    background:none;border:none;color:var(--text-mute);font-family:'Roboto Mono';
     font-size:11.5px;padding:6px 11px;border-radius:6px;cursor:pointer;transition:.15s;
   }
   .seg button.on{background:var(--saffron);color:#1a1206;font-weight:600}
@@ -163,7 +163,7 @@
     border-radius:6px;transition:background .12s}
   .stat-row:last-child{border:none}
   .stat-row .stat-nm{color:var(--text-dim);flex:1;min-width:0}
-  .stat-row b{font-family:'IBM Plex Mono';font-weight:500;margin-left:auto}
+  .stat-row b{font-family:'Roboto Mono';font-weight:500;margin-left:auto}
   .stat-row.clickable{cursor:pointer}
   .stat-row.clickable:hover{background:var(--panel)}
   /* Checkbox + color swatch (the swatch matches the line color used
@@ -185,18 +185,18 @@
   .sector:hover{background:var(--panel-2)}
   .sector:hover .nm{color:var(--saffron)}
   .back{background:var(--ink-2);border:1px solid var(--line);color:var(--text-dim);
-    font-family:'IBM Plex Mono';font-size:11.5px;padding:6px 11px;border-radius:8px;
+    font-family:'Roboto Mono';font-size:11.5px;padding:6px 11px;border-radius:8px;
     cursor:pointer;margin-bottom:14px;transition:.15s}
   .back:hover{color:var(--text);border-color:var(--saffron)}
   .sector .nm{width:150px;font-size:12px;color:var(--text-dim);flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .bar{flex:1;height:9px;background:var(--ink-2);border-radius:6px;overflow:hidden;position:relative}
   .bar i{position:absolute;top:0;bottom:0;left:50%;border-radius:6px;transition:width 1s cubic-bezier(.2,.7,.2,1)}
-  .sector .pct{width:72px;text-align:right;font-family:'IBM Plex Mono';font-size:12.5px;font-weight:500;flex:none}
+  .sector .pct{width:72px;text-align:right;font-family:'Roboto Mono';font-size:12.5px;font-weight:500;flex:none}
 
   /* sector controls + detail */
   .sec-ctrls{display:flex;gap:8px;flex:none}
   .dd{background:var(--ink-2);border:1px solid var(--line);color:var(--text-dim);
-    font-family:'IBM Plex Mono';font-size:14px;padding:8px 12px;border-radius:8px;cursor:pointer;outline:none}
+    font-family:'Roboto Mono';font-size:14px;padding:8px 12px;border-radius:8px;cursor:pointer;outline:none}
   .dd:hover{color:var(--text);border-color:var(--saffron)}
   #secDetail{display:none}
   .sd-chart{height:152px;margin:2px 0 18px;position:relative}
@@ -212,7 +212,7 @@
   .mv-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
   /* Name + inline ticker on one row; ticker sits right-justified */
   .mv-head{display:flex;align-items:baseline;gap:8px;min-width:0}
-  .mv-tk{flex:none;font-family:'IBM Plex Mono';font-size:10.5px;
+  .mv-tk{flex:none;font-family:'Roboto Mono';font-size:10.5px;
     color:var(--text-mute);letter-spacing:.02em}
   /* Single-line summary with ellipsis. Combined with table-layout:fixed
      on the movers tables (below), the row no longer expands the cell. */
@@ -236,10 +236,10 @@
     color:var(--text-mute);border-bottom:1px solid var(--line-soft)}
   .hi-tbl th.r{text-align:right}
   .hi-tbl td{padding:6px 0;border-top:1px solid var(--line-soft);font-size:13px;vertical-align:middle}
-  .hi-tbl td.r{text-align:right;font-family:'IBM Plex Mono';font-size:12px;
+  .hi-tbl td.r{text-align:right;font-family:'Roboto Mono';font-size:12px;
     font-variant-numeric:tabular-nums}
   .hi-tbl .nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .hi-tbl .ath-tag{font-family:'IBM Plex Mono';font-size:9.5px;
+  .hi-tbl .ath-tag{font-family:'Roboto Mono';font-size:9.5px;
     background:var(--up-soft);color:var(--up);padding:1px 5px;border-radius:3px;
     margin-left:6px;letter-spacing:.04em}
 
@@ -249,7 +249,7 @@
     border-bottom:1px solid var(--line-soft)}
   .pol-list li:last-child{border:none;padding-bottom:0}
   .pol-list li::before{content:counter(pol,decimal-leading-zero);
-    font-family:'IBM Plex Mono';font-size:12px;font-weight:600;color:var(--saffron);
+    font-family:'Roboto Mono';font-size:12px;font-weight:600;color:var(--saffron);
     flex:none;width:26px;padding-top:1px}
   .pol-item{flex:1;min-width:0}
   .pol-top{display:flex;align-items:baseline;gap:16px}
@@ -262,7 +262,7 @@
   /* watchlist tables: ticker beside name, tighter rows */
   #wlHold td,#wlCov td,#wlWatch td{padding:6px 0}
   #wlHold .sym,#wlCov .sym,#wlWatch .sym{display:inline}
-  .wl-tk{font-family:'IBM Plex Mono';font-size:11px;color:var(--text-mute);margin-left:8px}
+  .wl-tk{font-family:'Roboto Mono';font-size:11px;color:var(--text-mute);margin-left:8px}
   /* watchlist add bar (in card header) */
   .wl-add{display:flex;gap:8px;align-items:center;flex:none}
   .wl-add input{background:var(--panel);color:var(--text);
@@ -290,13 +290,13 @@
   #wlHold tr:hover .wl-move,#wlCov tr:hover .wl-move,#wlWatch tr:hover .wl-move{opacity:1}
   .wl-move:focus{opacity:1;outline:none;border-color:var(--saffron)}
   /* earnings / corporate feed (email-style, no links) */
-  .ec-tk{font-family:'IBM Plex Mono';font-weight:700;font-size:12.5px;margin-right:9px;
+  .ec-tk{font-family:'Roboto Mono';font-weight:700;font-size:12.5px;margin-right:9px;
     white-space:nowrap}
   .ec-tk.up{color:var(--up)} .ec-tk.down{color:var(--down)} .ec-tk.flat{color:var(--saffron)}
   .ec-sum{color:var(--text-dim);font-size:13px;line-height:1.5}
   .pol-item.ec-row{display:flex;align-items:baseline;gap:14px}
   .ec-main{flex:1;min-width:0}
-  .ec-dt{flex:none;white-space:nowrap;font-family:'IBM Plex Mono';font-size:11px;color:var(--text-mute)}
+  .ec-dt{flex:none;white-space:nowrap;font-family:'Roboto Mono';font-size:11px;color:var(--text-mute)}
   /* earnings update: company name + tighter rows */
   .ec-co{font-family:'Manrope',sans-serif;font-weight:700;font-size:12.5px;margin-right:9px}
   .ec-co.up{color:var(--up)} .ec-co.down{color:var(--down)} .ec-co.flat{color:var(--saffron)}
@@ -307,7 +307,7 @@
   .earn-cal{display:flex;flex-direction:column}
   .ec-day{padding:12px 0;border-bottom:1px solid var(--line-soft)}
   .earn-cal .ec-day:last-child{border:none;padding-bottom:0}
-  .ec-date{font-family:'IBM Plex Mono';font-size:12px;font-weight:600;color:var(--saffron);
+  .ec-date{font-family:'Roboto Mono';font-size:12px;font-weight:600;color:var(--saffron);
     margin-bottom:8px;display:flex;align-items:baseline;gap:10px}
   .ec-date span{font-family:'Manrope';font-size:11px;color:var(--text-mute);font-weight:500}
   .ec-co{display:flex;flex-wrap:wrap;gap:6px}
@@ -317,7 +317,7 @@
 
   /* macro monthly table */
   .macro-wrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:10px}
-  .macro-tbl{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono';font-size:12px}
+  .macro-tbl{width:100%;border-collapse:collapse;font-family:'Roboto Mono';font-size:12px}
   .macro-tbl th,.macro-tbl td{padding:5px 12px;text-align:right;white-space:nowrap;
     border-top:1px solid var(--line-soft)}
   .macro-tbl thead th{border-top:none;color:var(--text-mute);font-size:10px;
@@ -362,7 +362,7 @@
   .nm-close:hover{color:var(--text);border-color:var(--saffron)}
   .nm-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding-right:34px}
   .nm-head h3{font-family:'Fraunces',serif;font-size:20px;font-weight:600}
-  .nm-move{font-family:'IBM Plex Mono';font-size:13px;font-weight:600}
+  .nm-move{font-family:'Roboto Mono';font-size:13px;font-weight:600}
   .nm-disc{font-size:11.5px;color:var(--text-mute);margin:10px 0 16px;line-height:1.6;
     border-left:3px solid var(--saffron);background:var(--ink-2);padding:9px 12px;border-radius:7px}
   .nm-disc b{color:var(--text-dim)}
@@ -378,7 +378,7 @@
   .sd-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line-soft);font-size:12.5px}
   .sd-row:last-child{border:none}
   .sd-row span{color:var(--text-dim)}
-  .sd-row b{font-family:'IBM Plex Mono';font-weight:500}
+  .sd-row b{font-family:'Roboto Mono';font-weight:500}
   .sd-empty{font-size:12px;color:var(--text-mute);padding:10px 0}
 
   /* tables */
@@ -389,8 +389,8 @@
   td{padding:12px 0;border-top:1px solid var(--line-soft);font-size:13px}
   td .sym{font-weight:600}
   td .co{font-size:11px;color:var(--text-mute);margin-top:2px}
-  .px{font-family:'IBM Plex Mono';font-weight:500}
-  .pill{display:inline-block;font-family:'IBM Plex Mono';font-size:12px;font-weight:600;
+  .px{font-family:'Roboto Mono';font-weight:500}
+  .pill{display:inline-block;font-family:'Roboto Mono';font-size:12px;font-weight:600;
     padding:4px 9px;border-radius:6px}
   .pill.u{background:var(--up-soft);color:var(--up)}
   .pill.d{background:var(--down-soft);color:var(--down)}
@@ -400,7 +400,7 @@
   .note{display:flex;align-items:baseline;gap:12px;padding:5px 0;
     border-bottom:1px solid var(--line-soft);white-space:nowrap;overflow:hidden}
   .note:last-child{border:none;padding-bottom:0}
-  .n-date{flex:none;width:48px;font-family:'IBM Plex Mono';font-size:11px;color:var(--text-mute)}
+  .n-date{flex:none;width:48px;font-family:'Roboto Mono';font-size:11px;color:var(--text-mute)}
   /* Fixed width (not max-width) so company column aligns even when
      names are short like "TCS" or "KIMS". white-space:nowrap + ellipsis
      keeps long names clipped. */
@@ -412,7 +412,7 @@
   /* Fixed-width chip so curr/prev call columns line up across rows
      regardless of label length ("BUY" vs "ACCUMULATE"). */
   .n-call{flex:none;width:74px;box-sizing:border-box;
-    font-family:'IBM Plex Mono';font-size:10.5px;font-weight:600;
+    font-family:'Roboto Mono';font-size:10.5px;font-weight:600;
     padding:3px 0;border-radius:5px;letter-spacing:.05em;white-space:nowrap;
     text-align:center;overflow:hidden;text-overflow:ellipsis}
   .n-call.buy{background:var(--up-soft);color:var(--up)}
@@ -425,7 +425,7 @@
   .tp-arrow.up{color:var(--up)}
   .tp-arrow.down{color:var(--down)}
   /* News-You-Need-to-Know category chip */
-  .news-cat{flex:none;font-family:'IBM Plex Mono';font-size:9.5px;font-weight:600;
+  .news-cat{flex:none;font-family:'Roboto Mono';font-size:9.5px;font-weight:600;
     padding:3px 7px;border-radius:4px;letter-spacing:.06em;white-space:nowrap;
     text-transform:uppercase;align-self:center}
   .news-cat.pol{background:var(--saffron-soft);color:var(--saffron)}
@@ -433,7 +433,7 @@
   .news-cat.corp{background:rgba(120,140,180,.16);color:#9bb3d1}
   .news-cat.econ{background:rgba(120,180,220,.18);color:#7dc6e6}
   /* Per-row company tag — green / red / neutral by sentiment */
-  .news-co{flex:none;font-family:'IBM Plex Mono';font-size:11px;font-weight:600;
+  .news-co{flex:none;font-family:'Roboto Mono';font-size:11px;font-weight:600;
     padding:3px 8px;border-radius:4px;letter-spacing:.02em;white-space:nowrap;
     max-width:170px;overflow:hidden;text-overflow:ellipsis;align-self:center}
   .news-co.up{background:var(--up-soft);color:var(--up)}
@@ -442,7 +442,7 @@
   /* Screener: paired (label · dropdown · open-button) rows */
   .scr-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px}
   .scr-row + .scr-row{margin-top:12px}
-  .scr-lbl{flex:none;width:72px;font-family:'IBM Plex Mono';font-size:11px;
+  .scr-lbl{flex:none;width:72px;font-family:'Roboto Mono';font-size:11px;
     letter-spacing:.06em;text-transform:uppercase;color:var(--text-mute)}
   .scr-dd{flex:1;min-width:240px;background:var(--panel);color:var(--text);
     border:1px solid rgba(255,255,255,.14);border-radius:8px;
@@ -483,7 +483,7 @@
   .fin-row.open .fin-arrow{transform:rotate(90deg)}
   .fin-label{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--text);
     margin-right:auto}
-  .fin-fy-row{display:flex;flex-wrap:wrap;gap:18px;font-family:'IBM Plex Mono',monospace;
+  .fin-fy-row{display:flex;flex-wrap:wrap;gap:18px;font-family:'Roboto Mono',monospace;
     font-size:12px;color:var(--text-dim)}
   .fin-fy{white-space:nowrap}
   .fin-fy .fy-tag{font-size:10px;color:var(--text-mute);margin-left:2px}
@@ -493,7 +493,7 @@
   .fin-expand{grid-column:1/-1;display:none;padding:8px 0 4px;
     border-top:1px solid var(--line-soft);margin-top:8px}
   .fin-row.open .fin-expand{display:block}
-  table.fin-tbl{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:11.5px}
+  table.fin-tbl{width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;font-size:11.5px}
   table.fin-tbl th{padding:6px 8px;border-bottom:1px solid var(--line);color:var(--text-mute);
     text-align:right;font-weight:500;letter-spacing:.04em;text-transform:uppercase;font-size:9.5px}
   table.fin-tbl th:first-child{text-align:left}
@@ -508,20 +508,20 @@
   .sec-view-block:first-child{border-top:none;padding-top:4px}
   .sec-view-house{font-family:'Fraunces',serif;font-size:13.5px;font-weight:600;color:var(--text);
     display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
-  .sec-view-date{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-mute);font-weight:400}
+  .sec-view-date{font-family:'Roboto Mono',monospace;font-size:10.5px;color:var(--text-mute);font-weight:400}
   .sec-view-body{margin:0;font-size:13px;line-height:1.7}
   .sec-earn-block{padding:10px 0;border-top:1px solid var(--line-soft);font-size:13px;line-height:1.65}
   .sec-earn-block:first-child{border-top:none;padding-top:2px}
   .sec-pick{font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;color:var(--text);
     text-decoration:none;border-bottom:1px dotted var(--text-mute);cursor:pointer;margin-right:2px}
   .sec-pick:hover{color:var(--saffron);border-bottom-color:var(--saffron)}
-  .sec-pick-count{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-mute)}
+  .sec-pick-count{font-family:'Roboto Mono',monospace;font-size:10.5px;color:var(--text-mute)}
   /* Company chart: period return display + abnormal-move markers */
   .cm-return-row{display:flex;align-items:baseline;gap:12px;margin:4px 0 14px}
-  .cm-return{font-family:'IBM Plex Mono';font-size:24px;font-weight:600;color:var(--text-mute)}
+  .cm-return{font-family:'Roboto Mono';font-size:24px;font-weight:600;color:var(--text-mute)}
   .cm-return.up{color:var(--up)}
   .cm-return.down{color:var(--down)}
-  .cm-return-meta{font-family:'IBM Plex Mono';font-size:11px;color:var(--text-mute);
+  .cm-return-meta{font-family:'Roboto Mono';font-size:11px;color:var(--text-mute);
     letter-spacing:.06em;text-transform:uppercase}
   .cm-wrap{position:relative}
   /* Overlay covers the chart-box for positioned markers */
@@ -546,9 +546,9 @@
     max-width:340px;box-shadow:0 6px 20px rgba(0,0,0,.55);
     pointer-events:none}
   .cm-pop.show{display:block}
-  .cm-pop .cmp-date{font-family:'IBM Plex Mono';font-size:10px;color:var(--text-mute);
+  .cm-pop .cmp-date{font-family:'Roboto Mono';font-size:10px;color:var(--text-mute);
     text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-  .cm-pop .cmp-move{font-family:'IBM Plex Mono';font-size:13px;font-weight:600;margin-bottom:6px}
+  .cm-pop .cmp-move{font-family:'Roboto Mono';font-size:13px;font-weight:600;margin-bottom:6px}
   .cm-pop .cmp-move.up{color:var(--up)}
   .cm-pop .cmp-move.down{color:var(--down)}
   .cm-pop .cmp-news{color:var(--text-dim);font-size:11.5px;line-height:1.5}
@@ -558,14 +558,14 @@
   /* Fixed-width numeric cells; mono digits + right align so commas
      and thousands align across rows. */
   .n-tp{flex:none;width:72px;box-sizing:border-box;text-align:right;
-    font-family:'IBM Plex Mono';font-variant-numeric:tabular-nums;
+    font-family:'Roboto Mono';font-variant-numeric:tabular-nums;
     font-size:11.5px;color:var(--text-dim);white-space:nowrap}
   .n-tp.prev{color:var(--text-mute);font-size:10.5px}
   .n-tp.muted{color:var(--text-mute)}
   /* Column header row above the broker groups */
   .n-header{display:flex;align-items:center;gap:15px;padding:6px 0 10px;
     border-bottom:1px solid var(--line);margin-bottom:10px;
-    font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.06em;
+    font-family:'Roboto Mono';font-size:10px;letter-spacing:.06em;
     text-transform:uppercase;color:var(--text-mute)}
   .n-header .n-co,.n-header .n-ti{font-weight:600}
   .n-header .n-ti{text-decoration:none;cursor:default;color:var(--text-mute)}
@@ -581,7 +581,7 @@
     pointer-events:none;opacity:0;transform:translateY(-4px);
     transition:opacity .12s,transform .12s}
   .n-pop.show{opacity:1;transform:translateY(0)}
-  .n-pop .pop-h{font-family:'IBM Plex Mono';font-size:10px;color:var(--text-mute);
+  .n-pop .pop-h{font-family:'Roboto Mono';font-size:10px;color:var(--text-mute);
     text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
   .notes-group{background:var(--panel);color:var(--text-dim);
     border:1px solid rgba(255,255,255,.14);border-radius:8px;
@@ -594,7 +594,7 @@
   .broker-h{display:flex;align-items:baseline;justify-content:space-between;
     font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--saffron);
     padding-bottom:6px;margin-bottom:4px;border-bottom:1px solid var(--line)}
-  .broker-h span{font-family:'IBM Plex Mono';font-size:10.5px;font-weight:500;
+  .broker-h span{font-family:'Roboto Mono';font-size:10.5px;font-weight:500;
     color:var(--text-mute);letter-spacing:.04em}
   .n-foot{font-size:11.5px;color:var(--text-mute);padding-top:12px;line-height:1.6}
 
@@ -907,7 +907,7 @@
         #viewStrategy table.strat th.sec{text-align:left;width:20%}
         #viewStrategy table.strat th.mamg{width:10%;color:var(--saffron)}
         #viewStrategy table.strat td.mamg{padding:2px}
-        #viewStrategy .mamg-sel{width:100%;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;
+        #viewStrategy .mamg-sel{width:100%;font-family:'Roboto Mono',monospace;font-size:11.5px;font-weight:600;
           text-align:center;text-align-last:center;padding:5px 2px;border-radius:6px;border:1px dashed var(--line);
           background:var(--ink-2);color:var(--text-mute);cursor:pointer;-webkit-appearance:none;appearance:none}
         #viewStrategy .mamg-sel:hover{border-color:var(--saffron)}
@@ -923,7 +923,7 @@
         #viewStrategy .mamg-pub:hover:not(:disabled){background:rgba(233,162,59,.22)}
         #viewStrategy .mamg-pub:disabled{opacity:.4;cursor:default;background:transparent;color:var(--text-mute);border-color:var(--line)}
         #viewStrategy table.strat td.sec{text-align:left;font-size:12px;font-weight:600;color:var(--text);padding:0 10px;line-height:1.2}
-        #viewStrategy table.strat td.cell{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;
+        #viewStrategy table.strat td.cell{text-align:center;font-family:'Roboto Mono',monospace;font-size:11.5px;font-weight:600;
           padding:5px 4px;border-radius:6px;border:1px solid var(--line);color:var(--text-mute);cursor:default}
         #viewStrategy table.strat td.cell.ow{background:var(--up-soft);border-color:rgba(63,199,138,.40);color:var(--up)}
         #viewStrategy table.strat td.cell.uw{background:var(--down-soft);border-color:rgba(240,106,106,.40);color:var(--down)}
@@ -949,7 +949,7 @@
         #viewStrategy table.cons td.nm{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap}
         #viewStrategy table.cons td.sc{font-size:11.5px;color:var(--text-dim);white-space:nowrap}
         #viewStrategy table.cons td.bk{text-align:right}
-        #viewStrategy .cnt{display:inline-block;min-width:18px;text-align:center;font-family:'IBM Plex Mono',monospace;
+        #viewStrategy .cnt{display:inline-block;min-width:18px;text-align:center;font-family:'Roboto Mono',monospace;
           font-size:11px;font-weight:700;padding:1px 5px;border-radius:5px;margin-right:4px}
         #viewStrategy .cnt.buy{background:var(--up-soft);color:var(--up)}
         #viewStrategy .cnt.sell{background:var(--down-soft);color:var(--down)}
@@ -974,7 +974,7 @@
         #viewStrategy .ch-list{flex:1;display:flex;flex-direction:column;gap:7px;list-style:none;margin:0;padding:0}
         #viewStrategy .ch-list li{display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:12px}
         #viewStrategy .ch-sec{font-weight:600;color:var(--text);flex:0 0 178px}
-        #viewStrategy .ch-move{display:inline-flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700}
+        #viewStrategy .ch-move{display:inline-flex;align-items:center;gap:5px;font-family:'Roboto Mono',monospace;font-size:11px;font-weight:700}
         #viewStrategy .ch-move .arr{color:var(--text-mute);font-weight:700}
         #viewStrategy .rt{display:inline-block;min-width:26px;text-align:center;padding:1px 6px;border-radius:5px;border:1px solid var(--line);color:var(--text-mute)}
         #viewStrategy .rt.ow{background:var(--up-soft);color:var(--up);border-color:rgba(63,199,138,.40)}
@@ -2716,7 +2716,7 @@ const chart=new Chart(ctx,{
     devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
     plugins:{
       legend:{display:false,position:'bottom',
-        labels:{color:'#a9b0c0',font:{family:'IBM Plex Mono',size:10},
+        labels:{color:'#a9b0c0',font:{family:'Roboto Mono',size:10},
           boxWidth:14,boxHeight:2,padding:14,usePointStyle:false}},
       tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,
         titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:11,displayColors:true,
@@ -2743,7 +2743,7 @@ const chart=new Chart(ctx,{
           }}}},
     scales:{
       x:{display:true,grid:{display:false},border:{display:false},
-        ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
+        ticks:{color:'#646c7c',font:{family:'Roboto Mono',size:10},
           maxRotation:0,autoSkip:true,maxTicksLimit:10}},
       // Auto-scale y, breathing room top/bottom. In multi-line mode,
       // tick labels render as +/- percentages with a 0% baseline.
@@ -2751,7 +2751,7 @@ const chart=new Chart(ctx,{
         grid:{color:'#1f2530'},
         border:{display:false},
         beginAtZero:false,grace:'5%',
-        ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
+        ticks:{color:'#646c7c',font:{family:'Roboto Mono',size:10},
           // Chart.js v4 runs this callback during `new Chart()` —
           // BEFORE the `const chart = …` assignment completes. Using
           // the outer `chart` binding would throw a TDZ ReferenceError.
@@ -5647,14 +5647,14 @@ function renderCompanyChart(data, times, sym, tf){
               },
               label:cc=>'  '+companyChart._ccy+cc.parsed.y.toFixed(2)}}},
         scales:{x:{display:true, grid:{display:false}, border:{display:false},
-          ticks:{color:'#646c7c', font:{family:'IBM Plex Mono',size:10},
+          ticks:{color:'#646c7c', font:{family:'Roboto Mono',size:10},
             maxRotation:0, autoSkip:true, maxTicksLimit:10}},
           // Y-axis auto-scales to the data range with a 5% grace —
           // don't pin to zero (a stock at ₹2,000 with min:0 makes
           // daily moves look flat).
           y:{position:'right', grid:{color:'#1f2530'}, border:{display:false},
             beginAtZero:false, grace:'5%',
-            ticks:{color:'#646c7c', font:{family:'IBM Plex Mono',size:10}}}},
+            ticks:{color:'#646c7c', font:{family:'Roboto Mono',size:10}}}},
         interaction:{intersect:false, mode:'index'}}
     });
   }
@@ -5917,7 +5917,7 @@ function buildFlowChart(canvasId, labels, daily, cumul, name){
       interaction:{mode:'index',intersect:false},
       plugins:{
         legend:{display:true,position:'bottom',
-          labels:{color:'#a9b0c0',font:{family:'IBM Plex Mono',size:10},
+          labels:{color:'#a9b0c0',font:{family:'Roboto Mono',size:10},
             boxWidth:14,boxHeight:8,padding:14,usePointStyle:true}},
         tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,
           titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:11,displayColors:true,
@@ -5926,23 +5926,23 @@ function buildFlowChart(canvasId, labels, daily, cumul, name){
             label:c=>'  '+(c.dataset.label||'')+': '+posCr(c.parsed.y)}}},
       scales:{
         x:{grid:{display:false},border:{display:false},
-          ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
+          ticks:{color:'#646c7c',font:{family:'Roboto Mono',size:10},
             maxRotation:0,autoSkip:true,maxTicksLimit:11,
             callback:function(val){ return posDateShort(this.getLabelForValue(val)); }}},
         y:{position:'left',border:{display:false},
           min:zal.y.min,max:zal.y.max,
           grid:{color:c=>c.tick.value===0?'#3a4252':'#1f2530',
             lineWidth:c=>c.tick.value===0?1.4:1},
-          ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},
+          ticks:{color:'#646c7c',font:{family:'Roboto Mono',size:10},
             stepSize:zal.y.step,callback:v=>posShort(v)},
           title:{display:true,text:'Daily net (₹ Cr)',color:'#646c7c',
-            font:{family:'IBM Plex Mono',size:9}}},
+            font:{family:'Roboto Mono',size:9}}},
         y1:{position:'right',grid:{display:false},border:{display:false},
           min:zal.y1.min,max:zal.y1.max,
-          ticks:{color:'#e9a23b',font:{family:'IBM Plex Mono',size:10},
+          ticks:{color:'#e9a23b',font:{family:'Roboto Mono',size:10},
             stepSize:zal.y1.step,callback:v=>posShort(v)},
           title:{display:true,text:'Cumulative (₹ Cr)',color:'#e9a23b',
-            font:{family:'IBM Plex Mono',size:9}}}
+            font:{family:'Roboto Mono',size:9}}}
       }}
   });
 }
