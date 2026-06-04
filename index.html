@@ -3717,12 +3717,13 @@ function marketRelevant(items){
 // dedupes by normalised title, sorts by pubDate desc, caps at 20.
 async function loadNews(segment){
   const el=document.getElementById('newsList');
-  // Segment filter (header dropdown): ALL = the unified 24h digest;
-  // POL/EARN/CORP = single-bucket view widened to a 2-day window.
+  // Segment filter (header dropdown): every view (ALL + POL/EARN/CORP)
+  // is held to a 2-day window — both the RSS query and the post-fetch
+  // clamp use the same 2-day bound.
   const SEG=(segment||'ALL').toUpperCase();
-  const win=SEG==='ALL'?'1d':'2d';
-  const clampMs=(SEG==='ALL'?1:2)*864e5;
-  const SUB={ALL:'Last 24h · fact-based · politics → economy → company news · India',
+  const win='2d';
+  const clampMs=2*864e5;
+  const SUB={ALL:'Last 2 days · fact-based · politics → economy → company news · India',
     POL:'Last 2 days · politics & policy · India',
     EARN:'Last 2 days · earnings & results · India',
     CORP:'Last 2 days · corporate & M&A · India'};
