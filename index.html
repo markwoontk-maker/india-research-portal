@@ -2484,9 +2484,14 @@ function renderResearchNotes(groupBy){
   // (2) only works when the dashboard is opened from disk — browsers
   // block file:// links from https:// origins, so on GitHub Pages clicks
   // silently no-op; the user can still use the hover popup summary.
+  // file:// links open natively only when the page itself is loaded over
+  // file:// — browsers block file:// navigation from any http(s):// origin,
+  // so on GitHub Pages a target="_blank" click silently no-ops. Detect the
+  // origin here and only emit a file:// href when it'll actually open.
+  const onFileOrigin = (typeof location !== 'undefined') && location.protocol === 'file:';
   function urlFor(folder, house, headline, date, explicit){
     if(explicit) return explicit;
-    if(PM){
+    if(PM && onFileOrigin){
       // Lenient title key: strip trailing " (N)" suffix and non-alnum chars.
       const tk = String(headline).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
       const p = PM[`${house}|${date}|${folder}|${tk}`];
@@ -5009,9 +5014,13 @@ function renderCompanyResearch(){
   const pdKey=(h,d,co,ti)=>`${h}|${d}|${co}|${String(ti).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'')}`;
   const fileUrl=p=>'file:///'+p.replace(/\\/g,'/').split('/').map(encodeURIComponent).join('/');
   const NB={}; (typeof NOTEBOOKS==='undefined'?[]:NOTEBOOKS).forEach(n=>{ if(n&&n.url) NB[n.name]=n.url; });
+  // See urlFor() in renderResearchNotes — file:// hrefs are silently
+  // blocked when the page is served over http(s)://, so only emit them
+  // when the dashboard itself was opened from disk.
+  const onFileOrigin=(typeof location!=='undefined')&&location.protocol==='file:';
   const urlFor=(folder,h,ti,d,u)=>{
     if(u) return u;
-    if(PM){
+    if(PM && onFileOrigin){
       const tk=String(ti).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
       const p=PM[`${h}|${d}|${folder}|${tk}`];
       if(p) return fileUrl(p);
