@@ -37,6 +37,15 @@ one before).
    month's two fortnights' **INR equity** column; `fpiWt` = each sector's
    month-end equity AUC / total equity AUC (%). The parse self-checks: summed
    sector flows must equal the report's Grand Total.
+   - **NSDL access caveat (important):** the `StaticReports/...` HTML path is
+     WAF-protected — direct fetch/proxy returns a 247-byte "Request Rejected"
+     page. Drive the official selection form instead:
+     `https://www.fpi.nsdl.co.in/web/Reports/FPI_Fortnightly_Selection.aspx`
+     (pick the fortnight in the dropdown / `__doPostBack('btnds1','')`). The
+     **month-end report contains BOTH fortnights** of that month (1st–15th and
+     16th–end INR-equity columns), so one report per month suffices — monthly net
+     = group1 + group2. Note 3-letter months in NSDL's option values can be full
+     ("June15/June30", "July31") — read the actual dropdown values.
    - **Fallback for flows** if NSDL is unreachable: finnovate.in monthly
      sector blogs (`finnovate.in/learn/blog/fpi-…-<month>-2026-…`) and Trendlyne
      macro FII/DII. Cross-check the monthly Grand Total against finnovate when
@@ -51,9 +60,19 @@ one before).
    `Banks/Banking/Financial Services→Financial Services; IT/Software & Services→Information Technology; Oil & Gas/Oil, Gas & Consumable Fuels→Energy; Power/Utilities→Power; Automobile/Auto/Automobile and Auto Components→Automobile; Industrials→Capital Goods; Pharma/Pharmaceuticals/Healthcare→Healthcare; Consumer Staples/FMCG→FMCG; Metals→Metals & Mining; Telecommunication→Telecom; Cement→Construction Materials`.
 4. **Write** `data/fpi_sectors.json` (UTF-8 no BOM), sorted by `|flow|` desc:
    `{ "asOf":"YYYY-MM", "prevAsOf":"YYYY-MM", "benchmark":"Nifty 500",
+   "months":[12 ascending "YYYY-MM"],
    "sectors":[{ "name", "flow", "flowPrev", "fpiWt", "idxWt",
-   "ow":round(fpiWt-idxWt,1), "owPrev":round(fpiWtPrev-idxWt,1) }] }`.
+   "ow":round(fpiWt-idxWt,1), "owPrev":round(fpiWtPrev-idxWt,1),
+   "hist":[12 monthly net flows ₹ Cr aligned to months] }] }`.
    Exclude the "Sovereign" row; equity column only.
+5. **Rolling 12-month history (`months` + per-sector `hist`).** Powers the
+   click-a-sector-name drill-down chart. Each run, if `asOf` advanced to a new
+   month: append the new month to `months` and each sector's `hist`, then trim
+   both to the last **12** entries (drop the oldest). `hist[last]` must equal
+   `flow` and `hist[last-1]` must equal `flowPrev`. A month with no parseable
+   report → `null` in `hist` (never fabricate). A sector absent from an older
+   month → `null` for that slot. Keep every `hist.length === months.length`.
+   If `asOf` is unchanged (already current), leave `months`/`hist` as-is.
 
 ## 2. `data/model_portfolios.json` — multi-house model portfolios
 
@@ -96,7 +115,7 @@ is unchanged.
 ## 3. Validate, commit, push
 
 ```bash
-node -e "const d=require('./data/fpi_sectors.json'); if(!d.sectors.length) throw 'empty'; d.sectors.forEach(s=>['name','flow','flowPrev','fpiWt','idxWt','ow'].forEach(k=>{if(s[k]===undefined) throw k+' on '+s.name})); console.log('sectors ok', d.sectors.length)"
+node -e "const d=require('./data/fpi_sectors.json'); if(!d.sectors.length) throw 'empty'; if(!d.months||d.months.length!==12) throw 'months!=12'; d.sectors.forEach(s=>{['name','flow','flowPrev','fpiWt','idxWt','ow'].forEach(k=>{if(s[k]===undefined) throw k+' on '+s.name}); if(!Array.isArray(s.hist)||s.hist.length!==d.months.length) throw 'hist len '+s.name; if(s.hist[s.hist.length-1]!==s.flow) throw 'hist/flow mismatch '+s.name}); console.log('sectors ok', d.sectors.length, '| 12-mo hist ok')"
 node -e "const d=require('./data/model_portfolios.json'); const ok=new Set(['new','raised','trimmed','removed','held']); if(!d.houses.length) throw 'no houses'; d.houses.forEach(h=>h.overweight.concat(h.underweight).forEach(s=>{if(!('ticker' in s)||!s.stock) throw 'bad row '+h.broker; if(!ok.has(s.change)) throw 'bad change '+s.change})); console.log('houses ok', d.houses.length)"
 ```
 
