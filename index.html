@@ -2678,7 +2678,93 @@ function renderResearchNotes(groupBy){
     SELL:'sell', UP:'sell', UW:'sell', REDUCE:'sell',
     HOLD:'hold', NEUTRAL:'hold', EW:'hold', MP:'hold' };
 
-  el.innerHTML=header+groups.map(g=>{
+  // ---- Upgrade / Downgrade summary tables -----------------------------
+  // Bullish→bearish rank used to detect call-direction changes. Ties
+  // (BUY=OW=OP=ADD=ACCUMULATE all share rank 3) don't count as a move.
+  const CALL_RANK = { BUY:3, OP:3, OW:3, ADD:3, ACCUMULATE:3,
+                      HOLD:2, NEUTRAL:2, EW:2, MP:2, REDUCE:1,
+                      SELL:0, UW:0, UP:0 };
+  const tpNumLocal = s => { if(!s) return null; const m=String(s).replace(/[,₹\s]/g,'').match(/^([\d.]+)/); return m?parseFloat(m[1]):null; };
+  // Re-compute curr/prev TP + call for each row (mirrors the per-row
+  // render below). Returns null when there's nothing to score.
+  function scoreRow(r){
+    const [h,d,co,ti,u] = r;
+    const pd = PD ? PD[pdKey(h,d,co,ti)] : null;
+    const currTP   = (pd && pd.currTP) || tpOf(ti);
+    const currCall = (pd && pd.currCall) || null;
+    const prior    = findPrior(h,co,d);
+    const priorPd  = (PD && prior) ? PD[pdKey(prior[0],prior[1],prior[2],prior[3])] : null;
+    const prevTP   = (pd && pd.prevTP) || (priorPd && priorPd.currTP) || (prior ? tpOf(prior[3]) : null);
+    const prevCall = (pd && pd.prevCall) || (priorPd && priorPd.currCall) || null;
+    const cR = currCall ? CALL_RANK[currCall.toUpperCase()] : null;
+    const pR = prevCall ? CALL_RANK[prevCall.toUpperCase()] : null;
+    const callDelta = (cR != null && pR != null) ? cR - pR : null;
+    const cN = tpNumLocal(currTP), pN = tpNumLocal(prevTP);
+    const tpDelta = (cN != null && pN != null && cN !== pN) ? cN - pN : null;
+    let bucket = null;
+    if (callDelta != null && callDelta !== 0) bucket = callDelta > 0 ? 'up' : 'down';
+    else if (tpDelta != null) bucket = tpDelta > 0 ? 'up' : 'down';
+    if (!bucket) return null;
+    return { h,d,co,ti,u, currTP, prevTP, currCall, prevCall, bucket,
+             tpDeltaPct: (tpDelta != null && pN > 0) ? (tpDelta/pN*100) : null };
+  }
+  // Dedupe by (house, company): keep the most recent score, so multiple
+  // reports on the same name from the same house don't double-count.
+  const bestPick = {};
+  rows.forEach(r => {
+    const e = scoreRow(r);
+    if (!e) return;
+    const k = e.h + '|' + e.co;
+    if (!bestPick[k] || bestPick[k].d < e.d) bestPick[k] = e;
+  });
+  const ups = [], downs = [];
+  Object.values(bestPick).forEach(e => (e.bucket === 'up' ? ups : downs).push(e));
+  // Biggest moves first (by |TP%|), then newest, then alpha.
+  const udSort = (a,b) => Math.abs(b.tpDeltaPct||0) - Math.abs(a.tpDeltaPct||0)
+                      || (b.d < a.d ? -1 : b.d > a.d ? 1 : 0)
+                      || a.co.localeCompare(b.co);
+  ups.sort(udSort); downs.sort(udSort);
+
+  function udRowHtml(e){
+    const href = urlFor(e.co, e.h, e.ti, e.d, e.u);
+    const callHtml = (e.currCall && e.prevCall && e.currCall !== e.prevCall)
+      ? `<span class="n-call ${CT_FROM_TAG[e.prevCall.toUpperCase()]||'hold'}">${esc(e.prevCall)}</span>`+
+        `<span class="ar">→</span>`+
+        `<span class="n-call ${CT_FROM_TAG[e.currCall.toUpperCase()]||'hold'}">${esc(e.currCall)}</span>`
+      : (e.currCall ? `<span class="n-call ${CT_FROM_TAG[e.currCall.toUpperCase()]||'hold'}">${esc(e.currCall)}</span>` : '<span class="ar">—</span>');
+    let tpHtml = '<span class="ar">—</span>';
+    if (e.currTP && e.prevTP && e.currTP !== e.prevTP) {
+      const pctTxt = e.tpDeltaPct != null
+        ? ` <span class="pct ${e.bucket}">${e.tpDeltaPct>0?'+':''}${e.tpDeltaPct.toFixed(1)}%</span>`
+        : '';
+      tpHtml = `₹${esc(e.prevTP)} → ₹${esc(e.currTP)}${pctTxt}`;
+    } else if (e.currTP) {
+      tpHtml = `₹${esc(e.currTP)}`;
+    }
+    return `<div class="ud-row">`+
+      `<a class="ud-co" href="${esc(href)}" target="_blank" rel="noopener" title="${esc(e.ti)}">${esc(e.co)}</a>`+
+      `<span class="ud-house">${esc(e.h)}</span>`+
+      `<span class="ud-call">${callHtml}</span>`+
+      `<span class="ud-tp">${tpHtml}</span>`+
+    `</div>`;
+  }
+  function udCardHtml(items, bucket, label){
+    const inner = items.length
+      ? `<div class="ud-header"><span>Company</span><span>House</span><span>Call</span><span>Target</span></div>`+
+        items.map(udRowHtml).join('')
+      : `<div class="ud-empty">No ${label.toLowerCase()} in the last 2 days.</div>`;
+    return `<div class="ud-card ${bucket}">`+
+      `<div class="ud-h">${bucket==='up'?'▲':'▼'} ${label} <span class="cnt">${items.length}</span></div>`+
+      inner+
+    `</div>`;
+  }
+  const udTablesHtml =
+    `<div class="ud-grid">`+
+      udCardHtml(ups,   'up',   'Upgrades')+
+      udCardHtml(downs, 'down', 'Downgrades')+
+    `</div>`;
+
+  el.innerHTML=udTablesHtml+header+groups.map(g=>{
     const arr=groupMap[g].slice().sort((a,b)=>
       b[1]!==a[1] ? (b[1]<a[1]?-1:1) : secondCol(a).localeCompare(secondCol(b)));
     return `<div class="broker-grp">
