@@ -339,7 +339,7 @@ function buildFor(company){
     const k = r.house + '|' + r.date;
     if (seenB.has(k)) return false; seenB.add(k); return true;
   });
-  function topN(list){
+  function topN(list, n){
     const out = []; const seenText = new Set();
     for (const r of list){
       const it = thesisItem(r);
@@ -348,19 +348,77 @@ function buildFor(company){
       if (seenText.has(tk)) continue;
       seenText.add(tk);
       out.push(it);
-      if (out.length >= 3) break;
+      if (out.length >= (n||3)) break;
     }
     return out;
   }
-  const bullItems = topN(bulls);
-  const bearItems = topN(bears);
-  if (!bullItems.length && !bearItems.length) return null;
-  return { bull: bullItems, bear: bearItems };
+  const bullItems = topN(bulls, 3);
+  const bearItems = topN(bears, 3);
+  // Drivers: surface sentences in the PDF summaries that explicitly name
+  // a lever that moves the stock — anything matching DRIVER_RE
+  // ("driven by", "key driver", "catalyst", "headwind", "tailwind",
+  // "supports", "weighs on", "fuels", "boosts", "drags", etc.).
+  const driverItems = extractDrivers(pool, 6);
+  if (!bullItems.length && !bearItems.length && !driverItems.length) return null;
+  return { bull: bullItems, bear: bearItems, drivers: driverItems };
 }
+
+// ---- driver extraction --------------------------------------------------
+// A "driver" sentence is one that names a lever moving the stock —
+// volume growth, margin expansion, a regulatory tailwind, a commodity
+// headwind, a capex cycle, a launch, an M&A trigger, etc.
+const DRIVER_RE = /\b(drives?|drove|driven\s+by|key\s+driver|main\s+driver|catalyst|catalysts|trigger|triggers|tailwinds?|headwinds?|support(?:s|ed|ing)?\s+(?:the|its|growth|earnings|margins?|revenue|EPS|ROE|outlook)|weighs?\s+on|underpins?|propel(?:s|led)?|fuel(?:s|led)?\b|boost(?:s|ed|ing)?\b|drag(?:s|ged|ging)?\b|hurt(?:s|ing)?\b|hamper(?:s|ed)?|enable(?:s|d)?|aid(?:s|ed|ing)?\s+(?:growth|margins?|earnings|revenue)|lift(?:s|ed|ing)?\s+(?:growth|margins?|earnings|revenue|guidance)|positive\s+for|negative\s+for|risk(?:s)?\s+to)\b/i;
+
+function distillToSentences(text){
+  if (!text) return [];
+  const t = String(text).replace(/[��]/g, '').replace(/\s+/g, ' ').trim();
+  if (!t) return [];
+  return t.split(/(?<=[.!?])\s+(?=[A-Z0-9“"'])/).map(s => s.trim()).filter(Boolean);
+}
+function isGoodDriverSentence(s){
+  if (!s || s.length < 40 || s.length > 280) return false;
+  if (!/^[A-Z“"'(\[]/.test(s)) return false;
+  // Re-use the bull/bear quality filter to reject boilerplate.
+  if (/^(?:refer to|please refer|downloaded by|page \d|source:|see disclosure|target price|price target|fair value|cmp[\s:(]|reco[\s:(]|rating[\s:(]|bloomberg|reuters|isin|prior \()/i.test(s)) return false;
+  const garbled = (s.match(/[�■□]/g) || []).length;
+  if (garbled > 1) return true === false;
+  const digits = (s.match(/\d/g) || []).length;
+  const letters = (s.match(/[A-Za-z]/g) || []).length;
+  if (letters > 0 && digits / (digits + letters) > 0.30) return false;
+  return DRIVER_RE.test(s);
+}
+function extractDrivers(pool, maxN){
+  // Walk reports newest-first; for each, scan its PDF summary for driver
+  // sentences. Dedupe across reports by the first ~70 chars (broker
+  // overlap is common — same idea, slightly different wording).
+  const out = []; const seen = new Set();
+  for (const r of pool){
+    const text = r.pd && r.pd.summary;
+    if (!text) continue;
+    const sents = distillToSentences(text);
+    for (const s of sents){
+      if (!isGoodDriverSentence(s)) continue;
+      const key = s.toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 70);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const url = urlFor(company_for_pool(r), r.house, r.headline, r.date, r.explicit);
+      out.push({
+        text: s.length > 240 ? s.slice(0, 240).replace(/[\s,;:]+\S*$/, '') + '…' : s,
+        broker: abbrevOf(r.house),
+        date: r.date,
+        url,
+      });
+      if (out.length >= maxN) return out;
+    }
+  }
+  return out;
+}
+// Tiny helper — buildFor() sets r._folder; reuse it here.
+function company_for_pool(r){ return r._folder; }
 
 // ---------- 8) iterate companies and write -----------------------------
 const out = {};
-let withBoth = 0, withBullOnly = 0, withBearOnly = 0, empty = 0;
+let withBoth = 0, withBullOnly = 0, withBearOnly = 0, withDrivers = 0, empty = 0;
 for (const name of Object.keys(COMPANIES).sort()){
   if (SECTOR_NAMES.has(name)) continue;
   const t = buildFor(name);
@@ -369,12 +427,14 @@ for (const name of Object.keys(COMPANIES).sort()){
   if (t.bull.length && t.bear.length) withBoth++;
   else if (t.bull.length) withBullOnly++;
   else if (t.bear.length) withBearOnly++;
+  if (t.drivers && t.drivers.length) withDrivers++;
 }
 console.log(`Total companies in companies.json: ${Object.keys(COMPANIES).length}`);
 console.log(`Freshness window: reports newer than ${CUTOFF_YYMMDD} (last 2 years)`);
 console.log(`With bull + bear: ${withBoth}`);
 console.log(`Bull only:        ${withBullOnly}`);
 console.log(`Bear only:        ${withBearOnly}`);
+console.log(`With drivers:     ${withDrivers}`);
 console.log(`No data found:    ${empty}`);
 
 // Stable key order, one company per line for readable diffs.

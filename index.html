@@ -528,6 +528,13 @@
     margin-left:2px;white-space:nowrap;border-bottom:1px dotted transparent}
   .thesis-cite:hover{color:var(--text-dim);border-bottom-color:var(--text-mute)}
   @media (max-width:760px){ .thesis-grid{grid-template-columns:1fr} }
+  /* Stock Drivers list */
+  .driver-list{list-style:none;margin:0;padding:0}
+  .driver-list li{padding:9px 0 9px 18px;border-bottom:1px solid var(--line-soft);
+    font-size:13px;line-height:1.65;color:var(--text-dim);position:relative}
+  .driver-list li:last-child{border-bottom:none}
+  .driver-list li::before{content:"›";position:absolute;left:2px;top:9px;
+    color:var(--text-mute);font-family:'Roboto Mono',monospace;font-size:14px}
   /* Financial summary card — one table per metric, years across the top,
      research houses down the left. */
   .fin-section{margin-top:14px}
@@ -1566,6 +1573,18 @@
           </div>
         </div>
         <p class="co-desc-src">Bull = positive-rated reports (Buy/Add/OW/Outperform). Bear = negative-rated reports (Sell/Reduce/UW/Underperform) plus cautious Hold/Neutral notes where flagged. Citations open the local PDF when available, the Trendlyne report PDF otherwise.</p>
+      </div>
+      <!-- Key drivers: sentences from broker PDFs that explicitly name a
+           lever moving the stock (volumes, margins, capex, regulation,
+           commodity, M&A, etc.). Each carries a clickable citation to
+           the originating PDF. -->
+      <div class="card reveal" id="cDriversCard" hidden>
+        <div class="card-h">
+          <div><h3>Stock Drivers</h3>
+          <p id="cDriversSub">Levers brokers cite as moving the stock — click any citation to open the source PDF</p></div>
+        </div>
+        <ul id="cDriversList" class="driver-list"></ul>
+        <p class="co-desc-src">Surfaces sentences from each broker's PDF body summary that name a driver, catalyst, tailwind or headwind. One sentence per broker-report, deduped across brokers when the wording is near-identical.</p>
       </div>
       <!-- Financial summary distilled from each broker's latest estimate
            table — averages plus a click-to-expand per-broker breakdown
@@ -5002,6 +5021,7 @@ fetch('data/theses.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=
   if(!j||typeof j!=='object') return;
   window.THESES=j;
   if(typeof renderCompanyThesis==='function') renderCompanyThesis();
+  if(typeof renderCompanyDrivers==='function') renderCompanyDrivers();
 }).catch(()=>{});
 // Financial summary per company (Revenue / EBITDA / Net Profit by FY)
 // built by scripts/build-financials.js from each broker's latest report.
@@ -5700,6 +5720,43 @@ function renderCompanyThesis(){
   }
 }
 
+// Stock Drivers card — bullet list of sentences from broker PDFs that
+// explicitly name a lever moving the stock (catalyst / tailwind /
+// headwind / volume growth / margin lever / etc.). Source from the
+// same data/theses.json file, populated by scripts/build-theses.js.
+function renderCompanyDrivers(){
+  const card=document.getElementById('cDriversCard');
+  const list=document.getElementById('cDriversList');
+  const sub=document.getElementById('cDriversSub');
+  if(!card||!list) return;
+  if(!currentCompany ||
+     (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany))){
+    card.hidden=true; return;
+  }
+  const T=(window.THESES||{})[currentCompany];
+  const drivers = (T && Array.isArray(T.drivers)) ? T.drivers : [];
+  if(!drivers.length){ card.hidden=true; return; }
+  card.hidden=false;
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  function fmtCite(item){
+    const d=String(item.date||'');
+    if(d.length<6) return '';
+    const yy=d.slice(0,2), mm=d.slice(2,4);
+    const label=`(${item.broker||'?'}, ${mm}/${yy})`;
+    if(item.url){
+      return `<a class="thesis-cite" href="${esc(item.url)}" target="_blank" rel="noopener" title="${esc(item.broker||'')} · ${esc(d)}">${esc(label)}</a>`;
+    }
+    return `<span class="thesis-cite">${esc(label)}</span>`;
+  }
+  list.innerHTML = drivers.map(d=>{
+    const text = esc(d.text||'').replace(/\s*[.!?…]\s*$/,'.');
+    return `<li>${text} ${fmtCite(d)}</li>`;
+  }).join('');
+  if(sub){
+    sub.textContent=`${drivers.length} driver${drivers.length===1?'':'s'} surfaced — click any (Broker, MM/YY) to open the source PDF`;
+  }
+}
+
 // Financial Summary card — Revenue / EBITDA / Net Profit by FY,
 // each row expandable to a per-broker breakdown table. Data comes
 // from data/financials.json (scripts/build-financials.js).
@@ -5817,7 +5874,7 @@ async function loadCompanyChart(name, tf){
   const isSector = currentCompany && (typeof SECTOR_NAMES!=='undefined') && SECTOR_NAMES.has(currentCompany);
   const chartCard = document.getElementById('cChartCard');
   if (chartCard) chartCard.hidden = !!isSector;
-  if (name) { updateCoDesc(); renderCompanyResearch(); renderCompanyNews(name); renderCompanyThesis(); renderCompanyFinancials(); }
+  if (name) { updateCoDesc(); renderCompanyResearch(); renderCompanyNews(name); renderCompanyThesis(); renderCompanyDrivers(); renderCompanyFinancials(); }
   if (isSector) return;
   // Sync the segmented control highlight to the current timeframe.
   document.querySelectorAll('#cRangeSeg button').forEach(b=>{
