@@ -985,7 +985,7 @@
       </style>
       <div class="card reveal">
         <div class="card-h"><div><h3>House Strategy — Sector Conviction Grid</h3>
-          <p class="strat-sub">How each research house is positioned across GICS sectors · India strategy reports, 18 May – 2 Jun 2026.
+          <p class="strat-sub">How each research house is positioned across GICS sectors · India strategy reports, <!--STRAT:ASOF-->18 May – 2 Jun 2026<!--/STRAT:ASOF-->.
           <strong>Green</strong> = favoured / Overweight · <strong>Red</strong> = not favoured / Underweight · <strong>Amber</strong> = Neutral / mixed · <strong>—</strong> = no explicit sector view in the current report.</p></div></div>
         <div class="legend">
           <span><i class="swatch sw-ow"></i>Favoured (OW)</span>
@@ -1005,7 +1005,7 @@
               <th class="sec">GICS Sector</th>
               <th>JPMorgan</th><th>Nomura</th><th>CLSA</th><th>Jefferies</th><th>Bernstein</th><th>Kotak</th>
             </tr></thead>
-            <tbody>
+            <tbody><!--STRAT:GRID:START-->
               <tr><td class="sec">Energy</td>
                 <td class="cell na" title="No explicit OW/UW; worst monthly performer">—</td>
                 <td class="cell uw" title="Bearish Oil &amp; Gas — FY27 PAT decline ~16%, marketing-loss risk">UW</td>
@@ -1083,9 +1083,10 @@
                 <td class="cell na">—</td>
                 <td class="cell uw inf" title="WFH means lower commercial real-estate demand">UW</td>
                 <td class="cell na" title="REITs BUY-rated — see picks">—</td></tr>
-            </tbody>
+            <!--STRAT:GRID:END--></tbody>
           </table>
         </div>
+        <!--STRAT:CHANGES:START-->
         <p class="note"><strong>Reading the grid.</strong> JPMorgan and Nomura state formal top-down sector allocations. CLSA and Bernstein cells (marked *) are inferred from their earnings-momentum and thematic commentary — neither published a model-portfolio sector weighting in the current note. Jefferies' two strategy notes here (INR Pressure; JEI#41) are macro/flows pieces with no sector positioning, and Kotak's reports are a flows/ownership study plus stock-level KIE ratings — so their sector columns are left blank and their views captured in the cards below.</p>
 
         <div class="changes">
@@ -1109,12 +1110,13 @@
           </div>
           <p class="ch-note"><strong>Nomura</strong> labels its stances Bullish / Neutral / Bearish — mapped here to OW / N / UW to match the grid. <strong>CLSA, Kotak, Jefferies &amp; Bernstein</strong> announced no formal sector-weighting changes this cycle: CLSA's moves were stock-level rating changes (e.g. Hero MotoCorp, Kotak Bank up to O-PF; Dabur, Coal India down to U-PF), while Kotak, Jefferies and Bernstein give thematic / bottom-up views only.</p>
         </div>
+        <!--STRAT:CHANGES:END-->
       </div>
 
       <div class="card reveal">
         <div class="card-h"><div><h3>House Views &amp; Recommended Stocks</h3>
           <p class="strat-sub">Top-down stance and the names each house flags positively (top picks · model-portfolio overweights · Buy/Add-rated ideas).</p></div></div>
-        <div class="houses">
+        <div class="houses"><!--STRAT:HOUSES:START-->
 
           <div class="house">
             <h4>JPMorgan <span class="src">· 18 May &amp; 1 Jun</span></h4>
@@ -1186,15 +1188,14 @@
               <span class="chip">Embassy REIT</span><span class="chip">Mindspace REIT</span><span class="chip">Brookfield REIT</span>
             </div>
           </div>
-
-        </div>
+        <!--STRAT:HOUSES:END--></div>
       </div>
 
       <div class="card reveal">
         <div class="card-h"><div><h3>Cross-Broker Consensus</h3>
           <p class="strat-sub">Stocks where more than one house agrees — and where they clash. Recommending / non-recommending brokers shown on the right.
           Buy side = JPMorgan / Nomura top picks &amp; overweights, CLSA High-Conviction Outperform, Kotak KIE Buy. Sell side = CLSA Underperform, Kotak KIE Sell.</p></div></div>
-
+        <!--STRAT:CONS:START-->
         <div class="cons-h"><span class="dot g"></span>Buy / Overweight — favoured by 2+ brokers</div>
         <table class="cons">
           <thead><tr><th style="width:27%">Stock</th><th style="width:23%">GICS Sector</th><th class="num" style="width:14%"># Brokers</th><th style="text-align:right">Recommending brokers</th></tr></thead>
@@ -1239,6 +1240,7 @@
         </table>
 
         <p class="note"><strong>Method.</strong> Only the four houses that name stocks are counted (Jefferies &amp; Bernstein give thematic views only). Buy/OW = a house's top pick, model-portfolio overweight or Buy/High-Conviction-Outperform rating; Sell/UW = CLSA Underperform or Kotak KIE Sell. JPMorgan and Nomura don't publish stock-level sell lists, so the sell side draws on CLSA and Kotak. For split calls, <strong>Net</strong> = recommending minus non-recommending brokers. Mahindra &amp; Mahindra is a Kotak <em>Reduce</em> (not a full Sell) so it is not flagged against the two buys.</p>
+        <!--STRAT:CONS:END-->
       </div>
       <script>
         (function(){
