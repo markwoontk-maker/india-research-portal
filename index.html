@@ -1638,6 +1638,10 @@
 
     <div id="viewWatchlist" hidden>
       <datalist id="wlCompanyList"></datalist>
+      <div class="card reveal" id="wlResearchCard">
+        <div class="card-h"><div><h3>Latest Research — Watchlist</h3><p id="wlResearchSub">Broker reports on your watchlist names</p></div></div>
+        <div id="wlResearchNotes"></div>
+      </div>
       <div class="card reveal" id="wlN500Card">
         <div class="card-h"><div><h3>Nifty 500</h3><p>Benchmark · ^CRSLDX · Yahoo Finance</p></div></div>
         <table><thead><tr><th>Index</th><th class="r">Mkt Cap</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
@@ -4609,6 +4613,76 @@ async function wlEnsureShares(syms){
   wlSharesSave(c); return c;
 }
 function date_now(){ return new Date().getTime(); }
+function wlNormCo(s){ return String(s||'').toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,''); }
+function wlResearchNameSet(){
+  const set=new Set(); const add=v=>{ const n=wlNormCo(v); if(n) set.add(n); };
+  const CO=window.COMPANIES||{}; const t2n={};
+  for(const k in CO){ const tk=CO[k]&&CO[k].ticker; if(tk) t2n[tk.toUpperCase()]=k; }
+  [...WL.hold,...WL.cov,...WL.watch].forEach(function(row){
+    add(row[0]);
+    String(row[1]).split('|').forEach(function(c){
+      const up=c.toUpperCase(); if(t2n[up]) add(t2n[up]);
+      const base=c.replace(/\.NS$/i,'').toUpperCase();
+      if(typeof NAMES!=='undefined' && NAMES[base]) add(NAMES[base]);
+    });
+  });
+  return set;
+}
+function wlRenderResearch(){
+  const el=document.getElementById('wlResearchNotes'); if(!el) return;
+  const sub=document.getElementById('wlResearchSub');
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const fmtD=d=>{ const mm=+String(d).slice(2,4), dd=+String(d).slice(4,6); return dd+' '+(MON[mm-1]||''); };
+  const set=wlResearchNameSet();
+  const pool=[...(typeof notes==='undefined'?[]:notes), ...(typeof notesExt==='undefined'?[]:notesExt)]
+    .filter(n=>n && n.length>=4 && set.has(wlNormCo(n[2])))
+    .map(n=>[n[0],n[1],n[2],n[3],n[4]||null]);
+  const normT=t=>String(t).replace(/\s*\(\d+\)\s*$/,'').trim().toLowerCase();
+  pool.sort((a,b)=>String(b[1]).localeCompare(String(a[1])));
+  const seen=new Set(); const rows=[];
+  pool.forEach(r=>{ const k=r[0]+'|'+r[1]+'|'+r[2]+'|'+normT(r[3]); if(seen.has(k))return; seen.add(k); rows.push(r); });
+  const MAX=20; const shown=rows.slice(0,MAX);
+  if(sub) sub.textContent = rows.length
+    ? ('Latest broker reports on your watchlist names'+(rows.length>MAX?' · showing '+MAX+' of '+rows.length:' · '+rows.length))
+    : 'No recent broker reports for your watchlist names.';
+  if(!shown.length){ el.innerHTML=''; return; }
+  const NEG=/\b(miss|misses|missed|weak|weakening|headwinds?|lacklustre|lackluster|soft(?:er)?|concerns?|pressure|hazy|delays?|cautious|defensive|impacted|pares)\b|not out of the woods|may not last/i;
+  const POS=/\b(beat|beats|upgrade|outperform|strong|robust|relief|blockbuster|exemplary|positive|improving|improved|improvement|accelerate|accelerating|tailwind|momentum|ahead|exceeded|retained)\b|stay ow|turn positive|higher than/i;
+  const clause=s=>NEG.test(s)?'sell':POS.test(s)?'buy':'hold';
+  const tag=t=>{ const p=String(t).split(/\b(?:but|however|although|though|despite)\b/i); if(p.length>1){const x=clause(p[p.length-1]); if(x!=='hold')return x;} return clause(t); };
+  const CALL_RE=/\b(?:stay(?:s|ing)?|upgrade(?:s|d)? to|downgrade(?:s|d)? to|reiterate(?:s|d)?|maintain(?:s|ed)?|initiate(?:s|d)?(?:\s+with)?)\s+(BUY|SELL|HOLD|OW|UW|EW|NEUTRAL|OVERWEIGHT|UNDERWEIGHT|EQUAL[- ]?WEIGHT|OUTPERFORM|UNDERPERFORM|ADD|REDUCE|ACCUMULATE)\b/i;
+  const BARE_RE=/\b(OW|UW|EW|BUY|SELL|HOLD|NEUTRAL|OUTPERFORM|UNDERPERFORM|ADD|REDUCE|ACCUMULATE|OVERWEIGHT|UNDERWEIGHT)\b/i;
+  const normCall=c=>({OVERWEIGHT:'OW',UNDERWEIGHT:'UW','EQUAL-WEIGHT':'EW','EQUAL WEIGHT':'EW',OUTPERFORM:'OP',UNDERPERFORM:'UP'})[c]||c;
+  const CT={BUY:'buy',OP:'buy',OW:'buy',ADD:'buy',ACCUMULATE:'buy',SELL:'sell',UP:'sell',UW:'sell',REDUCE:'sell',HOLD:'hold',NEUTRAL:'hold',EW:'hold'};
+  const callOf=t=>{ let m=String(t).match(CALL_RE)||String(t).match(BARE_RE); if(m){const c=normCall((m[1]||m[0]).toUpperCase());return {label:c,cls:CT[c]||tag(t)};} const x=tag(t); return {label:x==='buy'?'Positive':x==='sell'?'Negative':'Neutral',cls:x}; };
+  const TP_RE=/(?:TP\s*)?(?:₹|Rs\.?|INR)\s*([\d,]+(?:\.\d+)?)/i; const TP_RE2=/TP\s*to\s*Rs\s*([\d,]+)/i;
+  const tpOf=s=>{ if(!s)return null; let m=String(s).match(TP_RE2)||String(s).match(TP_RE); return m?'₹'+m[1]:null; };
+  const PM=(typeof PDFMAP==='undefined'||!PDFMAP)?null:PDFMAP;
+  const DISK='C:/Users/admin/Desktop/India Related Reports/', HTTP='http://127.0.0.1:8788/';
+  const onFile=(typeof location!=='undefined')&&location.protocol==='file:';
+  const fileUrl=p=>{ const nm=String(p).replace(/\\/g,'/'); if(nm.toLowerCase().startsWith(DISK.toLowerCase())){ const rel=nm.slice(DISK.length); return HTTP+rel.split('/').map(encodeURIComponent).join('/'); } if(onFile) return 'file:///'+nm.split('/').map(encodeURIComponent).join('/'); return null; };
+  const urlFor=(folder,house,headline,date,explicit)=>{ if(explicit)return explicit; if(PM){ const tk=String(headline).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,''); const p=PM[house+'|'+date+'|'+folder+'|'+tk]; if(p){const u=fileUrl(p); if(u)return u;} } return 'https://www.google.com/search?q='+encodeURIComponent(house+' '+folder+' '+headline); };
+  const PD=(typeof PDFDATA==='undefined'||!PDFDATA)?null:PDFDATA;
+  const pdKey=(h,d,co,ti)=>h+'|'+d+'|'+co+'|'+String(ti).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
+  const header='<div class="n-header"><span class="n-date">Date</span><span class="n-co">Company</span><span class="n-ti">Headline</span><span class="n-tp">TP</span><span class="n-call-h">Call</span></div>';
+  const body=shown.map(r=>{
+    const h=r[0],d=r[1],co=r[2],ti=r[3],u=r[4];
+    const href=urlFor(co,h,ti,d,u);
+    const pd=PD?PD[pdKey(h,d,co,ti)]:null;
+    const tp=(pd&&pd.currTP)||tpOf(ti);
+    const c=(pd&&pd.currCall)?{label:pd.currCall,cls:CT[String(pd.currCall).toUpperCase()]||'hold'}:callOf(ti);
+    const tpCell=tp?'<span class="n-tp">₹'+esc(String(tp).replace(/^₹/,''))+'</span>':'<span class="n-tp muted">—</span>';
+    return '<div class="note">'+
+      '<span class="n-date">'+fmtD(d)+'</span>'+
+      '<span class="n-co" title="'+esc(co)+'">'+esc(co)+'</span>'+
+      '<a class="n-ti" href="'+esc(href)+'" target="_blank" rel="noopener" title="'+esc(ti)+'">'+esc(ti)+'</a>'+
+      tpCell+
+      '<span class="n-call '+c.cls+'">'+esc(c.label)+'</span>'+
+    '</div>';
+  }).join('');
+  el.innerHTML=header+body;
+}
 function wlRenderN500(){
   const d=wlMap['^CRSLDX']||{};
   const tb=document.getElementById('wlN500Body'); if(!tb) return;
@@ -4624,6 +4698,7 @@ function wlRender(){
     const tb=document.getElementById(WL_TBODY[sec]);
     if(tb) tb.innerHTML=wlRows(WL[sec],wlMap,sec);
   }
+  if(typeof wlRenderResearch==='function') wlRenderResearch();
 }
 // Resolve a typed query (company name or ticker) to a [name, "TICKER.NS"] pair.
 function wlResolve(q){
@@ -5223,6 +5298,7 @@ fetch('data/research.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(
   if(Array.isArray(j.ext)) notesExt=j.ext;
   renderResearchNotes();
   if(typeof renderCompanyResearch==='function') renderCompanyResearch();
+  if(typeof wlRenderResearch==='function') wlRenderResearch();
   if(typeof renderSectorSummary==='function') renderSectorSummary();
 }).catch(()=>{});
 // Extracted broker-stated TP / Call from the PDF body (via pdftotext +
@@ -5236,6 +5312,7 @@ fetch('data/pdfdata.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j
   window.PDFDATA=j;
   renderResearchNotes();
   if(typeof renderCompanyResearch==='function') renderCompanyResearch();
+  if(typeof wlRenderResearch==='function') wlRenderResearch();
   if(typeof renderSectorSummary==='function') renderSectorSummary();
 }).catch(()=>{});
 // pdfmap.json: same key scheme, value is the absolute path to the local
@@ -5247,6 +5324,7 @@ fetch('data/pdfmap.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=
   window.PDFMAP=j;
   renderResearchNotes();
   if(typeof renderCompanyResearch==='function') renderCompanyResearch();
+  if(typeof wlRenderResearch==='function') wlRenderResearch();
   if(typeof renderSectorSummary==='function') renderSectorSummary();
 }).catch(()=>{});
 // Trendlyne broker-coverage scrape (scripts/fetch-trendlyne-coverage.js).
@@ -5258,6 +5336,7 @@ fetch('data/trendlyne-coverage.json',{cache:'no-store'}).then(r=>r.ok?r.json():n
   if(!j||typeof j!=='object') return;
   window.TRENDLYNE_COVERAGE=j;
   if(typeof renderCompanyResearch==='function') renderCompanyResearch();
+  if(typeof wlRenderResearch==='function') wlRenderResearch();
   if(typeof renderSectorSummary==='function') renderSectorSummary();
 }).catch(()=>{});
 // Bull/Bear theses per company (scripts/build-theses.js). Schema:
@@ -5394,6 +5473,7 @@ fetch('data/companies.json',{cache:'no-store'})
   .then(j=>{
     if(!j) return;
     window.COMPANIES=j;
+    if(typeof wlRenderResearch==='function') wlRenderResearch();
     updateCoDesc();
     // If a company was selected before COMPANIES loaded, its chart
     // might have shown "No Yahoo Finance ticker mapped" because the
