@@ -1083,6 +1083,12 @@
         #viewStrategy .houses{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
         #viewStrategy .house{border:1px solid var(--line);border-radius:12px;padding:15px 16px;background:var(--ink-2)}
         #viewStrategy .house h4{font-family:'Fraunces',serif;font-size:15px;font-weight:600;margin-bottom:2px;display:flex;align-items:center;gap:8px}
+        /* Broker name -> latest India strategy PDF link. Inherit the
+           heading typography; only signal interactivity on hover. */
+        #viewStrategy .house h4 a.house-link{color:inherit;text-decoration:none;
+          border-bottom:1px dashed rgba(255,255,255,.18);transition:color .12s}
+        #viewStrategy .house h4 a.house-link:hover{color:var(--saffron);
+          border-bottom-color:var(--saffron)}
         #viewStrategy .house .src{font-size:10.5px;color:var(--text-mute);letter-spacing:.02em}
         #viewStrategy .house .stance{font-size:12px;color:var(--text-dim);line-height:1.55;margin:9px 0 11px}
         #viewStrategy .house .pk-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-mute);margin-bottom:6px}
@@ -1269,7 +1275,7 @@
         <div class="houses"><!--STRAT:HOUSES:START-->
 
           <div class="house">
-            <h4>JPMorgan <span class="src">· 18 May &amp; 1 Jun</span></h4>
+            <h4 data-broker="JPMorgan">JPMorgan <span class="src">· 18 May &amp; 1 Jun</span></h4>
             <div class="stance">Cautiously constructive. Nifty bear/base/bull <strong>20,500 / 27,000 / 30,000</strong>. Leans to high-growth domestic cyclicals; tilts Momentum/Growth/Quality over Value despite heavy FII outflows and a weak INR (~95/USD). <strong>Upgraded Industrials to OW.</strong></div>
             <div class="pk-label">Recommended</div>
             <div class="chips">
@@ -1282,7 +1288,7 @@
           </div>
 
           <div class="house">
-            <h4>Nomura <span class="src">· 1 Jun</span></h4>
+            <h4 data-broker="Nomura">Nomura <span class="src">· 1 Jun</span></h4>
             <div class="stance">Constructively cautious. New Mar-2027 Nifty target <strong>25,900</strong> (18.5x FY28 EPS). 4QFY26 PAT +18% but FY27/28 estimates trimmed. Prefers exporters, power/data-centre infra, financials &amp; IT; cautious on consumption.</div>
             <div class="pk-label">Recommended (Buy top picks)</div>
             <div class="chips">
@@ -1297,7 +1303,7 @@
           </div>
 
           <div class="house">
-            <h4>CLSA <span class="src">· 2 Jun</span></h4>
+            <h4 data-broker="CLSA">CLSA <span class="src">· 2 Jun</span></h4>
             <div class="stance">"Good 4Q but EPS cuts continue." Coverage PBT +17% YoY but flattered by PSU oil; cut FY27/28 Nifty EPS 1.3%/0.6%. Valuation full (~12% above 20-yr avg PE). Prefers domestics over exporters, consumption over investment.</div>
             <div class="pk-label">High-conviction Outperform</div>
             <div class="chips">
@@ -2268,7 +2274,7 @@ const notesPrior = [
   ["JPMorgan","260528","Ashok Leyland","Pricing discipline likely to continue amid volatile demand trends"],
   ["JPMorgan","260528","Kotak Mahindra Bank","CEO meet, System-leading growth, CASA build-out remain strategic priorities, cost efficiency in focus"],
   ["JPMorgan","260528","Mphasis","Analyst Day Takeaways, AI strategy and evolving deal dynamics"],
-  ["JPMorgan","260528","Oil and Natural Gas","Production decline remains a concern"],
+  ["JPMorgan","260528","ONGC","Production decline remains a concern"],
   ["JPMorgan","260528","Siemens Limited","Underweight, Weak 4QFY26, valuations expensive for mid-teens growth"],
   ["JPMorgan","260529","Alkem Laboratories","Steady core but margin visibility limited"],
   ["JPMorgan","260529","India Macro","RBI on hold, 1Q26 GDP at 7.5%, petroleum imports pickup"],
@@ -2364,7 +2370,7 @@ const notesPrior = [
   ["Jefferies","260528","Siemens Limited","Subdued Margin Outlook, Downgrade to Hold"],
   ["Jefferies","260529","Cummins India","Margin tailwinds ahead"],
   ["Jefferies","260529","Indian Consumer","Indian Consumer Staples, 4QFY26 Review"],
-  ["Jefferies","260529","IndiGo","Clouded near-term outlook"],
+  ["Jefferies","260529","InterGlobe Aviation","Clouded near-term outlook"],
   ["Jefferies","260529","TCI Express","Recovery Continues, Steep Grade Ahead"],
   ["Jefferies","260531","Gujarat Pipavav Port","Quarter a Beat, Outlook Uncertain"],
   ["Jefferies","260531","Patanjali Foods","Oils Recover QoQ, Foods Weak"],
@@ -2459,7 +2465,7 @@ const notesPrior = [
   ["Kotak","260526","India Strategy","(no title)"],
   ["Kotak","260526","Indigo Paints","Stepping up growth aspirations"],
   ["Kotak","260526","JK Cement","In-line set"],
-  ["Kotak","260526","TCS","AR analysis--on path toward AI-led transformation"],
+  ["Kotak","260526","Tata Consultancy Services","AR analysis--on path toward AI-led transformation"],
   ["Kotak","260526","Torrent Pharmaceuticals","Strong show, upbeat outlook"],
   ["Kotak","260527","Aditya Birla Fashion and Retail","Cash flow situation remains concerning"],
   ["Kotak","260527","Amara Raja Energy and Mobility","Mixed bag, cell ambitions lose key anchor"],
@@ -2544,7 +2550,7 @@ const notesPrior = [
   ["Nomura","260527","Amara Raja Energy and Mobility","New energy transition risks remain elevated"],
   ["Nomura","260527","Indian Metals","Aluminium, China shutdown fears lift prices"],
   ["Nomura","260528","Apar Industries","Strong 4Q, outlook remains on firm footing Raise FY27F-FY28F EBITDA estimates by 7%-9%, estimate FY26-29F EBITDA CAGR of 19%, maintain Buy"],
-  ["Nomura","260528","Oil and Natural Gas","4Q below estimates on higher expenses FY27F standalone earnings to be driven by higher realizations, maintain Neutral with higher TP of INR2"],
+  ["Nomura","260528","ONGC","4Q below estimates on higher expenses FY27F standalone earnings to be driven by higher realizations, maintain Neutral with higher TP of INR2"],
   ["Nomura","260529","Alkem Laboratories","4QFY26 results, Revenue in line, margins ahead"],
   ["Nomura","260529","EPL","meeting takeaways"],
   ["Nomura","260529","Indian Consumer","Monsoon monitor, Below-normal monsoon with moderate El Nino"],
@@ -5353,7 +5359,69 @@ fetch('data/pdfmap.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=
   if(typeof renderCompanyResearch==='function') renderCompanyResearch();
   if(typeof wlRenderResearch==='function') wlRenderResearch();
   if(typeof renderSectorSummary==='function') renderSectorSummary();
+  linkStrategyHouseHeads();
 }).catch(()=>{});
+
+// Strategy tab "House Views & Recommended Stocks" — turn each broker's
+// <h4 data-broker="..."> into a link to that house's most-recent India
+// strategy PDF (served by the local PDF server at 127.0.0.1:8788). Looks
+// up window.PDFMAP for the latest entry whose folder is "India Strategy"
+// / "India Equity Strategy" and whose house matches.
+function linkStrategyHouseHeads(){
+  const PM = window.PDFMAP;
+  if (!PM) return;
+  const DISK = 'C:/Users/admin/Desktop/India Related Reports/';
+  const HTTP = 'http://127.0.0.1:8788/';
+  const ON_FILE = location.protocol === 'file:';
+  function pdfHref(diskPath){
+    const norm = String(diskPath).replace(/\\/g,'/');
+    if (norm.toLowerCase().startsWith(DISK.toLowerCase())) {
+      return HTTP + norm.slice(DISK.length).split('/').map(encodeURIComponent).join('/');
+    }
+    if (ON_FILE) return 'file:///' + norm.split('/').map(encodeURIComponent).join('/');
+    return null;
+  }
+  // Folders considered "strategy" reports per broker.
+  const STRAT_FOLDERS = new Set(['India Strategy','India Equity Strategy','Asia Equity Strategy']);
+  // Map UI broker name → house tag in pdfmap key.
+  function latestStrategyForHouse(houseKey){
+    let bestDate = '', bestPath = null;
+    for (const [k, p] of Object.entries(PM)) {
+      const parts = k.split('|');
+      if (parts.length < 4) continue;
+      if (parts[0].toLowerCase() !== houseKey.toLowerCase()) continue;
+      if (!STRAT_FOLDERS.has(parts[2])) continue;
+      if (parts[1] > bestDate) { bestDate = parts[1]; bestPath = p; }
+    }
+    return bestPath;
+  }
+  document.querySelectorAll('h4[data-broker]').forEach(h => {
+    const houseKey = h.getAttribute('data-broker');
+    if (!houseKey || h.querySelector('a.house-link')) return;  // already linked
+    const path = latestStrategyForHouse(houseKey);
+    if (!path) return;
+    const href = pdfHref(path);
+    if (!href) return;
+    // Wrap the leading broker name (the text node before the <span class="src">)
+    // in an anchor; leave the date span alone.
+    const first = h.firstChild;
+    if (!first || first.nodeType !== Node.TEXT_NODE) return;
+    const name = first.textContent.replace(/\s+$/,'');
+    const a = document.createElement('a');
+    a.className = 'house-link';
+    a.href = href;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.title = 'Open ' + houseKey + ' latest India strategy PDF (' +
+              path.split(/[\\/]/).pop() + ')';
+    a.textContent = name;
+    h.replaceChild(a, first);
+    // Re-insert any trailing whitespace that came after the name.
+    if (/\s$/.test(first.textContent)) {
+      a.insertAdjacentText('afterend', ' ');
+    }
+  });
+}
 // Trendlyne broker-coverage scrape (scripts/fetch-trendlyne-coverage.js).
 // Schema: { "<NOTEBOOKS company name>": [{broker,date,headline,url,tp,rating}, ...] }
 // Used by renderCompanyResearch to populate the Broker Coverage card for

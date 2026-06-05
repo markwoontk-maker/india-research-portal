@@ -17,6 +17,16 @@ const CUTOFF_NEW = "260601";       // last 2 days = since this date inclusive
 const CUTOFF_PRIOR_MIN = "260420"; // anything older than that = drop from prior
 
 const RE = /^\[(\d{6})\]\s+\[([^\]]+)\]\s+(.+?)\s+-\s+(.+)\.pdf$/i;
+// Keep in sync with scripts/rebuild-pdfmap.js FOLDER_ALIAS — collapses
+// duplicate notebook names onto a single canonical name. If these two
+// scripts disagree, the renderer's pdfmap lookup misses and clicks fall
+// through to a Google-search fallback instead of opening the PDF.
+const FOLDER_ALIAS = {
+  "L&T":                          "Larsen & Toubro",
+  "Oil and Natural Gas":          "ONGC",
+  "IndiGo":                       "InterGlobe Aviation",
+  "Rainbow Children's Medicare":  "Rainbow Children's Hospitals",
+};
 const all = [];
 
 function walk(dir){
@@ -28,7 +38,8 @@ function walk(dir){
       const m = base.match(RE);
       if(!m) continue;
       const [, date, house, , headline] = m;
-      const folder = path.basename(path.dirname(p));
+      const rawFolder = path.basename(path.dirname(p));
+      const folder = FOLDER_ALIAS[rawFolder] || rawFolder;
       all.push([house, date, folder, headline]);
     }
   }
