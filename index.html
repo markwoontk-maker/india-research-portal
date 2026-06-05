@@ -614,6 +614,8 @@
   table.fin-tbl th{color:var(--text-mute);font-weight:500;letter-spacing:.04em;
     text-transform:uppercase;font-size:9.5px;border-bottom:1px solid var(--line)}
   table.fin-tbl th.bk,table.fin-tbl td.bk{text-align:left;width:18%;color:var(--text)}
+  table.fin-tbl td.bk a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--text-mute)}
+  table.fin-tbl td.bk a:hover{border-bottom-color:var(--text)}
   table.fin-tbl th.src,table.fin-tbl td.src{text-align:right;width:11%;color:var(--text-mute);font-size:10.5px}
   table.fin-tbl td .muted{color:var(--text-mute)}
   table.fin-tbl td a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--text-mute)}
@@ -1275,7 +1277,7 @@
         <div class="houses"><!--STRAT:HOUSES:START-->
 
           <div class="house">
-            <h4 data-broker="JPMorgan">JPMorgan <span class="src">· 18 May &amp; 1 Jun</span></h4>
+            <h4 data-broker="JPMorgan" data-report="India Strategy/[260518] [JPMorgan] India Equity Strategy - 4QFY26 Earnings Dissector, better-than-expected prints, upgrade Industrials to OW.pdf">JPMorgan <span class="src">· 18 May &amp; 1 Jun</span></h4>
             <div class="stance">Cautiously constructive. Nifty bear/base/bull <strong>20,500 / 27,000 / 30,000</strong>. Leans to high-growth domestic cyclicals; tilts Momentum/Growth/Quality over Value despite heavy FII outflows and a weak INR (~95/USD). <strong>Upgraded Industrials to OW.</strong></div>
             <div class="pk-label">Recommended</div>
             <div class="chips">
@@ -1288,7 +1290,7 @@
           </div>
 
           <div class="house">
-            <h4 data-broker="Nomura">Nomura <span class="src">· 1 Jun</span></h4>
+            <h4 data-broker="Nomura" data-report="India Strategy/[260601] [Nomura] India Equity Strategy - 4QFY26 earnings review.pdf">Nomura <span class="src">· 1 Jun</span></h4>
             <div class="stance">Constructively cautious. New Mar-2027 Nifty target <strong>25,900</strong> (18.5x FY28 EPS). 4QFY26 PAT +18% but FY27/28 estimates trimmed. Prefers exporters, power/data-centre infra, financials &amp; IT; cautious on consumption.</div>
             <div class="pk-label">Recommended (Buy top picks)</div>
             <div class="chips">
@@ -1303,7 +1305,7 @@
           </div>
 
           <div class="house">
-            <h4 data-broker="CLSA">CLSA <span class="src">· 2 Jun</span></h4>
+            <h4 data-broker="CLSA" data-report="India Strategy/[260602] [CLSA] India strategy - Good 4Q but EPS cuts continue.pdf">CLSA <span class="src">· 2 Jun</span></h4>
             <div class="stance">"Good 4Q but EPS cuts continue." Coverage PBT +17% YoY but flattered by PSU oil; cut FY27/28 Nifty EPS 1.3%/0.6%. Valuation full (~12% above 20-yr avg PE). Prefers domestics over exporters, consumption over investment.</div>
             <div class="pk-label">High-conviction Outperform</div>
             <div class="chips">
@@ -5368,8 +5370,7 @@ fetch('data/pdfmap.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=
 // up window.PDFMAP for the latest entry whose folder is "India Strategy"
 // / "India Equity Strategy" and whose house matches.
 function linkStrategyHouseHeads(){
-  const PM = window.PDFMAP;
-  if (!PM) return;
+  const PM = window.PDFMAP || null;
   const DISK = 'C:/Users/admin/Desktop/India Related Reports/';
   const HTTP = 'http://127.0.0.1:8788/';
   const ON_FILE = location.protocol === 'file:';
@@ -5381,8 +5382,16 @@ function linkStrategyHouseHeads(){
     if (ON_FILE) return 'file:///' + norm.split('/').map(encodeURIComponent).join('/');
     return null;
   }
-  // Folders considered "strategy" reports per broker.
-  const STRAT_FOLDERS = new Set(['India Strategy','India Equity Strategy','Asia Equity Strategy']);
+  // Build a URL from a path RELATIVE to the reports root (used by data-report).
+  function relHref(rel){
+    const enc = String(rel).replace(/\\/g,'/').split('/').map(encodeURIComponent).join('/');
+    return ON_FILE ? 'file:///C:/Users/admin/Desktop/India%20Related%20Reports/' + enc
+                   : HTTP + enc;
+  }
+  // Folders considered "strategy" reports per broker. India-only: this card is
+  // about each house's India strategy, so an Asia/EM positioning note is not the
+  // "respective sector report" we want to link to.
+  const STRAT_FOLDERS = new Set(['India Strategy','India Equity Strategy']);
   // Map UI broker name → house tag in pdfmap key.
   function latestStrategyForHouse(houseKey){
     let bestDate = '', bestPath = null;
@@ -5398,9 +5407,18 @@ function linkStrategyHouseHeads(){
   document.querySelectorAll('h4[data-broker]').forEach(h => {
     const houseKey = h.getAttribute('data-broker');
     if (!houseKey || h.querySelector('a.house-link')) return;  // already linked
-    const path = latestStrategyForHouse(houseKey);
-    if (!path) return;
-    const href = pdfHref(path);
+    // Prefer an explicit data-report (the exact sector report the card's views
+    // are based on); otherwise fall back to the latest India strategy PDF.
+    let href = null, fileLabel = '';
+    const explicit = h.getAttribute('data-report');
+    if (explicit) { href = relHref(explicit); fileLabel = explicit.split('/').pop(); }
+    else {
+      if (!PM) return;
+      const path = latestStrategyForHouse(houseKey);
+      if (!path) return;
+      href = pdfHref(path);
+      fileLabel = path.split(/[\\/]/).pop();
+    }
     if (!href) return;
     // Wrap the leading broker name (the text node before the <span class="src">)
     // in an anchor; leave the date span alone.
@@ -5412,8 +5430,7 @@ function linkStrategyHouseHeads(){
     a.href = href;
     a.target = '_blank';
     a.rel = 'noopener';
-    a.title = 'Open ' + houseKey + ' latest India strategy PDF (' +
-              path.split(/[\\/]/).pop() + ')';
+    a.title = 'Open ' + houseKey + ' India strategy report (' + fileLabel + ')';
     a.textContent = name;
     h.replaceChild(a, first);
     // Re-insert any trailing whitespace that came after the name.
@@ -6415,7 +6432,12 @@ function renderCompanyFinancials(){
       const link=info.url
         ? `<a href="${esc(info.url)}" target="_blank" rel="noopener">${esc(fmtD(info.date))}</a>`
         : esc(fmtD(info.date));
-      return `<tr><td class="bk">${esc(b)}</td>${cells}<td class="src">${link}</td></tr>`;
+      // Broker name itself is a link to the source PDF too — same target
+      // as the Source-date cell, lets you jump straight from the row label.
+      const brokerCell = info.url
+        ? `<a href="${esc(info.url)}" target="_blank" rel="noopener" title="Open ${esc(b)} report">${esc(b)}</a>`
+        : esc(b);
+      return `<tr><td class="bk">${brokerCell}</td>${cells}<td class="src">${link}</td></tr>`;
     }).join('');
     // Average row: only show a cell where we actually have data for that FY.
     const avgRow=`<tr class="avg"><td class="bk">Average</td>${FYS.map(fy=>{
