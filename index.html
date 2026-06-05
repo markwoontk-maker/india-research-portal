@@ -1518,8 +1518,9 @@
           <h3>MF Category Flows</h3>
           <p id="mfCatSub">Net equity-MF flows + AUM by category · AMFI</p>
         </div></div>
+        <p id="mfCatGist" style="font-size:11.5px;color:var(--text-dim);line-height:1.5;margin:0 0 12px;border-left:2px solid var(--saffron);padding-left:9px"></p>
         <div style="overflow-x:auto">
-          <table id="mfCatTbl" style="width:100%;border-collapse:collapse;min-width:560px;font-size:12.5px">
+          <table id="mfCatTbl" style="width:100%;border-collapse:collapse;min-width:620px;font-size:12.5px">
             <thead>
               <tr style="color:var(--text-mute);font-size:10px;letter-spacing:.1em;text-transform:uppercase;user-select:none">
                 <th data-key="name" data-label="Category" title="Click to sort" style="cursor:pointer;text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)">Category</th>
@@ -1527,11 +1528,12 @@
                 <th data-key="flowPrev" data-label="Prev mo" title="Click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">Prev mo</th>
                 <th data-key="ytd" data-label="YTD" title="Calendar year-to-date · click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">YTD</th>
                 <th data-key="oneY" data-label="1Y" title="Trailing 12-month · click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">1Y</th>
+                <th data-key="flowshare" data-label="Flow share" title="Category's share of this month's total net flow, with MoM change (pp) · click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">Flow share</th>
                 <th data-key="aum" data-label="AUM" title="Click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">AUM</th>
-                <th data-key="aumShare" data-label="Share" title="Click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">Share</th>
+                <th data-key="aumShare" data-label="AUM %" title="Click to sort" style="cursor:pointer;text-align:right;padding:6px 10px;border-bottom:1px solid var(--line)">AUM %</th>
               </tr>
             </thead>
-            <tbody id="mfCatBody"><tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text-mute)">Loading MF category flows…</td></tr></tbody>
+            <tbody id="mfCatBody"><tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-mute)">Loading MF category flows…</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -6660,20 +6662,48 @@ function mfCatYtd(c){ if(!Array.isArray(c.hist)) return null; const y=(mfCatMont
   let s=0,a=false; c.hist.forEach((v,i)=>{ if(v!=null && (mfCatMonths[i]||'').slice(0,4)===y){ s+=v; a=true; } }); return a?Math.round(s):null; }
 function mfCatOneY(c){ if(!Array.isArray(c.hist)) return null; const h=c.hist.slice(-12).filter(v=>v!=null);
   return h.length?Math.round(h.reduce((x,y)=>x+y,0)):null; }
-function mfCatVal(c,k){ if(k==='ytd') return mfCatYtd(c)??0; if(k==='oneY') return mfCatOneY(c)??0; return c[k]; }
+function mfCatTotals(){ return mfCatMonths.map((m,i)=>{ let s=0,a=false; mfCatData.forEach(c=>{ const v=c.hist&&c.hist[i]; if(v!=null){ s+=v; a=true; } }); return a?s:null; }); }
+function mfCatShareAt(c,totals,i){ const v=c.hist&&c.hist[i], t=totals?totals[i]:null; return (v!=null&&t!=null&&t>0)?+(v/t*100).toFixed(1):null; }
+function mfCatFlowShare(c){ const t=mfCatData.reduce((s,x)=>s+(typeof x.flow==='number'?x.flow:0),0); return (typeof c.flow==='number'&&t>0)?+(c.flow/t*100).toFixed(1):null; }
+function mfCatFlowShareMoM(c){ const tN=mfCatData.reduce((s,x)=>s+(typeof x.flow==='number'?x.flow:0),0), tP=mfCatData.reduce((s,x)=>s+(typeof x.flowPrev==='number'?x.flowPrev:0),0);
+  const now=(typeof c.flow==='number'&&tN>0)?c.flow/tN*100:null, prev=(typeof c.flowPrev==='number'&&tP>0)?c.flowPrev/tP*100:null;
+  return (now!=null&&prev!=null)?+(now-prev).toFixed(1):null; }
+function mfCatGist(){
+  if(!mfCatData||!mfCatMonths.length) return '';
+  const totals=mfCatTotals(), last=mfCatMonths.length-1;
+  const leaderAt=i=>{ if(totals[i]==null||totals[i]<=0) return null; let best=null,bv=-Infinity; mfCatData.forEach(c=>{ const v=c.hist&&c.hist[i]; if(v!=null&&v>bv){ bv=v; best=c.name; } }); return best; };
+  const lead=leaderAt(last); if(!lead) return '';
+  let streak=0; for(let i=last;i>=0;i--){ if(leaderAt(i)===lead) streak++; else break; }
+  const leadCat=mfCatData.find(c=>c.name===lead), leadShare=mfCatShareAt(leadCat,totals,last);
+  const mon=iso=>{ const [y,m]=iso.split('-'); return new Date(y,m-1,1).toLocaleDateString('en-IN',{month:'short',year:'numeric'}); };
+  const ord=n=>{ const s=['th','st','nd','rd'],v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); };
+  const g=mfCatData.filter(c=>c.name!==lead).map(c=>({n:c.name,m:mfCatFlowShareMoM(c)})).filter(x=>x.m!=null).sort((a,b)=>b.m-a.m)[0];
+  const tot=totals[last];
+  let s=lead+' drew the largest share of net inflows for the '+ord(streak)+' straight month ('+(leadShare!=null?leadShare+'%':'')+' in '+mon(mfCatMonths[last])+').';
+  if(g&&g.m>0.3) s+=' '+g.n+' gained the most share (+'+g.m.toFixed(1)+'pp MoM).';
+  if(tot!=null) s+=' Total equity-MF net inflow ₹'+Math.round(tot).toLocaleString('en-IN')+' cr.';
+  return s;
+}
+function mfCatVal(c,k){ if(k==='ytd') return mfCatYtd(c)??0; if(k==='oneY') return mfCatOneY(c)??0; if(k==='flowshare') return mfCatFlowShare(c)??-999; return c[k]; }
 function mfCatHistDraw(c){
   const cv=document.getElementById('mfCatChart'); if(!cv) return;
   if(mfCatChart){ mfCatChart.destroy(); mfCatChart=null; }
   const hist=c.hist||[], labels=mfCatMonths.map(secMonLbl);
   const colors=hist.map(v=> v==null?'#646c7c':(v>=0?'#3fc78a':'#f06a6a'));
+  const totals=mfCatTotals(), share=hist.map((v,i)=>mfCatShareAt(c,totals,i));
   mfCatChart=new Chart(cv,{ type:'bar',
-    data:{labels,datasets:[{data:hist.map(v=>v==null?0:v),backgroundColor:colors,borderWidth:0,categoryPercentage:.8,barPercentage:.9}]},
+    data:{labels,datasets:[
+      {label:'Net flow (₹ cr)',type:'bar',data:hist.map(v=>v==null?null:v),backgroundColor:colors,borderWidth:0,categoryPercentage:.8,barPercentage:.9,order:2,yAxisID:'y'},
+      {label:'% of net flow',type:'line',data:share,borderColor:'#e9a23b',borderWidth:1.6,pointRadius:0,pointHoverRadius:4,pointHoverBackgroundColor:'#e9a23b',tension:.15,spanGaps:true,fill:false,order:1,yAxisID:'y1'}
+    ]},
     options:{responsive:true,maintainAspectRatio:false,devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
-      plugins:{legend:{display:false},
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:true,position:'bottom',labels:{color:'#a9b0c0',font:{family:'IBM Plex Mono',size:10},boxWidth:14,boxHeight:8,padding:12,usePointStyle:true}},
         tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:10,
-          callbacks:{ label:x=> hist[x.dataIndex]==null?'no data':'  '+secCr(hist[x.dataIndex])+' cr' }}},
+          callbacks:{ label:x=>{ if(x.dataset.label==='% of net flow') return x.parsed.y==null?'':'  share: '+x.parsed.y.toFixed(1)+'%'; return hist[x.dataIndex]==null?'  no data':'  '+secCr(hist[x.dataIndex])+' cr'; } }}},
       scales:{ x:{grid:{display:false},border:{display:false},ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},maxRotation:0,autoSkip:true,maxTicksLimit:14}},
-        y:{grid:{color:'#1f2530'},border:{display:false},ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},callback:v=>(Math.abs(v)>=1000?(v/1000).toFixed(0)+'k':v)}} } }
+        y:{position:'left',grid:{color:'#1f2530'},border:{display:false},ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},callback:v=>(Math.abs(v)>=1000?(v/1000).toFixed(0)+'k':v)}},
+        y1:{position:'right',grid:{display:false},border:{display:false},grace:'10%',ticks:{color:'#e9a23b',font:{family:'IBM Plex Mono',size:10},callback:v=>v+'%'}} } }
   });
 }
 function mfCatRender(){
@@ -6687,17 +6717,21 @@ function mfCatRender(){
     const ytd=mfCatYtd(c), oy=mfCatOneY(c), open=mfCatExpanded===c.name;
     const caret=`<span style="color:var(--text-mute);font-size:9px;margin-left:5px">${open?'▾':'▸'}</span>`;
     const hasHist=c.hist&&c.hist.some(v=>v!=null);
-    const exp=open?`<tr class="mfcatexp"><td colspan="7" style="padding:4px 10px 14px;border-bottom:1px solid var(--line-soft)">
-        <div style="font-size:11px;color:var(--text-mute);margin:2px 0 6px">${c.name} — monthly net flow (₹ cr) · green inflow / red outflow · full history</div>
+    const fs=mfCatFlowShare(c), fsm=mfCatFlowShareMoM(c);
+    const fsCell=`<td style="${td};text-align:right;font-family:'IBM Plex Mono';font-size:11px;color:var(--text)">${fs==null?'—':fs.toFixed(1)+'%'}${fsm==null?'':' <span style="color:'+(fsm>=0?'var(--up)':'var(--down)')+';font-size:10px">'+(fsm>=0?'▲+':'▼')+Math.abs(fsm).toFixed(1)+'</span>'}</td>`;
+    const exp=open?`<tr class="mfcatexp"><td colspan="8" style="padding:4px 10px 14px;border-bottom:1px solid var(--line-soft)">
+        <div style="font-size:11px;color:var(--text-mute);margin:2px 0 6px">${c.name} — monthly net flow (bars, ₹ cr) + share of total net flow (line, %) · full history</div>
         ${hasHist?'<div class="chart-box" style="height:190px"><canvas id="mfCatChart"></canvas></div>':'<div style="color:var(--text-mute);font-size:11.5px;padding:10px 0">Monthly history unavailable.</div>'}
       </td></tr>`:'';
     return `<tr>
       <td class="mfcatname" data-name="${c.name.replace(/"/g,'&quot;')}" title="Show monthly flow chart" style="${td};font-weight:600;cursor:pointer">${c.name}${caret}</td>
       ${money(c.flow)}${money(c.flowPrev)}${money(ytd)}${money(oy)}
+      ${fsCell}
       <td style="${td};text-align:right;font-family:'IBM Plex Mono';color:var(--text-dim)">${mfAum(c.aum)}</td>
       <td style="${td};text-align:right;font-family:'IBM Plex Mono';color:var(--text-mute)">${c.aumShare!=null?c.aumShare.toFixed(1)+'%':'—'}</td>
     </tr>${exp}`;
   }).join('');
+  const gistEl=document.getElementById('mfCatGist'); if(gistEl) gistEl.textContent=mfCatGist();
   document.querySelectorAll('#mfCatTbl th[data-key]').forEach(th=>{
     const act=mfCatSort.key===th.dataset.key, arr=mfCatSort.dir>0?'▲':'▼';
     th.innerHTML=th.dataset.label+(act?' <span style="color:var(--saffron)">'+arr+'</span>':'');
@@ -6726,7 +6760,7 @@ async function loadMfCategories(){
     }
     mfCatRender();
   }catch(e){
-    body.innerHTML='<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text-mute)">MF category data unavailable — could not load <code>data/mf_categories.json</code>.</td></tr>';
+    body.innerHTML='<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-mute)">MF category data unavailable — could not load <code>data/mf_categories.json</code>.</td></tr>';
   }
 }
 /* ---------- Positioning tab · MF SIP flows (AMFI, append-only) ---------- */
