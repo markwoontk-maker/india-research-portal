@@ -268,6 +268,7 @@
   #wlHold td,#wlCov td,#wlWatch td{padding:6px 0}
   #wlHold .sym,#wlCov .sym,#wlWatch .sym{display:inline}
   .wl-tk{font-family:'Roboto Mono';font-size:11px;color:var(--text-mute);margin-left:8px}
+  #wlHold .wl-mc,#wlCov .wl-mc,#wlWatch .wl-mc{font-family:'Roboto Mono';font-size:12px;color:var(--text-dim);white-space:nowrap}
   /* watchlist add bar (in card header) */
   .wl-add{display:flex;gap:8px;align-items:center;flex:none}
   .wl-add input{background:var(--panel);color:var(--text);
@@ -1604,19 +1605,19 @@
       <div class="card reveal">
         <div class="card-h"><div><h3>Current Holdings</h3><p>Live prices · NSE</p></div>
           <div class="wl-add"><input list="wlCompanyList" id="wlAddHold" placeholder="Add stock…" autocomplete="off"><button data-sec="hold">Add</button></div></div>
-        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
+        <table><thead><tr><th>Stock</th><th class="r">Mkt Cap</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
           <tbody id="wlHold"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
       <div class="card reveal">
         <div class="card-h"><div><h3>Coverage</h3><p>Live prices · NSE</p></div>
           <div class="wl-add"><input list="wlCompanyList" id="wlAddCov" placeholder="Add stock…" autocomplete="off"><button data-sec="cov">Add</button></div></div>
-        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
+        <table><thead><tr><th>Stock</th><th class="r">Mkt Cap</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
           <tbody id="wlCov"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
       <div class="card reveal">
         <div class="card-h"><div><h3>Watchlist</h3><p>Live prices · NSE</p></div>
           <div class="wl-add"><input list="wlCompanyList" id="wlAddWatch" placeholder="Add stock…" autocomplete="off"><button data-sec="watch">Add</button></div></div>
-        <table><thead><tr><th>Stock</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
+        <table><thead><tr><th>Stock</th><th class="r">Mkt Cap</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
           <tbody id="wlWatch"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
     </div>
@@ -4479,19 +4480,60 @@ function wlPct(v){
   return `<td class="r"><span class="${up?'up':'down'}">${up?'+':''}${v.toFixed(2)}%</span></td>`;
 }
 function wlRows(list,map,sec){
-  if(!list.length) return '<tr><td class="pol-empty" colspan="7">No stocks yet — add one above.</td></tr>';
+  if(!list.length) return '<tr><td class="pol-empty" colspan="8">No stocks yet — add one above.</td></tr>';
   return list.map(([nm,sy],i)=>{
     const cands=sy.split('|');
     const hit=cands.find(c=>map[c]&&map[c].p!=null)||cands.find(c=>map[c]);
     const d=hit?map[hit]:null;
     const tk=(hit||cands[0]).replace('.NS','');
     const px=d&&d.p!=null?'₹'+inr(d.p):'<span style="color:var(--text-mute)">—</span>';
+    const mc=(d&&d.p!=null&&d.sh!=null&&wlUsdInr)?d.p*d.sh/wlUsdInr:null;
     return `<tr data-sec="${sec}" data-i="${i}"><td><span class="sym" draggable="true" title="Drag to reorder">${nm}</span><span class="wl-tk">${tk}</span></td>
+      <td class="r wl-mc">${wlFmtUsd(mc)}</td>
       <td class="r px">${px}</td>
       ${wlPct(d&&d.d1)}${wlPct(d&&d.w1)}${wlPct(d&&d.m1)}${wlPct(d&&d.ytd)}
       <td class="wl-actions">${wlMoveSel(sec)}<button class="wl-del" title="Remove ${nm}" aria-label="Remove ${nm}">✕</button></td></tr>`;
   }).join('');
 }
+let wlUsdInr=null;
+function wlFmtUsd(v){
+  if(v==null||!isFinite(v)) return '<span style="color:var(--text-mute)">—</span>';
+  const a=Math.abs(v);
+  if(a>=1e12) return '$'+(v/1e12).toFixed(2)+'T';
+  if(a>=1e9)  return '$'+(v/1e9).toFixed(2)+'B';
+  if(a>=1e6)  return '$'+(v/1e6).toFixed(1)+'M';
+  return '$'+Math.round(v).toLocaleString('en-US');
+}
+// Shares outstanding (rarely changes) cached in localStorage; market cap is
+// derived live = shares x INR price / USDINR. Source: Yahoo fundamentals-timeseries.
+const WL_SHARES_LS='irp_shares_v1';
+const WL_SH_TTL=30*864e5, WL_SH_NEG_TTL=3*864e5;
+function wlSharesCache(){ try{ return JSON.parse(localStorage.getItem(WL_SHARES_LS))||{}; }catch(e){ return {}; } }
+function wlSharesSave(c){ try{ localStorage.setItem(WL_SHARES_LS,JSON.stringify(c)); }catch(e){} }
+function wlParseShares(j){
+  const res=j&&j.timeseries&&j.timeseries.result; if(!res) return null;
+  let best=null,bestD='';
+  res.forEach(o=>{ const ty=o&&o.meta&&o.meta.type&&o.meta.type[0]; if(!ty||!Array.isArray(o[ty])) return;
+    o[ty].forEach(e=>{ if(e&&e.reportedValue&&e.reportedValue.raw!=null&&String(e.asOfDate)>bestD){ bestD=String(e.asOfDate); best=e.reportedValue.raw; } });
+  });
+  return best;
+}
+async function wlFetchShares(sym){
+  const types='quarterlyShareIssued,annualShareIssued,quarterlyOrdinarySharesNumber,annualOrdinarySharesNumber,annualBasicAverageShares';
+  const url='https://query1.finance.yahoo.com/ws/fundamentals-timeseries/v1/finance/timeseries/'+encodeURIComponent(sym)+
+    '?symbol='+encodeURIComponent(sym)+'&period1=1577836800&period2=1900000000&type='+types;
+  try{ return wlParseShares(await getJSON(url)); }catch(e){ return null; }
+}
+async function wlEnsureShares(syms){
+  const c=wlSharesCache(), now=date_now();
+  const need=syms.filter(s=>{ const e=c[s]; if(!e) return true; const ttl=e.sh!=null?WL_SH_TTL:WL_SH_NEG_TTL; return now-e.t>ttl; });
+  for(const batch of chunk(need,6)){
+    const rs=await Promise.allSettled(batch.map(s=>wlFetchShares(s).then(sh=>({s,sh}))));
+    rs.forEach(x=>{ if(x.status==='fulfilled') c[x.value.s]={sh:x.value.sh,t:now}; });
+  }
+  wlSharesSave(c); return c;
+}
+function date_now(){ return new Date().getTime(); }
 function wlN500Cell(id,v){
   const el=document.getElementById(id); if(!el) return;
   if(v==null||isNaN(v)){ el.textContent='—'; el.className='n500-v'; return; }
@@ -4596,7 +4638,7 @@ function wlInit(){
 async function loadWatchlist(){
   wlInit();
   const all=[...WL.hold,...WL.cov,...WL.watch];
-  const syms=[...new Set([...all.flatMap(x=>x[1].split('|')),'^CRSLDX'])];
+  const syms=[...new Set([...all.flatMap(x=>x[1].split('|')),'^CRSLDX','INR=X'])];
   const map={};
   async function pull(tfKey,field,withPrice){
     const [rng,iv]=TF[tfKey]||['1d','5m'];
@@ -4616,8 +4658,17 @@ async function loadWatchlist(){
     await Promise.all([pull('1W','w1'),pull('1M','m1'),pull('YTD','ytd')]);
   }catch(e){}
   wlMap=map;
+  wlUsdInr=(map['INR=X']&&map['INR=X'].p)||wlUsdInr;
   wlRender();
   wlRenderN500();
+  try{
+    const hitSyms=[...new Set([...WL.hold,...WL.cov,...WL.watch].map(([nm,sy])=>{
+      const cands=sy.split('|'); return cands.find(c=>map[c]&&map[c].p!=null)||cands.find(c=>map[c])||cands[0];
+    }).filter(Boolean))];
+    const c=await wlEnsureShares(hitSyms);
+    hitSyms.forEach(s=>{ if(map[s]&&c[s]&&c[s].sh!=null) map[s].sh=c[s].sh; });
+    wlRender();
+  }catch(e){}
 }
 
 /* ---------- Companies tab ---------- */
