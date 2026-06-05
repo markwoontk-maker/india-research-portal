@@ -270,12 +270,22 @@ function cleanNum(s) {
 }
 
 // ---- Walk + extract --------------------------------------------------
+// Folder-alias map — keep in sync with scripts/rebuild-pdfmap.js. Folds
+// duplicate notebook names onto the canonical so the rest of the
+// pipeline only sees one identity per stock.
+const FOLDER_ALIAS = {
+  "L&T":                          "Larsen & Toubro",
+  "Oil and Natural Gas":          "ONGC",
+  "IndiGo":                       "InterGlobe Aviation",
+  "Rainbow Children's Medicare":  "Rainbow Children's Hospitals",
+};
 
 function listPdfs() {
   const out = [];
-  for (const folder of fs.readdirSync(REPORTS)) {
-    const dir = path.join(REPORTS, folder);
+  for (const rawFolder of fs.readdirSync(REPORTS)) {
+    const dir = path.join(REPORTS, rawFolder);
     if (!fs.statSync(dir).isDirectory()) continue;
+    const folder = FOLDER_ALIAS[rawFolder] || rawFolder;
     for (const f of fs.readdirSync(dir)) {
       if (!f.toLowerCase().endsWith(".pdf")) continue;
       // Filename: "[YYMMDD] [House] Folder - Title.pdf". Separator MUST

@@ -12,6 +12,17 @@ const REPORTS = "C:\\Users\\admin\\Desktop\\India Related Reports";
 const OUT = path.join(__dirname, "..", "data", "pdfmap.json");
 const RE = /^\[(\d{6})\]\s+\[([^\]]+)\]\s+(.+?)\s+-\s+(.+)\.pdf$/i;
 
+// Folder-alias map — collapses duplicate notebook names (one ticker, two
+// folder labels) onto the canonical name so the rest of the pipeline
+// (theses / financials / dropdowns) only sees one identity per stock.
+// Keep this in sync with the NOTEBOOKS dedup in index.html.
+const FOLDER_ALIAS = {
+  "L&T":                          "Larsen & Toubro",
+  "Oil and Natural Gas":          "ONGC",
+  "IndiGo":                       "InterGlobe Aviation",
+  "Rainbow Children's Medicare":  "Rainbow Children's Hospitals",
+};
+
 const map = {};
 let count = 0;
 
@@ -24,7 +35,8 @@ function walk(dir){
     const m = base.match(RE);
     if(!m) continue;
     const [, date, house, , titleRaw] = m;
-    const folder = path.basename(path.dirname(p));
+    const rawFolder = path.basename(path.dirname(p));
+    const folder = FOLDER_ALIAS[rawFolder] || rawFolder;
     const titleNoSuffix = titleRaw.replace(/\s*\(\d+\)\s*$/, "").trim();
     const titleNorm = titleNoSuffix.toLowerCase().replace(/[^a-z0-9]+/g, "");
     const key = `${house.trim()}|${date}|${folder}|${titleNorm}`;

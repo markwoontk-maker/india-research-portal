@@ -1,7 +1,9 @@
 {
   "_README": "Hand-written thesis overrides. scripts/build-theses.js merges these on top of its auto-extracted output. Use for companies where pdftotext mangled the source or the auto-extracted sentence quoted a metadata line. Each entry can swap specific brokers' houseViews (via _replaceHouseViews) or replace the bull/bear paragraph blocks. Paragraphs are split by \\n\\n in the output; each becomes its own <p> in the renderer. Citation marker syntax: [CITE:Broker|YYMMDD|encodeURIComponent(url)|page]. Bolding policy: highlight meaningful claim phrases (targets, rating actions, drivers, beat/miss with context), NOT bare numbers / FY labels / bps figures.",
   "Adani Ports and SEZ": {
-    "_replaceHouseViews": ["Kotak"],
+    "_replaceHouseViews": [
+      "Kotak"
+    ],
     "houseViews": [
       {
         "broker": "Kotak",
