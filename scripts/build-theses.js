@@ -332,27 +332,47 @@ function thesisItem(r){
     url,
   };
 }
-// Bold-mark key phrases inside a sentence. Heuristic: numbers + units
-// (percentages, currency, multiples, capacity), quarterly tags and
-// "raised/cut" verbs near a TP get wrapped in **bold** markers. The UI
-// converts these to <b>...</b>.
+// Bold-mark key CLAIM PHRASES inside a sentence. The earlier heuristic
+// bolded every standalone number / FY label / bps figure, which dressed
+// up the paragraph without adding insight. The new set targets phrases
+// where the broker is saying something — a target, a rating action, a
+// driver, a beat/miss, a causation — and leaves bare numbers alone.
 const BOLD_PATTERNS = [
-  /\b(?:₹|Rs\.?|INR|US\$|USD|\$)\s*\d[\d,]*(?:\.\d+)?\s*(?:bn|mn|cr|crore|k|m|b|trn)?\b/gi,  // currency
-  /\b\d+(?:\.\d+)?\s*(?:%|bps|x\b|MW\b|GW\b|TEU\b|kt|mt|ktpa|mtpa|mn ton|kg)\b/gi,           // pct/multiples/units
-  /\b(?:[1-4]Q|H[12]|FY)\d{2,4}[A-Z]?\b/gi,                                                   // quarter labels
-  /\b(?:raised|raises|cut|cuts|lowered|hikes?|hiked|upgrade(?:d|s)?|downgrade(?:d|s)?|reiterate(?:d|s)?|maintained?|beat|miss(?:ed)?|exceeded|outperformed|underperformed)\b/gi,
+  // 1. Confidence / optimism clauses anchored to a sentiment verb.
+  //    e.g. "confident of achieving its 1bnt cargo target by 2030".
+  /\b(?:confident|optimistic|bullish|positive|encouraged|comfortable)\s+(?:of|on|about|in)\s+[^.,;:!?]{6,80}/gi,
+
+  // 2. Targets / guides / expects / aims / sees / forecasts clauses with
+  //    substantive context after the verb (≥10 chars).
+  /\b(?:expects?|expecting|anticipates?|aims?\s+(?:to|for|at)|targets?\b|guides?\s+(?:to|for|at)|sees?\b|projects?|forecasts?|aspires?\s+to|plans?\s+to)\s+[^.,;:!?]{10,80}/gi,
+
+  // 3. Rating + (optional) TP combo. Captures "maintain OW with a new
+  //    PT of Rs.1,660", "reiterate ADD with a Fair Value of ₹1,900",
+  //    "raises rating to Buy".
+  /\b(?:reiterates?|maintains?|raises?|cuts?|lowers?|hikes?|upgrades?|downgrades?|initiates?(?:\s+with)?|stays?(?:\s+(?:at|on))?)\s+(?:to\s+)?(?:Buy|Sell|Hold|ADD|REDUCE|Overweight|Underweight|Outperform|Underperform|Neutral|OW|UW|EW|MP|OP|UP)(?:\s+rating)?(?:\s+with\s+(?:a\s+)?(?:PT|TP|target|Fair\s*Value|FV)\s*(?:of\s+)?(?:₹|Rs\.?|INR|US\$|USD|\$)\s*[\d,]+(?:\.\d+)?(?:\s*(?:bn|cr|crore))?)?/gi,
+
+  // 4. Standalone Fair Value / Price Target statements.
+  /\b(?:Fair\s*Value|Price\s*Target|target\s*price)\s+(?:of|at|to)?\s*(?:₹|Rs\.?|INR|US\$|USD|\$)\s*[\d,]+(?:\.\d+)?(?:\s*(?:bn|cr|crore))?/gi,
+
+  // 5. "new PT of Rs1,660" / "raises TP to ₹520" — TP-action statements.
+  /\b(?:new\s+(?:PT|TP|target)|PT\s+(?:to|of)|TP\s+(?:to|of)|raises?\s+(?:PT|TP|target)|cuts?\s+(?:PT|TP|target))\s+(?:to\s+)?(?:₹|Rs\.?|INR|US\$|USD|\$)\s*[\d,]+(?:\.\d+)?/gi,
+
+  // 6. Key / main driver / catalyst / risk phrases with the trailing
+  //    noun phrase (when present).
+  /\b(?:key|main|primary|biggest|major)\s+(?:driver|catalyst|tailwind|headwind|risk|positive|trigger|swing\s+factor)s?\b(?:\s+(?:is|are|remains?|being|to|for)\s+[^.,;:!?]{5,60})?/gi,
+
+  // 7. Beat / miss outcomes WITH context (so we don't bold a lone "beat").
+  /\b(?:beat|miss(?:ed)?|exceeded|surpassed|outperformed|underperformed)\s+(?:our\s+|the\s+)?(?:estimates?|expectations?|consensus|forecast|guidance|JPMe|KIE|JEFe|UBSe|MSe|BBGe)(?:\s+(?:by|on)\s+[^.,;:!?]{2,40})?/gi,
+
+  // 8. Causation phrases — "driven by ...", "supported by ...".
+  /\b(?:driven\s+by|supported\s+by|aided\s+by|underpinned\s+by|fuel(?:l?)ed\s+by|powered\s+by)\s+[^.,;:!?]{6,60}/gi,
 ];
 function boldify(text){
-  // Apply each pattern, taking care not to double-wrap.
   let out = text;
   for (const re of BOLD_PATTERNS){
-    out = out.replace(re, m => {
-      // skip if already inside ** markers (cheap check on adjacent chars
-      // — the result is good enough for v1)
-      return '**' + m + '**';
-    });
+    out = out.replace(re, m => '**' + m + '**');
   }
-  // collapse adjacent bold runs.
+  // collapse adjacent bold runs (** ** ** → single).
   out = out.replace(/\*\*\s*\*\*/g, ' ');
   return out;
 }
