@@ -1507,6 +1507,14 @@
 
       <div class="card reveal">
         <div class="card-h"><div>
+          <h3>MF SIP Flows</h3>
+          <p id="sipSub">Monthly SIP contribution · AMFI</p>
+        </div></div>
+        <div class="chart-box" id="sipBox" style="height:220px"><canvas id="sipChart"></canvas></div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-h"><div>
           <h3>MF Category Flows</h3>
           <p id="mfCatSub">Net equity-MF flows + AUM by category · AMFI</p>
         </div></div>
@@ -1549,14 +1557,6 @@
             <tbody id="mfPosBody"><tr><td colspan="3" style="padding:20px;text-align:center;color:var(--text-mute)">Loading MF positioning…</td></tr></tbody>
           </table>
         </div>
-      </div>
-
-      <div class="card reveal">
-        <div class="card-h"><div>
-          <h3>MF SIP Flows</h3>
-          <p id="sipSub">Monthly SIP contribution · AMFI</p>
-        </div></div>
-        <div class="chart-box" id="sipBox" style="height:220px"><canvas id="sipChart"></canvas></div>
       </div>
     </div>
 
@@ -6743,14 +6743,20 @@ async function loadSipFlows(){
       'Monthly SIP contribution (₹ cr) · AMFI · latest ₹'+Math.round(latest).toLocaleString('en-IN')+' cr ('+mon(d.asOf)+')'+
       (d.sipAum?' · SIP AUM ₹'+(d.sipAum/100000).toFixed(1)+'L cr':'')+(d.sipAccounts?' · '+d.sipAccounts+' cr accounts':'');
     if(sipChart){ sipChart.destroy(); sipChart=null; }
+    const yoy=d.sip.map((v,i)=> (i>=12 && v!=null && d.sip[i-12]!=null) ? +((v/d.sip[i-12]-1)*100).toFixed(1) : null);
     sipChart=new Chart(cv,{ type:'bar',
-      data:{labels:d.months.map(secMonLbl),datasets:[{data:d.sip.map(v=>v==null?0:v),backgroundColor:d.sip.map(v=>v==null?'#646c7c':'#3fc78a'),borderWidth:0,categoryPercentage:.8,barPercentage:.9}]},
+      data:{labels:d.months.map(secMonLbl),datasets:[
+        {label:'SIP (₹ cr)',type:'bar',data:d.sip.map(v=>v==null?null:v),backgroundColor:d.sip.map(v=>v==null?'#646c7c':'#3fc78a'),borderWidth:0,categoryPercentage:.8,barPercentage:.9,order:2,yAxisID:'y'},
+        {label:'YoY %',type:'line',data:yoy,borderColor:'#e9a23b',borderWidth:1.6,pointRadius:0,pointHoverRadius:4,pointHoverBackgroundColor:'#e9a23b',tension:.15,spanGaps:true,fill:false,order:1,yAxisID:'y1'}
+      ]},
       options:{responsive:true,maintainAspectRatio:false,devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
-        plugins:{legend:{display:false},
+        interaction:{mode:'index',intersect:false},
+        plugins:{legend:{display:true,position:'bottom',labels:{color:'#a9b0c0',font:{family:'IBM Plex Mono',size:10},boxWidth:14,boxHeight:8,padding:12,usePointStyle:true}},
           tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:10,
-            callbacks:{ label:x=> d.sip[x.dataIndex]==null?'no data':'  ₹'+Math.round(d.sip[x.dataIndex]).toLocaleString('en-IN')+' cr' }}},
+            callbacks:{ label:x=>{ if(x.dataset.label==='YoY %') return x.parsed.y==null?'':'  YoY: '+(x.parsed.y>=0?'+':'')+x.parsed.y.toFixed(1)+'%'; return d.sip[x.dataIndex]==null?'  no data':'  ₹'+Math.round(d.sip[x.dataIndex]).toLocaleString('en-IN')+' cr'; } }}},
         scales:{ x:{grid:{display:false},border:{display:false},ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},maxRotation:0,autoSkip:true,maxTicksLimit:14}},
-          y:{grid:{color:'#1f2530'},border:{display:false},grace:'6%',ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},callback:v=>(v/1000).toFixed(0)+'k'}} } }
+          y:{position:'left',min:20000,grid:{color:'#1f2530'},border:{display:false},grace:'6%',ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},callback:v=>(v/1000).toFixed(0)+'k'},title:{display:true,text:'SIP (₹ cr)',color:'#646c7c',font:{family:'IBM Plex Mono',size:9}}},
+          y1:{position:'right',grid:{display:false},border:{display:false},grace:'8%',ticks:{color:'#e9a23b',font:{family:'IBM Plex Mono',size:10},callback:v=>v+'%'},title:{display:true,text:'YoY %',color:'#e9a23b',font:{family:'IBM Plex Mono',size:9}}} } }
     });
   }catch(e){
     const b=document.getElementById('sipBox'); if(b) b.innerHTML='<p style="color:var(--text-mute);text-align:center;padding:60px 0">SIP data unavailable — could not load <code>data/sip_flows.json</code>.</p>';
