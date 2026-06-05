@@ -4638,6 +4638,15 @@ function wlRenderResearch(){
   const pool=[...(typeof notes==='undefined'?[]:notes), ...(typeof notesExt==='undefined'?[]:notesExt)]
     .filter(n=>n && n.length>=4 && set.has(wlNormCo(n[2])))
     .map(n=>[n[0],n[1],n[2],n[3],n[4]||null]);
+  // Prev TP / Prev call history: matched current rows + older matched
+  // reports from notesPrior, keyed (house|company), newest-first.
+  const wlPrior=(typeof notesPrior==='undefined'?[]:notesPrior)
+    .filter(n=>n && n.length>=4 && set.has(wlNormCo(n[2])))
+    .map(n=>[n[0],n[1],n[2],n[3]]);
+  const wlHist={};
+  [...pool.map(r=>[r[0],r[1],r[2],r[3]]),...wlPrior].forEach(r=>{ const k=r[0]+'|'+r[2]; (wlHist[k]=wlHist[k]||[]).push(r); });
+  Object.keys(wlHist).forEach(k=>wlHist[k].sort((a,b)=>a[1]<b[1]?1:-1));
+  const wlFindPrior=(house,co,date)=>{ const arr=wlHist[house+'|'+co]||[]; return arr.find(r=>r[1]<date)||null; };
   // Keep only reports from the past 2 days. Anchor the window on the newest
   // matched report date (robust to the runtime clock vs the dataset's dates).
   if(pool.length){
@@ -4672,20 +4681,30 @@ function wlRenderResearch(){
   const urlFor=(folder,house,headline,date,explicit)=>{ if(explicit)return explicit; if(PM){ const tk=String(headline).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,''); const p=PM[house+'|'+date+'|'+folder+'|'+tk]; if(p){const u=fileUrl(p); if(u)return u;} } return 'https://www.google.com/search?q='+encodeURIComponent(house+' '+folder+' '+headline); };
   const PD=(typeof PDFDATA==='undefined'||!PDFDATA)?null:PDFDATA;
   const pdKey=(h,d,co,ti)=>h+'|'+d+'|'+co+'|'+String(ti).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
-  const header='<div class="n-header"><span class="n-date">Date</span><span class="n-co">Company</span><span class="n-ti">Headline</span><span class="n-tp">TP</span><span class="n-call-h">Call</span></div>';
+  const header='<div class="n-header"><span class="n-date">Date</span><span class="n-co">Company</span><span class="n-ti">Headline</span><span class="n-tp">Curr TP</span><span class="n-call-h">Curr</span><span class="n-tp prev">Prev TP</span><span class="n-call-h">Prev</span></div>';
+  const tpNum=s=>{ if(!s)return null; const m=String(s).replace(/[,₹\s]/g,'').match(/^([\d.]+)/); return m?parseFloat(m[1]):null; };
   const body=shown.map(r=>{
     const h=r[0],d=r[1],co=r[2],ti=r[3],u=r[4];
     const href=urlFor(co,h,ti,d,u);
     const pd=PD?PD[pdKey(h,d,co,ti)]:null;
-    const tp=(pd&&pd.currTP)||tpOf(ti);
+    const currTP=(pd&&pd.currTP)||tpOf(ti);
     const c=(pd&&pd.currCall)?{label:pd.currCall,cls:CT[String(pd.currCall).toUpperCase()]||'hold'}:callOf(ti);
-    const tpCell=tp?'<span class="n-tp">₹'+esc(String(tp).replace(/^₹/,''))+'</span>':'<span class="n-tp muted">—</span>';
+    const prior=wlFindPrior(h,co,d);
+    const priorPd=(PD&&prior)?PD[pdKey(prior[0],prior[1],prior[2],prior[3])]:null;
+    const prevTP=(pd&&pd.prevTP)||(priorPd&&priorPd.currTP)||(prior?tpOf(prior[3]):null);
+    const prevCallStr=(pd&&pd.prevCall)||(priorPd&&priorPd.currCall);
+    const prevC=prevCallStr?{label:prevCallStr,cls:CT[String(prevCallStr).toUpperCase()]||'hold'}:(prior?callOf(prior[3]):null);
+    const cN=tpNum(currTP),pN=tpNum(prevTP);
+    const arrow=(cN!=null&&pN!=null&&cN!==pN)?(cN>pN?'<span class="tp-arrow up" title="Raised from ₹'+esc(String(prevTP).replace(/^₹/,''))+'">▲</span>':'<span class="tp-arrow down" title="Cut from ₹'+esc(String(prevTP).replace(/^₹/,''))+'">▼</span>'):'';
+    const tpCurr=currTP?'<span class="n-tp">₹'+esc(String(currTP).replace(/^₹/,''))+arrow+'</span>':'<span class="n-tp muted">—</span>';
+    const tpPrev=prevTP?'<span class="n-tp prev">₹'+esc(String(prevTP).replace(/^₹/,''))+'</span>':'<span class="n-tp prev muted">—</span>';
+    const callCurr='<span class="n-call '+c.cls+'">'+esc(c.label)+'</span>';
+    const callPrev=prevC?'<span class="n-call prev '+prevC.cls+'">'+esc(prevC.label)+'</span>':'<span class="n-call prev empty">—</span>';
     return '<div class="note">'+
       '<span class="n-date">'+fmtD(d)+'</span>'+
       '<span class="n-co" title="'+esc(co)+'">'+esc(co)+'</span>'+
       '<a class="n-ti" href="'+esc(href)+'" target="_blank" rel="noopener" title="'+esc(ti)+'">'+esc(ti)+'</a>'+
-      tpCell+
-      '<span class="n-call '+c.cls+'">'+esc(c.label)+'</span>'+
+      tpCurr+callCurr+tpPrev+callPrev+
     '</div>';
   }).join('');
   el.innerHTML=header+body;
