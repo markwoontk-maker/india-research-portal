@@ -1,17 +1,21 @@
-# India Highs Refresher — routine prompt
+# India Highs Refresher — prompt
 
-Paste this into the routine's **Initial message** field at
-https://claude.ai/code/routines (create a new routine if there isn't one yet).
+Invoked by `scripts/build-highs.ps1` (a step in the local `scripts/daily-refresh.ps1`
+pipeline that runs at **9:30 AM MYT Mon–Fri**, i.e. ~7:00 AM IST — before market
+open, picking up yesterday's NSE post-close ATH / 52-week-high lists).
 
-Suggested cron (UTC): `30 11 * * 1-5` — Mon–Fri 11:30 UTC ≈ 5:00 PM IST, after the NSE close.
+The wrapper calls `claude -p` with this prompt body, then validates the
+resulting `data/highs.json` structure and reverts on failure. **Do NOT commit
+or push from inside this prompt** — `daily-refresh.ps1` stages `data/highs.json`
+with the rest of the day's changes and pushes once at the end.
+
 Repo: `markwoontk-maker/india-research-portal` · branch `main`.
 
 ---
 
 You refresh the **All-Time High + 52-Week High** card on the India Research
-Portal dashboard. Run once a day after the Indian market closes and commit a
-single fresh `data/highs.json` to the repo. The static page picks it up via the
-fetch at the bottom of index.html — no other code changes.
+Portal dashboard by writing a single fresh `data/highs.json`. The static page
+picks it up via the fetch at the bottom of index.html — no other code changes.
 
 ### Inputs (free, no API key)
 
@@ -52,21 +56,13 @@ Rules:
   filtering. Sort by 52w-high descending; cap at 30 rows.
 - Skip rows where you can't extract a clean numeric `cmp` or high.
 - If both lists come back empty, **do not overwrite** the file — leave the
-  previous day's snapshot in place.
-
-### Commit + push
-
-After writing, commit with:
-
-```
-chore: refresh data/highs.json (YYYY-MM-DD)
-```
-
-and push to `main`. GitHub Pages auto-publishes within ~1 minute.
+  previous day's snapshot in place. The wrapper script also detects an
+  empty-both result and reverts.
 
 ### Failure mode
 
 If either source page is unreachable (HTTP error / parser returns 0 rows for
-both lists), **abort without committing** and email a one-line note to
-markworktk@gmail.com saying which source failed. The page falls back to the
-previous `data/highs.json` automatically — no further action needed.
+both lists), **leave `data/highs.json` unchanged** and exit. The wrapper
+validates the result and reverts on any structural / empty failure, so the
+dashboard keeps showing the previous day's snapshot. No email needed — the
+daily-refresh log captures the failure.

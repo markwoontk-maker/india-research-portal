@@ -66,6 +66,10 @@ Inline citation format: `(<Abbrev>, YYYY/MM/DD)`. Used in `data/companies.json` 
 | KS | Khambatta Securities |
 | PL | Prabhudas Lilladhar |
 
+## ATH + 52-week-high card
+- The Overview tab's **All-Time-High / 52-Week-High** card reads `data/highs.json` `{asOf, ath:[{name,cmp,ath}], w52:[{name,cmp,w52h}]}` via the lightweight overlay at the bottom of index.html (`HI_ATH`/`HI_W52` are `let`, not `const`, so the JSON overrides the inline seed). Skip-if-stale: if the fetch fails the page falls back to the committed seed.
+- **Refresher (LOCAL):** `scripts/build-highs.ps1` (a step in `scripts/daily-refresh.ps1`) runs the Claude headless miner against `docs/highs-refresher-prompt.md`. Sources: Dhan ATH list + Groww `?index=GIDXNIFTY500` 52WH list + the Nifty 500 constituents CSV. Validates JSON structure (asOf format, ath/w52 arrays, required fields per row, non-empty) and reverts on failure. Always exits 0 so it never aborts the rest of the daily refresh. `daily-refresh.ps1` stages `data/highs.json` with the rest of the day's diffs and pushes once at the end. **No cloud routine** — same git-push gotcha as the FII/DII refresher.
+
 ## Research refresher routine
 - **Trigger:** `trig_018gy39x8QiAfrp9UxSPzPyA` — "India Research Notes Refresher"
 - **URL:** https://claude.ai/code/routines/trig_018gy39x8QiAfrp9UxSPzPyA
