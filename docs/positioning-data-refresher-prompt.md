@@ -112,11 +112,34 @@ where `change` ∈ `new | raised | trimmed | removed | held` and each side caps
 you can infer the MoM move. Preserve a house's existing `url` if its source page
 is unchanged.
 
+## 2b. `data/mf_categories.json` — MF category flows (AMFI, **APPEND-ONLY**)
+
+Powers the "MF Category Flows" card on the Positioning tab. Official AMFI net
+inflows + AUM for the **6 equity cap categories** (canonical names: `Large Cap`,
+`Large & Mid Cap`, `Mid Cap`, `Small Cap`, `Multi Cap`, `Flexi Cap`). Run on the
+**17th** (after AMFI's ~10th-of-month release).
+
+1. Fetch the latest completed month's category **net inflow (₹ cr)** + **AUM**.
+   Source: AMFI monthly (`amfiindia.com/research-information/amfi-monthly`, often
+   flaky on a direct hit — try WebFetch/proxy); **fallback** the finnovate monthly
+   MF blogs (`finnovate.in/learn/blog/mutual-fund-data-<month>-2026`) cross-checked
+   vs upstox/ventura/moneycontrol. A category with no clean figure → `null`.
+2. **APPEND-ONLY:** if `asOf` advanced to a new month, append that month to
+   `months` and to each category's `hist`; update each category's `flow`(=hist
+   last), `flowPrev`(=hist 2nd-last), `aum`, `aumShare`(=round(aum/Σaum×100,1)).
+   **NEVER trim older months** — the history grows forever (a new bar each month).
+   If `asOf` is unchanged (already current), leave the file untouched.
+3. Keep the shape: `{ asOf, prevAsOf, months:[…asc…],
+   categories:[{ name, flow, flowPrev, aum, aumShare, hist:[…aligned to months…] }] }`,
+   exactly the 6 categories, `hist.length === months.length` per category, UTF-8
+   no BOM. Never fabricate a figure.
+
 ## 3. Validate, commit, push
 
 ```bash
 node -e "const d=require('./data/fpi_sectors.json'); if(!d.sectors.length) throw 'empty'; if(!d.months||d.months.length!==12) throw 'months!=12'; d.sectors.forEach(s=>{['name','flow','flowPrev','fpiWt','idxWt','ow'].forEach(k=>{if(s[k]===undefined) throw k+' on '+s.name}); if(!Array.isArray(s.hist)||s.hist.length!==d.months.length) throw 'hist len '+s.name; if(s.hist[s.hist.length-1]!==s.flow) throw 'hist/flow mismatch '+s.name}); console.log('sectors ok', d.sectors.length, '| 12-mo hist ok')"
 node -e "const d=require('./data/model_portfolios.json'); const ok=new Set(['new','raised','trimmed','removed','held']); if(!d.houses.length) throw 'no houses'; d.houses.forEach(h=>h.overweight.concat(h.underweight).forEach(s=>{if(!('ticker' in s)||!s.stock) throw 'bad row '+h.broker; if(!ok.has(s.change)) throw 'bad change '+s.change})); console.log('houses ok', d.houses.length)"
+node -e "const d=require('./data/mf_categories.json'); if(d.categories.length!==6) throw 'cats'; if(!d.months.length) throw 'no months'; d.categories.forEach(c=>{['name','flow','flowPrev','aum','aumShare'].forEach(k=>{if(c[k]===undefined) throw k+' on '+c.name}); if(!Array.isArray(c.hist)||c.hist.length!==d.months.length) throw 'hist len '+c.name; if(c.hist[c.hist.length-1]!==c.flow) throw 'flow!=hist[last] '+c.name}); console.log('mf categories ok', d.categories.length, '|', d.months.length, 'months (append-only)')"
 ```
 
 Commit only the file(s) that actually changed and push to `main`:
