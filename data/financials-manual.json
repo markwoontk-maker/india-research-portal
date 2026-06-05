@@ -4,28 +4,226 @@
     "currency": "₹ cr",
     "metrics": {
       "revenue": {
-        "FY23": {"tag":"A","avg":127539.5,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":127539.5}]},
-        "FY24": {"tag":"A","avg":96421.0,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":96421.0}]},
-        "FY25": {"tag":"A","avg":97894.8,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":97894.8}]},
-        "FY26": {"tag":"A","avg":100468.6,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":100468.6}]},
-        "FY27": {"tag":"E","avg":148921.9,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":148921.9}]},
-        "FY28": {"tag":"E","avg":164156.8,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":164156.8}]}
+        "FY23": {
+          "tag": "A",
+          "avg": 127539.5,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 127539.5
+            }
+          ]
+        },
+        "FY24": {
+          "tag": "A",
+          "avg": 96421,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 96421
+            }
+          ]
+        },
+        "FY25": {
+          "tag": "A",
+          "avg": 97894.8,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 97894.8
+            }
+          ]
+        },
+        "FY26": {
+          "tag": "A",
+          "avg": 100468.6,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 100468.6
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 148921.9,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 148921.9
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 164156.8,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 164156.8
+            }
+          ]
+        }
       },
       "ebitda": {
-        "FY23": {"tag":"A","avg":10012.3,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":10012.3}]},
-        "FY24": {"tag":"A","avg":13237.1,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":13237.1}]},
-        "FY25": {"tag":"A","avg":16722.4,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":16722.4}]},
-        "FY26": {"tag":"A","avg":16463.8,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":16463.8}]},
-        "FY27": {"tag":"E","avg":21056.4,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":21056.4}]},
-        "FY28": {"tag":"E","avg":24988.1,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":24988.1}]}
+        "FY23": {
+          "tag": "A",
+          "avg": 10012.3,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 10012.3
+            }
+          ]
+        },
+        "FY24": {
+          "tag": "A",
+          "avg": 13237.1,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 13237.1
+            }
+          ]
+        },
+        "FY25": {
+          "tag": "A",
+          "avg": 16722.4,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 16722.4
+            }
+          ]
+        },
+        "FY26": {
+          "tag": "A",
+          "avg": 16463.8,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 16463.8
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 21056.4,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 21056.4
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 24988.1,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 24988.1
+            }
+          ]
+        }
       },
       "netProfit": {
-        "FY23": {"tag":"A","avg":2833.3,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":2833.3}]},
-        "FY24": {"tag":"A","avg":3954.9,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":3954.9}]},
-        "FY25": {"tag":"A","avg":3166.2,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":3166.2}]},
-        "FY26": {"tag":"A","avg":1782.9,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":1782.9}]},
-        "FY27": {"tag":"E","avg":3981.6,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":3981.6}]},
-        "FY28": {"tag":"E","avg":4679.7,"brokers":[{"name":"Jefferies","date":"260602","url":"file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf","value":4679.7}]}
+        "FY23": {
+          "tag": "A",
+          "avg": 2833.3,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 2833.3
+            }
+          ]
+        },
+        "FY24": {
+          "tag": "A",
+          "avg": 3954.9,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 3954.9
+            }
+          ]
+        },
+        "FY25": {
+          "tag": "A",
+          "avg": 3166.2,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 3166.2
+            }
+          ]
+        },
+        "FY26": {
+          "tag": "A",
+          "avg": 1782.9,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 1782.9
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 3981.6,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 3981.6
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 4679.7,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
+              "value": 4679.7
+            }
+          ]
+        }
       }
     },
     "segments": {
@@ -35,25 +233,706 @@
         "source": "Exhibit 41 — AEL Segmentwise Projections (pages 21-22)",
         "metrics": {
           "revenue": {
-            "Trading/Mining":      {"FY23":106014.8,"FY24":70847.1,"FY25":50030.8,"FY26":38450.6,"FY27":42161.8,"FY28":40486.1},
-            "ANIL":                {"FY23":3537.0,  "FY24":8571.0, "FY25":13965.4,"FY26":15399.0,"FY27":17716.0,"FY28":25290.4},
-            "Airport":             {"FY23":5986.0,  "FY24":8061.5, "FY25":10223.0,"FY26":13215.4,"FY27":16198.9,"FY28":18603.9},
-            "Road":                {"FY23":4907.3,  "FY24":7177.1, "FY25":9694.1, "FY26":6347.2, "FY27":6664.5, "FY28":6997.8},
-            "Copper":              {"FY23":null,    "FY24":null,   "FY25":2291.3, "FY26":15284.3,"FY27":53820.0,"FY28":59800.0},
-            "Others":              {"FY23":7094.4,  "FY24":1764.4, "FY25":11690.1,"FY26":11772.0,"FY27":12360.6,"FY28":12978.7},
-            "Total":               {"FY23":127539.5,"FY24":96421.0,"FY25":97894.8,"FY26":100468.6,"FY27":148921.9,"FY28":164156.8}
+            "Trading/Mining": {
+              "FY23": 106014.8,
+              "FY24": 70847.1,
+              "FY25": 50030.8,
+              "FY26": 38450.6,
+              "FY27": 42161.8,
+              "FY28": 40486.1
+            },
+            "ANIL": {
+              "FY23": 3537,
+              "FY24": 8571,
+              "FY25": 13965.4,
+              "FY26": 15399,
+              "FY27": 17716,
+              "FY28": 25290.4
+            },
+            "Airport": {
+              "FY23": 5986,
+              "FY24": 8061.5,
+              "FY25": 10223,
+              "FY26": 13215.4,
+              "FY27": 16198.9,
+              "FY28": 18603.9
+            },
+            "Road": {
+              "FY23": 4907.3,
+              "FY24": 7177.1,
+              "FY25": 9694.1,
+              "FY26": 6347.2,
+              "FY27": 6664.5,
+              "FY28": 6997.8
+            },
+            "Copper": {
+              "FY23": null,
+              "FY24": null,
+              "FY25": 2291.3,
+              "FY26": 15284.3,
+              "FY27": 53820,
+              "FY28": 59800
+            },
+            "Others": {
+              "FY23": 7094.4,
+              "FY24": 1764.4,
+              "FY25": 11690.1,
+              "FY26": 11772,
+              "FY27": 12360.6,
+              "FY28": 12978.7
+            },
+            "Total": {
+              "FY23": 127539.5,
+              "FY24": 96421,
+              "FY25": 97894.8,
+              "FY26": 100468.6,
+              "FY27": 148921.9,
+              "FY28": 164156.8
+            }
           },
           "ebitda": {
-            "Trading/Mining":      {"FY23":5971.0,  "FY24":7247.0, "FY25":6180.0, "FY26":4332.0, "FY27":5234.9, "FY28":5287.8},
-            "ANIL":                {"FY23":412.0,   "FY24":2297.0, "FY25":4776.0, "FY26":4532.0, "FY27":4798.1, "FY28":6404.0},
-            "Airport":             {"FY23":1682.0,  "FY24":2437.0, "FY25":3480.0, "FY26":5394.0, "FY27":6623.9, "FY28":8016.2},
-            "Road":                {"FY23":1983.0,  "FY24":1231.0, "FY25":1769.0, "FY26":1362.0, "FY27":2292.6, "FY28":2493.2},
-            "Copper":              {"FY23":null,    "FY24":null,   "FY25":null,   "FY26":260.0,  "FY27":1494.0, "FY28":1867.5},
-            "Others (incl Defence)":{"FY23":-22.7,  "FY24":25.1,   "FY25":517.4,  "FY26":583.7,  "FY27":612.9,  "FY28":919.4},
-            "Total":               {"FY23":10025.3, "FY24":13237.1,"FY25":16722.4,"FY26":16463.8,"FY27":21056.4,"FY28":24988.1}
+            "Trading/Mining": {
+              "FY23": 5971,
+              "FY24": 7247,
+              "FY25": 6180,
+              "FY26": 4332,
+              "FY27": 5234.9,
+              "FY28": 5287.8
+            },
+            "ANIL": {
+              "FY23": 412,
+              "FY24": 2297,
+              "FY25": 4776,
+              "FY26": 4532,
+              "FY27": 4798.1,
+              "FY28": 6404
+            },
+            "Airport": {
+              "FY23": 1682,
+              "FY24": 2437,
+              "FY25": 3480,
+              "FY26": 5394,
+              "FY27": 6623.9,
+              "FY28": 8016.2
+            },
+            "Road": {
+              "FY23": 1983,
+              "FY24": 1231,
+              "FY25": 1769,
+              "FY26": 1362,
+              "FY27": 2292.6,
+              "FY28": 2493.2
+            },
+            "Copper": {
+              "FY23": null,
+              "FY24": null,
+              "FY25": null,
+              "FY26": 260,
+              "FY27": 1494,
+              "FY28": 1867.5
+            },
+            "Others (incl Defence)": {
+              "FY23": -22.7,
+              "FY24": 25.1,
+              "FY25": 517.4,
+              "FY26": 583.7,
+              "FY27": 612.9,
+              "FY28": 919.4
+            },
+            "Total": {
+              "FY23": 10025.3,
+              "FY24": 13237.1,
+              "FY25": 16722.4,
+              "FY26": 16463.8,
+              "FY27": 21056.4,
+              "FY28": 24988.1
+            }
           }
         }
       }
     }
+  },
+  "Adani Ports and SEZ": {
+    "currency": "₹ cr",
+    "metrics": {
+      "revenue": {
+        "FY26": {
+          "tag": "A",
+          "avg": 38735.8,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260602%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Capacity%20Crunch%20to%20Drive%20Next%20Leg%20of%20Upside.pdf",
+              "value": 38735.8
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 43915,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260602%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Capacity%20Crunch%20to%20Drive%20Next%20Leg%20of%20Upside.pdf",
+              "value": 43915
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 52222.9,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260602",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260602%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Capacity%20Crunch%20to%20Drive%20Next%20Leg%20of%20Upside.pdf",
+              "value": 52222.9
+            }
+          ]
+        }
+      },
+      "ebitda": {},
+      "netProfit": {}
+    },
+    "notes": "Front-page FY (Mar) 2026A-2028E table — Revenue only on front page"
+  },
+  "Apollo Hospitals": {
+    "currency": "₹ cr",
+    "metrics": {
+      "revenue": {},
+      "ebitda": {
+        "FY26": {
+          "tag": "A",
+          "avg": 4292.7,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260521",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apollo%20Hospitals/%5B260521%5D%20%5BJefferies%5D%20Apollo%20Hospitals%20-%20Strong%20Mar-Q%20and%20Robust%20Outlook%2C%20BUY.pdf",
+              "value": 4292.7
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 5146.1,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260521",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apollo%20Hospitals/%5B260521%5D%20%5BJefferies%5D%20Apollo%20Hospitals%20-%20Strong%20Mar-Q%20and%20Robust%20Outlook%2C%20BUY.pdf",
+              "value": 5146.1
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 6475.9,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260521",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apollo%20Hospitals/%5B260521%5D%20%5BJefferies%5D%20Apollo%20Hospitals%20-%20Strong%20Mar-Q%20and%20Robust%20Outlook%2C%20BUY.pdf",
+              "value": 6475.9
+            }
+          ]
+        }
+      },
+      "netProfit": {
+        "FY26": {
+          "tag": "A",
+          "avg": 1445.9,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260521",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apollo%20Hospitals/%5B260521%5D%20%5BJefferies%5D%20Apollo%20Hospitals%20-%20Strong%20Mar-Q%20and%20Robust%20Outlook%2C%20BUY.pdf",
+              "value": 1445.9
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 1956.1,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260521",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apollo%20Hospitals/%5B260521%5D%20%5BJefferies%5D%20Apollo%20Hospitals%20-%20Strong%20Mar-Q%20and%20Robust%20Outlook%2C%20BUY.pdf",
+              "value": 1956.1
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 2518.8,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260521",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apollo%20Hospitals/%5B260521%5D%20%5BJefferies%5D%20Apollo%20Hospitals%20-%20Strong%20Mar-Q%20and%20Robust%20Outlook%2C%20BUY.pdf",
+              "value": 2518.8
+            }
+          ]
+        }
+      }
+    },
+    "notes": "Front-page Adj.PAT (₹m) FY26A-FY28E + Estimates Revision EBITDA (₹m)"
+  },
+  "Eicher Motors": {
+    "currency": "₹ cr",
+    "metrics": {
+      "revenue": {
+        "FY26": {
+          "tag": "A",
+          "avg": 23407.6,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260522",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
+              "value": 23407.6
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 27402.8,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260522",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
+              "value": 27402.8
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 31684.9,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260522",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
+              "value": 31684.9
+            }
+          ]
+        },
+        "FY29": {
+          "tag": "E",
+          "avg": 36407.6,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260522",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
+              "value": 36407.6
+            }
+          ]
+        }
+      },
+      "ebitda": {
+        "FY26": {
+          "tag": "A",
+          "avg": 5785.1,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260522",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
+              "value": 5785.1
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 6809.1,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260522",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
+              "value": 6809.1
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 8049.3,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260522",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
+              "value": 8049.3
+            }
+          ]
+        },
+        "FY29": {
+          "tag": "E",
+          "avg": 9341.5,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260522",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
+              "value": 9341.5
+            }
+          ]
+        }
+      },
+      "netProfit": {
+        "FY26": {
+          "tag": "A",
+          "avg": 5556.8,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260522",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
+              "value": 5556.8
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 6366.6,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260522",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
+              "value": 6366.6
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 7398.1,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260522",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
+              "value": 7398.1
+            }
+          ]
+        },
+        "FY29": {
+          "tag": "E",
+          "avg": 8534.9,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260522",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
+              "value": 8534.9
+            }
+          ]
+        }
+      }
+    },
+    "notes": "Front-page FY (Mar) 2026A-2029E table"
+  },
+  "IndiGo": {
+    "currency": "₹ cr",
+    "metrics": {
+      "revenue": {
+        "FY26": {
+          "tag": "A",
+          "avg": 84961.9,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 84961.9
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 97520.6,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 97520.6
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 114076.9,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 114076.9
+            }
+          ]
+        }
+      },
+      "ebitda": {
+        "FY26": {
+          "tag": "A",
+          "avg": 12720,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 12720
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 17746.6,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 17746.6
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 28310.7,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 28310.7
+            }
+          ]
+        }
+      },
+      "netProfit": {
+        "FY26": {
+          "tag": "A",
+          "avg": -2502.5,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": -2502.5
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 2038.6,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 2038.6
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 7918.3,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 7918.3
+            }
+          ]
+        }
+      }
+    },
+    "notes": "Front-page FY (Mar) 2026A-2028E table"
+  },
+  "InterGlobe Aviation": {
+    "currency": "₹ cr",
+    "metrics": {
+      "revenue": {
+        "FY26": {
+          "tag": "A",
+          "avg": 84961.9,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 84961.9
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 97520.6,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 97520.6
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 114076.9,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 114076.9
+            }
+          ]
+        }
+      },
+      "ebitda": {
+        "FY26": {
+          "tag": "A",
+          "avg": 12720,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 12720
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 17746.6,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 17746.6
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 28310.7,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 28310.7
+            }
+          ]
+        }
+      },
+      "netProfit": {
+        "FY26": {
+          "tag": "A",
+          "avg": -2502.5,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": -2502.5
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 2038.6,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 2038.6
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 7918.3,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260529",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
+              "value": 7918.3
+            }
+          ]
+        }
+      }
+    },
+    "notes": "Front-page FY (Mar) 2026A-2028E table"
+  },
+  "State Bank of India": {
+    "currency": "₹ cr",
+    "metrics": {
+      "revenue": {},
+      "ebitda": {},
+      "netProfit": {
+        "FY26": {
+          "tag": "E",
+          "avg": 80030,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260525",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/State%20Bank%20of%20India/%5B260525%5D%20%5BJefferies%5D%20State%20Bank%20of%20India%20-%20Roadshow%20Feedback%2C%20Balancing%20Growth%20%26%20Profits%2C%20Investing%20in.pdf",
+              "value": 80030
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 79610,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260525",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/State%20Bank%20of%20India/%5B260525%5D%20%5BJefferies%5D%20State%20Bank%20of%20India%20-%20Roadshow%20Feedback%2C%20Balancing%20Growth%20%26%20Profits%2C%20Investing%20in.pdf",
+              "value": 79610
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 90690,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260525",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/State%20Bank%20of%20India/%5B260525%5D%20%5BJefferies%5D%20State%20Bank%20of%20India%20-%20Roadshow%20Feedback%2C%20Balancing%20Growth%20%26%20Profits%2C%20Investing%20in.pdf",
+              "value": 90690
+            }
+          ]
+        },
+        "FY29": {
+          "tag": "E",
+          "avg": 102170,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260525",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/State%20Bank%20of%20India/%5B260525%5D%20%5BJefferies%5D%20State%20Bank%20of%20India%20-%20Roadshow%20Feedback%2C%20Balancing%20Growth%20%26%20Profits%2C%20Investing%20in.pdf",
+              "value": 102170
+            }
+          ]
+        }
+      }
+    },
+    "notes": "Front-page FY (Mar) 2026E-2029E table (banks: Net Profit only)"
   }
 }
