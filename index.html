@@ -6755,7 +6755,7 @@ async function loadSipFlows(){
           tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:10,
             callbacks:{ label:x=>{ if(x.dataset.label==='YoY %') return x.parsed.y==null?'':'  YoY: '+(x.parsed.y>=0?'+':'')+x.parsed.y.toFixed(1)+'%'; return d.sip[x.dataIndex]==null?'  no data':'  ₹'+Math.round(d.sip[x.dataIndex]).toLocaleString('en-IN')+' cr'; } }}},
         scales:{ x:{grid:{display:false},border:{display:false},ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},maxRotation:0,autoSkip:true,maxTicksLimit:14}},
-          y:{position:'left',min:20000,grid:{color:'#1f2530'},border:{display:false},grace:'6%',ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},callback:v=>(v/1000).toFixed(0)+'k'},title:{display:true,text:'SIP (₹ cr)',color:'#646c7c',font:{family:'IBM Plex Mono',size:9}}},
+          y:{position:'left',min:18000,grid:{color:'#1f2530'},border:{display:false},grace:'6%',ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},callback:v=>(v/1000).toFixed(0)+'k'},title:{display:true,text:'SIP (₹ cr)',color:'#646c7c',font:{family:'IBM Plex Mono',size:9}}},
           y1:{position:'right',grid:{display:false},border:{display:false},grace:'8%',ticks:{color:'#e9a23b',font:{family:'IBM Plex Mono',size:10},callback:v=>v+'%'},title:{display:true,text:'YoY %',color:'#e9a23b',font:{family:'IBM Plex Mono',size:9}}} } }
     });
   }catch(e){
