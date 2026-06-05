@@ -320,6 +320,46 @@ function thesisItem(r){
     url,
   };
 }
+// Bold-mark key phrases inside a sentence. Heuristic: numbers + units
+// (percentages, currency, multiples, capacity), quarterly tags and
+// "raised/cut" verbs near a TP get wrapped in **bold** markers. The UI
+// converts these to <b>...</b>.
+const BOLD_PATTERNS = [
+  /\b(?:₹|Rs\.?|INR|US\$|USD|\$)\s*\d[\d,]*(?:\.\d+)?\s*(?:bn|mn|cr|crore|k|m|b|trn)?\b/gi,  // currency
+  /\b\d+(?:\.\d+)?\s*(?:%|bps|x\b|MW\b|GW\b|TEU\b|kt|mt|ktpa|mtpa|mn ton|kg)\b/gi,           // pct/multiples/units
+  /\b(?:[1-4]Q|H[12]|FY)\d{2,4}[A-Z]?\b/gi,                                                   // quarter labels
+  /\b(?:raised|raises|cut|cuts|lowered|hikes?|hiked|upgrade(?:d|s)?|downgrade(?:d|s)?|reiterate(?:d|s)?|maintained?|beat|miss(?:ed)?|exceeded|outperformed|underperformed)\b/gi,
+];
+function boldify(text){
+  // Apply each pattern, taking care not to double-wrap.
+  let out = text;
+  for (const re of BOLD_PATTERNS){
+    out = out.replace(re, m => {
+      // skip if already inside ** markers (cheap check on adjacent chars
+      // — the result is good enough for v1)
+      return '**' + m + '**';
+    });
+  }
+  // collapse adjacent bold runs.
+  out = out.replace(/\*\*\s*\*\*/g, ' ');
+  return out;
+}
+
+// Render an array of thesisItems as a single paragraph: each sentence
+// is bolded then followed by its (broker, date) citation. The UI splits
+// the paragraph by citation markers and renders each citation as a
+// clickable anchor.
+function paragraphify(items){
+  if (!items || !items.length) return null;
+  return items.map(it => {
+    const sentence = boldify(it.text || '').replace(/\s*$/, '');
+    const cite = `[CITE:${it.broker}|${it.date}|${encodeURIComponent(it.url||'')}|${it.page||1}]`;
+    // make sure each sentence ends in a period before the citation
+    const punct = /[.!?…]$/.test(sentence) ? '' : '.';
+    return sentence + punct + ' ' + cite;
+  }).join(' ');
+}
+
 function buildFor(company){
   const pool = poolFor(company);
   if (!pool.length) return null;
@@ -347,6 +387,7 @@ function buildFor(company){
       const tk = it.text.toLowerCase().slice(0, 80);
       if (seenText.has(tk)) continue;
       seenText.add(tk);
+      it.page = 1;     // default — most extracted sentences come from page 1
       out.push(it);
       if (out.length >= (n||3)) break;
     }
@@ -359,8 +400,89 @@ function buildFor(company){
   // ("driven by", "key driver", "catalyst", "headwind", "tailwind",
   // "supports", "weighs on", "fuels", "boosts", "drags", etc.).
   const driverItems = extractDrivers(pool, 6);
-  if (!bullItems.length && !bearItems.length && !driverItems.length) return null;
-  return { bull: bullItems, bear: bearItems, drivers: driverItems };
+  // ---- per-broker latest "House Views" -------------------------------
+  // For each broker covering this name, distil their LATEST report's
+  // summary into 2-3 sentences as a flowing paragraph. Ordered newest
+  // report first.
+  const byHouse = {};
+  for (const r of pool){
+    if (!byHouse[r.house] || byHouse[r.house].date < r.date) byHouse[r.house] = r;
+  }
+  const houseViews = Object.values(byHouse)
+    .sort((a,b) => b.date.localeCompare(a.date))
+    .map(r => {
+      const text = (r.pd && r.pd.summary) || stripRatingPrefix(String(r.headline||''));
+      const sents = distillToSentences(text).filter(s => !isBadSentence(s)).slice(0, 3);
+      if (!sents.length) return null;
+      const para = sents.map(s => boldify(s)).join(' ');
+      const url = urlFor(company, r.house, r.headline, r.date, r.explicit);
+      return {
+        broker: abbrevOf(r.house),
+        brokerFull: r.house,
+        date: r.date,
+        url,
+        page: 1,
+        direction: r._dir,            // bull / bear / neutral
+        paragraph: para,
+      };
+    }).filter(Boolean).slice(0, 8);
+  // ---- conflicting views: ratings + TP spread -------------------------
+  const ratings = [];
+  for (const h of Object.keys(byHouse)){
+    const r = byHouse[h];
+    let label = '';
+    if (r.pd && r.pd.currCall) label = r.pd.currCall.toUpperCase();
+    else {
+      const m = String(r.headline||'').match(CALL_RE) || String(r.headline||'').match(BARE_RE);
+      if (m) label = CALL_NORM((m[1]||m[0]).toUpperCase());
+    }
+    if (!label) continue;
+    const dir = CALL_DIR[label] || 'neutral';
+    ratings.push({ broker: abbrevOf(r.house), brokerFull: r.house, date: r.date, label, dir,
+      url: urlFor(company, r.house, r.headline, r.date, r.explicit) });
+  }
+  // Detect rating divergence: at least one bull AND at least one bear.
+  const bullishHouses = ratings.filter(x => x.dir === 'bull');
+  const bearishHouses = ratings.filter(x => x.dir === 'bear');
+  const conflicts = [];
+  if (bullishHouses.length && bearishHouses.length){
+    conflicts.push({
+      topic: 'Rating',
+      bullish: bullishHouses,
+      bearish: bearishHouses,
+    });
+  }
+  // Detect TP spread (max/min > 1.3x) when 2+ brokers have TPs.
+  const tps = [];
+  for (const h of Object.keys(byHouse)){
+    const r = byHouse[h];
+    if (r.pd && r.pd.currTP){
+      const n = parseFloat(String(r.pd.currTP).replace(/[,₹\s]/g,''));
+      if (n > 0) tps.push({ broker: abbrevOf(r.house), brokerFull: r.house, date: r.date,
+        url: urlFor(company, r.house, r.headline, r.date, r.explicit), tp: n, tpStr: r.pd.currTP });
+    }
+  }
+  if (tps.length >= 2){
+    const sorted = tps.slice().sort((a,b)=>b.tp-a.tp);
+    const high = sorted[0], low = sorted[sorted.length-1];
+    if (high.tp / low.tp >= 1.30){
+      conflicts.push({
+        topic: 'TP',
+        spread: +(high.tp / low.tp).toFixed(2) + 'x',
+        high, low, all: sorted,
+      });
+    }
+  }
+  if (!bullItems.length && !bearItems.length && !driverItems.length && !houseViews.length) return null;
+  return {
+    bull: bullItems,
+    bear: bearItems,
+    drivers: driverItems,
+    bullParagraph: paragraphify(bullItems),
+    bearParagraph: paragraphify(bearItems),
+    houseViews,
+    conflicts,
+  };
 }
 
 // ---- driver extraction --------------------------------------------------

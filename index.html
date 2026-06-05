@@ -565,6 +565,36 @@
   .driver-list li:last-child{border-bottom:none}
   .driver-list li::before{content:"›";position:absolute;left:2px;top:9px;
     color:var(--text-mute);font-family:'Roboto Mono',monospace;font-size:14px}
+  /* House Views card */
+  .house-view{padding:12px 14px;border-left:3px solid var(--text-mute);
+    margin-bottom:10px;background:var(--ink-2);border-radius:6px}
+  .house-view:last-child{margin-bottom:0}
+  .house-view.bull{border-left-color:var(--up)}
+  .house-view.bear{border-left-color:var(--down)}
+  .house-view.neutral{border-left-color:var(--saffron)}
+  .house-view-h{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+  .house-view-h b{font-family:'Fraunces',serif;font-size:13.5px;color:var(--text)}
+  .house-view-meta{font-family:'Roboto Mono',monospace;font-size:10.5px;color:var(--text-mute)}
+  .house-view-body{margin:0;font-size:13px;line-height:1.7}
+  .house-view-body b{color:var(--text);font-weight:600}
+  /* Conflicting Views card */
+  .conf-block{padding:10px 0;border-top:1px solid var(--line-soft)}
+  .conf-block:first-child{border-top:none;padding-top:0}
+  .conf-h{font-family:'Fraunces',serif;font-size:13.5px;font-weight:600;color:var(--text);
+    margin-bottom:8px;display:flex;align-items:baseline;gap:8px}
+  .conf-meta{font-family:'Roboto Mono',monospace;font-size:11px;color:var(--saffron);font-weight:600}
+  .conf-row{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;margin-bottom:6px}
+  .conf-side{font-size:11.5px;color:var(--text-mute);margin-right:4px;font-weight:500}
+  .conf-chip{display:inline-block;font-size:11px;font-weight:600;padding:3px 8px;
+    border-radius:5px;border:1px solid var(--line);background:var(--ink-2);
+    font-family:'Inter',sans-serif;letter-spacing:.01em}
+  .conf-chip.buy{background:var(--up-soft);color:var(--up);border-color:rgba(63,199,138,.30)}
+  .conf-chip.sell{background:var(--down-soft);color:var(--down);border-color:rgba(240,106,106,.30)}
+  .conf-chip.hold,.conf-chip.neutral{background:var(--saffron-soft);color:var(--saffron);border-color:rgba(233,162,59,.30)}
+  .conf-chip-a{text-decoration:none}
+  .conf-chip-a:hover .conf-chip{filter:brightness(1.15)}
+  .conf-note{font-size:11.5px;color:var(--text-mute);margin-top:4px;line-height:1.55}
+  .conf-note b{color:var(--text-dim);font-weight:600}
   /* Financial summary card — one table per metric, years across the top,
      research houses down the left. */
   .fin-section{margin-top:14px}
@@ -1710,6 +1740,26 @@
         </div>
         <ul id="cDriversList" class="driver-list"></ul>
         <p class="co-desc-src">Surfaces sentences from each broker's PDF body summary that name a driver, catalyst, tailwind or headwind. One sentence per broker-report, deduped across brokers when the wording is near-identical.</p>
+      </div>
+      <!-- House Views: 1 short paragraph per broker, ordered by most-
+           recent report; **bold** key metrics + citation linked to the
+           source PDF (page-anchored). -->
+      <div class="card reveal" id="cHouseViewsCard" hidden>
+        <div class="card-h">
+          <div><h3>House Views</h3>
+          <p id="cHouseViewsSub">Each broker's latest take on the company — one short paragraph apiece</p></div>
+        </div>
+        <div id="cHouseViewsBody"></div>
+        <p class="co-desc-src">A bull / bear / neutral bar on the left of each block reflects the broker's current rating direction. Bold = key metrics surfaced from the PDF body. Citation opens the PDF at the relevant page (where supported by the browser's PDF viewer).</p>
+      </div>
+      <!-- Conflicting Views: surfaces rating divergence and TP spread -->
+      <div class="card reveal" id="cConflictsCard" hidden>
+        <div class="card-h">
+          <div><h3>Conflicting Views</h3>
+          <p>Where the houses disagree — rating direction and target-price spread</p></div>
+        </div>
+        <div id="cConflictsBody"></div>
+        <p class="co-desc-src">Surfaces a "Rating divergence" block when ≥1 broker is bullish AND ≥1 is bearish, and a "Target-price spread" block when the highest TP is ≥1.30× the lowest. Click any chip to open the underlying report.</p>
       </div>
       <!-- Financial summary distilled from each broker's latest estimate
            table — averages plus a click-to-expand per-broker breakdown
@@ -5220,6 +5270,8 @@ fetch('data/theses.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=
   window.THESES=j;
   if(typeof renderCompanyThesis==='function') renderCompanyThesis();
   if(typeof renderCompanyDrivers==='function') renderCompanyDrivers();
+  if(typeof renderCompanyHouseViews==='function') renderCompanyHouseViews();
+  if(typeof renderCompanyConflicts==='function') renderCompanyConflicts();
 }).catch(()=>{});
 // Financial summary per company (Revenue / EBITDA / Net Profit by FY)
 // built by scripts/build-financials.js from each broker's latest report.
@@ -5907,6 +5959,42 @@ function renderSectorSummary(){ renderSectorTab(); }
 // from data/theses.json (built by scripts/build-theses.js) and each
 // ends with a clickable (ABBR, MM/YY) citation that opens the broker's
 // PDF in a new tab.
+// Helpers shared across the new Bull/Bear paragraph, House Views and
+// Conflicting Views renderers.
+const THESIS_ESC = s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function thesisCite(broker, date, url, page){
+  const d=String(date||'');
+  if(d.length<6) return '';
+  const yy=d.slice(0,2), mm=d.slice(2,4);
+  const label=`(${broker||'?'}, ${mm}/${yy})`;
+  if(url){
+    // page-anchor (#page=N) jumps the PDF viewer to that page; most
+    // browsers (Chrome, Edge, Firefox built-in viewer) and Adobe
+    // Acrobat respect it. Falls back gracefully when ignored.
+    const href = page ? url + '#page=' + page : url;
+    return `<a class="thesis-cite" href="${THESIS_ESC(href)}" target="_blank" rel="noopener" title="${THESIS_ESC(broker||'')} · ${THESIS_ESC(d)} · open at page ${page||1}">${THESIS_ESC(label)}</a>`;
+  }
+  return `<span class="thesis-cite">${THESIS_ESC(label)}</span>`;
+}
+
+// Turn a paragraph containing **bold** markers and [CITE:Broker|Date|EncodedURL|Page]
+// markers into HTML — bold tags + clickable citations.
+function renderParagraphMarkup(text){
+  if(!text) return '<span class="empty">No reports captured for this side.</span>';
+  // 1. Escape HTML first.
+  let out = THESIS_ESC(text);
+  // 2. **bold** → <b>...</b>
+  out = out.replace(/\*\*(.+?)\*\*/g, (m, inner) => '<b>'+inner+'</b>');
+  // 3. [CITE:broker|date|encodedUrl|page] → clickable chip
+  out = out.replace(/\[CITE:([^|\]]*)\|([^|\]]*)\|([^|\]]*)\|([^\]]*)\]/g, (m, broker, date, encUrl, page) => {
+    try {
+      const url = encUrl ? decodeURIComponent(encUrl) : '';
+      return thesisCite(broker, date, url, +page||1);
+    } catch { return m; }
+  });
+  return out;
+}
+
 function renderCompanyThesis(){
   const card=document.getElementById('cThesisCard');
   const bullEl=document.getElementById('cBull');
@@ -5919,37 +6007,111 @@ function renderCompanyThesis(){
     card.hidden=true; return;
   }
   const T=(window.THESES||{})[currentCompany];
-  if(!T || (!Array.isArray(T.bull) && !Array.isArray(T.bear)) ||
-     (!(T.bull && T.bull.length) && !(T.bear && T.bear.length))){
-    card.hidden=true; return;
-  }
+  if(!T){ card.hidden=true; return; }
+  const hasBull = T.bullParagraph || (Array.isArray(T.bull) && T.bull.length);
+  const hasBear = T.bearParagraph || (Array.isArray(T.bear) && T.bear.length);
+  if (!hasBull && !hasBear){ card.hidden=true; return; }
   card.hidden=false;
-  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  // yymmdd → MM/YY (the format the user requested).
-  function fmtCite(item){
-    const d=String(item.date||'');
-    if(d.length<6) return '';
-    const yy=d.slice(0,2), mm=d.slice(2,4);
-    const label=`(${item.broker||'?'}, ${mm}/${yy})`;
-    if(item.url){
-      return `<a class="thesis-cite" href="${esc(item.url)}" target="_blank" rel="noopener" title="${esc(item.broker||'')} · ${esc(d)}">${esc(label)}</a>`;
-    }
-    return `<span class="thesis-cite">${esc(label)}</span>`;
-  }
-  function renderList(arr){
-    if(!arr || !arr.length) return '<span class="empty">No reports captured for this side.</span>';
-    return arr.map(item=>{
-      const text=esc(item.text||'').replace(/\s*[.!?…]\s*$/,'.'); // ensure single closing punctuation
-      const cite=fmtCite(item);
+  // New schema (bullParagraph/bearParagraph) is preferred. Fall back to
+  // the legacy `bull`/`bear` arrays when the paragraph form isn't present.
+  function renderSide(paragraph, list){
+    if(paragraph) return renderParagraphMarkup(paragraph);
+    if(!list || !list.length) return '<span class="empty">No reports captured for this side.</span>';
+    return list.map(item=>{
+      const text=THESIS_ESC(item.text||'').replace(/\s*[.!?…]\s*$/,'.');
+      const cite=thesisCite(item.broker, item.date, item.url, item.page||1);
       return text + (cite ? ' '+cite : '');
     }).join(' ');
   }
-  bullEl.innerHTML=renderList(T.bull);
-  bearEl.innerHTML=renderList(T.bear);
+  bullEl.innerHTML=renderSide(T.bullParagraph, T.bull);
+  bearEl.innerHTML=renderSide(T.bearParagraph, T.bear);
   if(subEl){
     const nB=(T.bull||[]).length, nb=(T.bear||[]).length;
-    subEl.textContent=`Distilled from ${nB+nb} broker report${nB+nb===1?'':'s'} — citations link to the source PDF`;
+    subEl.textContent=`Distilled from ${nB+nb} broker report${nB+nb===1?'':'s'} — bold = key metrics · citations link to the source PDF (page-anchored)`;
   }
+}
+
+// House Views card — one short paragraph per broker, ordered by most-
+// recent report. Each broker's paragraph is distilled from their PDF
+// body summary, with **bold** key metrics and a clickable citation
+// linking to the source PDF.
+function renderCompanyHouseViews(){
+  const card=document.getElementById('cHouseViewsCard');
+  const body=document.getElementById('cHouseViewsBody');
+  const sub=document.getElementById('cHouseViewsSub');
+  if(!card||!body) return;
+  if(!currentCompany ||
+     (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany))){
+    card.hidden=true; return;
+  }
+  const T=(window.THESES||{})[currentCompany];
+  const views = (T && Array.isArray(T.houseViews)) ? T.houseViews : [];
+  if(!views.length){ card.hidden=true; return; }
+  card.hidden=false;
+  const blocks = views.map(v=>{
+    const para = renderParagraphMarkup(v.paragraph||'');
+    const yy = (v.date||'').slice(0,2);
+    const mm = (v.date||'').slice(2,4);
+    const cite = thesisCite(v.broker, v.date, v.url, v.page||1);
+    const dirCls = v.direction==='bull' ? 'bull' : v.direction==='bear' ? 'bear' : 'neutral';
+    return `<div class="house-view ${dirCls}">
+      <div class="house-view-h"><b>${THESIS_ESC(v.brokerFull||v.broker)}</b>
+        <span class="house-view-meta">${mm}/${yy}</span></div>
+      <p class="co-desc house-view-body">${para} ${cite}</p>
+    </div>`;
+  }).join('');
+  body.innerHTML = blocks;
+  if(sub){
+    sub.textContent = `${views.length} broker${views.length===1?'':'s'} covering this name · most-recent report first · click any citation to open the PDF at the source page`;
+  }
+}
+
+// Conflicting Views card — surfaces rating divergence (bullish vs
+// bearish brokers) and material TP spread when present.
+function renderCompanyConflicts(){
+  const card=document.getElementById('cConflictsCard');
+  const body=document.getElementById('cConflictsBody');
+  if(!card||!body) return;
+  if(!currentCompany ||
+     (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany))){
+    card.hidden=true; return;
+  }
+  const T=(window.THESES||{})[currentCompany];
+  const conflicts = (T && Array.isArray(T.conflicts)) ? T.conflicts : [];
+  if(!conflicts.length){ card.hidden=true; return; }
+  card.hidden=false;
+  function chip(broker, label, url, dir){
+    const cls = dir==='bull'?'buy':dir==='bear'?'sell':'hold';
+    const inner = `<span class="conf-chip ${cls}">${THESIS_ESC(broker)} · ${THESIS_ESC(label||'')}</span>`;
+    return url ? `<a href="${THESIS_ESC(url)}" target="_blank" rel="noopener" class="conf-chip-a">${inner}</a>` : inner;
+  }
+  const fmtCurr = v => '₹' + Number(v).toLocaleString('en-IN');
+  const blocks = conflicts.map(c=>{
+    if(c.topic==='Rating'){
+      const bullish = (c.bullish||[]).map(b => chip(b.broker, b.label, b.url, 'bull')).join(' ');
+      const bearish = (c.bearish||[]).map(b => chip(b.broker, b.label, b.url, 'bear')).join(' ');
+      return `<div class="conf-block">
+        <div class="conf-h">Rating divergence</div>
+        <div class="conf-row"><span class="conf-side">Bullish:</span> ${bullish}</div>
+        <div class="conf-row"><span class="conf-side">Bearish:</span> ${bearish}</div>
+        <p class="conf-note">${(c.bullish||[]).length} broker${(c.bullish||[]).length===1?'':'s'} positive vs ${(c.bearish||[]).length} negative — click a chip to open the source report.</p>
+      </div>`;
+    }
+    if(c.topic==='TP'){
+      const allChips = (c.all||[]).map(t => {
+        const url = t.url ? (t.url + '#page=1') : '';
+        const inner = `<span class="conf-chip neutral">${THESIS_ESC(t.broker)} ${fmtCurr(t.tp)}</span>`;
+        return url ? `<a href="${THESIS_ESC(url)}" target="_blank" rel="noopener" class="conf-chip-a">${inner}</a>` : inner;
+      }).join(' ');
+      return `<div class="conf-block">
+        <div class="conf-h">Target-price spread <span class="conf-meta">${THESIS_ESC(c.spread||'')}</span></div>
+        <div class="conf-row">${allChips}</div>
+        <p class="conf-note">Highest TP <b>${THESIS_ESC(c.high?.broker||'?')} ${fmtCurr(c.high?.tp)}</b> vs lowest <b>${THESIS_ESC(c.low?.broker||'?')} ${fmtCurr(c.low?.tp)}</b> — a ${THESIS_ESC(c.spread||'')} spread suggests genuine disagreement on the story.</p>
+      </div>`;
+    }
+    return '';
+  }).join('');
+  body.innerHTML = blocks;
 }
 
 // Stock Drivers card — bullet list of sentences from broker PDFs that
@@ -6158,7 +6320,7 @@ async function loadCompanyChart(name, tf){
   const isSector = currentCompany && (typeof SECTOR_NAMES!=='undefined') && SECTOR_NAMES.has(currentCompany);
   const chartCard = document.getElementById('cChartCard');
   if (chartCard) chartCard.hidden = !!isSector;
-  if (name) { updateCoDesc(); renderCompanyResearch(); renderCompanyNews(name); renderCompanyThesis(); renderCompanyDrivers(); renderCompanyFinancials(); }
+  if (name) { updateCoDesc(); renderCompanyResearch(); renderCompanyNews(name); renderCompanyThesis(); renderCompanyDrivers(); renderCompanyHouseViews(); renderCompanyConflicts(); renderCompanyFinancials(); }
   if (isSector) return;
   // Sync the segmented control highlight to the current timeframe.
   document.querySelectorAll('#cRangeSeg button').forEach(b=>{
