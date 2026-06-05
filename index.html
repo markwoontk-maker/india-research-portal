@@ -4638,14 +4638,21 @@ function wlRenderResearch(){
   const pool=[...(typeof notes==='undefined'?[]:notes), ...(typeof notesExt==='undefined'?[]:notesExt)]
     .filter(n=>n && n.length>=4 && set.has(wlNormCo(n[2])))
     .map(n=>[n[0],n[1],n[2],n[3],n[4]||null]);
+  // Keep only reports from the past 2 days. Anchor the window on the newest
+  // matched report date (robust to the runtime clock vs the dataset's dates).
+  if(pool.length){
+    const DAY=864e5, ymd=d=>{ d=String(d); return new Date(2000+(+d.slice(0,2)), (+d.slice(2,4))-1, +d.slice(4,6)).getTime(); };
+    const newest=Math.max.apply(null,pool.map(r=>ymd(r[1]))), cutoff=newest-2*DAY;
+    for(let i=pool.length-1;i>=0;i--) if(ymd(pool[i][1])<cutoff) pool.splice(i,1);
+  }
   const normT=t=>String(t).replace(/\s*\(\d+\)\s*$/,'').trim().toLowerCase();
   pool.sort((a,b)=>String(b[1]).localeCompare(String(a[1])));
   const seen=new Set(); const rows=[];
   pool.forEach(r=>{ const k=r[0]+'|'+r[1]+'|'+r[2]+'|'+normT(r[3]); if(seen.has(k))return; seen.add(k); rows.push(r); });
   const MAX=20; const shown=rows.slice(0,MAX);
   if(sub) sub.textContent = rows.length
-    ? ('Latest broker reports on your watchlist names'+(rows.length>MAX?' · showing '+MAX+' of '+rows.length:' · '+rows.length))
-    : 'No recent broker reports for your watchlist names.';
+    ? ('Watchlist names · last 2 days '+'· '+(rows.length>MAX?'showing '+MAX+' of '+rows.length:rows.length+' report'+(rows.length===1?'':'s')))
+    : 'No broker reports for your watchlist names in the last 2 days.';
   if(!shown.length){ el.innerHTML=''; return; }
   const NEG=/\b(miss|misses|missed|weak|weakening|headwinds?|lacklustre|lackluster|soft(?:er)?|concerns?|pressure|hazy|delays?|cautious|defensive|impacted|pares)\b|not out of the woods|may not last/i;
   const POS=/\b(beat|beats|upgrade|outperform|strong|robust|relief|blockbuster|exemplary|positive|improving|improved|improvement|accelerate|accelerating|tailwind|momentum|ahead|exceeded|retained)\b|stay ow|turn positive|higher than/i;
