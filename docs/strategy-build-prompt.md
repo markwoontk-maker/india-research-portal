@@ -90,9 +90,13 @@ Conviction change row:
   </ul>
 </div>
 ```
-House card:
+House card. Put `data-broker` (the house tag) and `data-report` (the path,
+relative to the India Related Reports root, of THIS house's India sector report
+that the card's views are based on) on the `<h4>` — the page turns the house name
+into a link to that report. Use these for JPMorgan, Nomura and CLSA (the houses
+with a formal India sector report); omit `data-report` for houses without one.
 ```
-<div class="house"><h4>JPMorgan <span class="src">· dates</span></h4>
+<div class="house"><h4 data-broker="JPMorgan" data-report="India Strategy/[YYMMDD] [JPMorgan] India Equity Strategy - ….pdf">JPMorgan <span class="src">· dates</span></h4>
   <div class="stance">one-line stance</div>
   <div class="pk-label">Recommended</div>
   <div class="chips"><span class="chip">Name</span>…</div>
