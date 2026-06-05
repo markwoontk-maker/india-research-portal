@@ -1,9 +1,11 @@
 # Daily research portal refresh.
 #
-# Runs Mon-Fri at 09:35 Malaysia time (= local time on this PC) via
-# Windows Task Scheduler. Assumes a separate upstream step has
-# already renamed and sorted any new PDFs into the
-# India Related Reports library on disk.
+# Triggered by Windows Task Scheduler ~90 s after the upstream
+# "Sorting Folder Rename" task finishes (event 102 on the rename task's
+# completion). That task downloads + renames + sorts any new broker PDFs
+# into the India Related Reports library on disk before this script runs;
+# we inherit its schedule (currently Mon-Fri, but if it's promoted to
+# every day this refresh follows automatically -- no edit needed here).
 #
 # End-to-end workflow:
 #   1. Rebuild data/pdfmap.json from the local PDF library on disk.
