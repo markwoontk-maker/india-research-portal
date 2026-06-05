@@ -294,6 +294,19 @@
     opacity:0;transition:opacity .12s;vertical-align:middle}
   #wlHold tr:hover .wl-move,#wlCov tr:hover .wl-move,#wlWatch tr:hover .wl-move{opacity:1}
   .wl-move:focus{opacity:1;outline:none;border-color:var(--saffron)}
+  /* watchlist: Nifty 500 performance strip */
+  .n500-h{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+  .n500-h h3{font-family:'Fraunces',serif;font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .n500-h p{font-size:12px;color:var(--text-mute);margin-top:4px}
+  .n500-ltp{font-family:'IBM Plex Mono';font-size:20px;font-weight:600;color:var(--text)}
+  .n500-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .n500-cell{display:flex;flex-direction:column;gap:5px;padding:12px 14px;
+    border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+  .n500-k{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--text-mute)}
+  .n500-v{font-family:'IBM Plex Mono';font-size:17px;font-weight:600;color:var(--text-dim)}
+  .n500-v.up{color:var(--up)} .n500-v.down{color:var(--down)}
+  @media(max-width:560px){.n500-grid{grid-template-columns:repeat(2,1fr)}}
   /* earnings / corporate feed (email-style, no links) */
   .ec-tk{font-family:'Roboto Mono';font-weight:700;font-size:12.5px;margin-right:9px;
     white-space:nowrap}
@@ -1565,6 +1578,16 @@
 
     <div id="viewWatchlist" hidden>
       <datalist id="wlCompanyList"></datalist>
+      <div class="card reveal wl-n500" id="wlN500Card">
+        <div class="n500-h"><div><h3>Nifty 500</h3><p>Benchmark · ^CRSLDX · Yahoo Finance</p></div>
+          <div class="n500-ltp" id="wlN500Ltp">—</div></div>
+        <div class="n500-grid">
+          <div class="n500-cell"><span class="n500-k">1D</span><span class="n500-v" id="wlN500_d1">—</span></div>
+          <div class="n500-cell"><span class="n500-k">1W</span><span class="n500-v" id="wlN500_w1">—</span></div>
+          <div class="n500-cell"><span class="n500-k">1M</span><span class="n500-v" id="wlN500_m1">—</span></div>
+          <div class="n500-cell"><span class="n500-k">YTD</span><span class="n500-v" id="wlN500_ytd">—</span></div>
+        </div>
+      </div>
       <div class="card reveal">
         <div class="card-h"><div><h3>Current Holdings</h3><p>Live prices · NSE</p></div>
           <div class="wl-add"><input list="wlCompanyList" id="wlAddHold" placeholder="Add stock…" autocomplete="off"><button data-sec="hold">Add</button></div></div>
@@ -4456,6 +4479,20 @@ function wlRows(list,map,sec){
       <td class="wl-actions">${wlMoveSel(sec)}<button class="wl-del" title="Remove ${nm}" aria-label="Remove ${nm}">✕</button></td></tr>`;
   }).join('');
 }
+function wlN500Cell(id,v){
+  const el=document.getElementById(id); if(!el) return;
+  if(v==null||isNaN(v)){ el.textContent='—'; el.className='n500-v'; return; }
+  const up=v>=0;
+  el.textContent=(up?'+':'')+v.toFixed(2)+'%';
+  el.className='n500-v '+(up?'up':'down');
+}
+function wlRenderN500(){
+  const d=wlMap['^CRSLDX']||{};
+  const ltp=document.getElementById('wlN500Ltp');
+  if(ltp) ltp.textContent=d.p!=null?inr(d.p):'—';
+  wlN500Cell('wlN500_d1',d.d1); wlN500Cell('wlN500_w1',d.w1);
+  wlN500Cell('wlN500_m1',d.m1); wlN500Cell('wlN500_ytd',d.ytd);
+}
 function wlRender(){
   for(const sec in WL_TBODY){
     const tb=document.getElementById(WL_TBODY[sec]);
@@ -4546,7 +4583,7 @@ function wlInit(){
 async function loadWatchlist(){
   wlInit();
   const all=[...WL.hold,...WL.cov,...WL.watch];
-  const syms=[...new Set(all.flatMap(x=>x[1].split('|')))];
+  const syms=[...new Set([...all.flatMap(x=>x[1].split('|')),'^CRSLDX'])];
   const map={};
   async function pull(tfKey,field,withPrice){
     const [rng,iv]=TF[tfKey]||['1d','5m'];
@@ -4567,6 +4604,7 @@ async function loadWatchlist(){
   }catch(e){}
   wlMap=map;
   wlRender();
+  wlRenderN500();
 }
 
 /* ---------- Companies tab ---------- */
