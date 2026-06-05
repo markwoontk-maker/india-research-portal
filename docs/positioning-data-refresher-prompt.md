@@ -158,12 +158,11 @@ node -e "const d=require('./data/mf_categories.json'); if(d.categories.length!==
 node -e "const d=require('./data/sip_flows.json'); if(d.sip.length!==d.months.length) throw 'sip len'; if(!d.months.length) throw 'no months'; if(typeof d.sipAum!=='number') throw 'aum'; console.log('sip ok', d.months.length, 'months (append-only)')"
 ```
 
-Commit only the file(s) that actually changed and push to `main`:
-```
-chore: refresh positioning data (fpi_sectors <asOf>, model_portfolios <asOf>)
-```
-GitHub Pages republishes within ~1 minute.
+**Do NOT git commit or push** — when run by the local `scripts/build-positioning.ps1`
+wrapper (the only supported path; the cloud routine can't push), the wrapper
+validates and the `daily-refresh.ps1` git step stages + commits + pushes whatever
+changed. Just create/update + validate the data files, then stop.
 
 **Failure mode:** if a source for one file is unreachable or yields nothing
-parseable, leave that file unchanged, refresh only the other, and note in the run
-output which source failed. Never commit empty or fabricated data.
+parseable, leave that file unchanged, refresh only the others, and note in the run
+output which source failed. Never write empty or fabricated data.
