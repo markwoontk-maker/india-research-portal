@@ -1,0 +1,56 @@
+{
+  "_note": "AMFI monthly NET INFLOWS (Rs cr) for the 6 equity cap categories, last ~12 months, plus latest-month AUM. asOf = latest COMPLETED/published AMFI month. May-2026 AMFI data not yet released as of 2026-06-05 (AMFI publishes ~10th of next month), so latest is April 2026. Net-flow figures sourced from AMFI monthly data as reported by finnovate.in, Ventura, Upstox, Outlook Money, indmoney, AngelOne, cafemutual, indiainfoline, valueresearch and HDFC Sky. Cells that could not be reliably sourced are null (not estimated). Mar-2026 column matches the supplied cross-check anchor exactly.",
+  "asOf": "2026-04",
+  "prevAsOf": "2026-03",
+  "months": ["2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04"],
+  "categories": [
+    {
+      "name": "Flexi Cap",
+      "flow": 10147.85,
+      "flowPrev": 10054.12,
+      "aum": 559366,
+      "aumShare": 23.4,
+      "hist": [3841.32, 5733, 7654.33, 7679.40, 7029.26, 8928.71, null, 10019, 7672.36, 6924.65, 10054.12, 10147.85]
+    },
+    {
+      "name": "Large Cap",
+      "flow": 2525,
+      "flowPrev": 2997.84,
+      "aum": 398835,
+      "aumShare": 16.7,
+      "hist": [1250.47, 1694, 2125.09, 2834.88, 2319.04, 971.97, 1640, null, 2004.98, 2111.68, 2997.84, 2525]
+    },
+    {
+      "name": "Large & Mid Cap",
+      "flow": 4490,
+      "flowPrev": 5307.25,
+      "aum": 335218,
+      "aumShare": 14.0,
+      "hist": [null, 3497, 5034.71, 3325.66, 3805.17, null, null, 4094, 3181.89, 3137.73, 5307.25, 4490]
+    },
+    {
+      "name": "Mid Cap",
+      "flow": 6551.40,
+      "flowPrev": 6063.53,
+      "aum": 475012,
+      "aumShare": 19.9,
+      "hist": [2808.7, 3754.40, 5182.49, 5390.62, 5085.40, 3807.11, 4487, 4176, 3185.47, 4002.99, 6063.53, 6551.40]
+    },
+    {
+      "name": "Small Cap",
+      "flow": 6885.90,
+      "flowPrev": 6263.56,
+      "aum": 392772,
+      "aumShare": 16.4,
+      "hist": [3214.21, 4024.50, 6484.43, 4992.90, 4362.91, 3476.04, 4407, 3824, 2942.11, 3881.06, 6263.56, 6885.90]
+    },
+    {
+      "name": "Multi Cap",
+      "flow": 3806.01,
+      "flowPrev": 2981.55,
+      "aum": 228691,
+      "aumShare": 9.6,
+      "hist": [null, 2794, 3990.84, 3193.05, null, 2500.43, null, 2255, 1995.23, 1933.53, 2981.55, 3806.01]
+    }
+  ]
+}
