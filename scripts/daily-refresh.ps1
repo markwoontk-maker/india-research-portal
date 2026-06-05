@@ -113,9 +113,14 @@ Step "build-strategy" {
   & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-strategy.ps1"
 }
 
+# 8b. Append the latest daily FII/DII flows (data/fii_dii.json). Done here (not
+#     the cloud routine, whose git push silently fails) so the local git step
+#     below actually publishes it. Append-only + idempotent; never throws.
+Step "refresh-fii-dii" { & $node "scripts\refresh-fii-dii.js" }
+
 # 9. Commit + push if there are any changes. No-op on a quiet day.
 Step "git stage" {
-  & git add data/pdfdata.json data/pdfmap.json data/theses.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
+  & git add data/pdfdata.json data/pdfmap.json data/theses.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
 }
 Step "git commit + push" {
   $cached = & git diff --cached --stat
