@@ -565,6 +565,11 @@
   .driver-list li:last-child{border-bottom:none}
   .driver-list li::before{content:"›";position:absolute;left:2px;top:9px;
     color:var(--text-mute);font-family:'Roboto Mono',monospace;font-size:14px}
+  /* Thesis / House Views paragraphs — each pointer is its own block */
+  .thesis-p{margin:0 0 10px 0;font-size:13px;line-height:1.7;color:var(--text-dim)}
+  .thesis-p:last-child{margin-bottom:0}
+  .thesis-p b{color:var(--text);font-weight:600}
+  .thesis-col .thesis-p{font-size:13px}
   /* House Views card */
   .house-view{padding:12px 14px;border-left:3px solid var(--text-mute);
     margin-bottom:10px;background:var(--ink-2);border-radius:6px}
@@ -6083,22 +6088,25 @@ function thesisCite(broker, date, url, page){
   return `<span class="thesis-cite">${THESIS_ESC(label)}</span>`;
 }
 
-// Turn a paragraph containing **bold** markers and [CITE:Broker|Date|EncodedURL|Page]
-// markers into HTML — bold tags + clickable citations.
+// Turn a paragraph-block string containing **bold** markers and
+// [CITE:Broker|Date|EncodedURL|Page] markers into HTML. Paragraph
+// boundaries are signalled by "\n\n"; each chunk becomes its own
+// <p class="thesis-p"> so each pointer reads as a distinct point.
 function renderParagraphMarkup(text){
-  if(!text) return '<span class="empty">No reports captured for this side.</span>';
-  // 1. Escape HTML first.
-  let out = THESIS_ESC(text);
-  // 2. **bold** → <b>...</b>
-  out = out.replace(/\*\*(.+?)\*\*/g, (m, inner) => '<b>'+inner+'</b>');
-  // 3. [CITE:broker|date|encodedUrl|page] → clickable chip
-  out = out.replace(/\[CITE:([^|\]]*)\|([^|\]]*)\|([^|\]]*)\|([^\]]*)\]/g, (m, broker, date, encUrl, page) => {
-    try {
-      const url = encUrl ? decodeURIComponent(encUrl) : '';
-      return thesisCite(broker, date, url, +page||1);
-    } catch { return m; }
-  });
-  return out;
+  if(!text) return '<p class="empty">No reports captured for this side.</p>';
+  const blocks = String(text).split(/\n{2,}/).map(s => s.trim()).filter(Boolean);
+  if(!blocks.length) return '<p class="empty">No reports captured for this side.</p>';
+  return blocks.map(chunk => {
+    let html = THESIS_ESC(chunk);
+    html = html.replace(/\*\*(.+?)\*\*/g, (m, inner) => '<b>'+inner+'</b>');
+    html = html.replace(/\[CITE:([^|\]]*)\|([^|\]]*)\|([^|\]]*)\|([^\]]*)\]/g, (m, broker, date, encUrl, page) => {
+      try {
+        const url = encUrl ? decodeURIComponent(encUrl) : '';
+        return thesisCite(broker, date, url, +page||1);
+      } catch { return m; }
+    });
+    return '<p class="thesis-p">' + html + '</p>';
+  }).join('');
 }
 
 function renderCompanyThesis(){

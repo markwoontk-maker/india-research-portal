@@ -168,7 +168,12 @@ function stripRatingPrefix(headline){
 
 // Boilerplate / metadata patterns that show up in PDF-text extractions
 // and shouldn't surface as a thesis sentence.
-const BAD_OPENS = /^(?:refer to|please refer|downloaded by|page \d|source:|see disclosure|disclosure|exhibit \d|figure \d|table \d|fig\. \d|tab\. \d|chart \d|exhibit:|appendix|copyright|all rights reserved|©|target price|price target|fair value|cmp[\s:(]|reco[\s:(]|rating[\s:(]|bloomberg|reuters|nse|bse|isin|shares outstanding|market cap[\s:]|52[- ]week|prior \(|q[1-4]fy|fy2|consensus est|kie:|our est|net revenues?\s|ebitda grew|ebit grew|preferential issue)/i;
+const BAD_OPENS = /^(?:refer to|please refer|downloaded by|page \d|source:|see disclosure|disclosure|exhibit \d|figure \d|table \d|fig\. \d|tab\. \d|chart \d|exhibit:|appendix|copyright|all rights reserved|©|target price|price target|fair value|cmp[\s:(]|reco[\s:(]|rating[\s:(]|bloomberg|reuters|nse|bse|isin|shares outstanding|market cap[\s:]|52[- ]week|prior \(|q[1-4]fy|fy2|consensus est|kie:|our est|net revenues?\s|ebitda grew|ebit grew|preferential issue|transportation cmp|metals cmp|pharma cmp|financials cmp|consumer cmp|sector view|nifty-?50)/i;
+// Kotak's standard front-page banner — "<Sector> CMP(): X Fair Value(): Y
+// Sector View: Z NIFTY-50: N <RATING> <date> ..." — gets pdftotext-glued
+// to the first sentence of the actual thesis. Strip it before sentence-
+// splitting.
+const KOTAK_BANNER = /^[A-Z][A-Za-z& ]+CMP\([^)]*\)[\s:]*[\d,]+(?:\s+Fair Value\([^)]*\)[\s:]*[\d,]+)?(?:\s+Sector View[^N]+)?(?:\s+NIFTY-?50[^A-Z]+)?(?:\s+(?:BUY|SELL|HOLD|ADD|REDUCE|ACCUMULATE|NEUTRAL))?\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s*\d{4}\s+/i;
 const ALMOST_ONLY_NUMBERS = /^[\s\d,.()%/+\-:$₹Rs\w]{0,15}$/;        // very short and numeric-dominated
 function isBadSentence(t){
   if (!t || t.length < 30) return true;
@@ -193,9 +198,16 @@ function isBadSentence(t){
   return false;
 }
 
+// Kotak follow-on: "AR2026: Investment engine starting to show its colors"
+// is the report SUBTITLE that pdftotext glues right after the banner.
+// Strip up to ~12 title words before the actual prose sentence begins
+// (a sentence usually starts with the company name + verb).
+const KOTAK_SUBTITLE = /^AR\d{4}:?\s+(?:[A-Z][a-z]+|[a-z]+|\&)(?:\s+(?:[A-Z][a-z]+|[a-z]+|\&)){1,12}\s+(?=[A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)*\s+\(|[A-Z][A-Za-z]+\s+(?:reported|continued|delivered|expects|guided|grew|posted|missed|beat|raised|announced|saw))/;
 function cleanText(t){
   return String(t)
     .replace(/[��]/g, '')                       // strip replacement chars
+    .replace(KOTAK_BANNER, '')                       // strip Kotak header banner
+    .replace(KOTAK_SUBTITLE, '')                     // strip Kotak report subtitle
     .replace(/\s+/g, ' ')
     .replace(/[‐–—]/g, '—')                          // unify dashes
     .replace(/\s*\(\d+\)\s*$/, '')                   // drop trailing " (2)"
@@ -345,19 +357,18 @@ function boldify(text){
   return out;
 }
 
-// Render an array of thesisItems as a single paragraph: each sentence
-// is bolded then followed by its (broker, date) citation. The UI splits
-// the paragraph by citation markers and renders each citation as a
-// clickable anchor.
+// Render an array of thesisItems as a STRING of paragraphs joined by
+// "\n\n" — each item gets its own paragraph block with **bold** key
+// metrics inline and a (broker, date) citation at the end. The
+// renderer in the page splits on "\n\n" and wraps each chunk in a <p>.
 function paragraphify(items){
   if (!items || !items.length) return null;
   return items.map(it => {
     const sentence = boldify(it.text || '').replace(/\s*$/, '');
     const cite = `[CITE:${it.broker}|${it.date}|${encodeURIComponent(it.url||'')}|${it.page||1}]`;
-    // make sure each sentence ends in a period before the citation
     const punct = /[.!?…]$/.test(sentence) ? '' : '.';
     return sentence + punct + ' ' + cite;
-  }).join(' ');
+  }).join('\n\n');
 }
 
 function buildFor(company){
@@ -558,6 +569,47 @@ console.log(`Bull only:        ${withBullOnly}`);
 console.log(`Bear only:        ${withBearOnly}`);
 console.log(`With drivers:     ${withDrivers}`);
 console.log(`No data found:    ${empty}`);
+
+// Merge hand-written overrides on top. Schema for each entry in
+// data/theses-manual.json:
+//   { "<Company>": {
+//       "houseViews": [{broker, brokerFull, date, url, page, direction, paragraph}],
+//       "bullParagraph": "para1\n\npara2 ...",   // optional
+//       "bearParagraph": "...",                   // optional
+//       "_replaceHouseViews": ["Kotak"]           // optional: only swap these brokers
+//     }, ... }
+// _replaceHouseViews lets you fix one broker's noisy summary while
+// keeping the auto-extracted views for the others intact.
+const MANUAL_PATH = path.join(ROOT, 'data', 'theses-manual.json');
+if (fs.existsSync(MANUAL_PATH)){
+  try {
+    const manual = JSON.parse(fs.readFileSync(MANUAL_PATH, 'utf8'));
+    let touched = 0;
+    for (const [co, override] of Object.entries(manual)){
+      if (co.startsWith('_')) continue;
+      if (!out[co]) out[co] = { bull: [], bear: [], drivers: [], houseViews: [], conflicts: [] };
+      const target = out[co];
+      // Replace named brokers in houseViews while keeping the rest.
+      const replaceSet = new Set((override._replaceHouseViews || []).map(s => s.toLowerCase()));
+      if (Array.isArray(override.houseViews)){
+        if (replaceSet.size){
+          target.houseViews = (target.houseViews || []).filter(v =>
+            !replaceSet.has((v.brokerFull||v.broker||'').toLowerCase()));
+        }
+        target.houseViews = [...override.houseViews, ...(target.houseViews||[])]
+          // newest first
+          .sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+      }
+      for (const fld of ['bullParagraph', 'bearParagraph', 'bull', 'bear', 'drivers', 'conflicts']){
+        if (override[fld] !== undefined) target[fld] = override[fld];
+      }
+      touched++;
+    }
+    console.log(`Manual overrides applied: ${touched} (from data/theses-manual.json)`);
+  } catch (e){
+    console.log('theses-manual.json parse failed:', e.message);
+  }
+}
 
 // Stable key order, one company per line for readable diffs.
 const keys = Object.keys(out).sort();
