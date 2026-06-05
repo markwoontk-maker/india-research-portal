@@ -134,12 +134,28 @@ inflows + AUM for the **6 equity cap categories** (canonical names: `Large Cap`,
    exactly the 6 categories, `hist.length === months.length` per category, UTF-8
    no BOM. Never fabricate a figure.
 
+## 2c. `data/sip_flows.json` — monthly SIP contribution (AMFI, **APPEND-ONLY**)
+
+Powers the "MF SIP Flows" chart. Official AMFI **monthly SIP contribution (₹ cr)**
+plus latest SIP AUM + accounts. Run on the **17th** (after AMFI's ~10th release).
+1. Fetch the latest completed month's **total SIP contribution (₹ cr)** and the
+   latest **SIP AUM (₹ cr)** + **SIP accounts (crore)**. Sources: AMFI monthly
+   (often flaky — WebFetch/proxy), finnovate / cafemutual / valueresearch /
+   rightadvise.com/sip-data-india.html (a clean monthly table); cross-check 2+.
+   A month with no clean figure → `null` (never fabricate/interpolate).
+2. **APPEND-ONLY:** if `asOf` advanced, append the new month to `months` and `sip`,
+   and refresh `sipAum`/`sipAccounts`/`statsAsOf`. **Never trim** older months.
+   If `asOf` unchanged, leave the file untouched.
+3. Shape: `{ asOf, months:[…asc…], sip:[…aligned, null if unknown…], sipAum,
+   sipAccounts, statsAsOf }`, `sip.length === months.length`, UTF-8 no BOM.
+
 ## 3. Validate, commit, push
 
 ```bash
 node -e "const d=require('./data/fpi_sectors.json'); if(!d.sectors.length) throw 'empty'; if(!d.months||d.months.length!==12) throw 'months!=12'; d.sectors.forEach(s=>{['name','flow','flowPrev','fpiWt','idxWt','ow'].forEach(k=>{if(s[k]===undefined) throw k+' on '+s.name}); if(!Array.isArray(s.hist)||s.hist.length!==d.months.length) throw 'hist len '+s.name; if(s.hist[s.hist.length-1]!==s.flow) throw 'hist/flow mismatch '+s.name}); console.log('sectors ok', d.sectors.length, '| 12-mo hist ok')"
 node -e "const d=require('./data/model_portfolios.json'); const ok=new Set(['new','raised','trimmed','removed','held']); if(!d.houses.length) throw 'no houses'; d.houses.forEach(h=>h.overweight.concat(h.underweight).forEach(s=>{if(!('ticker' in s)||!s.stock) throw 'bad row '+h.broker; if(!ok.has(s.change)) throw 'bad change '+s.change})); console.log('houses ok', d.houses.length)"
 node -e "const d=require('./data/mf_categories.json'); if(d.categories.length!==6) throw 'cats'; if(!d.months.length) throw 'no months'; d.categories.forEach(c=>{['name','flow','flowPrev','aum','aumShare'].forEach(k=>{if(c[k]===undefined) throw k+' on '+c.name}); if(!Array.isArray(c.hist)||c.hist.length!==d.months.length) throw 'hist len '+c.name; if(c.hist[c.hist.length-1]!==c.flow) throw 'flow!=hist[last] '+c.name}); console.log('mf categories ok', d.categories.length, '|', d.months.length, 'months (append-only)')"
+node -e "const d=require('./data/sip_flows.json'); if(d.sip.length!==d.months.length) throw 'sip len'; if(!d.months.length) throw 'no months'; if(typeof d.sipAum!=='number') throw 'aum'; console.log('sip ok', d.months.length, 'months (append-only)')"
 ```
 
 Commit only the file(s) that actually changed and push to `main`:
