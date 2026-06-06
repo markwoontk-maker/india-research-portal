@@ -156,6 +156,35 @@
      attribute must still win (an inline display:flex would override it). */
   #viewPositioning{display:flex;flex-direction:column;gap:18px}
   #viewPositioning[hidden]{display:none}
+  /* Charts gallery: grid layout, but [hidden] must still win (see Positioning note). */
+  #viewCharts{display:block}
+  #viewCharts[hidden]{display:none}
+  .gal-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:4px 0 14px}
+  .gal-search{flex:1;min-width:200px;background:var(--panel-2);border:1px solid var(--line);
+    color:var(--text);border-radius:8px;padding:8px 12px;font-size:13px;font-family:inherit}
+  .gal-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .gal-chip{background:var(--panel-2);border:1px solid var(--line);color:var(--text-dim);
+    font-size:11.5px;padding:4px 10px;border-radius:999px;cursor:pointer;transition:.12s;font-family:'Roboto Mono'}
+  .gal-chip.on{background:var(--saffron);color:#1a1206;border-color:var(--saffron);font-weight:600}
+  .gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+  .gal-card{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
+    overflow:hidden;display:flex;flex-direction:column}
+  .gal-card img{width:100%;display:block;background:#fff;cursor:zoom-in;border-bottom:1px solid var(--line)}
+  .gal-body{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+  .gal-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+  .gal-tags{display:flex;flex-wrap:wrap;gap:5px}
+  .gal-tag{font-size:10.5px;padding:2px 8px;border-radius:999px;font-family:'Roboto Mono';
+    background:var(--panel);border:1px solid var(--line);color:var(--text-dim)}
+  .gal-tag.src{border-color:var(--saffron);color:var(--saffron)}
+  .gal-tag.co{color:var(--text)}
+  .gal-note{font-size:11.5px;line-height:1.45;color:var(--text-dim)}
+  .gal-note b{color:var(--text-mute);font-weight:600}
+  .gal-empty{padding:30px;text-align:center;color:var(--text-mute)}
+  .gal-lb{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;
+    flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:30px;cursor:zoom-out}
+  .gal-lb[hidden]{display:none}
+  .gal-lb img{max-width:94vw;max-height:82vh;background:#fff;border-radius:6px}
+  .gal-lb-cap{color:#eee;font-size:12.5px;max-width:80vw;text-align:center}
 
   /* Tighter rows + room for the left-side checkbox + color swatch. */
   .stat-row{display:flex;align-items:center;gap:9px;padding:6px;
@@ -847,6 +876,10 @@
       <div class="nav-item" data-view="sector" data-title="Sector">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         Sector
+      </div>
+      <div class="nav-item" data-view="charts" data-title="Charts">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5M4 19h16M8 16l3-4 3 2 4-6"/></svg>
+        Charts
       </div>
       <div class="nav-item" data-view="watchlist" data-title="Watchlist">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M4 10h16M10 10v10"/></svg>
@@ -1883,6 +1916,21 @@
       </div>
     </div>
 
+    <div id="viewCharts" hidden>
+      <div class="card">
+        <div class="card-h"><div>
+          <h3>Charts</h3>
+          <p class="ch-sub" id="galCount">Every chart, table and exhibit pulled from the research PDFs.</p>
+        </div></div>
+        <div class="gal-controls">
+          <input id="galSearch" class="gal-search" type="search" placeholder="Search titles, companies, captions…" />
+          <div id="galChips" class="gal-chips"></div>
+        </div>
+        <div id="galGrid" class="gal-grid"></div>
+        <div id="galEmpty" class="gal-empty" hidden>No charts match these filters.</div>
+      </div>
+    </div>
+    <div id="galLightbox" class="gal-lb" hidden><img id="galLbImg" alt="" /><div id="galLbCap" class="gal-lb-cap"></div></div>
     <div id="viewSoon" hidden>
       <div class="card reveal">
         <div class="card-h"><div><h3 id="soonTitle">Section</h3><p>On the roadmap</p></div></div>
