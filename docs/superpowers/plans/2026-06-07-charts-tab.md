@@ -792,6 +792,55 @@ git commit -m "feat(charts): pilot extraction — charts.json + cropped exhibit 
 
 ---
 
+### Task 10: Auto-ingest new reports — local incremental refresher (AFTER pilot sign-off)
+
+**Gate:** Do this only after Task 9 and the user has approved the pilot's crops and
+commentary tone (the analysis prompt in `analysis_prompt.md` may be tweaked first).
+
+**Why local:** cloud CCR routines clone this repo read-only and cannot push
+(documented in `CLAUDE.md`), and the pipeline needs the local PDFs. So this mirrors
+`build-highs.ps1` / `build-positioning.ps1`: a step in `scripts/daily-refresh.ps1`
+that stages results for the daily commit+push.
+
+**Files:**
+- Create: `scripts/charts/build-charts.ps1`
+- Modify: `scripts/charts/lib.py` (the incremental scanner walks ALL folders, not just
+  `PILOT_FOLDERS` — add an `ALL_FOLDERS` scan or a `folders=None → every dir` arg to
+  the render entry point), `scripts/daily-refresh.ps1` (add the build-charts step).
+
+- [ ] **Step 1: Make rendering scope-configurable.** Refactor `render_pages.py` to
+  accept a folder list (default = every direct subdir of `REPORTS_ROOT` except
+  `Sorting Folder`), and to **skip PDFs whose `report_key` is already in
+  `data/charts.json`** (idempotent — only new reports render).
+
+- [ ] **Step 2: Write `build-charts.ps1`** modeled on `build-positioning.ps1`:
+  1. Run Phase A (incremental — new PDFs only) → if none new, exit 0 quietly.
+  2. For each new PDF, invoke **headless Claude** (`claude -p …` like `build-strategy.ps1`)
+     with `analysis_prompt.md` + the page PNG paths, capture the JSON to
+     `.charts-work/<slug>/analysis.json`. Validate JSON; skip a PDF on failure (never abort).
+  3. Run Phase C (`crop_assemble.py`) in **append mode** — load existing
+     `charts.json`, add only the new rows, rewrite. (Add an append/merge path to
+     `crop_assemble.py` keyed by `id` so existing rows/images are untouched.)
+  4. Exit 0 always (so it never breaks the rest of the daily refresh).
+
+- [ ] **Step 3: Wire into `daily-refresh.ps1`** — add a `build-charts.ps1` step
+  before the stage+commit+push block, so new crops + the updated `charts.json` ride
+  the daily push. Stage `data/charts.json` and `charts/`.
+
+- [ ] **Step 4: Test the increment.** Temporarily drop one new test PDF into a
+  folder, run `build-charts.ps1`, confirm only that report's exhibits are added to
+  `charts.json` (existing rows unchanged) and its WebP crops appear. Remove the test
+  PDF and re-run → confirm no duplicate rows (idempotent).
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add scripts/charts/build-charts.ps1 scripts/charts/render_pages.py scripts/charts/crop_assemble.py scripts/charts/lib.py scripts/daily-refresh.ps1
+git commit -m "feat(charts): local incremental auto-ingest of new reports (daily-refresh step)"
+```
+
+---
+
 ## Notes for the executor
 
 - **Re-running is cheap and safe:** Phase A re-renders idempotently; Phase B analyses are cached per-PDF on disk (skip PDFs that already have `analysis.json`); Phase C is a pure function of `index.json` + the analyses. Tune crop padding by editing one arg and re-running Phase C alone.
