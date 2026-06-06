@@ -26,7 +26,7 @@
 - `scripts/charts/analysis_prompt.md` — the Phase B subagent prompt template.
 - `scripts/charts/run.ps1` — driver: runs Phase A, prints the Phase B instructions, runs Phase C.
 - `data/charts.json` — output manifest (generated).
-- `charts/<Folder_slug>/*.png` — generated cropped exhibit images.
+- `charts/<Folder_slug>/*.webp` — generated cropped exhibit images (capped-width WebP).
 - `scripts/.charts-work/` — scratch: rendered pages + per-PDF `analysis.json` (git-ignored).
 
 **Modify:**
@@ -379,11 +379,17 @@ git commit -m "feat(charts): Phase B analysis prompt + output schema"
 
 ```python
 # scripts/charts/crop_assemble.py
-"""Phase C: read per-PDF analyses, clip-crop each exhibit, write data/charts.json."""
+"""Phase C: read per-PDF analyses, clip-crop each exhibit, write data/charts.json.
+
+Crops are saved as capped-width WebP (q80) to keep the committed image set small
+(~5-10x smaller than PNG). Run with: uv run --python 3.12 --with pymupdf --with pillow.
+"""
+import io
 import json
 from datetime import date
 from pathlib import Path
 import fitz  # PyMuPDF
+from PIL import Image
 from lib import pad_bbox, norm_to_points, source_type, company_sector, fs_slug
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -391,7 +397,9 @@ WORK = ROOT / "scripts" / ".charts-work"
 CHARTS_DIR = ROOT / "charts"
 COMPANIES = str(ROOT / "data" / "companies.json")
 OUT = ROOT / "data" / "charts.json"
-CROP_DPI = 200
+CROP_DPI = 200      # render the clip at 200 dpi, then downscale to MAX_W for storage
+MAX_W = 1100        # cap stored image width (px); charts stay crisp, files stay small
+WEBP_Q = 80         # WebP quality
 
 def main():
     index = json.loads((WORK / "index.json").read_text(encoding="utf-8"))
@@ -413,9 +421,13 @@ def main():
             page = doc[pageno - 1]
             for n, c in enumerate(charts, start=1):
                 rect = fitz.Rect(*norm_to_points(pad_bbox(c["bbox"]), w_pt, h_pt))
-                img_name = f'{pdf["slug"]}_p{pageno:02d}_{n}.png'
+                img_name = f'{pdf["slug"]}_p{pageno:02d}_{n}.webp'
                 (CHARTS_DIR / folder_seg).mkdir(parents=True, exist_ok=True)
-                page.get_pixmap(clip=rect, dpi=CROP_DPI).save(CHARTS_DIR / folder_seg / img_name)
+                pix = page.get_pixmap(clip=rect, dpi=CROP_DPI)
+                img = Image.open(io.BytesIO(pix.tobytes("png"))).convert("RGB")
+                if img.width > MAX_W:
+                    img = img.resize((MAX_W, round(img.height * MAX_W / img.width)), Image.LANCZOS)
+                img.save(CHARTS_DIR / folder_seg / img_name, "WEBP", quality=WEBP_Q, method=6)
                 subj = c.get("subject_company")
                 out.append({
                     "id": f'{pdf["key"]}#p{pageno}_{n}',
@@ -448,9 +460,9 @@ Pick the first slug from `index.json`, write a one-exhibit `analysis.json` cover
 
 ```bash
 uv run --python 3.12 python -c "import json,pathlib; d=json.load(open('scripts/.charts-work/index.json',encoding='utf-8')); s=d['pdfs'][0]['slug']; pathlib.Path('scripts/.charts-work',s,'analysis.json').write_text(json.dumps({'pages':[{'page':1,'charts':[{'bbox':[0.05,0.05,0.95,0.6],'chart_title':'SMOKE','chart_type':'other','subject_company':None,'subject_sectors':['Macro'],'analyst_caption':None,'commentary':'smoke test'}]}]}),encoding='utf-8'); print('seeded',s)"
-cd scripts/charts; uv run --python 3.12 --with pymupdf python crop_assemble.py; cd ../..
+cd scripts/charts; uv run --python 3.12 --with pymupdf --with pillow python crop_assemble.py; cd ../..
 ```
-Expected: `TOTAL charts written: 1`; a PNG exists under `charts/<folder_slug>/`; `data/charts.json` has one row whose `image` path points to that PNG. Open the PNG with Read to confirm it's a valid crop. Then delete the synthetic `analysis.json` so the real run replaces it.
+Expected: `TOTAL charts written: 1`; a `.webp` exists under `charts/<folder_slug>/`; `data/charts.json` has one row whose `image` path points to that file. Open the `.webp` with Read to confirm it's a valid crop. Then delete the synthetic `analysis.json` so the real run replaces it.
 
 - [ ] **Step 3: Commit**
 
@@ -492,7 +504,7 @@ if ($pending -gt 0) { Write-Host "Stopping before Phase C (analyses incomplete).
 
 Write-Host ""
 Write-Host "== Phase C: crop + assemble ==" -ForegroundColor Cyan
-uv run --python 3.12 --with pymupdf python crop_assemble.py
+uv run --python 3.12 --with pymupdf --with pillow python crop_assemble.py
 ```
 
 - [ ] **Step 2: Run it (Phase A + the gate)**
@@ -744,10 +756,10 @@ This is the model-driven execution step. It produces the real `analysis.json` fi
 
 - [ ] **Step 3: Write each agent's validated response** to `scripts/.charts-work/<slug>/analysis.json` verbatim.
 
-- [ ] **Step 4: Run Phase C.** `cd scripts/charts; uv run --python 3.12 --with pymupdf python crop_assemble.py; cd ../..`
-Expected: `assembled …` per PDF and a `TOTAL charts written: N` (N in the hundreds). `data/charts.json` is regenerated (overwrites the Task 7 seed); PNGs populate `charts/<folder_slug>/`.
+- [ ] **Step 4: Run Phase C.** `cd scripts/charts; uv run --python 3.12 --with pymupdf --with pillow python crop_assemble.py; cd ../..`
+Expected: `assembled …` per PDF and a `TOTAL charts written: N` (N in the hundreds). `data/charts.json` is regenerated (overwrites the Task 7 seed); `.webp` crops populate `charts/<folder_slug>/`.
 
-- [ ] **Step 5: Spot-check crops.** Open ~5 random PNGs across folders with the Read tool. Confirm each crop tightly contains its exhibit (title + footnote included, neighbouring exhibits not bleeding in). If crops are systematically loose/tight, adjust the `pad` arg in `crop_assemble.py` `pad_bbox(c["bbox"], <pad>)` and re-run Phase C (no re-analysis needed).
+- [ ] **Step 5: Spot-check crops.** Open ~5 random `.webp` crops across folders with the Read tool. Confirm each crop tightly contains its exhibit (title + footnote included, neighbouring exhibits not bleeding in). If crops are systematically loose/tight, adjust the `pad` arg in `crop_assemble.py` `pad_bbox(c["bbox"], <pad>)` and re-run Phase C (no re-analysis needed).
 
 - [ ] **Step 6: Commit data + images**
 
@@ -783,4 +795,5 @@ git commit -m "feat(charts): pilot extraction — charts.json + cropped exhibit 
 ## Notes for the executor
 
 - **Re-running is cheap and safe:** Phase A re-renders idempotently; Phase B analyses are cached per-PDF on disk (skip PDFs that already have `analysis.json`); Phase C is a pure function of `index.json` + the analyses. Tune crop padding by editing one arg and re-running Phase C alone.
-- **Scaling beyond the pilot** (all 261 folders): change `PILOT_FOLDERS` in `lib.py`. Before that, settle image storage (thousands of PNGs) — downsample/JPEG, git-lfs, or external host — and remember any auto-refresh must run locally (cloud routines can't push this repo).
+- **Image storage:** crops are committed as capped-width WebP (q80, ≤1100px) — ~5-10x smaller than PNG, which keeps even the full rollout under the GitHub Pages size budget. Do NOT use Git LFS: Pages serves the LFS pointer text, not the binary, so images would break.
+- **Scaling beyond the pilot** (all 261 folders): change `PILOT_FOLDERS` in `lib.py`. WebP keeps the full set ~120-200 MB (fine for Pages). If bandwidth ever matters, serve `charts/` via jsDelivr (no account/keys). Remember any auto-refresh must run locally (cloud routines can't push this repo).

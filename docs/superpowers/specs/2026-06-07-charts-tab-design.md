@@ -85,13 +85,15 @@ against `companies.json` names where possible.
 ### Phase C — Crop + assemble (deterministic, no model)
 The Python script converts each normalized `bbox` to page-point coordinates, pads
 slightly (~2%), and re-renders just that region with
-`page.get_pixmap(clip=rect, dpi=200)` → a cropped PNG. pymupdf alone does render +
-clip-crop, so **no Pillow/poppler needed**. Outputs:
+`page.get_pixmap(clip=rect, dpi=200)`, then downscales to ≤1100px width and saves as
+**WebP (q80)** via Pillow (`uv … --with pymupdf --with pillow`). WebP keeps the
+committed image set ~5-10x smaller than PNG. Outputs:
 
-- Images: `charts/<Folder>/<slug>_p<NN>_<n>.png` where `<slug>` is the report key
-  sanitized to a filesystem-safe form (`House_YYMMDD_titleslug` — the `|` and `#`
+- Images: `charts/<Folder_slug>/<slug>_p<NN>_<n>.webp` where `<slug>` is the report
+  key sanitized to a filesystem-safe form (`House_YYMMDD_titleslug` — the `|` and `#`
   separators in the pdfmap key are **illegal in Windows filenames**, so they are
-  replaced; `<Folder>` is the source folder name).
+  replaced); `<Folder_slug>` is the source folder name slugified too (no spaces, so
+  the web path needs no %20 encoding).
 - Manifest: `data/charts.json` (see §5)
 
 Two-level tags resolved here:
@@ -114,7 +116,7 @@ Two-level tags resolved here:
       "source_type": "theme|sector|company",
       "report_title": "string",
       "page": 4,
-      "image": "charts/India Macro/Jefferies_260603_<titleslug>_p04_1.png",  // filesystem-safe slug
+      "image": "charts/India_Macro/Jefferies_260603_<titleslug>_p04_1.webp",  // slugified dir + WebP
       "chart_title": "string",
       "chart_type": "line",
       "subject_company": "string|null",  // per-chart subject tag
@@ -171,9 +173,12 @@ PNGs + this spec and push to `main`. GitHub Pages auto-publishes.
 
 ## 9. Scaling notes (out of scope, recorded for later)
 
-- **Storage:** committing thousands of PNGs for all 621 PDFs would bloat the Pages
-  repo. Before full rollout, decide: downsample/JPEG, git-lfs, or an external asset
-  host. The pilot's PNG count is small and fine to commit directly.
+- **Storage:** crops are committed as capped-width WebP (q80, ≤1100px), so the full
+  621-PDF rollout stays ~120-200 MB — under the GitHub Pages ~1 GB budget. The
+  full-page render intermediates live in git-ignored `scripts/.charts-work/` and are
+  never committed. **Do not use Git LFS** — Pages serves the LFS pointer text, not
+  the binary, so images would break. If bandwidth ever matters, serve `charts/` via
+  jsDelivr (mirrors the public repo, no account/keys).
 - **Auto-refresh:** any future "new report → new charts" automation must run
   **locally** (like `build-highs.ps1` / `build-positioning.ps1`) — cloud CCR
   routines clone this repo read-only and cannot push (documented gotcha).
