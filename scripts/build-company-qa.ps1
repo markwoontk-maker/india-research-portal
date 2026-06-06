@@ -105,7 +105,7 @@ function Run-Phase([string]$promptPath, [string]$needExpr, [string]$arg, [int]$b
     else    { @(& $node -e $expr     2>$null) | Where-Object { $_ -and $_.Trim() } }
   }
   $need = @(& $get $needExpr $arg)
-  Out-Log ("$label: $($need.Count) companies in queue.")
+  Out-Log ("${label}: $($need.Count) companies in queue.")
   $noProgress = 0
   $attempted = @{}
   while ($need.Count -gt 0 -and (Get-Date) -lt $deadline -and $noProgress -lt $maxNoProgress) {
@@ -118,7 +118,7 @@ function Run-Phase([string]$promptPath, [string]$needExpr, [string]$arg, [int]$b
     # validate; restore the pre-batch file (NOT git) on corruption to keep prior progress
     & $node -e $validator 2>$null | Out-Null
     if ($LASTEXITCODE -ne 0) {
-      Out-Log "$label: $dataFile invalid after batch - restoring pre-batch copy."
+      Out-Log "${label}: $dataFile invalid after batch - restoring pre-batch copy."
       if (Test-Path -LiteralPath $bak) { Copy-Item -LiteralPath $bak (Join-Path $repo $dataFile) -Force }
     }
     Remove-Item $bak -Force -ErrorAction SilentlyContinue
@@ -132,7 +132,7 @@ function Run-Phase([string]$promptPath, [string]$needExpr, [string]$arg, [int]$b
       $noProgress = 0
     }
   }
-  if ($noProgress -ge $maxNoProgress) { Out-Log "$label: aborting phase after $maxNoProgress no-progress batches (check nlm auth / prompts)." }
+  if ($noProgress -ge $maxNoProgress) { Out-Log "${label}: aborting phase after $maxNoProgress no-progress batches (check nlm auth / prompts)." }
 }
 
 # --- phase 1: questioner (generate questions for in-scope companies) ----------
