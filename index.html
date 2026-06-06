@@ -1787,7 +1787,7 @@
           <p id="cFinSub">Per-broker Revenue / EBITDA / Net Profit by fiscal year — average shown in the bottom row</p></div>
         </div>
         <div id="cFinBody"></div>
-        <p class="co-desc-src">Sourced from each broker's most recent report on the company (PDF estimate tables, layout-extracted via pdftotext). Numbers normalised to ₹ crore. Where a broker uses a different unit/convention, this normalisation may be off — see the per-broker breakdown for raw values.</p>
+        <p class="co-desc-src">Sourced from each broker's most recent report on the company (PDF estimate tables, layout-extracted via pdftotext). Numbers normalised to ₹ million. Where a broker uses a different unit/convention, this normalisation may be off — see the per-broker breakdown for raw values.</p>
       </div>
       <!-- Broker coverage on the selected company: one row per research house,
            latest TP/call + prior TP/call side-by-side. -->
@@ -6365,12 +6365,13 @@ function renderCompanyFinancials(){
   if(!hasAny){ card.hidden=true; return; }
   card.hidden=false;
   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  // Number formatter: ₹ cr with thousand-separator.
+  // Number formatter: ₹ mn with Indian-style comma grouping.
+  // Examples: 537,815 → "5,37,815"   1,015,142 → "10,15,142"
+  // For very small absolute values (< 100 mn = < 10 cr) keep one decimal.
   const fmt=v=>{
     if(v==null) return '—';
     const abs=Math.abs(v);
-    if(abs>=100000) return (v/1000).toFixed(1)+'k';   // > 100k cr → in '000 cr
-    if(abs>=10) return Math.round(v).toLocaleString('en-IN');
+    if(abs>=100) return Math.round(v).toLocaleString('en-IN');
     return v.toFixed(1);
   };
   const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -6507,7 +6508,7 @@ function renderCompanyFinancials(){
     const brokerCount=new Set();
     Object.values(F.metrics).forEach(o=>Object.values(o).forEach(fy=>fy.brokers.forEach(b=>brokerCount.add(b.name))));
     const segCount=F.segments?Object.keys(F.segments).length:0;
-    sub.textContent=`${brokerCount.size} broker${brokerCount.size===1?'':'s'} parsed · figures in ${F.currency||'₹ cr'} · superscript A = actual, E = estimate${segCount?` · ${segCount} broker${segCount===1?'':'s'} provide segment breakdown`:''} · click a Source date to open the PDF`;
+    sub.textContent=`${brokerCount.size} broker${brokerCount.size===1?'':'s'} parsed · figures in ${F.currency||'₹ mn'} · superscript A = actual, E = estimate${segCount?` · ${segCount} broker${segCount===1?'':'s'} provide segment breakdown`:''} · click a Source date to open the PDF`;
   }
 }
 

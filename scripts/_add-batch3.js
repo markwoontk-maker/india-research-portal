@@ -15,16 +15,24 @@ function fileUrl(p){
 
 // Build a per-broker block. The same name + url tuple repeats inside
 // each FY for the brokers array.
-function brokerBlock(broker, date, pdfPath, source, tagByFY, metrics){
+//
+// NOTE: every numeric value in the metrics object below this function is
+// historically in ₹ cr — we store/serve in ₹ mn, so the wrapper scales
+// inputs by ×10. Exception: the Adani Power / Adani Ports / Belrise /
+// Concor / Cummins entries are already in ₹ mn (raw from Jefferies
+// Exhibit 1) — those skip the scaler by setting _alreadyMn=true.
+function brokerBlock(broker, date, pdfPath, source, tagByFY, metrics, opts){
   const url = fileUrl(pdfPath);
-  const out = { currency: '₹ cr', metrics: {} };
+  const scale = (opts && opts._alreadyMn) ? 1 : 10;
+  const out = { currency: '₹ mn', metrics: {} };
   for (const [mk, fyMap] of Object.entries(metrics)){
     out.metrics[mk] = {};
     for (const [fy, val] of Object.entries(fyMap)){
       if (val == null) continue;
+      const scaled = +(val * scale).toFixed(1);
       out.metrics[mk][fy] = {
-        tag: tagByFY[fy] || 'E', avg: val,
-        brokers: [{ name: broker, date, url, value: val }]
+        tag: tagByFY[fy] || 'E', avg: scaled,
+        brokers: [{ name: broker, date, url, value: scaled }]
       };
     }
   }
@@ -34,7 +42,7 @@ function brokerBlock(broker, date, pdfPath, source, tagByFY, metrics){
 
 // Merge multiple broker blocks for one company into a single entry.
 function mergeBlocks(...blocks){
-  const out = { currency: '₹ cr', metrics: {} };
+  const out = { currency: '₹ mn', metrics: {} };
   const allMetrics = new Set();
   for (const b of blocks) for (const k of Object.keys(b.metrics||{})) allMetrics.add(k);
   for (const mk of allMetrics){
@@ -60,63 +68,60 @@ function mergeBlocks(...blocks){
 
 // --- Adani Power (Jefferies 18 May 26 — Exhibit 1: APL Financial Summary) -
 // Source: per-user screenshot of Exhibit 1. Net Sales = Revenue,
-// Adjusted PAT = Net Profit. All ₹mn → ₹cr (÷ 10).
+// Adjusted PAT = Net Profit. Raw ₹ mn from the screenshot.
 existing['Adani Power'] = brokerBlock('Jefferies', '260518',
   `${REPORTS}\\Adani Power\\[260518] [Jefferies] Adani Power - FCF to turn positive by FY30E.pdf`,
   'Exhibit 1 — APL Financial Summary',
   { FY26: 'A', FY27: 'E', FY28: 'E', FY29: 'E' },
   {
-    revenue:  { FY26: 53782, FY27: 62459, FY28:  82429, FY29: 101514 },
-    ebitda:   { FY26: 19539, FY27: 21069, FY28:  29058, FY29:  36262 },
-    netProfit:{ FY26: 11073, FY27: 12388, FY28:  15181, FY29:  18344 },
-  });
+    revenue:  { FY26: 537815, FY27: 624588, FY28: 824293, FY29: 1015142 },
+    ebitda:   { FY26: 195391, FY27: 210689, FY28: 290584, FY29:  362622 },
+    netProfit:{ FY26: 110730, FY27: 123876, FY28: 151807, FY29:  183439 },
+  }, {_alreadyMn:true});
 
-// --- Adani Ports and SEZ — Jefferies Exhibit 1: ADSEZ Financial Summary
-// Replaces the earlier "Revenue only" entry. ₹mn → ₹cr.
+// --- Adani Ports and SEZ — Jefferies Exhibit 1 (raw ₹mn) -------------
 existing['Adani Ports and SEZ'] = brokerBlock('Jefferies', '260604',
   `${REPORTS}\\Adani Ports and SEZ\\[260604] [Jefferies] Adani Ports and SEZ - Management Meet Takeaways.pdf`,
   'Exhibit 1 — ADSEZ Financial Summary',
   { FY26: 'A', FY27: 'E', FY28: 'E', FY29: 'E' },
   {
-    revenue:  { FY26: 38736, FY27: 43915, FY28: 52223, FY29: 60829 },
-    ebitda:   { FY26: 22851, FY27: 25378, FY28: 30298, FY29: 35145 },
-    netProfit:{ FY26: 13691, FY27: 15151, FY28: 18943, FY29: 22927 },
-  });
+    revenue:  { FY26: 387358, FY27: 439150, FY28: 522229, FY29: 608287 },
+    ebitda:   { FY26: 228514, FY27: 253779, FY28: 302981, FY29: 351449 },
+    netProfit:{ FY26: 136912, FY27: 151514, FY28: 189431, FY29: 229273 },
+  }, {_alreadyMn:true});
 
-// --- Belrise Industries — Jefferies 25 May 26 front-page FY (Mar) mini-table -
-// FY26A / FY27E / FY28E / FY29E. Rev. (MM) / EBITDA (MM) / Net Profit (MM).
+// --- Belrise Industries — Jefferies front-page mini-table (raw ₹mn) --
 existing['Belrise Industries'] = brokerBlock('Jefferies', '260525',
   `${REPORTS}\\Belrise Industries\\[260525] [Jefferies] Belrise Industries - Expanding Footprint.pdf`,
   'Front-page FY (Mar) mini-table — Rev/EBITDA/Net Profit',
   { FY26: 'A', FY27: 'E', FY28: 'E', FY29: 'E' },
   {
-    revenue:  { FY26: 9509, FY27: 10859, FY28: 13485, FY29: 15041 },
-    ebitda:   { FY26: 1154, FY27:  1302, FY28:  1818, FY29:  2034 },
-    netProfit:{ FY26:  502, FY27:   642, FY28:   891, FY29:  1022 },
-  });
+    revenue:  { FY26: 95091, FY27: 108591, FY28: 134852, FY29: 150405 },
+    ebitda:   { FY26: 11538, FY27:  13024, FY28:  18177, FY29:  20340 },
+    netProfit:{ FY26:  5020, FY27:   6422, FY28:   8909, FY29:  10219 },
+  }, {_alreadyMn:true});
 
-// --- Container Corporation of India — Jefferies 26 May 26 Exhibit 1 ----
-// Net Sales / EBITDA / Adjusted PAT, ₹mn → ₹cr.
+// --- Container Corporation of India — Jefferies Exhibit 1 (raw ₹mn) --
 existing['Container Corporation of India'] = brokerBlock('Jefferies', '260526',
   `${REPORTS}\\Container Corporation of India\\[260526] [Jefferies] Concor - Catalyst ahead but execution key.pdf`,
   'Exhibit 1 — Concor Financial Summary',
   { FY26: 'A', FY27: 'E', FY28: 'E', FY29: 'E' },
   {
-    revenue:  { FY26: 9060, FY27: 9467,  FY28: 11191, FY29: 12633 },
-    ebitda:   { FY26: 1922, FY27: 2098,  FY28:  2664, FY29:  3075 },
-    netProfit:{ FY26: 1222, FY27: 1314,  FY28:  1740, FY29:  2099 },
-  });
+    revenue:  { FY26: 90595, FY27: 94670, FY28: 111910, FY29: 126327 },
+    ebitda:   { FY26: 19215, FY27: 20980, FY28:  26637, FY29:  30746 },
+    netProfit:{ FY26: 12218, FY27: 13141, FY28:  17402, FY29:  20991 },
+  }, {_alreadyMn:true});
 
-// --- Cummins India — Jefferies 29 May 26 Exhibit 1: Cummins Financial Summary -
+// --- Cummins India — Jefferies Exhibit 1 (raw ₹mn) -------------------
 existing['Cummins India'] = brokerBlock('Jefferies', '260529',
   `${REPORTS}\\Cummins India\\[260529] [Jefferies] Cummins India Limited - Margin tailwinds ahead.pdf`,
   'Exhibit 1 — Cummins Financial Summary',
   { FY26: 'A', FY27: 'E', FY28: 'E', FY29: 'E' },
   {
-    revenue:  { FY26: 12143, FY27: 14443, FY28: 16775, FY29: 19593 },
-    ebitda:   { FY26:  2378, FY27:  2918, FY28:  3578, FY29:  4329 },
-    netProfit:{ FY26:  2595, FY27:  3188, FY28:  3933, FY29:  4778 },
-  });
+    revenue:  { FY26: 121432, FY27: 144428, FY28: 167750, FY29: 195934 },
+    ebitda:   { FY26:  23781, FY27:  29180, FY28:  35784, FY29:  43290 },
+    netProfit:{ FY26:  25949, FY27:  31880, FY28:  39331, FY29:  47778 },
+  }, {_alreadyMn:true});
 
 // --- AWL Agri Business (JPMorgan 26 May 26, page 2 Key Metrics) --------
 existing['AWL Agri Business'] = brokerBlock('JPMorgan', '260526',

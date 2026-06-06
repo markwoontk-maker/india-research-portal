@@ -1,78 +1,78 @@
 {
   "_README": "Hand-verified financial tables transcribed from specific broker reports. scripts/build-financials.js merges these on top of its auto-extracted output, so an entry here OVERRIDES whatever the pdftotext scan produced for that company. Values are in INR crore (mn / 10). Schema must match the build script's output exactly.",
   "Adani Enterprises": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY23": {
           "tag": "A",
-          "avg": 127539.5,
+          "avg": 1275395,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 127539.5
+              "value": 1275395
             }
           ]
         },
         "FY24": {
           "tag": "A",
-          "avg": 96421,
+          "avg": 964210,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 96421
+              "value": 964210
             }
           ]
         },
         "FY25": {
           "tag": "A",
-          "avg": 97894.8,
+          "avg": 978948,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 97894.8
+              "value": 978948
             }
           ]
         },
         "FY26": {
           "tag": "A",
-          "avg": 100468.6,
+          "avg": 1004686,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 100468.6
+              "value": 1004686
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 148921.9,
+          "avg": 1489219,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 148921.9
+              "value": 1489219
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 164156.8,
+          "avg": 1641568,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 164156.8
+              "value": 1641568
             }
           ]
         }
@@ -80,73 +80,73 @@
       "ebitda": {
         "FY23": {
           "tag": "A",
-          "avg": 10012.3,
+          "avg": 100123,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 10012.3
+              "value": 100123
             }
           ]
         },
         "FY24": {
           "tag": "A",
-          "avg": 13237.1,
+          "avg": 132371,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 13237.1
+              "value": 132371
             }
           ]
         },
         "FY25": {
           "tag": "A",
-          "avg": 16722.4,
+          "avg": 167224,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 16722.4
+              "value": 167224
             }
           ]
         },
         "FY26": {
           "tag": "A",
-          "avg": 16463.8,
+          "avg": 164638,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 16463.8
+              "value": 164638
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 21056.4,
+          "avg": 210564,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 21056.4
+              "value": 210564
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 24988.1,
+          "avg": 249881,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 24988.1
+              "value": 249881
             }
           ]
         }
@@ -154,73 +154,73 @@
       "netProfit": {
         "FY23": {
           "tag": "A",
-          "avg": 2833.3,
+          "avg": 28333,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 2833.3
+              "value": 28333
             }
           ]
         },
         "FY24": {
           "tag": "A",
-          "avg": 3954.9,
+          "avg": 39549,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 3954.9
+              "value": 39549
             }
           ]
         },
         "FY25": {
           "tag": "A",
-          "avg": 3166.2,
+          "avg": 31662,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 3166.2
+              "value": 31662
             }
           ]
         },
         "FY26": {
           "tag": "A",
-          "avg": 1782.9,
+          "avg": 17829,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 1782.9
+              "value": 17829
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 3981.6,
+          "avg": 39816,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 3981.6
+              "value": 39816
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 4679.7,
+          "avg": 46797,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260602",
               "url": "file:///C:/Users/admin/Desktop/India%20Related%20Reports/Adani%20Enterprises/%5B260602%5D%20%5BJefferies%5D%20Adani%20Enterprises%20-%20Championing%20India%27s%20incubation%20landscape.pdf",
-              "value": 4679.7
+              "value": 46797
             }
           ]
         }
@@ -234,118 +234,118 @@
         "metrics": {
           "revenue": {
             "Trading/Mining": {
-              "FY23": 106014.8,
-              "FY24": 70847.1,
-              "FY25": 50030.8,
-              "FY26": 38450.6,
-              "FY27": 42161.8,
-              "FY28": 40486.1
+              "FY23": 1060148,
+              "FY24": 708471,
+              "FY25": 500308,
+              "FY26": 384506,
+              "FY27": 421618,
+              "FY28": 404861
             },
             "ANIL": {
-              "FY23": 3537,
-              "FY24": 8571,
-              "FY25": 13965.4,
-              "FY26": 15399,
-              "FY27": 17716,
-              "FY28": 25290.4
+              "FY23": 35370,
+              "FY24": 85710,
+              "FY25": 139654,
+              "FY26": 153990,
+              "FY27": 177160,
+              "FY28": 252904
             },
             "Airport": {
-              "FY23": 5986,
-              "FY24": 8061.5,
-              "FY25": 10223,
-              "FY26": 13215.4,
-              "FY27": 16198.9,
-              "FY28": 18603.9
+              "FY23": 59860,
+              "FY24": 80615,
+              "FY25": 102230,
+              "FY26": 132154,
+              "FY27": 161989,
+              "FY28": 186039
             },
             "Road": {
-              "FY23": 4907.3,
-              "FY24": 7177.1,
-              "FY25": 9694.1,
-              "FY26": 6347.2,
-              "FY27": 6664.5,
-              "FY28": 6997.8
+              "FY23": 49073,
+              "FY24": 71771,
+              "FY25": 96941,
+              "FY26": 63472,
+              "FY27": 66645,
+              "FY28": 69978
             },
             "Copper": {
               "FY23": null,
               "FY24": null,
-              "FY25": 2291.3,
-              "FY26": 15284.3,
-              "FY27": 53820,
-              "FY28": 59800
+              "FY25": 22913,
+              "FY26": 152843,
+              "FY27": 538200,
+              "FY28": 598000
             },
             "Others": {
-              "FY23": 7094.4,
-              "FY24": 1764.4,
-              "FY25": 11690.1,
-              "FY26": 11772,
-              "FY27": 12360.6,
-              "FY28": 12978.7
+              "FY23": 70944,
+              "FY24": 17644,
+              "FY25": 116901,
+              "FY26": 117720,
+              "FY27": 123606,
+              "FY28": 129787
             },
             "Total": {
-              "FY23": 127539.5,
-              "FY24": 96421,
-              "FY25": 97894.8,
-              "FY26": 100468.6,
-              "FY27": 148921.9,
-              "FY28": 164156.8
+              "FY23": 1275395,
+              "FY24": 964210,
+              "FY25": 978948,
+              "FY26": 1004686,
+              "FY27": 1489219,
+              "FY28": 1641568
             }
           },
           "ebitda": {
             "Trading/Mining": {
-              "FY23": 5971,
-              "FY24": 7247,
-              "FY25": 6180,
-              "FY26": 4332,
-              "FY27": 5234.9,
-              "FY28": 5287.8
+              "FY23": 59710,
+              "FY24": 72470,
+              "FY25": 61800,
+              "FY26": 43320,
+              "FY27": 52349,
+              "FY28": 52878
             },
             "ANIL": {
-              "FY23": 412,
-              "FY24": 2297,
-              "FY25": 4776,
-              "FY26": 4532,
-              "FY27": 4798.1,
-              "FY28": 6404
+              "FY23": 4120,
+              "FY24": 22970,
+              "FY25": 47760,
+              "FY26": 45320,
+              "FY27": 47981,
+              "FY28": 64040
             },
             "Airport": {
-              "FY23": 1682,
-              "FY24": 2437,
-              "FY25": 3480,
-              "FY26": 5394,
-              "FY27": 6623.9,
-              "FY28": 8016.2
+              "FY23": 16820,
+              "FY24": 24370,
+              "FY25": 34800,
+              "FY26": 53940,
+              "FY27": 66239,
+              "FY28": 80162
             },
             "Road": {
-              "FY23": 1983,
-              "FY24": 1231,
-              "FY25": 1769,
-              "FY26": 1362,
-              "FY27": 2292.6,
-              "FY28": 2493.2
+              "FY23": 19830,
+              "FY24": 12310,
+              "FY25": 17690,
+              "FY26": 13620,
+              "FY27": 22926,
+              "FY28": 24932
             },
             "Copper": {
               "FY23": null,
               "FY24": null,
               "FY25": null,
-              "FY26": 260,
-              "FY27": 1494,
-              "FY28": 1867.5
+              "FY26": 2600,
+              "FY27": 14940,
+              "FY28": 18675
             },
             "Others (incl Defence)": {
-              "FY23": -22.7,
-              "FY24": 25.1,
-              "FY25": 517.4,
-              "FY26": 583.7,
-              "FY27": 612.9,
-              "FY28": 919.4
+              "FY23": -227,
+              "FY24": 251,
+              "FY25": 5174,
+              "FY26": 5837,
+              "FY27": 6129,
+              "FY28": 9194
             },
             "Total": {
-              "FY23": 10025.3,
-              "FY24": 13237.1,
-              "FY25": 16722.4,
-              "FY26": 16463.8,
-              "FY27": 21056.4,
-              "FY28": 24988.1
+              "FY23": 100253,
+              "FY24": 132371,
+              "FY25": 167224,
+              "FY26": 164638,
+              "FY27": 210564,
+              "FY28": 249881
             }
           }
         }
@@ -353,54 +353,54 @@
     }
   },
   "Adani Ports and SEZ": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 38736,
+          "avg": 387358,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260604",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260604%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Management%20Meet%20Takeaways.pdf",
-              "value": 38736
+              "value": 387358
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 43915,
+          "avg": 439150,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260604",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260604%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Management%20Meet%20Takeaways.pdf",
-              "value": 43915
+              "value": 439150
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 52223,
+          "avg": 522229,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260604",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260604%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Management%20Meet%20Takeaways.pdf",
-              "value": 52223
+              "value": 522229
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 60829,
+          "avg": 608287,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260604",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260604%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Management%20Meet%20Takeaways.pdf",
-              "value": 60829
+              "value": 608287
             }
           ]
         }
@@ -408,49 +408,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 22851,
+          "avg": 228514,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260604",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260604%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Management%20Meet%20Takeaways.pdf",
-              "value": 22851
+              "value": 228514
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 25378,
+          "avg": 253779,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260604",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260604%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Management%20Meet%20Takeaways.pdf",
-              "value": 25378
+              "value": 253779
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 30298,
+          "avg": 302981,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260604",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260604%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Management%20Meet%20Takeaways.pdf",
-              "value": 30298
+              "value": 302981
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 35145,
+          "avg": 351449,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260604",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260604%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Management%20Meet%20Takeaways.pdf",
-              "value": 35145
+              "value": 351449
             }
           ]
         }
@@ -458,49 +458,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 13691,
+          "avg": 136912,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260604",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260604%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Management%20Meet%20Takeaways.pdf",
-              "value": 13691
+              "value": 136912
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 15151,
+          "avg": 151514,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260604",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260604%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Management%20Meet%20Takeaways.pdf",
-              "value": 15151
+              "value": 151514
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 18943,
+          "avg": 189431,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260604",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260604%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Management%20Meet%20Takeaways.pdf",
-              "value": 18943
+              "value": 189431
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 22927,
+          "avg": 229273,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260604",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Ports%20and%20SEZ/%5B260604%5D%20%5BJefferies%5D%20Adani%20Ports%20and%20SEZ%20-%20Management%20Meet%20Takeaways.pdf",
-              "value": 22927
+              "value": 229273
             }
           ]
         }
@@ -509,54 +509,54 @@
     "notes": "Exhibit 1 — ADSEZ Financial Summary"
   },
   "Adani Power": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 53782,
+          "avg": 537815,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
-              "value": 53782
+              "value": 537815
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 62459,
+          "avg": 624588,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
-              "value": 62459
+              "value": 624588
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 82429,
+          "avg": 824293,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
-              "value": 82429
+              "value": 824293
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 101514,
+          "avg": 1015142,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
-              "value": 101514
+              "value": 1015142
             }
           ]
         }
@@ -564,49 +564,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 19539,
+          "avg": 195391,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
-              "value": 19539
+              "value": 195391
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 21069,
+          "avg": 210689,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
-              "value": 21069
+              "value": 210689
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 29058,
+          "avg": 290584,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
-              "value": 29058
+              "value": 290584
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 36262,
+          "avg": 362622,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
-              "value": 36262
+              "value": 362622
             }
           ]
         }
@@ -614,49 +614,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 11073,
+          "avg": 110730,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
-              "value": 11073
+              "value": 110730
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 12388,
+          "avg": 123876,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
-              "value": 12388
+              "value": 123876
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 15181,
+          "avg": 151807,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
-              "value": 15181
+              "value": 151807
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 18344,
+          "avg": 183439,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
-              "value": 18344
+              "value": 183439
             }
           ]
         }
@@ -665,56 +665,56 @@
     "notes": "Exhibit 1 — APL Financial Summary"
   },
   "Aditya Birla Capital": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {},
       "ebitda": {},
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 3109,
+          "avg": 31090,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
-              "value": 3109
+              "value": 31090
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 4067,
+          "avg": 40670,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
-              "value": 4067
+              "value": 40670
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 4925,
+          "avg": 49250,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
-              "value": 4925
+              "value": 49250
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 6026,
+          "avg": 60260,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
-              "value": 6026
+              "value": 60260
             }
           ]
         }
@@ -723,54 +723,54 @@
     "notes": "Page 4 standalone — Profit after tax (Net Profit proxy)"
   },
   "Alkem Laboratories": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY25": {
           "tag": "A",
-          "avg": 12965,
+          "avg": 129650,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Alkem%20Laboratories/%5B260529%5D%20%5BJPMorgan%5D%20Alkem%20Laboratories%20-%20Steady%20core%20but%20margin%20visibility%20limited.pdf",
-              "value": 12965
+              "value": 129650
             }
           ]
         },
         "FY26": {
           "tag": "E",
-          "avg": 14712,
+          "avg": 147120,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Alkem%20Laboratories/%5B260529%5D%20%5BJPMorgan%5D%20Alkem%20Laboratories%20-%20Steady%20core%20but%20margin%20visibility%20limited.pdf",
-              "value": 14712
+              "value": 147120
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 16391,
+          "avg": 163910,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Alkem%20Laboratories/%5B260529%5D%20%5BJPMorgan%5D%20Alkem%20Laboratories%20-%20Steady%20core%20but%20margin%20visibility%20limited.pdf",
-              "value": 16391
+              "value": 163910
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 18098,
+          "avg": 180980,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Alkem%20Laboratories/%5B260529%5D%20%5BJPMorgan%5D%20Alkem%20Laboratories%20-%20Steady%20core%20but%20margin%20visibility%20limited.pdf",
-              "value": 18098
+              "value": 180980
             }
           ]
         }
@@ -778,49 +778,49 @@
       "ebitda": {
         "FY25": {
           "tag": "A",
-          "avg": 2512,
+          "avg": 25120,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Alkem%20Laboratories/%5B260529%5D%20%5BJPMorgan%5D%20Alkem%20Laboratories%20-%20Steady%20core%20but%20margin%20visibility%20limited.pdf",
-              "value": 2512
+              "value": 25120
             }
           ]
         },
         "FY26": {
           "tag": "E",
-          "avg": 3005,
+          "avg": 30050,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Alkem%20Laboratories/%5B260529%5D%20%5BJPMorgan%5D%20Alkem%20Laboratories%20-%20Steady%20core%20but%20margin%20visibility%20limited.pdf",
-              "value": 3005
+              "value": 30050
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 3449,
+          "avg": 34490,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Alkem%20Laboratories/%5B260529%5D%20%5BJPMorgan%5D%20Alkem%20Laboratories%20-%20Steady%20core%20but%20margin%20visibility%20limited.pdf",
-              "value": 3449
+              "value": 34490
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 3876,
+          "avg": 38760,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Alkem%20Laboratories/%5B260529%5D%20%5BJPMorgan%5D%20Alkem%20Laboratories%20-%20Steady%20core%20but%20margin%20visibility%20limited.pdf",
-              "value": 3876
+              "value": 38760
             }
           ]
         }
@@ -828,49 +828,49 @@
       "netProfit": {
         "FY25": {
           "tag": "A",
-          "avg": 2166,
+          "avg": 21660,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Alkem%20Laboratories/%5B260529%5D%20%5BJPMorgan%5D%20Alkem%20Laboratories%20-%20Steady%20core%20but%20margin%20visibility%20limited.pdf",
-              "value": 2166
+              "value": 21660
             }
           ]
         },
         "FY26": {
           "tag": "E",
-          "avg": 2433,
+          "avg": 24330,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Alkem%20Laboratories/%5B260529%5D%20%5BJPMorgan%5D%20Alkem%20Laboratories%20-%20Steady%20core%20but%20margin%20visibility%20limited.pdf",
-              "value": 2433
+              "value": 24330
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 2430,
+          "avg": 24300,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Alkem%20Laboratories/%5B260529%5D%20%5BJPMorgan%5D%20Alkem%20Laboratories%20-%20Steady%20core%20but%20margin%20visibility%20limited.pdf",
-              "value": 2430
+              "value": 24300
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 2668,
+          "avg": 26680,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Alkem%20Laboratories/%5B260529%5D%20%5BJPMorgan%5D%20Alkem%20Laboratories%20-%20Steady%20core%20but%20margin%20visibility%20limited.pdf",
-              "value": 2668
+              "value": 26680
             }
           ]
         }
@@ -879,54 +879,54 @@
     "notes": "Key Metrics (FYE Mar) — page 2"
   },
   "Amara Raja Energy and Mobility": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 13549,
+          "avg": 135490,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amara%20Raja%20Energy%20and%20Mobility/%5B260526%5D%20%5BJPMorgan%5D%20Amara%20Raja%20-%20Post-4Q%20call%2C%20BESS%20focus%20seeing%20acceleration.pdf",
-              "value": 13549
+              "value": 135490
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 14674,
+          "avg": 146740,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amara%20Raja%20Energy%20and%20Mobility/%5B260526%5D%20%5BJPMorgan%5D%20Amara%20Raja%20-%20Post-4Q%20call%2C%20BESS%20focus%20seeing%20acceleration.pdf",
-              "value": 14674
+              "value": 146740
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 15582,
+          "avg": 155820,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amara%20Raja%20Energy%20and%20Mobility/%5B260526%5D%20%5BJPMorgan%5D%20Amara%20Raja%20-%20Post-4Q%20call%2C%20BESS%20focus%20seeing%20acceleration.pdf",
-              "value": 15582
+              "value": 155820
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 16594,
+          "avg": 165940,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amara%20Raja%20Energy%20and%20Mobility/%5B260526%5D%20%5BJPMorgan%5D%20Amara%20Raja%20-%20Post-4Q%20call%2C%20BESS%20focus%20seeing%20acceleration.pdf",
-              "value": 16594
+              "value": 165940
             }
           ]
         }
@@ -934,49 +934,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 1544,
+          "avg": 15440,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amara%20Raja%20Energy%20and%20Mobility/%5B260526%5D%20%5BJPMorgan%5D%20Amara%20Raja%20-%20Post-4Q%20call%2C%20BESS%20focus%20seeing%20acceleration.pdf",
-              "value": 1544
+              "value": 15440
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 1761,
+          "avg": 17610,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amara%20Raja%20Energy%20and%20Mobility/%5B260526%5D%20%5BJPMorgan%5D%20Amara%20Raja%20-%20Post-4Q%20call%2C%20BESS%20focus%20seeing%20acceleration.pdf",
-              "value": 1761
+              "value": 17610
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 1917,
+          "avg": 19170,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amara%20Raja%20Energy%20and%20Mobility/%5B260526%5D%20%5BJPMorgan%5D%20Amara%20Raja%20-%20Post-4Q%20call%2C%20BESS%20focus%20seeing%20acceleration.pdf",
-              "value": 1917
+              "value": 19170
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 2091,
+          "avg": 20910,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amara%20Raja%20Energy%20and%20Mobility/%5B260526%5D%20%5BJPMorgan%5D%20Amara%20Raja%20-%20Post-4Q%20call%2C%20BESS%20focus%20seeing%20acceleration.pdf",
-              "value": 2091
+              "value": 20910
             }
           ]
         }
@@ -984,49 +984,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 711,
+          "avg": 7110,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amara%20Raja%20Energy%20and%20Mobility/%5B260526%5D%20%5BJPMorgan%5D%20Amara%20Raja%20-%20Post-4Q%20call%2C%20BESS%20focus%20seeing%20acceleration.pdf",
-              "value": 711
+              "value": 7110
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 893,
+          "avg": 8930,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amara%20Raja%20Energy%20and%20Mobility/%5B260526%5D%20%5BJPMorgan%5D%20Amara%20Raja%20-%20Post-4Q%20call%2C%20BESS%20focus%20seeing%20acceleration.pdf",
-              "value": 893
+              "value": 8930
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 950,
+          "avg": 9500,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amara%20Raja%20Energy%20and%20Mobility/%5B260526%5D%20%5BJPMorgan%5D%20Amara%20Raja%20-%20Post-4Q%20call%2C%20BESS%20focus%20seeing%20acceleration.pdf",
-              "value": 950
+              "value": 9500
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 1020,
+          "avg": 10200,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amara%20Raja%20Energy%20and%20Mobility/%5B260526%5D%20%5BJPMorgan%5D%20Amara%20Raja%20-%20Post-4Q%20call%2C%20BESS%20focus%20seeing%20acceleration.pdf",
-              "value": 1020
+              "value": 10200
             }
           ]
         }
@@ -1035,54 +1035,54 @@
     "notes": "Key Metrics (FYE Mar) — page 2"
   },
   "Amber Enterprises": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 12187,
+          "avg": 121870,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amber%20Enterprises/%5B260518%5D%20%5BJPMorgan%5D%20Amber%20Enterprises%20-%20Margin%20pressure%20and%20PCB%20execution%20delays.pdf",
-              "value": 12187
+              "value": 121870
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 14670,
+          "avg": 146700,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amber%20Enterprises/%5B260518%5D%20%5BJPMorgan%5D%20Amber%20Enterprises%20-%20Margin%20pressure%20and%20PCB%20execution%20delays.pdf",
-              "value": 14670
+              "value": 146700
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 17978,
+          "avg": 179780,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amber%20Enterprises/%5B260518%5D%20%5BJPMorgan%5D%20Amber%20Enterprises%20-%20Margin%20pressure%20and%20PCB%20execution%20delays.pdf",
-              "value": 17978
+              "value": 179780
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 20839,
+          "avg": 208390,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amber%20Enterprises/%5B260518%5D%20%5BJPMorgan%5D%20Amber%20Enterprises%20-%20Margin%20pressure%20and%20PCB%20execution%20delays.pdf",
-              "value": 20839
+              "value": 208390
             }
           ]
         }
@@ -1090,49 +1090,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 952,
+          "avg": 9520,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amber%20Enterprises/%5B260518%5D%20%5BJPMorgan%5D%20Amber%20Enterprises%20-%20Margin%20pressure%20and%20PCB%20execution%20delays.pdf",
-              "value": 952
+              "value": 9520
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 1082,
+          "avg": 10820,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amber%20Enterprises/%5B260518%5D%20%5BJPMorgan%5D%20Amber%20Enterprises%20-%20Margin%20pressure%20and%20PCB%20execution%20delays.pdf",
-              "value": 1082
+              "value": 10820
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 1616,
+          "avg": 16160,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amber%20Enterprises/%5B260518%5D%20%5BJPMorgan%5D%20Amber%20Enterprises%20-%20Margin%20pressure%20and%20PCB%20execution%20delays.pdf",
-              "value": 1616
+              "value": 16160
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 1944,
+          "avg": 19440,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amber%20Enterprises/%5B260518%5D%20%5BJPMorgan%5D%20Amber%20Enterprises%20-%20Margin%20pressure%20and%20PCB%20execution%20delays.pdf",
-              "value": 1944
+              "value": 19440
             }
           ]
         }
@@ -1140,49 +1140,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 205,
+          "avg": 2050,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amber%20Enterprises/%5B260518%5D%20%5BJPMorgan%5D%20Amber%20Enterprises%20-%20Margin%20pressure%20and%20PCB%20execution%20delays.pdf",
-              "value": 205
+              "value": 2050
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 335,
+          "avg": 3350,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amber%20Enterprises/%5B260518%5D%20%5BJPMorgan%5D%20Amber%20Enterprises%20-%20Margin%20pressure%20and%20PCB%20execution%20delays.pdf",
-              "value": 335
+              "value": 3350
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 696,
+          "avg": 6960,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amber%20Enterprises/%5B260518%5D%20%5BJPMorgan%5D%20Amber%20Enterprises%20-%20Margin%20pressure%20and%20PCB%20execution%20delays.pdf",
-              "value": 696
+              "value": 6960
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 798,
+          "avg": 7980,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260518",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Amber%20Enterprises/%5B260518%5D%20%5BJPMorgan%5D%20Amber%20Enterprises%20-%20Margin%20pressure%20and%20PCB%20execution%20delays.pdf",
-              "value": 798
+              "value": 7980
             }
           ]
         }
@@ -1191,54 +1191,54 @@
     "notes": "Key Metrics (FYE Mar) — page 2"
   },
   "Anthem Biosciences": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY25": {
           "tag": "A",
-          "avg": 1845,
+          "avg": 18450,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Anthem%20Biosciences/%5B260520%5D%20%5BJPMorgan%5D%20Anthem%20Biosciences%20-%20CRDMO%20pipeline%20depth%2C%20capabilities%20and%20capacity%20expansion%20underpin%20multi-year%20growth%20visibility.pdf",
-              "value": 1845
+              "value": 18450
             }
           ]
         },
         "FY26": {
           "tag": "E",
-          "avg": 2124,
+          "avg": 21240,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Anthem%20Biosciences/%5B260520%5D%20%5BJPMorgan%5D%20Anthem%20Biosciences%20-%20CRDMO%20pipeline%20depth%2C%20capabilities%20and%20capacity%20expansion%20underpin%20multi-year%20growth%20visibility.pdf",
-              "value": 2124
+              "value": 21240
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 2534,
+          "avg": 25340,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Anthem%20Biosciences/%5B260520%5D%20%5BJPMorgan%5D%20Anthem%20Biosciences%20-%20CRDMO%20pipeline%20depth%2C%20capabilities%20and%20capacity%20expansion%20underpin%20multi-year%20growth%20visibility.pdf",
-              "value": 2534
+              "value": 25340
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 3022,
+          "avg": 30220,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Anthem%20Biosciences/%5B260520%5D%20%5BJPMorgan%5D%20Anthem%20Biosciences%20-%20CRDMO%20pipeline%20depth%2C%20capabilities%20and%20capacity%20expansion%20underpin%20multi-year%20growth%20visibility.pdf",
-              "value": 3022
+              "value": 30220
             }
           ]
         }
@@ -1246,49 +1246,49 @@
       "ebitda": {
         "FY25": {
           "tag": "A",
-          "avg": 671,
+          "avg": 6710,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Anthem%20Biosciences/%5B260520%5D%20%5BJPMorgan%5D%20Anthem%20Biosciences%20-%20CRDMO%20pipeline%20depth%2C%20capabilities%20and%20capacity%20expansion%20underpin%20multi-year%20growth%20visibility.pdf",
-              "value": 671
+              "value": 6710
             }
           ]
         },
         "FY26": {
           "tag": "E",
-          "avg": 834,
+          "avg": 8340,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Anthem%20Biosciences/%5B260520%5D%20%5BJPMorgan%5D%20Anthem%20Biosciences%20-%20CRDMO%20pipeline%20depth%2C%20capabilities%20and%20capacity%20expansion%20underpin%20multi-year%20growth%20visibility.pdf",
-              "value": 834
+              "value": 8340
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 993,
+          "avg": 9930,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Anthem%20Biosciences/%5B260520%5D%20%5BJPMorgan%5D%20Anthem%20Biosciences%20-%20CRDMO%20pipeline%20depth%2C%20capabilities%20and%20capacity%20expansion%20underpin%20multi-year%20growth%20visibility.pdf",
-              "value": 993
+              "value": 9930
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 1206,
+          "avg": 12060,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Anthem%20Biosciences/%5B260520%5D%20%5BJPMorgan%5D%20Anthem%20Biosciences%20-%20CRDMO%20pipeline%20depth%2C%20capabilities%20and%20capacity%20expansion%20underpin%20multi-year%20growth%20visibility.pdf",
-              "value": 1206
+              "value": 12060
             }
           ]
         }
@@ -1296,49 +1296,49 @@
       "netProfit": {
         "FY25": {
           "tag": "A",
-          "avg": 451,
+          "avg": 4510,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Anthem%20Biosciences/%5B260520%5D%20%5BJPMorgan%5D%20Anthem%20Biosciences%20-%20CRDMO%20pipeline%20depth%2C%20capabilities%20and%20capacity%20expansion%20underpin%20multi-year%20growth%20visibility.pdf",
-              "value": 451
+              "value": 4510
             }
           ]
         },
         "FY26": {
           "tag": "E",
-          "avg": 592,
+          "avg": 5920,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Anthem%20Biosciences/%5B260520%5D%20%5BJPMorgan%5D%20Anthem%20Biosciences%20-%20CRDMO%20pipeline%20depth%2C%20capabilities%20and%20capacity%20expansion%20underpin%20multi-year%20growth%20visibility.pdf",
-              "value": 592
+              "value": 5920
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 727,
+          "avg": 7270,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Anthem%20Biosciences/%5B260520%5D%20%5BJPMorgan%5D%20Anthem%20Biosciences%20-%20CRDMO%20pipeline%20depth%2C%20capabilities%20and%20capacity%20expansion%20underpin%20multi-year%20growth%20visibility.pdf",
-              "value": 727
+              "value": 7270
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 862,
+          "avg": 8620,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Anthem%20Biosciences/%5B260520%5D%20%5BJPMorgan%5D%20Anthem%20Biosciences%20-%20CRDMO%20pipeline%20depth%2C%20capabilities%20and%20capacity%20expansion%20underpin%20multi-year%20growth%20visibility.pdf",
-              "value": 862
+              "value": 8620
             }
           ]
         }
@@ -1347,54 +1347,54 @@
     "notes": "Key Metrics (FYE Mar) — page 2"
   },
   "Apar Industries": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 22902,
+          "avg": 229020,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apar%20Industries/%5B260528%5D%20%5BNomura%5D%20Apar%20Industries%20-%20Strong%204Q%2C%20outlook%20remains%20on%20firm%20footing%20Raise%20FY27F-FY28F%20EBITDA%20estimates%20by%207%25-9%25%2C%20estimate%20FY26-29F%20EBITDA%20CAGR%20of%2019%25%2C%20maintain%20Buy.pdf",
-              "value": 22902
+              "value": 229020
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 27097,
+          "avg": 270970,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apar%20Industries/%5B260528%5D%20%5BNomura%5D%20Apar%20Industries%20-%20Strong%204Q%2C%20outlook%20remains%20on%20firm%20footing%20Raise%20FY27F-FY28F%20EBITDA%20estimates%20by%207%25-9%25%2C%20estimate%20FY26-29F%20EBITDA%20CAGR%20of%2019%25%2C%20maintain%20Buy.pdf",
-              "value": 27097
+              "value": 270970
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 30613,
+          "avg": 306130,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apar%20Industries/%5B260528%5D%20%5BNomura%5D%20Apar%20Industries%20-%20Strong%204Q%2C%20outlook%20remains%20on%20firm%20footing%20Raise%20FY27F-FY28F%20EBITDA%20estimates%20by%207%25-9%25%2C%20estimate%20FY26-29F%20EBITDA%20CAGR%20of%2019%25%2C%20maintain%20Buy.pdf",
-              "value": 30613
+              "value": 306130
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 35930,
+          "avg": 359300,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apar%20Industries/%5B260528%5D%20%5BNomura%5D%20Apar%20Industries%20-%20Strong%204Q%2C%20outlook%20remains%20on%20firm%20footing%20Raise%20FY27F-FY28F%20EBITDA%20estimates%20by%207%25-9%25%2C%20estimate%20FY26-29F%20EBITDA%20CAGR%20of%2019%25%2C%20maintain%20Buy.pdf",
-              "value": 35930
+              "value": 359300
             }
           ]
         }
@@ -1402,49 +1402,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 4811,
+          "avg": 48110,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apar%20Industries/%5B260528%5D%20%5BNomura%5D%20Apar%20Industries%20-%20Strong%204Q%2C%20outlook%20remains%20on%20firm%20footing%20Raise%20FY27F-FY28F%20EBITDA%20estimates%20by%207%25-9%25%2C%20estimate%20FY26-29F%20EBITDA%20CAGR%20of%2019%25%2C%20maintain%20Buy.pdf",
-              "value": 4811
+              "value": 48110
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 5693,
+          "avg": 56930,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apar%20Industries/%5B260528%5D%20%5BNomura%5D%20Apar%20Industries%20-%20Strong%204Q%2C%20outlook%20remains%20on%20firm%20footing%20Raise%20FY27F-FY28F%20EBITDA%20estimates%20by%207%25-9%25%2C%20estimate%20FY26-29F%20EBITDA%20CAGR%20of%2019%25%2C%20maintain%20Buy.pdf",
-              "value": 5693
+              "value": 56930
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 6431,
+          "avg": 64310,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apar%20Industries/%5B260528%5D%20%5BNomura%5D%20Apar%20Industries%20-%20Strong%204Q%2C%20outlook%20remains%20on%20firm%20footing%20Raise%20FY27F-FY28F%20EBITDA%20estimates%20by%207%25-9%25%2C%20estimate%20FY26-29F%20EBITDA%20CAGR%20of%2019%25%2C%20maintain%20Buy.pdf",
-              "value": 6431
+              "value": 64310
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 7548,
+          "avg": 75480,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apar%20Industries/%5B260528%5D%20%5BNomura%5D%20Apar%20Industries%20-%20Strong%204Q%2C%20outlook%20remains%20on%20firm%20footing%20Raise%20FY27F-FY28F%20EBITDA%20estimates%20by%207%25-9%25%2C%20estimate%20FY26-29F%20EBITDA%20CAGR%20of%2019%25%2C%20maintain%20Buy.pdf",
-              "value": 7548
+              "value": 75480
             }
           ]
         }
@@ -1452,49 +1452,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 1715,
+          "avg": 17150,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apar%20Industries/%5B260528%5D%20%5BNomura%5D%20Apar%20Industries%20-%20Strong%204Q%2C%20outlook%20remains%20on%20firm%20footing%20Raise%20FY27F-FY28F%20EBITDA%20estimates%20by%207%25-9%25%2C%20estimate%20FY26-29F%20EBITDA%20CAGR%20of%2019%25%2C%20maintain%20Buy.pdf",
-              "value": 1715
+              "value": 17150
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 2049,
+          "avg": 20490,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apar%20Industries/%5B260528%5D%20%5BNomura%5D%20Apar%20Industries%20-%20Strong%204Q%2C%20outlook%20remains%20on%20firm%20footing%20Raise%20FY27F-FY28F%20EBITDA%20estimates%20by%207%25-9%25%2C%20estimate%20FY26-29F%20EBITDA%20CAGR%20of%2019%25%2C%20maintain%20Buy.pdf",
-              "value": 2049
+              "value": 20490
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 2328,
+          "avg": 23280,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apar%20Industries/%5B260528%5D%20%5BNomura%5D%20Apar%20Industries%20-%20Strong%204Q%2C%20outlook%20remains%20on%20firm%20footing%20Raise%20FY27F-FY28F%20EBITDA%20estimates%20by%207%25-9%25%2C%20estimate%20FY26-29F%20EBITDA%20CAGR%20of%2019%25%2C%20maintain%20Buy.pdf",
-              "value": 2328
+              "value": 23280
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 2869,
+          "avg": 28690,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apar%20Industries/%5B260528%5D%20%5BNomura%5D%20Apar%20Industries%20-%20Strong%204Q%2C%20outlook%20remains%20on%20firm%20footing%20Raise%20FY27F-FY28F%20EBITDA%20estimates%20by%207%25-9%25%2C%20estimate%20FY26-29F%20EBITDA%20CAGR%20of%2019%25%2C%20maintain%20Buy.pdf",
-              "value": 2869
+              "value": 28690
             }
           ]
         }
@@ -1503,43 +1503,43 @@
     "notes": "Income statement (INRmn) — page 2"
   },
   "Apollo Hospitals": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {},
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 4292.7,
+          "avg": 42927,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apollo%20Hospitals/%5B260521%5D%20%5BJefferies%5D%20Apollo%20Hospitals%20-%20Strong%20Mar-Q%20and%20Robust%20Outlook%2C%20BUY.pdf",
-              "value": 4292.7
+              "value": 42927
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 5146.1,
+          "avg": 51461,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apollo%20Hospitals/%5B260521%5D%20%5BJefferies%5D%20Apollo%20Hospitals%20-%20Strong%20Mar-Q%20and%20Robust%20Outlook%2C%20BUY.pdf",
-              "value": 5146.1
+              "value": 51461
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 6475.9,
+          "avg": 64759,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apollo%20Hospitals/%5B260521%5D%20%5BJefferies%5D%20Apollo%20Hospitals%20-%20Strong%20Mar-Q%20and%20Robust%20Outlook%2C%20BUY.pdf",
-              "value": 6475.9
+              "value": 64759
             }
           ]
         }
@@ -1547,37 +1547,37 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 1445.9,
+          "avg": 14459,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apollo%20Hospitals/%5B260521%5D%20%5BJefferies%5D%20Apollo%20Hospitals%20-%20Strong%20Mar-Q%20and%20Robust%20Outlook%2C%20BUY.pdf",
-              "value": 1445.9
+              "value": 14459
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 1956.1,
+          "avg": 19561,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apollo%20Hospitals/%5B260521%5D%20%5BJefferies%5D%20Apollo%20Hospitals%20-%20Strong%20Mar-Q%20and%20Robust%20Outlook%2C%20BUY.pdf",
-              "value": 1956.1
+              "value": 19561
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 2518.8,
+          "avg": 25188,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Apollo%20Hospitals/%5B260521%5D%20%5BJefferies%5D%20Apollo%20Hospitals%20-%20Strong%20Mar-Q%20and%20Robust%20Outlook%2C%20BUY.pdf",
-              "value": 2518.8
+              "value": 25188
             }
           ]
         }
@@ -1586,54 +1586,54 @@
     "notes": "Front-page Adj.PAT (₹m) FY26A-FY28E + Estimates Revision EBITDA (₹m)"
   },
   "Ashok Leyland": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 44007,
+          "avg": 440070,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Ashok%20Leyland/%5B260528%5D%20%5BJPMorgan%5D%20Ashok%20Leyland%20-%20Pricing%20discipline%20likely%20to%20continue%20amid%20volatile%20demand%20trends.pdf",
-              "value": 44007
+              "value": 440070
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 47611,
+          "avg": 476110,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Ashok%20Leyland/%5B260528%5D%20%5BJPMorgan%5D%20Ashok%20Leyland%20-%20Pricing%20discipline%20likely%20to%20continue%20amid%20volatile%20demand%20trends.pdf",
-              "value": 47611
+              "value": 476110
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 51573,
+          "avg": 515730,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Ashok%20Leyland/%5B260528%5D%20%5BJPMorgan%5D%20Ashok%20Leyland%20-%20Pricing%20discipline%20likely%20to%20continue%20amid%20volatile%20demand%20trends.pdf",
-              "value": 51573
+              "value": 515730
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 54031,
+          "avg": 540310,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Ashok%20Leyland/%5B260528%5D%20%5BJPMorgan%5D%20Ashok%20Leyland%20-%20Pricing%20discipline%20likely%20to%20continue%20amid%20volatile%20demand%20trends.pdf",
-              "value": 54031
+              "value": 540310
             }
           ]
         }
@@ -1641,49 +1641,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 5732,
+          "avg": 57320,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Ashok%20Leyland/%5B260528%5D%20%5BJPMorgan%5D%20Ashok%20Leyland%20-%20Pricing%20discipline%20likely%20to%20continue%20amid%20volatile%20demand%20trends.pdf",
-              "value": 5732
+              "value": 57320
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 5971,
+          "avg": 59710,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Ashok%20Leyland/%5B260528%5D%20%5BJPMorgan%5D%20Ashok%20Leyland%20-%20Pricing%20discipline%20likely%20to%20continue%20amid%20volatile%20demand%20trends.pdf",
-              "value": 5971
+              "value": 59710
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 7227,
+          "avg": 72270,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Ashok%20Leyland/%5B260528%5D%20%5BJPMorgan%5D%20Ashok%20Leyland%20-%20Pricing%20discipline%20likely%20to%20continue%20amid%20volatile%20demand%20trends.pdf",
-              "value": 7227
+              "value": 72270
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 7652,
+          "avg": 76520,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Ashok%20Leyland/%5B260528%5D%20%5BJPMorgan%5D%20Ashok%20Leyland%20-%20Pricing%20discipline%20likely%20to%20continue%20amid%20volatile%20demand%20trends.pdf",
-              "value": 7652
+              "value": 76520
             }
           ]
         }
@@ -1691,49 +1691,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 3914,
+          "avg": 39140,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Ashok%20Leyland/%5B260528%5D%20%5BJPMorgan%5D%20Ashok%20Leyland%20-%20Pricing%20discipline%20likely%20to%20continue%20amid%20volatile%20demand%20trends.pdf",
-              "value": 3914
+              "value": 39140
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 4073,
+          "avg": 40730,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Ashok%20Leyland/%5B260528%5D%20%5BJPMorgan%5D%20Ashok%20Leyland%20-%20Pricing%20discipline%20likely%20to%20continue%20amid%20volatile%20demand%20trends.pdf",
-              "value": 4073
+              "value": 40730
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 5013,
+          "avg": 50130,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Ashok%20Leyland/%5B260528%5D%20%5BJPMorgan%5D%20Ashok%20Leyland%20-%20Pricing%20discipline%20likely%20to%20continue%20amid%20volatile%20demand%20trends.pdf",
-              "value": 5013
+              "value": 50130
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 5331,
+          "avg": 53310,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260528",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Ashok%20Leyland/%5B260528%5D%20%5BJPMorgan%5D%20Ashok%20Leyland%20-%20Pricing%20discipline%20likely%20to%20continue%20amid%20volatile%20demand%20trends.pdf",
-              "value": 5331
+              "value": 53310
             }
           ]
         }
@@ -1742,54 +1742,54 @@
     "notes": "Key Metrics (FYE Mar) — page 2"
   },
   "Asian Paints": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 35516,
+          "avg": 355160,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Asian%20Paints/%5B260602%5D%20%5BJPMorgan%5D%20Asian%20Paints%20-%20Analyst%20meet%20takeaways%2C%20Disciplined%20growth%20playbook.pdf",
-              "value": 35516
+              "value": 355160
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 40414,
+          "avg": 404140,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Asian%20Paints/%5B260602%5D%20%5BJPMorgan%5D%20Asian%20Paints%20-%20Analyst%20meet%20takeaways%2C%20Disciplined%20growth%20playbook.pdf",
-              "value": 40414
+              "value": 404140
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 43186,
+          "avg": 431860,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Asian%20Paints/%5B260602%5D%20%5BJPMorgan%5D%20Asian%20Paints%20-%20Analyst%20meet%20takeaways%2C%20Disciplined%20growth%20playbook.pdf",
-              "value": 43186
+              "value": 431860
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 46561,
+          "avg": 465610,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Asian%20Paints/%5B260602%5D%20%5BJPMorgan%5D%20Asian%20Paints%20-%20Analyst%20meet%20takeaways%2C%20Disciplined%20growth%20playbook.pdf",
-              "value": 46561
+              "value": 465610
             }
           ]
         }
@@ -1797,49 +1797,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 7334,
+          "avg": 73340,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Asian%20Paints/%5B260602%5D%20%5BJPMorgan%5D%20Asian%20Paints%20-%20Analyst%20meet%20takeaways%2C%20Disciplined%20growth%20playbook.pdf",
-              "value": 7334
+              "value": 73340
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 7796,
+          "avg": 77960,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Asian%20Paints/%5B260602%5D%20%5BJPMorgan%5D%20Asian%20Paints%20-%20Analyst%20meet%20takeaways%2C%20Disciplined%20growth%20playbook.pdf",
-              "value": 7796
+              "value": 77960
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 8860,
+          "avg": 88600,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Asian%20Paints/%5B260602%5D%20%5BJPMorgan%5D%20Asian%20Paints%20-%20Analyst%20meet%20takeaways%2C%20Disciplined%20growth%20playbook.pdf",
-              "value": 8860
+              "value": 88600
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 9695,
+          "avg": 96950,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Asian%20Paints/%5B260602%5D%20%5BJPMorgan%5D%20Asian%20Paints%20-%20Analyst%20meet%20takeaways%2C%20Disciplined%20growth%20playbook.pdf",
-              "value": 9695
+              "value": 96950
             }
           ]
         }
@@ -1847,49 +1847,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 4552,
+          "avg": 45520,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Asian%20Paints/%5B260602%5D%20%5BJPMorgan%5D%20Asian%20Paints%20-%20Analyst%20meet%20takeaways%2C%20Disciplined%20growth%20playbook.pdf",
-              "value": 4552
+              "value": 45520
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 4935,
+          "avg": 49350,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Asian%20Paints/%5B260602%5D%20%5BJPMorgan%5D%20Asian%20Paints%20-%20Analyst%20meet%20takeaways%2C%20Disciplined%20growth%20playbook.pdf",
-              "value": 4935
+              "value": 49350
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 5746,
+          "avg": 57460,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Asian%20Paints/%5B260602%5D%20%5BJPMorgan%5D%20Asian%20Paints%20-%20Analyst%20meet%20takeaways%2C%20Disciplined%20growth%20playbook.pdf",
-              "value": 5746
+              "value": 57460
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 6428,
+          "avg": 64280,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Asian%20Paints/%5B260602%5D%20%5BJPMorgan%5D%20Asian%20Paints%20-%20Analyst%20meet%20takeaways%2C%20Disciplined%20growth%20playbook.pdf",
-              "value": 6428
+              "value": 64280
             }
           ]
         }
@@ -1898,42 +1898,42 @@
     "notes": "Key Metrics (FYE Mar) — page 2"
   },
   "Avenue Supermarts": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 68821,
+          "avg": 688210,
           "brokers": [
             {
               "name": "Bernstein",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Avenue%20Supermarts/%5B260520%5D%20%5BBernstein%5D%20Avenue%20Supermarts%20-%20DMart%2C%20The%20LFL%20vs%20inflation%20equation%2C%20how%20much%20does%20it%20really%20matter.pdf",
-              "value": 68821
+              "value": 688210
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 82093,
+          "avg": 820930,
           "brokers": [
             {
               "name": "Bernstein",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Avenue%20Supermarts/%5B260520%5D%20%5BBernstein%5D%20Avenue%20Supermarts%20-%20DMart%2C%20The%20LFL%20vs%20inflation%20equation%2C%20how%20much%20does%20it%20really%20matter.pdf",
-              "value": 82093
+              "value": 820930
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 97157,
+          "avg": 971570,
           "brokers": [
             {
               "name": "Bernstein",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Avenue%20Supermarts/%5B260520%5D%20%5BBernstein%5D%20Avenue%20Supermarts%20-%20DMart%2C%20The%20LFL%20vs%20inflation%20equation%2C%20how%20much%20does%20it%20really%20matter.pdf",
-              "value": 97157
+              "value": 971570
             }
           ]
         }
@@ -1941,37 +1941,37 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 5187,
+          "avg": 51870,
           "brokers": [
             {
               "name": "Bernstein",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Avenue%20Supermarts/%5B260520%5D%20%5BBernstein%5D%20Avenue%20Supermarts%20-%20DMart%2C%20The%20LFL%20vs%20inflation%20equation%2C%20how%20much%20does%20it%20really%20matter.pdf",
-              "value": 5187
+              "value": 51870
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 6410,
+          "avg": 64100,
           "brokers": [
             {
               "name": "Bernstein",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Avenue%20Supermarts/%5B260520%5D%20%5BBernstein%5D%20Avenue%20Supermarts%20-%20DMart%2C%20The%20LFL%20vs%20inflation%20equation%2C%20how%20much%20does%20it%20really%20matter.pdf",
-              "value": 6410
+              "value": 64100
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 7751,
+          "avg": 77510,
           "brokers": [
             {
               "name": "Bernstein",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Avenue%20Supermarts/%5B260520%5D%20%5BBernstein%5D%20Avenue%20Supermarts%20-%20DMart%2C%20The%20LFL%20vs%20inflation%20equation%2C%20how%20much%20does%20it%20really%20matter.pdf",
-              "value": 7751
+              "value": 77510
             }
           ]
         }
@@ -1981,54 +1981,54 @@
     "notes": "Financials block (page 1) — Rev / EBITDA only"
   },
   "AWL Agri Business": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 74731,
+          "avg": 747310,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/AWL%20Agri%20Business/%5B260526%5D%20%5BJPMorgan%5D%20AWL%20Agri%20Business%20-%20Investor%20Day%2C%20Building%20an%20integrated%20Foods%20platform%2C%20margin%20trajectory%20a%20key%20monitorable.pdf",
-              "value": 74731
+              "value": 747310
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 86789,
+          "avg": 867890,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/AWL%20Agri%20Business/%5B260526%5D%20%5BJPMorgan%5D%20AWL%20Agri%20Business%20-%20Investor%20Day%2C%20Building%20an%20integrated%20Foods%20platform%2C%20margin%20trajectory%20a%20key%20monitorable.pdf",
-              "value": 86789
+              "value": 867890
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 91614,
+          "avg": 916140,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/AWL%20Agri%20Business/%5B260526%5D%20%5BJPMorgan%5D%20AWL%20Agri%20Business%20-%20Investor%20Day%2C%20Building%20an%20integrated%20Foods%20platform%2C%20margin%20trajectory%20a%20key%20monitorable.pdf",
-              "value": 91614
+              "value": 916140
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 96274,
+          "avg": 962740,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/AWL%20Agri%20Business/%5B260526%5D%20%5BJPMorgan%5D%20AWL%20Agri%20Business%20-%20Investor%20Day%2C%20Building%20an%20integrated%20Foods%20platform%2C%20margin%20trajectory%20a%20key%20monitorable.pdf",
-              "value": 96274
+              "value": 962740
             }
           ]
         }
@@ -2036,49 +2036,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 2131,
+          "avg": 21310,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/AWL%20Agri%20Business/%5B260526%5D%20%5BJPMorgan%5D%20AWL%20Agri%20Business%20-%20Investor%20Day%2C%20Building%20an%20integrated%20Foods%20platform%2C%20margin%20trajectory%20a%20key%20monitorable.pdf",
-              "value": 2131
+              "value": 21310
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 2291,
+          "avg": 22910,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/AWL%20Agri%20Business/%5B260526%5D%20%5BJPMorgan%5D%20AWL%20Agri%20Business%20-%20Investor%20Day%2C%20Building%20an%20integrated%20Foods%20platform%2C%20margin%20trajectory%20a%20key%20monitorable.pdf",
-              "value": 2291
+              "value": 22910
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 2377,
+          "avg": 23770,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/AWL%20Agri%20Business/%5B260526%5D%20%5BJPMorgan%5D%20AWL%20Agri%20Business%20-%20Investor%20Day%2C%20Building%20an%20integrated%20Foods%20platform%2C%20margin%20trajectory%20a%20key%20monitorable.pdf",
-              "value": 2377
+              "value": 23770
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 2433,
+          "avg": 24330,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/AWL%20Agri%20Business/%5B260526%5D%20%5BJPMorgan%5D%20AWL%20Agri%20Business%20-%20Investor%20Day%2C%20Building%20an%20integrated%20Foods%20platform%2C%20margin%20trajectory%20a%20key%20monitorable.pdf",
-              "value": 2433
+              "value": 24330
             }
           ]
         }
@@ -2086,49 +2086,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 1071,
+          "avg": 10710,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/AWL%20Agri%20Business/%5B260526%5D%20%5BJPMorgan%5D%20AWL%20Agri%20Business%20-%20Investor%20Day%2C%20Building%20an%20integrated%20Foods%20platform%2C%20margin%20trajectory%20a%20key%20monitorable.pdf",
-              "value": 1071
+              "value": 10710
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 1016,
+          "avg": 10160,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/AWL%20Agri%20Business/%5B260526%5D%20%5BJPMorgan%5D%20AWL%20Agri%20Business%20-%20Investor%20Day%2C%20Building%20an%20integrated%20Foods%20platform%2C%20margin%20trajectory%20a%20key%20monitorable.pdf",
-              "value": 1016
+              "value": 10160
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 1075,
+          "avg": 10750,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/AWL%20Agri%20Business/%5B260526%5D%20%5BJPMorgan%5D%20AWL%20Agri%20Business%20-%20Investor%20Day%2C%20Building%20an%20integrated%20Foods%20platform%2C%20margin%20trajectory%20a%20key%20monitorable.pdf",
-              "value": 1075
+              "value": 10750
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 1131,
+          "avg": 11310,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/AWL%20Agri%20Business/%5B260526%5D%20%5BJPMorgan%5D%20AWL%20Agri%20Business%20-%20Investor%20Day%2C%20Building%20an%20integrated%20Foods%20platform%2C%20margin%20trajectory%20a%20key%20monitorable.pdf",
-              "value": 1131
+              "value": 11310
             }
           ]
         }
@@ -2137,54 +2137,54 @@
     "notes": "Key Metrics (FYE Mar) — page 2"
   },
   "Belrise Industries": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 9509,
+          "avg": 95091,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Belrise%20Industries/%5B260525%5D%20%5BJefferies%5D%20Belrise%20Industries%20-%20Expanding%20Footprint.pdf",
-              "value": 9509
+              "value": 95091
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 10859,
+          "avg": 108591,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Belrise%20Industries/%5B260525%5D%20%5BJefferies%5D%20Belrise%20Industries%20-%20Expanding%20Footprint.pdf",
-              "value": 10859
+              "value": 108591
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 13485,
+          "avg": 134852,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Belrise%20Industries/%5B260525%5D%20%5BJefferies%5D%20Belrise%20Industries%20-%20Expanding%20Footprint.pdf",
-              "value": 13485
+              "value": 134852
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 15041,
+          "avg": 150405,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Belrise%20Industries/%5B260525%5D%20%5BJefferies%5D%20Belrise%20Industries%20-%20Expanding%20Footprint.pdf",
-              "value": 15041
+              "value": 150405
             }
           ]
         }
@@ -2192,49 +2192,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 1154,
+          "avg": 11538,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Belrise%20Industries/%5B260525%5D%20%5BJefferies%5D%20Belrise%20Industries%20-%20Expanding%20Footprint.pdf",
-              "value": 1154
+              "value": 11538
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 1302,
+          "avg": 13024,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Belrise%20Industries/%5B260525%5D%20%5BJefferies%5D%20Belrise%20Industries%20-%20Expanding%20Footprint.pdf",
-              "value": 1302
+              "value": 13024
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 1818,
+          "avg": 18177,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Belrise%20Industries/%5B260525%5D%20%5BJefferies%5D%20Belrise%20Industries%20-%20Expanding%20Footprint.pdf",
-              "value": 1818
+              "value": 18177
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 2034,
+          "avg": 20340,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Belrise%20Industries/%5B260525%5D%20%5BJefferies%5D%20Belrise%20Industries%20-%20Expanding%20Footprint.pdf",
-              "value": 2034
+              "value": 20340
             }
           ]
         }
@@ -2242,49 +2242,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 502,
+          "avg": 5020,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Belrise%20Industries/%5B260525%5D%20%5BJefferies%5D%20Belrise%20Industries%20-%20Expanding%20Footprint.pdf",
-              "value": 502
+              "value": 5020
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 642,
+          "avg": 6422,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Belrise%20Industries/%5B260525%5D%20%5BJefferies%5D%20Belrise%20Industries%20-%20Expanding%20Footprint.pdf",
-              "value": 642
+              "value": 6422
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 891,
+          "avg": 8909,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Belrise%20Industries/%5B260525%5D%20%5BJefferies%5D%20Belrise%20Industries%20-%20Expanding%20Footprint.pdf",
-              "value": 891
+              "value": 8909
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 1022,
+          "avg": 10219,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Belrise%20Industries/%5B260525%5D%20%5BJefferies%5D%20Belrise%20Industries%20-%20Expanding%20Footprint.pdf",
-              "value": 1022
+              "value": 10219
             }
           ]
         }
@@ -2293,54 +2293,54 @@
     "notes": "Front-page FY (Mar) mini-table — Rev/EBITDA/Net Profit"
   },
   "Bharat Electronics": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 27610,
+          "avg": 276100,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Electronics/%5B260520%5D%20%5BJPMorgan%5D%20Bharat%20Electronics%20-%20Growth%20momentum%20remains%20intact%2C%20preferred%20defense%20play%20in%20India.pdf",
-              "value": 27610
+              "value": 276100
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 31752,
+          "avg": 317520,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Electronics/%5B260520%5D%20%5BJPMorgan%5D%20Bharat%20Electronics%20-%20Growth%20momentum%20remains%20intact%2C%20preferred%20defense%20play%20in%20India.pdf",
-              "value": 31752
+              "value": 317520
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 36514,
+          "avg": 365140,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Electronics/%5B260520%5D%20%5BJPMorgan%5D%20Bharat%20Electronics%20-%20Growth%20momentum%20remains%20intact%2C%20preferred%20defense%20play%20in%20India.pdf",
-              "value": 36514
+              "value": 365140
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 41992,
+          "avg": 419920,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Electronics/%5B260520%5D%20%5BJPMorgan%5D%20Bharat%20Electronics%20-%20Growth%20momentum%20remains%20intact%2C%20preferred%20defense%20play%20in%20India.pdf",
-              "value": 41992
+              "value": 419920
             }
           ]
         }
@@ -2348,49 +2348,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 8049,
+          "avg": 80490,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Electronics/%5B260520%5D%20%5BJPMorgan%5D%20Bharat%20Electronics%20-%20Growth%20momentum%20remains%20intact%2C%20preferred%20defense%20play%20in%20India.pdf",
-              "value": 8049
+              "value": 80490
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 8880,
+          "avg": 88800,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Electronics/%5B260520%5D%20%5BJPMorgan%5D%20Bharat%20Electronics%20-%20Growth%20momentum%20remains%20intact%2C%20preferred%20defense%20play%20in%20India.pdf",
-              "value": 8880
+              "value": 88800
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 10212,
+          "avg": 102120,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Electronics/%5B260520%5D%20%5BJPMorgan%5D%20Bharat%20Electronics%20-%20Growth%20momentum%20remains%20intact%2C%20preferred%20defense%20play%20in%20India.pdf",
-              "value": 10212
+              "value": 102120
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 11743,
+          "avg": 117430,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Electronics/%5B260520%5D%20%5BJPMorgan%5D%20Bharat%20Electronics%20-%20Growth%20momentum%20remains%20intact%2C%20preferred%20defense%20play%20in%20India.pdf",
-              "value": 11743
+              "value": 117430
             }
           ]
         }
@@ -2398,49 +2398,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 6062,
+          "avg": 60620,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Electronics/%5B260520%5D%20%5BJPMorgan%5D%20Bharat%20Electronics%20-%20Growth%20momentum%20remains%20intact%2C%20preferred%20defense%20play%20in%20India.pdf",
-              "value": 6062
+              "value": 60620
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 6703,
+          "avg": 67030,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Electronics/%5B260520%5D%20%5BJPMorgan%5D%20Bharat%20Electronics%20-%20Growth%20momentum%20remains%20intact%2C%20preferred%20defense%20play%20in%20India.pdf",
-              "value": 6703
+              "value": 67030
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 7674,
+          "avg": 76740,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Electronics/%5B260520%5D%20%5BJPMorgan%5D%20Bharat%20Electronics%20-%20Growth%20momentum%20remains%20intact%2C%20preferred%20defense%20play%20in%20India.pdf",
-              "value": 7674
+              "value": 76740
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 8785,
+          "avg": 87850,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Electronics/%5B260520%5D%20%5BJPMorgan%5D%20Bharat%20Electronics%20-%20Growth%20momentum%20remains%20intact%2C%20preferred%20defense%20play%20in%20India.pdf",
-              "value": 8785
+              "value": 87850
             }
           ]
         }
@@ -2449,55 +2449,55 @@
     "notes": "Key Metrics (FYE Mar) — page 2"
   },
   "Bharat Petroleum": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {},
       "ebitda": {
         "FY25": {
           "tag": "A",
-          "avg": 25470,
+          "avg": 254700,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Petroleum/%5B260520%5D%20%5BJefferies%5D%20Bharat%20Petroleum%20-%20Mar-26%20Review%2C%20EBITDA%20beat%2C%20Valuation%20Favourable.pdf",
-              "value": 25470
+              "value": 254700
             }
           ]
         },
         "FY26": {
           "tag": "A",
-          "avg": 41180,
+          "avg": 411800,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Petroleum/%5B260520%5D%20%5BJefferies%5D%20Bharat%20Petroleum%20-%20Mar-26%20Review%2C%20EBITDA%20beat%2C%20Valuation%20Favourable.pdf",
-              "value": 41180
+              "value": 411800
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 10450,
+          "avg": 104500,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Petroleum/%5B260520%5D%20%5BJefferies%5D%20Bharat%20Petroleum%20-%20Mar-26%20Review%2C%20EBITDA%20beat%2C%20Valuation%20Favourable.pdf",
-              "value": 10450
+              "value": 104500
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 32280,
+          "avg": 322800,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Petroleum/%5B260520%5D%20%5BJefferies%5D%20Bharat%20Petroleum%20-%20Mar-26%20Review%2C%20EBITDA%20beat%2C%20Valuation%20Favourable.pdf",
-              "value": 32280
+              "value": 322800
             }
           ]
         }
@@ -2505,61 +2505,61 @@
       "netProfit": {
         "FY25": {
           "tag": "A",
-          "avg": 13280,
+          "avg": 132800,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Petroleum/%5B260520%5D%20%5BJefferies%5D%20Bharat%20Petroleum%20-%20Mar-26%20Review%2C%20EBITDA%20beat%2C%20Valuation%20Favourable.pdf",
-              "value": 13280
+              "value": 132800
             }
           ]
         },
         "FY26": {
           "tag": "A",
-          "avg": 17791,
+          "avg": 177910,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Petroleum/%5B260520%5D%20%5BJefferies%5D%20Bharat%20Petroleum%20-%20Mar-26%20Review%2C%20EBITDA%20beat%2C%20Valuation%20Favourable.pdf",
-              "value": 23300
+              "value": 233000
             },
             {
               "name": "Kotak",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Petroleum/%5B260520%5D%20%5BKotak%5D%20Bharat%20Petroleum%20-%204Q%20outperformance%2C%201HFY27%20set%20for%20deep%20losses.pdf",
-              "value": 12282
+              "value": 122820
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 12598.5,
+          "avg": 125985,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Petroleum/%5B260520%5D%20%5BJefferies%5D%20Bharat%20Petroleum%20-%20Mar-26%20Review%2C%20EBITDA%20beat%2C%20Valuation%20Favourable.pdf",
-              "value": 18730
+              "value": 187300
             },
             {
               "name": "Kotak",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Petroleum/%5B260520%5D%20%5BKotak%5D%20Bharat%20Petroleum%20-%204Q%20outperformance%2C%201HFY27%20set%20for%20deep%20losses.pdf",
-              "value": 6467
+              "value": 64670
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": -7877,
+          "avg": -78770,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bharat%20Petroleum/%5B260520%5D%20%5BKotak%5D%20Bharat%20Petroleum%20-%204Q%20outperformance%2C%201HFY27%20set%20for%20deep%20losses.pdf",
-              "value": -7877
+              "value": -78770
             }
           ]
         }
@@ -2568,54 +2568,54 @@
     "notes": "Front-page FY (Mar) 2025A-2028E mini-table · Forecasts/Valuations (page 1) — EPS-derived PAT, ₹217cr shares"
   },
   "Container Corporation of India": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 9060,
+          "avg": 90595,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Container%20Corporation%20of%20India/%5B260526%5D%20%5BJefferies%5D%20Concor%20-%20Catalyst%20ahead%20but%20execution%20key.pdf",
-              "value": 9060
+              "value": 90595
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 9467,
+          "avg": 94670,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Container%20Corporation%20of%20India/%5B260526%5D%20%5BJefferies%5D%20Concor%20-%20Catalyst%20ahead%20but%20execution%20key.pdf",
-              "value": 9467
+              "value": 94670
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 11191,
+          "avg": 111910,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Container%20Corporation%20of%20India/%5B260526%5D%20%5BJefferies%5D%20Concor%20-%20Catalyst%20ahead%20but%20execution%20key.pdf",
-              "value": 11191
+              "value": 111910
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 12633,
+          "avg": 126327,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Container%20Corporation%20of%20India/%5B260526%5D%20%5BJefferies%5D%20Concor%20-%20Catalyst%20ahead%20but%20execution%20key.pdf",
-              "value": 12633
+              "value": 126327
             }
           ]
         }
@@ -2623,49 +2623,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 1922,
+          "avg": 19215,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Container%20Corporation%20of%20India/%5B260526%5D%20%5BJefferies%5D%20Concor%20-%20Catalyst%20ahead%20but%20execution%20key.pdf",
-              "value": 1922
+              "value": 19215
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 2098,
+          "avg": 20980,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Container%20Corporation%20of%20India/%5B260526%5D%20%5BJefferies%5D%20Concor%20-%20Catalyst%20ahead%20but%20execution%20key.pdf",
-              "value": 2098
+              "value": 20980
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 2664,
+          "avg": 26637,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Container%20Corporation%20of%20India/%5B260526%5D%20%5BJefferies%5D%20Concor%20-%20Catalyst%20ahead%20but%20execution%20key.pdf",
-              "value": 2664
+              "value": 26637
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 3075,
+          "avg": 30746,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Container%20Corporation%20of%20India/%5B260526%5D%20%5BJefferies%5D%20Concor%20-%20Catalyst%20ahead%20but%20execution%20key.pdf",
-              "value": 3075
+              "value": 30746
             }
           ]
         }
@@ -2673,49 +2673,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 1222,
+          "avg": 12218,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Container%20Corporation%20of%20India/%5B260526%5D%20%5BJefferies%5D%20Concor%20-%20Catalyst%20ahead%20but%20execution%20key.pdf",
-              "value": 1222
+              "value": 12218
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 1314,
+          "avg": 13141,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Container%20Corporation%20of%20India/%5B260526%5D%20%5BJefferies%5D%20Concor%20-%20Catalyst%20ahead%20but%20execution%20key.pdf",
-              "value": 1314
+              "value": 13141
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 1740,
+          "avg": 17402,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Container%20Corporation%20of%20India/%5B260526%5D%20%5BJefferies%5D%20Concor%20-%20Catalyst%20ahead%20but%20execution%20key.pdf",
-              "value": 1740
+              "value": 17402
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 2099,
+          "avg": 20991,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Container%20Corporation%20of%20India/%5B260526%5D%20%5BJefferies%5D%20Concor%20-%20Catalyst%20ahead%20but%20execution%20key.pdf",
-              "value": 2099
+              "value": 20991
             }
           ]
         }
@@ -2724,54 +2724,54 @@
     "notes": "Exhibit 1 — Concor Financial Summary"
   },
   "Cummins India": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 12143,
+          "avg": 121432,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Cummins%20India/%5B260529%5D%20%5BJefferies%5D%20Cummins%20India%20Limited%20-%20Margin%20tailwinds%20ahead.pdf",
-              "value": 12143
+              "value": 121432
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 14443,
+          "avg": 144428,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Cummins%20India/%5B260529%5D%20%5BJefferies%5D%20Cummins%20India%20Limited%20-%20Margin%20tailwinds%20ahead.pdf",
-              "value": 14443
+              "value": 144428
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 16775,
+          "avg": 167750,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Cummins%20India/%5B260529%5D%20%5BJefferies%5D%20Cummins%20India%20Limited%20-%20Margin%20tailwinds%20ahead.pdf",
-              "value": 16775
+              "value": 167750
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 19593,
+          "avg": 195934,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Cummins%20India/%5B260529%5D%20%5BJefferies%5D%20Cummins%20India%20Limited%20-%20Margin%20tailwinds%20ahead.pdf",
-              "value": 19593
+              "value": 195934
             }
           ]
         }
@@ -2779,49 +2779,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 2378,
+          "avg": 23781,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Cummins%20India/%5B260529%5D%20%5BJefferies%5D%20Cummins%20India%20Limited%20-%20Margin%20tailwinds%20ahead.pdf",
-              "value": 2378
+              "value": 23781
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 2918,
+          "avg": 29180,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Cummins%20India/%5B260529%5D%20%5BJefferies%5D%20Cummins%20India%20Limited%20-%20Margin%20tailwinds%20ahead.pdf",
-              "value": 2918
+              "value": 29180
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 3578,
+          "avg": 35784,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Cummins%20India/%5B260529%5D%20%5BJefferies%5D%20Cummins%20India%20Limited%20-%20Margin%20tailwinds%20ahead.pdf",
-              "value": 3578
+              "value": 35784
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 4329,
+          "avg": 43290,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Cummins%20India/%5B260529%5D%20%5BJefferies%5D%20Cummins%20India%20Limited%20-%20Margin%20tailwinds%20ahead.pdf",
-              "value": 4329
+              "value": 43290
             }
           ]
         }
@@ -2829,49 +2829,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 2595,
+          "avg": 25949,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Cummins%20India/%5B260529%5D%20%5BJefferies%5D%20Cummins%20India%20Limited%20-%20Margin%20tailwinds%20ahead.pdf",
-              "value": 2595
+              "value": 25949
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 3188,
+          "avg": 31880,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Cummins%20India/%5B260529%5D%20%5BJefferies%5D%20Cummins%20India%20Limited%20-%20Margin%20tailwinds%20ahead.pdf",
-              "value": 3188
+              "value": 31880
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 3933,
+          "avg": 39331,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Cummins%20India/%5B260529%5D%20%5BJefferies%5D%20Cummins%20India%20Limited%20-%20Margin%20tailwinds%20ahead.pdf",
-              "value": 3933
+              "value": 39331
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 4778,
+          "avg": 47778,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Cummins%20India/%5B260529%5D%20%5BJefferies%5D%20Cummins%20India%20Limited%20-%20Margin%20tailwinds%20ahead.pdf",
-              "value": 4778
+              "value": 47778
             }
           ]
         }
@@ -2880,54 +2880,54 @@
     "notes": "Exhibit 1 — Cummins Financial Summary"
   },
   "Eicher Motors": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 23407.6,
+          "avg": 234076,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
-              "value": 23407.6
+              "value": 234076
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 27402.8,
+          "avg": 274028,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
-              "value": 27402.8
+              "value": 274028
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 31684.9,
+          "avg": 316849,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
-              "value": 31684.9
+              "value": 316849
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 36407.6,
+          "avg": 364076,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
-              "value": 36407.6
+              "value": 364076
             }
           ]
         }
@@ -2935,49 +2935,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 5785.1,
+          "avg": 57851,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
-              "value": 5785.1
+              "value": 57851
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 6809.1,
+          "avg": 68091,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
-              "value": 6809.1
+              "value": 68091
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 8049.3,
+          "avg": 80493,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
-              "value": 8049.3
+              "value": 80493
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 9341.5,
+          "avg": 93415,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
-              "value": 9341.5
+              "value": 93415
             }
           ]
         }
@@ -2985,49 +2985,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 5556.8,
+          "avg": 55568,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
-              "value": 5556.8
+              "value": 55568
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 6366.6,
+          "avg": 63666,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
-              "value": 6366.6
+              "value": 63666
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 7398.1,
+          "avg": 73981,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
-              "value": 7398.1
+              "value": 73981
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 8534.9,
+          "avg": 85349,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Eicher%20Motors/%5B260522%5D%20%5BJefferies%5D%20Eicher%20-%20Growing%20Well%20and%20Expanding%20Capacity.pdf",
-              "value": 8534.9
+              "value": 85349
             }
           ]
         }
@@ -3036,54 +3036,54 @@
     "notes": "Front-page FY (Mar) 2026A-2029E table"
   },
   "GE Vernova T&D India": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 6206,
+          "avg": 62060,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/GE%20Vernova%20T%26D%20India/%5B260520%5D%20%5BJPMorgan%5D%20GE%20Vernova%20T%26D%20India%20-%20Emerge%20incrementally%20positive%20on%20the%20LT%20story%2C%20raising%20PT%20to%20Rs5050%2C%20stay%20OW.pdf",
-              "value": 6206
+              "value": 62060
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 7974,
+          "avg": 79740,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/GE%20Vernova%20T%26D%20India/%5B260520%5D%20%5BJPMorgan%5D%20GE%20Vernova%20T%26D%20India%20-%20Emerge%20incrementally%20positive%20on%20the%20LT%20story%2C%20raising%20PT%20to%20Rs5050%2C%20stay%20OW.pdf",
-              "value": 7974
+              "value": 79740
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 9992,
+          "avg": 99920,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/GE%20Vernova%20T%26D%20India/%5B260520%5D%20%5BJPMorgan%5D%20GE%20Vernova%20T%26D%20India%20-%20Emerge%20incrementally%20positive%20on%20the%20LT%20story%2C%20raising%20PT%20to%20Rs5050%2C%20stay%20OW.pdf",
-              "value": 9992
+              "value": 99920
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 12822,
+          "avg": 128220,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/GE%20Vernova%20T%26D%20India/%5B260520%5D%20%5BJPMorgan%5D%20GE%20Vernova%20T%26D%20India%20-%20Emerge%20incrementally%20positive%20on%20the%20LT%20story%2C%20raising%20PT%20to%20Rs5050%2C%20stay%20OW.pdf",
-              "value": 12822
+              "value": 128220
             }
           ]
         }
@@ -3091,49 +3091,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 1684,
+          "avg": 16840,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/GE%20Vernova%20T%26D%20India/%5B260520%5D%20%5BJPMorgan%5D%20GE%20Vernova%20T%26D%20India%20-%20Emerge%20incrementally%20positive%20on%20the%20LT%20story%2C%20raising%20PT%20to%20Rs5050%2C%20stay%20OW.pdf",
-              "value": 1684
+              "value": 16840
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 2065,
+          "avg": 20650,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/GE%20Vernova%20T%26D%20India/%5B260520%5D%20%5BJPMorgan%5D%20GE%20Vernova%20T%26D%20India%20-%20Emerge%20incrementally%20positive%20on%20the%20LT%20story%2C%20raising%20PT%20to%20Rs5050%2C%20stay%20OW.pdf",
-              "value": 2065
+              "value": 20650
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 2747,
+          "avg": 27470,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/GE%20Vernova%20T%26D%20India/%5B260520%5D%20%5BJPMorgan%5D%20GE%20Vernova%20T%26D%20India%20-%20Emerge%20incrementally%20positive%20on%20the%20LT%20story%2C%20raising%20PT%20to%20Rs5050%2C%20stay%20OW.pdf",
-              "value": 2747
+              "value": 27470
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 3466,
+          "avg": 34660,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/GE%20Vernova%20T%26D%20India/%5B260520%5D%20%5BJPMorgan%5D%20GE%20Vernova%20T%26D%20India%20-%20Emerge%20incrementally%20positive%20on%20the%20LT%20story%2C%20raising%20PT%20to%20Rs5050%2C%20stay%20OW.pdf",
-              "value": 3466
+              "value": 34660
             }
           ]
         }
@@ -3141,49 +3141,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 1233,
+          "avg": 12330,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/GE%20Vernova%20T%26D%20India/%5B260520%5D%20%5BJPMorgan%5D%20GE%20Vernova%20T%26D%20India%20-%20Emerge%20incrementally%20positive%20on%20the%20LT%20story%2C%20raising%20PT%20to%20Rs5050%2C%20stay%20OW.pdf",
-              "value": 1233
+              "value": 12330
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 1556,
+          "avg": 15560,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/GE%20Vernova%20T%26D%20India/%5B260520%5D%20%5BJPMorgan%5D%20GE%20Vernova%20T%26D%20India%20-%20Emerge%20incrementally%20positive%20on%20the%20LT%20story%2C%20raising%20PT%20to%20Rs5050%2C%20stay%20OW.pdf",
-              "value": 1556
+              "value": 15560
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 2057,
+          "avg": 20570,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/GE%20Vernova%20T%26D%20India/%5B260520%5D%20%5BJPMorgan%5D%20GE%20Vernova%20T%26D%20India%20-%20Emerge%20incrementally%20positive%20on%20the%20LT%20story%2C%20raising%20PT%20to%20Rs5050%2C%20stay%20OW.pdf",
-              "value": 2057
+              "value": 20570
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 2590,
+          "avg": 25900,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260520",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/GE%20Vernova%20T%26D%20India/%5B260520%5D%20%5BJPMorgan%5D%20GE%20Vernova%20T%26D%20India%20-%20Emerge%20incrementally%20positive%20on%20the%20LT%20story%2C%20raising%20PT%20to%20Rs5050%2C%20stay%20OW.pdf",
-              "value": 2590
+              "value": 25900
             }
           ]
         }
@@ -3192,42 +3192,42 @@
     "notes": "Key Metrics (FYE Mar) — page 2"
   },
   "InterGlobe Aviation": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 84961.9,
+          "avg": 849619,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
-              "value": 84961.9
+              "value": 849619
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 97520.6,
+          "avg": 975206,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
-              "value": 97520.6
+              "value": 975206
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 114076.9,
+          "avg": 1140769,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
-              "value": 114076.9
+              "value": 1140769
             }
           ]
         }
@@ -3235,37 +3235,37 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 12720,
+          "avg": 127200,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
-              "value": 12720
+              "value": 127200
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 17746.6,
+          "avg": 177466,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
-              "value": 17746.6
+              "value": 177466
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 28310.7,
+          "avg": 283107,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
-              "value": 28310.7
+              "value": 283107
             }
           ]
         }
@@ -3273,37 +3273,37 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": -2502.5,
+          "avg": -25025,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
-              "value": -2502.5
+              "value": -25025
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 2038.6,
+          "avg": 20386,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
-              "value": 2038.6
+              "value": 20386
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 7918.3,
+          "avg": 79183,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260529",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/IndiGo/%5B260529%5D%20%5BJefferies%5D%20IndiGo%20-%20Clouded%20near-term%20outlook.pdf",
-              "value": 7918.3
+              "value": 79183
             }
           ]
         }
@@ -3312,96 +3312,96 @@
     "notes": "Front-page FY (Mar) 2026A-2028E table"
   },
   "Larsen & Toubro": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY25": {
           "tag": "A",
-          "avg": 255735,
+          "avg": 2557350,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 255735
+              "value": 2557350
             },
             {
               "name": "CLSA",
               "date": "260601",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Larsen%20%26%20Toubro/%5B260601%5D%20%5BCLSA%5D%20Larsen%20%26%20Toubro%20-%20(no%20title).pdf",
-              "value": 255735
+              "value": 2557350
             }
           ]
         },
         "FY26": {
           "tag": "E",
-          "avg": 285874,
+          "avg": 2858740,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 285874
+              "value": 2858740
             },
             {
               "name": "CLSA",
               "date": "260601",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Larsen%20%26%20Toubro/%5B260601%5D%20%5BCLSA%5D%20Larsen%20%26%20Toubro%20-%20(no%20title).pdf",
-              "value": 285874
+              "value": 2858740
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 317748.5,
+          "avg": 3177485,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 310797
+              "value": 3107970
             },
             {
               "name": "CLSA",
               "date": "260601",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Larsen%20%26%20Toubro/%5B260601%5D%20%5BCLSA%5D%20Larsen%20%26%20Toubro%20-%20(no%20title).pdf",
-              "value": 324700
+              "value": 3247000
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 379021.5,
+          "avg": 3790215,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 367481
+              "value": 3674810
             },
             {
               "name": "CLSA",
               "date": "260601",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Larsen%20%26%20Toubro/%5B260601%5D%20%5BCLSA%5D%20Larsen%20%26%20Toubro%20-%20(no%20title).pdf",
-              "value": 390562
+              "value": 3905620
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 439729.5,
+          "avg": 4397295,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 424774
+              "value": 4247740
             },
             {
               "name": "CLSA",
               "date": "260601",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Larsen%20%26%20Toubro/%5B260601%5D%20%5BCLSA%5D%20Larsen%20%26%20Toubro%20-%20(no%20title).pdf",
-              "value": 454685
+              "value": 4546850
             }
           ]
         }
@@ -3409,61 +3409,61 @@
       "ebitda": {
         "FY25": {
           "tag": "A",
-          "avg": 26435,
+          "avg": 264350,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 26435
+              "value": 264350
             }
           ]
         },
         "FY26": {
           "tag": "E",
-          "avg": 29151,
+          "avg": 291510,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 29151
+              "value": 291510
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 30843,
+          "avg": 308430,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 30843
+              "value": 308430
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 37120,
+          "avg": 371200,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 37120
+              "value": 371200
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 42478,
+          "avg": 424780,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 42478
+              "value": 424780
             }
           ]
         }
@@ -3471,91 +3471,91 @@
       "netProfit": {
         "FY25": {
           "tag": "A",
-          "avg": 14563,
+          "avg": 145630,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 14563
+              "value": 145630
             },
             {
               "name": "CLSA",
               "date": "260601",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Larsen%20%26%20Toubro/%5B260601%5D%20%5BCLSA%5D%20Larsen%20%26%20Toubro%20-%20(no%20title).pdf",
-              "value": 14563
+              "value": 145630
             }
           ]
         },
         "FY26": {
           "tag": "E",
-          "avg": 17591,
+          "avg": 175910,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 17806
+              "value": 178060
             },
             {
               "name": "CLSA",
               "date": "260601",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Larsen%20%26%20Toubro/%5B260601%5D%20%5BCLSA%5D%20Larsen%20%26%20Toubro%20-%20(no%20title).pdf",
-              "value": 17376
+              "value": 173760
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 20960,
+          "avg": 209600,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 21568
+              "value": 215680
             },
             {
               "name": "CLSA",
               "date": "260601",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Larsen%20%26%20Toubro/%5B260601%5D%20%5BCLSA%5D%20Larsen%20%26%20Toubro%20-%20(no%20title).pdf",
-              "value": 20352
+              "value": 203520
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 25730.5,
+          "avg": 257305,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 26432
+              "value": 264320
             },
             {
               "name": "CLSA",
               "date": "260601",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Larsen%20%26%20Toubro/%5B260601%5D%20%5BCLSA%5D%20Larsen%20%26%20Toubro%20-%20(no%20title).pdf",
-              "value": 25029
+              "value": 250290
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 29877,
+          "avg": 298770,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/L%26T/%5B260522%5D%20%5BKotak%5D%20L%26T%20-%20AR2026%2C%20Margin%20test%20ahead.pdf",
-              "value": 30128
+              "value": 301280
             },
             {
               "name": "CLSA",
               "date": "260601",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Larsen%20%26%20Toubro/%5B260601%5D%20%5BCLSA%5D%20Larsen%20%26%20Toubro%20-%20(no%20title).pdf",
-              "value": 29626
+              "value": 296260
             }
           ]
         }
@@ -3564,66 +3564,66 @@
     "notes": "Exhibit 14 Consolidated financials (page 10) · Financials block (page 2) — Revenue + Net profit"
   },
   "Lloyds Metals and Energy": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY25": {
           "tag": "A",
-          "avg": 6721,
+          "avg": 67210,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 6721
+              "value": 67210
             }
           ]
         },
         "FY26": {
           "tag": "A",
-          "avg": 17113,
+          "avg": 171130,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 17113
+              "value": 171130
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 31090,
+          "avg": 310900,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 31090
+              "value": 310900
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 38744,
+          "avg": 387440,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 38744
+              "value": 387440
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 48397,
+          "avg": 483970,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 48397
+              "value": 483970
             }
           ]
         }
@@ -3631,61 +3631,61 @@
       "ebitda": {
         "FY25": {
           "tag": "A",
-          "avg": 1953,
+          "avg": 19530,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 1953
+              "value": 19530
             }
           ]
         },
         "FY26": {
           "tag": "A",
-          "avg": 6140,
+          "avg": 61400,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 6140
+              "value": 61400
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 12792,
+          "avg": 127920,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 12792
+              "value": 127920
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 15265,
+          "avg": 152650,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 15265
+              "value": 152650
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 18767,
+          "avg": 187670,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 18767
+              "value": 187670
             }
           ]
         }
@@ -3693,61 +3693,61 @@
       "netProfit": {
         "FY25": {
           "tag": "A",
-          "avg": 1450,
+          "avg": 14500,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 1450
+              "value": 14500
             }
           ]
         },
         "FY26": {
           "tag": "A",
-          "avg": 3681,
+          "avg": 36810,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 3681
+              "value": 36810
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 6589,
+          "avg": 65890,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 6589
+              "value": 65890
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 7019,
+          "avg": 70190,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 7019
+              "value": 70190
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 8380,
+          "avg": 83800,
           "brokers": [
             {
               "name": "Nomura",
               "date": "260526",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Lloyds%20Metals%20and%20Energy/%5B260526%5D%20%5BNomura%5D%20Lloyds%20Metals%20and%20Energy%20-%20Beyond%20the%20first%20rerating.pdf",
-              "value": 8380
+              "value": 83800
             }
           ]
         }
@@ -3756,54 +3756,54 @@
     "notes": "Income statement (INRmn) — page 2"
   },
   "Reliance Industries": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY26": {
           "tag": "A",
-          "avg": 1057219,
+          "avg": 10572190,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Reliance%20Industries/%5B260602%5D%20%5BJPMorgan%5D%20Reliance%20Industries%20-%20Stronger%20commodity%20margins%2C%20New%20Energy%20-%20likely%20FY27%20stock%20drivers.pdf",
-              "value": 1057219
+              "value": 10572190
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 1223763,
+          "avg": 12237630,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Reliance%20Industries/%5B260602%5D%20%5BJPMorgan%5D%20Reliance%20Industries%20-%20Stronger%20commodity%20margins%2C%20New%20Energy%20-%20likely%20FY27%20stock%20drivers.pdf",
-              "value": 1223763
+              "value": 12237630
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 1227634,
+          "avg": 12276340,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Reliance%20Industries/%5B260602%5D%20%5BJPMorgan%5D%20Reliance%20Industries%20-%20Stronger%20commodity%20margins%2C%20New%20Energy%20-%20likely%20FY27%20stock%20drivers.pdf",
-              "value": 1227634
+              "value": 12276340
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 1362474,
+          "avg": 13624740,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Reliance%20Industries/%5B260602%5D%20%5BJPMorgan%5D%20Reliance%20Industries%20-%20Stronger%20commodity%20margins%2C%20New%20Energy%20-%20likely%20FY27%20stock%20drivers.pdf",
-              "value": 1362474
+              "value": 13624740
             }
           ]
         }
@@ -3811,49 +3811,49 @@
       "ebitda": {
         "FY26": {
           "tag": "A",
-          "avg": 178949,
+          "avg": 1789490,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Reliance%20Industries/%5B260602%5D%20%5BJPMorgan%5D%20Reliance%20Industries%20-%20Stronger%20commodity%20margins%2C%20New%20Energy%20-%20likely%20FY27%20stock%20drivers.pdf",
-              "value": 178949
+              "value": 1789490
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 196651,
+          "avg": 1966510,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Reliance%20Industries/%5B260602%5D%20%5BJPMorgan%5D%20Reliance%20Industries%20-%20Stronger%20commodity%20margins%2C%20New%20Energy%20-%20likely%20FY27%20stock%20drivers.pdf",
-              "value": 196651
+              "value": 1966510
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 214529,
+          "avg": 2145290,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Reliance%20Industries/%5B260602%5D%20%5BJPMorgan%5D%20Reliance%20Industries%20-%20Stronger%20commodity%20margins%2C%20New%20Energy%20-%20likely%20FY27%20stock%20drivers.pdf",
-              "value": 214529
+              "value": 2145290
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 229396,
+          "avg": 2293960,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Reliance%20Industries/%5B260602%5D%20%5BJPMorgan%5D%20Reliance%20Industries%20-%20Stronger%20commodity%20margins%2C%20New%20Energy%20-%20likely%20FY27%20stock%20drivers.pdf",
-              "value": 229396
+              "value": 2293960
             }
           ]
         }
@@ -3861,49 +3861,49 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 80775,
+          "avg": 807750,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Reliance%20Industries/%5B260602%5D%20%5BJPMorgan%5D%20Reliance%20Industries%20-%20Stronger%20commodity%20margins%2C%20New%20Energy%20-%20likely%20FY27%20stock%20drivers.pdf",
-              "value": 80775
+              "value": 807750
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 78690,
+          "avg": 786900,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Reliance%20Industries/%5B260602%5D%20%5BJPMorgan%5D%20Reliance%20Industries%20-%20Stronger%20commodity%20margins%2C%20New%20Energy%20-%20likely%20FY27%20stock%20drivers.pdf",
-              "value": 78690
+              "value": 786900
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 84062,
+          "avg": 840620,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Reliance%20Industries/%5B260602%5D%20%5BJPMorgan%5D%20Reliance%20Industries%20-%20Stronger%20commodity%20margins%2C%20New%20Energy%20-%20likely%20FY27%20stock%20drivers.pdf",
-              "value": 84062
+              "value": 840620
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 92076,
+          "avg": 920760,
           "brokers": [
             {
               "name": "JPMorgan",
               "date": "260602",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Reliance%20Industries/%5B260602%5D%20%5BJPMorgan%5D%20Reliance%20Industries%20-%20Stronger%20commodity%20margins%2C%20New%20Energy%20-%20likely%20FY27%20stock%20drivers.pdf",
-              "value": 92076
+              "value": 920760
             }
           ]
         }
@@ -3912,56 +3912,56 @@
     "notes": "Key Metrics (FYE Mar) — page 2"
   },
   "State Bank of India": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {},
       "ebitda": {},
       "netProfit": {
         "FY26": {
           "tag": "E",
-          "avg": 80030,
+          "avg": 800300,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/State%20Bank%20of%20India/%5B260525%5D%20%5BJefferies%5D%20State%20Bank%20of%20India%20-%20Roadshow%20Feedback%2C%20Balancing%20Growth%20%26%20Profits%2C%20Investing%20in.pdf",
-              "value": 80030
+              "value": 800300
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 79610,
+          "avg": 796100,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/State%20Bank%20of%20India/%5B260525%5D%20%5BJefferies%5D%20State%20Bank%20of%20India%20-%20Roadshow%20Feedback%2C%20Balancing%20Growth%20%26%20Profits%2C%20Investing%20in.pdf",
-              "value": 79610
+              "value": 796100
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 90690,
+          "avg": 906900,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/State%20Bank%20of%20India/%5B260525%5D%20%5BJefferies%5D%20State%20Bank%20of%20India%20-%20Roadshow%20Feedback%2C%20Balancing%20Growth%20%26%20Profits%2C%20Investing%20in.pdf",
-              "value": 90690
+              "value": 906900
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 102170,
+          "avg": 1021700,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260525",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/State%20Bank%20of%20India/%5B260525%5D%20%5BJefferies%5D%20State%20Bank%20of%20India%20-%20Roadshow%20Feedback%2C%20Balancing%20Growth%20%26%20Profits%2C%20Investing%20in.pdf",
-              "value": 102170
+              "value": 1021700
             }
           ]
         }
@@ -3970,66 +3970,66 @@
     "notes": "Front-page FY (Mar) 2026E-2029E table (banks: Net Profit only)"
   },
   "Torrent Pharmaceuticals": {
-    "currency": "₹ cr",
+    "currency": "₹ mn",
     "metrics": {
       "revenue": {
         "FY25": {
           "tag": "A",
-          "avg": 11516,
+          "avg": 115160,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 11516
+              "value": 115160
             }
           ]
         },
         "FY26": {
           "tag": "A",
-          "avg": 13983,
+          "avg": 139830,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 13983
+              "value": 139830
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 19614,
+          "avg": 196140,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 19614
+              "value": 196140
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 21777,
+          "avg": 217770,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 21777
+              "value": 217770
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 24188,
+          "avg": 241880,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 24188
+              "value": 241880
             }
           ]
         }
@@ -4037,61 +4037,61 @@
       "ebitda": {
         "FY25": {
           "tag": "A",
-          "avg": 3721,
+          "avg": 37210,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 3721
+              "value": 37210
             }
           ]
         },
         "FY26": {
           "tag": "A",
-          "avg": 4562,
+          "avg": 45620,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 4562
+              "value": 45620
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 6512,
+          "avg": 65120,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 6512
+              "value": 65120
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 7448,
+          "avg": 74480,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 7448
+              "value": 74480
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 8393,
+          "avg": 83930,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 8393
+              "value": 83930
             }
           ]
         }
@@ -4099,61 +4099,61 @@
       "netProfit": {
         "FY25": {
           "tag": "A",
-          "avg": 1928,
+          "avg": 19280,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 1928
+              "value": 19280
             }
           ]
         },
         "FY26": {
           "tag": "A",
-          "avg": 2232,
+          "avg": 22320,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 2232
+              "value": 22320
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 2744,
+          "avg": 27440,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 2744
+              "value": 27440
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 3551,
+          "avg": 35510,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 3551
+              "value": 35510
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 4317,
+          "avg": 43170,
           "brokers": [
             {
               "name": "Jefferies",
               "date": "260522",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Torrent%20Pharmaceuticals/%5B260522%5D%20%5BJefferies%5D%20Torrent%20Pharmaceuticals%20-%20In-line%20Mar-Q%2C%20JB%20integration%20progressing%20well%2C%20BUY.pdf",
-              "value": 4317
+              "value": 43170
             }
           ]
         }

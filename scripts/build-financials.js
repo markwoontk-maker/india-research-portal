@@ -76,15 +76,15 @@ function num(s){
   return neg ? -v : v;
 }
 
-// Convert ↑units to ₹ crore. Most Indian broker reports use ₹ mn or ₹ bn.
-// Jefferies often uses MM (= million). 1 cr = 10 mn = 0.01 bn.
-function toCr(v, unit){
+// Convert ↑units to ₹ million. Most Indian broker reports use ₹ mn or
+// ₹ bn (Jefferies sometimes labels it "MM"). 1 mn = 10 cr = 0.001 bn.
+function toMn(v, unit){
   if (v == null) return null;
   switch ((unit || '').toLowerCase()){
-    case 'cr': case 'crore': case 'crores': return v;
-    case 'mn': case 'm': case 'mm': case 'million': return v / 10;
-    case 'bn': case 'b': case 'billion': return v * 100;
-    case 'tn': case 't': case 'trillion': return v * 100000;
+    case 'cr': case 'crore': case 'crores': return v * 10;
+    case 'mn': case 'm': case 'mm': case 'million': return v;
+    case 'bn': case 'b': case 'billion': return v * 1000;
+    case 'tn': case 't': case 'trillion': return v * 1000000;
     default: return v;        // unknown → assume same unit (best effort)
   }
 }
@@ -202,7 +202,7 @@ function main(){
       for (const k of Object.keys(x.data)){
         norm.data[k] = {};
         for (const [fy, info] of Object.entries(x.data[k])){
-          norm.data[k][fy] = { value: toCr(info.value, x.unit), tag: info.tag };
+          norm.data[k][fy] = { value: toMn(info.value, x.unit), tag: info.tag };
         }
       }
       perBroker[h] = { date, url: fileUrl(pdfPath), unit: x.unit, ...norm.data };
@@ -224,7 +224,7 @@ function main(){
     // Strict sanity filter — column-alignment in pdftotext is fragile,
     // and a wrong column easily produces a ratio, % growth, or a value
     // from a different table. We keep only values that:
-    //   1. fall in a plausible ₹ crore range (10..1,000,000)
+    //   1. fall in a plausible ₹ million range (100..10,000,000)
     //   2. are positive for revenue/EBITDA (net profit may be negative)
     //   3. agree with the cross-broker median within 2x both ways
     //      (when there are 2+ brokers per FY).
@@ -232,7 +232,7 @@ function main(){
     function plausible(v, mk){
       if (v == null || !isFinite(v)) return false;
       const abs = Math.abs(v);
-      if (abs < 10 || abs > 1000000) return false;
+      if (abs < 100 || abs > 10000000) return false;
       if (mk !== 'netProfit' && v <= 0) return false;
       return true;
     }
@@ -261,7 +261,7 @@ function main(){
     // Only commit metric rows that have at least one parseable FY.
     const hasAny = Object.values(metrics).some(m => Object.keys(m).length);
     if (!hasAny){ miss++; console.log('— no metrics'); continue; }
-    out[co] = { currency: '₹ cr', metrics };
+    out[co] = { currency: '₹ mn', metrics };
     ok++;
     const summary = Object.keys(metrics).map(k => `${k[0].toUpperCase()}:${Object.keys(metrics[k]).length}`).join(' ');
     console.log(`✓ ${extractedCount}/${names.length} brokers · ${summary}`);
