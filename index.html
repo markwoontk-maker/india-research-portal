@@ -624,6 +624,13 @@
     border-bottom:none}
   table.fin-tbl sup.fy-tag-actual{color:var(--up);font-size:9px;margin-left:1px}
   table.fin-tbl sup.fy-tag-est{color:var(--saffron);font-size:9px;margin-left:1px}
+  /* Standalone vs consolidated basis label above a metrics block */
+  .fin-basis{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:.10em;
+    text-transform:uppercase;color:var(--text-mute);border:1px solid var(--line);
+    border-radius:999px;padding:2px 9px;margin:0 0 4px}
+  .fin-basis-src{font-weight:400;letter-spacing:.02em;text-transform:none;
+    color:var(--text-mute);margin-left:6px}
+  .fin-alt-divider{height:1px;background:var(--line-soft);margin:20px 0 14px}
   .fin-seg-divider{height:1px;background:var(--line);margin:22px 0 16px}
   .fin-seg-h{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--text);
     letter-spacing:.02em;margin-bottom:10px;text-transform:uppercase;font-size:11px;
@@ -6381,78 +6388,102 @@ function renderCompanyFinancials(){
     {key:'ebitda',   label:'EBITDA'},
     {key:'netProfit',label:'Net Profit'},
   ];
-  // Year columns — anchor on FY25..FY29 plus any actually-captured FY in
-  // FY24..FY30 (sliding window so the table grows when newer data lands).
-  const seen=new Set();
-  Object.values(F.metrics).forEach(o=>Object.keys(o).forEach(fy=>seen.add(fy)));
-  const baseYears=['FY25','FY26','FY27','FY28','FY29'];
-  const extra=[...seen].filter(fy=>!baseYears.includes(fy))
-    .filter(fy=>{ const n=+fy.slice(2); return n>=24 && n<=30; });
-  const FYS=[...baseYears,...extra].sort((a,b)=>(+a.slice(2))-(+b.slice(2)));
+  // Year columns for a given metrics block — anchor on FY25..FY29 plus any
+  // actually-captured FY in FY24..FY30 (sliding window so the table grows
+  // when newer data lands). Computed per-block so a primary (standalone) and
+  // an alternate (consolidated) block can span different years.
+  function yearsFor(MM){
+    const seen=new Set();
+    Object.values(MM||{}).forEach(o=>Object.keys(o||{}).forEach(fy=>seen.add(fy)));
+    const baseYears=['FY25','FY26','FY27','FY28','FY29'];
+    const extra=[...seen].filter(fy=>!baseYears.includes(fy))
+      .filter(fy=>{ const n=+fy.slice(2); return n>=24 && n<=30; });
+    return [...baseYears,...extra].sort((a,b)=>(+a.slice(2))-(+b.slice(2)));
+  }
   // Dominant tag per FY (A across metrics → actual, otherwise estimate).
-  function tagFor(fy){
+  function tagForIn(MM,fy){
     let A=0,E=0;
-    for(const m of Object.values(F.metrics)){
+    for(const m of Object.values(MM||{})){
       const o=m[fy]; if(!o) continue;
       if(o.tag==='A') A++; else if(o.tag==='E') E++;
     }
     return A>=E ? (A?'A':(E?'E':'')) : 'E';
   }
-  function fyHeader(fy){
-    const t=tagFor(fy);
+  function fyHeaderIn(MM,fy){
+    const t=tagForIn(MM,fy);
     const tagHtml=t?`<sup class="fy-tag-${t==='A'?'actual':'est'}">${t}</sup>`:'';
     return `${esc(fy)}${tagHtml}`;
   }
-  body.innerHTML=METRICS.map(M=>{
-    const fyMap=F.metrics[M.key]||{};
-    if(!Object.keys(fyMap).length){
-      return `<div class="fin-section">
-        <div class="fin-section-h">${esc(M.label)}</div>
-        <div class="fin-empty">No estimates captured for this metric.</div>
-      </div>`;
-    }
-    // Build {broker: {date, url, vals:{fy:value}}}.
-    const brokers={};
-    FYS.forEach(fy=>{
-      const o=fyMap[fy]; if(!o) return;
-      o.brokers.forEach(b=>{
-        if(!brokers[b.name]) brokers[b.name]={date:b.date,url:b.url,vals:{}};
-        if(b.date>brokers[b.name].date){ brokers[b.name].date=b.date; brokers[b.name].url=b.url; }
-        brokers[b.name].vals[fy]=b.value;
+  // Render the three metric sections (Revenue / EBITDA / Net Profit) for one
+  // basis block (the primary F.metrics, or an alternate F.alt.metrics).
+  function sectionsFor(MM){
+    const FYS=yearsFor(MM);
+    return METRICS.map(MET=>{
+      const fyMap=(MM&&MM[MET.key])||{};
+      if(!Object.keys(fyMap).length){
+        return `<div class="fin-section">
+          <div class="fin-section-h">${esc(MET.label)}</div>
+          <div class="fin-empty">No estimates captured for this metric.</div>
+        </div>`;
+      }
+      // Build {broker: {date, url, vals:{fy:value}}}.
+      const brokers={};
+      FYS.forEach(fy=>{
+        const o=fyMap[fy]; if(!o) return;
+        o.brokers.forEach(b=>{
+          if(!brokers[b.name]) brokers[b.name]={date:b.date,url:b.url,vals:{}};
+          if(b.date>brokers[b.name].date){ brokers[b.name].date=b.date; brokers[b.name].url=b.url; }
+          brokers[b.name].vals[fy]=b.value;
+        });
       });
-    });
-    // Sort brokers most-recent-first so freshest numbers sit at the top.
-    const sortedBrokers=Object.keys(brokers).sort((a,b)=>brokers[b].date.localeCompare(brokers[a].date));
-    const head=`<tr><th class="bk">Research house</th>${FYS.map(fy=>`<th>${fyHeader(fy)}</th>`).join('')}<th class="src">Source</th></tr>`;
-    const rows=sortedBrokers.map(b=>{
-      const info=brokers[b];
-      const cells=FYS.map(fy=>{
-        const v=info.vals[fy];
-        return `<td>${v==null?'<span class="muted">—</span>':esc(fmt(v))}</td>`;
+      // Sort brokers most-recent-first so freshest numbers sit at the top.
+      const sortedBrokers=Object.keys(brokers).sort((a,b)=>brokers[b].date.localeCompare(brokers[a].date));
+      const head=`<tr><th class="bk">Research house</th>${FYS.map(fy=>`<th>${fyHeaderIn(MM,fy)}</th>`).join('')}<th class="src">Source</th></tr>`;
+      const rows=sortedBrokers.map(b=>{
+        const info=brokers[b];
+        const cells=FYS.map(fy=>{
+          const v=info.vals[fy];
+          return `<td>${v==null?'<span class="muted">—</span>':esc(fmt(v))}</td>`;
+        }).join('');
+        const link=info.url
+          ? `<a href="${esc(info.url)}" target="_blank" rel="noopener">${esc(fmtD(info.date))}</a>`
+          : esc(fmtD(info.date));
+        // Broker name itself is a link to the source PDF too — same target
+        // as the Source-date cell, lets you jump straight from the row label.
+        const brokerCell = info.url
+          ? `<a href="${esc(info.url)}" target="_blank" rel="noopener" title="Open ${esc(b)} report">${esc(b)}</a>`
+          : esc(b);
+        return `<tr><td class="bk">${brokerCell}</td>${cells}<td class="src">${link}</td></tr>`;
       }).join('');
-      const link=info.url
-        ? `<a href="${esc(info.url)}" target="_blank" rel="noopener">${esc(fmtD(info.date))}</a>`
-        : esc(fmtD(info.date));
-      // Broker name itself is a link to the source PDF too — same target
-      // as the Source-date cell, lets you jump straight from the row label.
-      const brokerCell = info.url
-        ? `<a href="${esc(info.url)}" target="_blank" rel="noopener" title="Open ${esc(b)} report">${esc(b)}</a>`
-        : esc(b);
-      return `<tr><td class="bk">${brokerCell}</td>${cells}<td class="src">${link}</td></tr>`;
+      // Average row: only show a cell where we actually have data for that FY.
+      const avgRow=`<tr class="avg"><td class="bk">Average</td>${FYS.map(fy=>{
+        const o=fyMap[fy];
+        return `<td>${o ? esc(fmt(o.avg)) : '<span class="muted">—</span>'}</td>`;
+      }).join('')}<td class="src"></td></tr>`;
+      return `<div class="fin-section">
+        <div class="fin-section-h">${esc(MET.label)}</div>
+        <table class="fin-tbl">
+          <thead>${head}</thead>
+          <tbody>${rows}${avgRow}</tbody>
+        </table>
+      </div>`;
     }).join('');
-    // Average row: only show a cell where we actually have data for that FY.
-    const avgRow=`<tr class="avg"><td class="bk">Average</td>${FYS.map(fy=>{
-      const o=fyMap[fy];
-      return `<td>${o ? esc(fmt(o.avg)) : '<span class="muted">—</span>'}</td>`;
-    }).join('')}<td class="src"></td></tr>`;
-    return `<div class="fin-section">
-      <div class="fin-section-h">${esc(M.label)}</div>
-      <table class="fin-tbl">
-        <thead>${head}</thead>
-        <tbody>${rows}${avgRow}</tbody>
-      </table>
-    </div>`;
-  }).join('');
+  }
+  // Small pill label naming the basis of the block beneath it.
+  function basisBar(label, src){
+    if(!label && !src) return '';
+    const s = src ? ` <span class="fin-basis-src">${esc(src)}</span>` : '';
+    return `<div class="fin-basis">${esc(label||'')}${s}</div>`;
+  }
+  // Primary block (standalone-first), then optional alternate-basis block.
+  let finHtml = basisBar(F.basis || '');
+  finHtml += sectionsFor(F.metrics);
+  if (F.alt && F.alt.metrics && Object.values(F.alt.metrics).some(o=>Object.keys(o||{}).length)){
+    finHtml += `<div class="fin-alt-divider"></div>`;
+    finHtml += basisBar((F.alt.basis||'Consolidated')+' (alternate basis)', F.alt.source||'');
+    finHtml += sectionsFor(F.alt.metrics);
+  }
+  body.innerHTML = finHtml;
 
   // Segment breakdown (optional): when a broker's report carries a
   // segment-wise revenue / EBITDA / PAT table, F.segments[brokerName]
@@ -6466,10 +6497,14 @@ function renderCompanyFinancials(){
       const metricBlocks = Object.entries(block.metrics||{}).map(([mk, segMap])=>{
         const mLabel = mk==='revenue' ? 'Revenue' :
                        mk==='ebitda'  ? 'EBITDA'  :
+                       mk==='profit'  ? 'Segment Profit (PBIT)' :
                        mk==='netProfit' ? 'Net Profit' : mk;
-        // Year range = same FYS we picked for the main tables, but only
-        // years that actually have a value in this segment block.
-        const segFYs = FYS.filter(fy => Object.values(segMap).some(row => row && row[fy]!=null));
+        // Year columns derived from THIS segment block (screener / annual-report
+        // segmentals may carry historical FYs outside the broker-estimate window).
+        const segFYs = [...new Set(
+          Object.values(segMap||{}).flatMap(row =>
+            Object.keys(row||{}).filter(fy => /^FY\d{2}$/.test(fy) && row[fy]!=null))
+        )].sort((a,b)=>(+a.slice(2))-(+b.slice(2)));
         if (!segFYs.length) return '';
         const segHead = `<tr><th class="bk">Segment</th>${segFYs.map(fy=>`<th>${esc(fy)}</th>`).join('')}</tr>`;
         const segRows = Object.entries(segMap).map(([seg, vals])=>{
@@ -6493,22 +6528,24 @@ function renderCompanyFinancials(){
         : esc(block.date?fmtD(block.date):broker);
       const srcLabel = block.source ? ` · ${esc(block.source)}` : '';
       return `<div class="fin-seg-block">
-        <div class="fin-seg-block-h"><b>${esc(broker)}</b> — segment-wise projections <span class="fin-seg-src">${link}${srcLabel}</span></div>
+        <div class="fin-seg-block-h"><b>${esc(broker)}</b> — segment breakdown <span class="fin-seg-src">${link}${srcLabel}</span></div>
         ${metricBlocks}
       </div>`;
     }).join('');
     body.insertAdjacentHTML('beforeend', `
       <div class="fin-seg-divider"></div>
-      <div class="fin-seg-h">Segment-wise Projections</div>
+      <div class="fin-seg-h">Segment-wise Breakdown</div>
       ${segBlocks}
     `);
   }
 
   if(sub){
     const brokerCount=new Set();
-    Object.values(F.metrics).forEach(o=>Object.values(o).forEach(fy=>fy.brokers.forEach(b=>brokerCount.add(b.name))));
+    Object.values(F.metrics).forEach(o=>Object.values(o).forEach(fy=>(fy.brokers||[]).forEach(b=>brokerCount.add(b.name))));
+    if(F.alt&&F.alt.metrics) Object.values(F.alt.metrics).forEach(o=>Object.values(o).forEach(fy=>(fy.brokers||[]).forEach(b=>brokerCount.add(b.name))));
     const segCount=F.segments?Object.keys(F.segments).length:0;
-    sub.textContent=`${brokerCount.size} broker${brokerCount.size===1?'':'s'} parsed · figures in ${F.currency||'₹ mn'} · superscript A = actual, E = estimate${segCount?` · ${segCount} broker${segCount===1?'':'s'} provide segment breakdown`:''} · click a Source date to open the PDF`;
+    const basisTxt=F.basis?`${F.basis} basis${F.alt?' (+ consolidated)':''} · `:'';
+    sub.textContent=`${basisTxt}${brokerCount.size} broker${brokerCount.size===1?'':'s'} parsed · figures in ${F.currency||'₹ mn'} · superscript A = actual, E = estimate${segCount?` · ${segCount} source${segCount===1?'':'s'} provide segment breakdown`:''} · click a Source date to open the PDF`;
   }
 }
 
