@@ -39,15 +39,15 @@ $maxNoProgress   = 3      # consecutive no-progress batches -> abort that phase
 function Out-Log([string]$m){ Write-Output ("[build-company-qa] " + $m) }
 
 # node validators (throw on malformed file)
-$valQ = 'const d=require("./data/company_questions.json"); if(!d.companies) throw 0; Object.values(d.companies).forEach(c=>{["bull","bear","debates"].forEach(k=>{if(!Array.isArray(c[k])) throw 0; c[k].forEach(it=>{if(!it.q) throw 0});});});'
-$valA = 'const d=require("./data/company_qa.json"); if(!d.companies) throw 0; Object.values(d.companies).forEach(c=>{["bull","bear","debates"].forEach(k=>{if(!Array.isArray(c[k])) throw 0; c[k].forEach(it=>{if(typeof it.q!=="string"||typeof it.a!=="string") throw 0});});});'
+$valQ = 'var P=require("path"),CWD=process.cwd();const d=require(P.join(CWD,"data/company_questions.json")); if(!d.companies) throw 0; Object.values(d.companies).forEach(c=>{["bull","bear","debates"].forEach(k=>{if(!Array.isArray(c[k])) throw 0; c[k].forEach(it=>{if(!it.q) throw 0});});});'
+$valA = 'var P=require("path"),CWD=process.cwd();const d=require(P.join(CWD,"data/company_qa.json")); if(!d.companies) throw 0; Object.values(d.companies).forEach(c=>{["bull","bear","debates"].forEach(k=>{if(!Array.isArray(c[k])) throw 0; c[k].forEach(it=>{if(typeof it.q!=="string"||typeof it.a!=="string") throw 0});});});'
 
 # node work-list computations (print one company name per line)
 #  - needQ: in-scope companies (sector routes to a source-bearing notebook) that
 #    have no questions yet.
-$needQjs = 'const c=require("./data/companies.json");const sn=require("./data/sector_notebooks.json");const titles=new Set(sn.notebooks.map(n=>n.title));const r=sn.routing;var q={};try{q=require("./data/company_questions.json").companies||{}}catch(e){}var SEP=" "+String.fromCharCode(183)+" ";function route(s){if(!s)return null;if(r[s])return r[s];var p=s.split(SEP);for(var i=p.length;i>=1;i--){var k=p.slice(0,i).join(SEP);if(r[k])return r[k];}return r[p[0]]||null;}console.log(Object.keys(c).filter(function(n){var t=route(c[n].sector);return t&&titles.has(t)&&!q[n];}).join("\n"));'
+$needQjs = 'var P=require("path"),CWD=process.cwd();const c=require(P.join(CWD,"data/companies.json"));const sn=require(P.join(CWD,"data/sector_notebooks.json"));const titles=new Set(sn.notebooks.map(n=>n.title));const r=sn.routing;var q={};try{q=require(P.join(CWD,"data/company_questions.json")).companies||{}}catch(e){}var SEP=" "+String.fromCharCode(183)+" ";function route(s){if(!s)return null;if(r[s])return r[s];var p=s.split(SEP);for(var i=p.length;i>=1;i--){var k=p.slice(0,i).join(SEP);if(r[k])return r[k];}return r[p[0]]||null;}console.log(Object.keys(c).filter(function(n){var t=route(c[n].sector);return t&&titles.has(t)&&!q[n];}).join("\n"));'
 #  - needA: companies that have questions but no fresh answer this window.
-$needAjs = 'var ws=process.argv[1];var q={};try{q=require("./data/company_questions.json").companies||{}}catch(e){}var a={};try{a=require("./data/company_qa.json").companies||{}}catch(e){}console.log(Object.keys(q).filter(function(n){return !(a[n]&&a[n].asOf&&a[n].asOf>=ws);}).join("\n"));'
+$needAjs = 'var P=require("path"),CWD=process.cwd();var ws=process.argv[2];var q={};try{q=require(P.join(CWD,"data/company_questions.json")).companies||{}}catch(e){}var a={};try{a=require(P.join(CWD,"data/company_qa.json")).companies||{}}catch(e){}console.log(Object.keys(q).filter(function(n){return !(a[n]&&a[n].asOf&&a[n].asOf>=ws);}).join("\n"));'
 
 # --- locate claude -----------------------------------------------------------
 if (-not (Test-Path -LiteralPath $claude)) {
@@ -74,6 +74,15 @@ $winStart = if ($now.Day -ge 17) { $now.ToString('yyyy-MM-17') } else { $now.ToS
 $deadline = (Get-Date).AddSeconds($overallBudgetSec)
 Out-Log "window $window - running batched miner (budget $([int]($overallBudgetSec/60)) min)..."
 
+# Write the node helpers to temp .js files and invoke them as `node file.js`.
+# (PowerShell 5.1 mangles the embedded double quotes when these are passed via
+#  `node -e <string>`, so the programs would silently error and return nothing.)
+$utf8nb  = New-Object System.Text.UTF8Encoding $false
+$jsNeedQ = Join-Path $env:TEMP 'cqa-needq.js'; [System.IO.File]::WriteAllText($jsNeedQ, $needQjs, $utf8nb)
+$jsNeedA = Join-Path $env:TEMP 'cqa-needa.js'; [System.IO.File]::WriteAllText($jsNeedA, $needAjs, $utf8nb)
+$jsValQ  = Join-Path $env:TEMP 'cqa-valq.js';  [System.IO.File]::WriteAllText($jsValQ,  $valQ,  $utf8nb)
+$jsValA  = Join-Path $env:TEMP 'cqa-vala.js';  [System.IO.File]::WriteAllText($jsValA,  $valA,  $utf8nb)
+
 # --- run one scoped claude batch directly (stdin prompt + hard timeout) -------
 function Invoke-Batch([string]$basePromptPath, [string[]]$names, [string]$label) {
   $scope = "`n`nSCOPE OVERRIDE: Process ONLY these companies, using these EXACT names as the keys: " +
@@ -94,17 +103,18 @@ function Invoke-Batch([string]$basePromptPath, [string[]]$names, [string]$label)
 }
 
 # --- generic batched phase ----------------------------------------------------
-# $needExpr: node program printing the remaining work list (names, one per line).
-# $arg: optional argument passed to the node program (winStart for answerer).
+# $needFile: node SCRIPT FILE printing the remaining work list (names, one/line).
+#            (Files, not -e: PS 5.1 mangles double-quote-heavy -e arguments.)
+# $arg: optional argument passed to the node script (winStart for answerer).
 # $dataFile: the JSON this phase writes (for backup/validate/restore).
-# $validator: node validation program for $dataFile.
-function Run-Phase([string]$promptPath, [string]$needExpr, [string]$arg, [int]$batchSize, [string]$dataFile, [string]$validator, [string]$label) {
+# $valFile: node validation SCRIPT FILE for $dataFile.
+function Run-Phase([string]$promptPath, [string]$needFile, [string]$arg, [int]$batchSize, [string]$dataFile, [string]$valFile, [string]$label) {
   $get = {
-    param($expr,$a)
-    if ($a) { @(& $node -e $expr $a 2>$null) | Where-Object { $_ -and $_.Trim() } }
-    else    { @(& $node -e $expr     2>$null) | Where-Object { $_ -and $_.Trim() } }
+    param($f,$a)
+    if ($a) { @(& $node $f $a 2>$null) | Where-Object { $_ -and $_.Trim() } }
+    else    { @(& $node $f    2>$null) | Where-Object { $_ -and $_.Trim() } }
   }
-  $need = @(& $get $needExpr $arg)
+  $need = @(& $get $needFile $arg)
   Out-Log ("${label}: $($need.Count) companies in queue.")
   $noProgress = 0
   $attempted = @{}
@@ -116,14 +126,14 @@ function Run-Phase([string]$promptPath, [string]$needExpr, [string]$arg, [int]$b
     Copy-Item -LiteralPath (Join-Path $repo $dataFile) $bak -Force -ErrorAction SilentlyContinue
     [void](Invoke-Batch $promptPath $batch $label)
     # validate; restore the pre-batch file (NOT git) on corruption to keep prior progress
-    & $node -e $validator 2>$null | Out-Null
+    & $node $valFile 2>$null | Out-Null
     if ($LASTEXITCODE -ne 0) {
       Out-Log "${label}: $dataFile invalid after batch - restoring pre-batch copy."
       if (Test-Path -LiteralPath $bak) { Copy-Item -LiteralPath $bak (Join-Path $repo $dataFile) -Force }
     }
     Remove-Item $bak -Force -ErrorAction SilentlyContinue
     $before = $need.Count
-    $need = @(& $get $needExpr $arg)
+    $need = @(& $get $needFile $arg)
     if ($need.Count -ge $before) {
       foreach ($n in $batch) { $attempted[$n] = $true }   # don't retry the same names this run
       $noProgress++
@@ -136,14 +146,14 @@ function Run-Phase([string]$promptPath, [string]$needExpr, [string]$arg, [int]$b
 }
 
 # --- phase 1: questioner (generate questions for in-scope companies) ----------
-Run-Phase $qPrompt $needQjs $null $qBatch "data/company_questions.json" $valQ "questioner"
+Run-Phase $qPrompt $jsNeedQ $null $qBatch "data/company_questions.json" $jsValQ "questioner"
 
 # --- phase 2: answerer (ground answers for companies not yet fresh) -----------
-Run-Phase $aPrompt $needAjs $winStart $aBatch "data/company_qa.json" $valA "answerer"
+Run-Phase $aPrompt $jsNeedA $winStart $aBatch "data/company_qa.json" $jsValA "answerer"
 
 # --- advance watermark ONLY when nothing is left needing questions or answers --
-$remQ = @(& $node -e $needQjs 2>$null | Where-Object { $_ -and $_.Trim() }).Count
-$remA = @(& $node -e $needAjs $winStart 2>$null | Where-Object { $_ -and $_.Trim() }).Count
+$remQ = @(& $node $jsNeedQ 2>$null | Where-Object { $_ -and $_.Trim() }).Count
+$remA = @(& $node $jsNeedA $winStart 2>$null | Where-Object { $_ -and $_.Trim() }).Count
 if ($remQ -eq 0 -and $remA -eq 0) {
   @{ lastWindow = $window; asOf = (Get-Date).ToString("s") } | ConvertTo-Json | Set-Content -LiteralPath $stateFile -Encoding utf8
   Out-Log "window $window complete (0 pending) - watermark advanced."
