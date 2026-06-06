@@ -36,34 +36,42 @@ def main():
         doc = fitz.open(pdf["path"])
         page_dims = {p["page"]: (p["w_pt"], p["h_pt"]) for p in pdf["pages"]}
         folder_seg = fs_slug(pdf["folder"])  # web/FS-safe dir (no spaces)
-        for pageno, charts in sorted(page_charts.items()):
-            w_pt, h_pt = page_dims[pageno]
-            page = doc[pageno - 1]
-            for n, c in enumerate(charts, start=1):
-                rect = fitz.Rect(*norm_to_points(pad_bbox(c["bbox"]), w_pt, h_pt))
-                img_name = f'{pdf["slug"]}_p{pageno:02d}_{n}.webp'
-                (CHARTS_DIR / folder_seg).mkdir(parents=True, exist_ok=True)
-                pix = page.get_pixmap(clip=rect, dpi=CROP_DPI)
-                img = Image.open(io.BytesIO(pix.tobytes("png"))).convert("RGB")
-                if img.width > MAX_W:
-                    img = img.resize((MAX_W, round(img.height * MAX_W / img.width)), Image.LANCZOS)
-                img.save(CHARTS_DIR / folder_seg / img_name, "WEBP", quality=WEBP_Q, method=6)
-                subj = c.get("subject_company")
-                out.append({
-                    "id": f'{pdf["key"]}#p{pageno}_{n}',
-                    "report_key": pdf["key"], "house": pdf["house"], "date": pdf["date"],
-                    "source": pdf["folder"], "source_type": source_type(pdf["folder"]),
-                    "report_title": pdf["report_title"], "page": pageno,
-                    "image": f'charts/{folder_seg}/{img_name}',
-                    "chart_title": c.get("chart_title") or "",
-                    "chart_type": c.get("chart_type") or "other",
-                    "subject_company": subj,
-                    "subject_sectors": c.get("subject_sectors") or [],
-                    "sector": company_sector(subj, COMPANIES),
-                    "analyst_caption": c.get("analyst_caption"),
-                    "commentary": c.get("commentary") or "",
-                })
-        doc.close()
+        try:
+            for pageno, charts in sorted(page_charts.items()):
+                if pageno not in page_dims:  # analysis referenced a page Phase A didn't render
+                    print(f"  WARN {pdf['slug']}: page {pageno} not in index; skipping")
+                    continue
+                w_pt, h_pt = page_dims[pageno]
+                page = doc[pageno - 1]
+                for n, c in enumerate(charts, start=1):
+                    rect = fitz.Rect(*norm_to_points(pad_bbox(c["bbox"]), w_pt, h_pt))
+                    img_name = f'{pdf["slug"]}_p{pageno:02d}_{n}.webp'
+                    (CHARTS_DIR / folder_seg).mkdir(parents=True, exist_ok=True)
+                    pix = page.get_pixmap(clip=rect, dpi=CROP_DPI)
+                    raw = pix.tobytes("png")
+                    del pix  # free native pixmap before Pillow decodes
+                    # convert strips alpha; broker PDFs are white-bg so this is safe
+                    img = Image.open(io.BytesIO(raw)).convert("RGB")
+                    if img.width > MAX_W:
+                        img = img.resize((MAX_W, round(img.height * MAX_W / img.width)), Image.LANCZOS)
+                    img.save(CHARTS_DIR / folder_seg / img_name, "WEBP", quality=WEBP_Q, method=6)
+                    subj = c.get("subject_company")
+                    out.append({
+                        "id": f'{pdf["key"]}#p{pageno}_{n}',
+                        "report_key": pdf["key"], "house": pdf["house"], "date": pdf["date"],
+                        "source": pdf["folder"], "source_type": source_type(pdf["folder"]),
+                        "report_title": pdf["report_title"], "page": pageno,
+                        "image": f'charts/{folder_seg}/{img_name}',
+                        "chart_title": c.get("chart_title") or "",
+                        "chart_type": c.get("chart_type") or "other",
+                        "subject_company": subj,
+                        "subject_sectors": c.get("subject_sectors") or [],
+                        "sector": company_sector(subj, COMPANIES),
+                        "analyst_caption": c.get("analyst_caption"),
+                        "commentary": c.get("commentary") or "",
+                    })
+        finally:
+            doc.close()  # always release the file handle, even mid-PDF
         print("assembled", pdf["slug"], sum(len(v) for v in page_charts.values()), "exhibits")
     out.sort(key=lambda r: (r["date"], r["source"], r["page"]))
     OUT.write_text(json.dumps({"updated": date.today().isoformat(), "charts": out},
