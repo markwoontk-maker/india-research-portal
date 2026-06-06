@@ -2,6 +2,7 @@
   "_README": "Hand-verified financial tables transcribed from specific broker reports. scripts/build-financials.js merges these on top of its auto-extracted output, so an entry here OVERRIDES whatever the pdftotext scan produced for that company. Values are in INR crore (mn / 10). Schema must match the build script's output exactly.",
   "Adani Enterprises": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY23": {
@@ -354,6 +355,7 @@
   },
   "Adani Ports and SEZ": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -510,6 +512,7 @@
   },
   "Adani Power": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -666,6 +669,7 @@
   },
   "Aditya Birla Capital": {
     "currency": "₹ mn",
+    "basis": "Standalone",
     "metrics": {
       "revenue": {
         "FY25": {
@@ -797,6 +801,7 @@
   },
   "Alkem Laboratories": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY25": {
@@ -953,6 +958,7 @@
   },
   "Amara Raja Energy and Mobility": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -1109,6 +1115,7 @@
   },
   "Amber Enterprises": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -1265,6 +1272,7 @@
   },
   "Anthem Biosciences": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY25": {
@@ -1421,6 +1429,7 @@
   },
   "Apar Industries": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -1577,6 +1586,7 @@
   },
   "Apollo Hospitals": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {},
       "ebitda": {
@@ -1660,6 +1670,7 @@
   },
   "Ashok Leyland": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -1816,6 +1827,7 @@
   },
   "Asian Paints": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -1972,6 +1984,7 @@
   },
   "Avenue Supermarts": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -2055,6 +2068,7 @@
   },
   "AWL Agri Business": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -2211,6 +2225,7 @@
   },
   "Bajaj Finserv": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY25": {
@@ -2342,6 +2357,7 @@
   },
   "Belrise Industries": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -2498,6 +2514,7 @@
   },
   "Bharat Electronics": {
     "currency": "₹ mn",
+    "basis": "Standalone",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -2654,6 +2671,7 @@
   },
   "Bharat Petroleum": {
     "currency": "₹ mn",
+    "basis": "Standalone",
     "metrics": {
       "revenue": {},
       "ebitda": {
@@ -2773,6 +2791,7 @@
   },
   "Container Corporation of India": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -2929,6 +2948,7 @@
   },
   "Cummins India": {
     "currency": "₹ mn",
+    "basis": "Standalone",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -3085,6 +3105,7 @@
   },
   "Eicher Motors": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -3241,6 +3262,7 @@
   },
   "GE Vernova T&D India": {
     "currency": "₹ mn",
+    "basis": "Standalone",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -3397,6 +3419,7 @@
   },
   "InterGlobe Aviation": {
     "currency": "₹ mn",
+    "basis": "Standalone",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -3517,6 +3540,7 @@
   },
   "Larsen & Toubro": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY25": {
@@ -3769,6 +3793,7 @@
   },
   "Lloyds Metals and Energy": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY25": {
@@ -3961,6 +3986,7 @@
   },
   "Reliance Industries": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY26": {
@@ -4117,6 +4143,7 @@
   },
   "State Bank of India": {
     "currency": "₹ mn",
+    "basis": "Standalone",
     "metrics": {
       "revenue": {},
       "ebitda": {},
@@ -4175,6 +4202,7 @@
   },
   "Torrent Pharmaceuticals": {
     "currency": "₹ mn",
+    "basis": "Consolidated",
     "metrics": {
       "revenue": {
         "FY25": {
