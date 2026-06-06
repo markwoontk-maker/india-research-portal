@@ -5484,6 +5484,15 @@ fetch('data/trendlyne-coverage.json',{cache:'no-store'}).then(r=>r.ok?r.json():n
   if(typeof wlRenderResearch==='function') wlRenderResearch();
   if(typeof renderSectorSummary==='function') renderSectorSummary();
 }).catch(()=>{});
+// Per-company bull/bear/key-debate Q&A, built by scripts/build-company-qa.ps1
+// (questioner + answerer agents). Top-level file is {asOf, companies:{}};
+// we keep the companies map on window.COMPANY_QA, keyed by company name.
+window.COMPANY_QA=null;
+fetch('data/company_qa.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
+  if(!j||typeof j!=='object'||!j.companies) return;
+  window.COMPANY_QA=j.companies;
+  if(typeof renderCompanyQA==='function') renderCompanyQA();
+}).catch(()=>{});
 // Bull/Bear theses per company (scripts/build-theses.js). Schema:
 //   { "<Company>": { bull: [{text,broker,date,url}, ...], bear: [...] } }
 // Rendered as two side-by-side paragraphs with clickable (ABBR, MM/YY)
@@ -5494,6 +5503,7 @@ fetch('data/theses.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=
   window.THESES=j;
   if(typeof renderCompanyThesis==='function') renderCompanyThesis();
   if(typeof renderCompanyDrivers==='function') renderCompanyDrivers();
+  if(typeof renderCompanyQA==='function') renderCompanyQA();
   if(typeof renderCompanyHouseViews==='function') renderCompanyHouseViews();
   if(typeof renderCompanyConflicts==='function') renderCompanyConflicts();
 }).catch(()=>{});
@@ -6379,6 +6389,54 @@ function renderCompanyDrivers(){
   }
 }
 
+// Key Questions card — bull/bear/key-debate Q&A for the selected company.
+// Mirrors renderCompanyDrivers: keyed on currentCompany, hidden for sectors
+// and when there's no entry. Data from window.COMPANY_QA (data/company_qa.json).
+function renderCompanyQA(){
+  const card=document.getElementById('cQACard');
+  const body=document.getElementById('cQABody');
+  const sub=document.getElementById('cQASub');
+  if(!card||!body) return;
+  if(!currentCompany ||
+     (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany))){
+    card.hidden=true; return;
+  }
+  const Q=(window.COMPANY_QA||{})[currentCompany];
+  if(!Q){ card.hidden=true; return; }
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  function fmtCite(item){
+    const d=String(item.date||'');
+    if(d.length<6) return '';
+    const yy=d.slice(0,2), mm=d.slice(2,4);
+    const label=`(${item.broker||'?'}, ${mm}/${yy})`;
+    if(item.url){
+      return `<a class="thesis-cite" href="${esc(item.url)}" target="_blank" rel="noopener" title="${esc(item.broker||'')} · ${esc(d)}">${esc(label)}</a>`;
+    }
+    return `<span class="thesis-cite">${esc(label)}</span>`;
+  }
+  const sections=[['bull','Bull case'],['bear','Bear case'],['debates','Key debates']];
+  let total=0, html='';
+  sections.forEach(([key,label])=>{
+    const items=Array.isArray(Q[key])?Q[key]:[];
+    if(!items.length) return;
+    total+=items.length;
+    html+=`<div class="qa-sec"><h4 class="qa-sec-h ${key}">${esc(label)}</h4>`;
+    html+=items.map(it=>{
+      const q=esc(it.q||'');
+      const a=esc(it.a||'').replace(/\s*$/,'');
+      const cite=it.a?fmtCite(it):'';
+      return `<details class="qa-item"><summary>${q}</summary><div class="qa-a">${a||'<span class="empty">No grounded answer yet.</span>'} ${cite}</div></details>`;
+    }).join('');
+    html+='</div>';
+  });
+  if(!total){ card.hidden=true; return; }
+  card.hidden=false;
+  body.innerHTML=html;
+  if(sub){
+    sub.textContent=`${total} question${total===1?'':'s'} · answers grounded in this company's broker library · click to expand`;
+  }
+}
+
 // Financial Summary card — Revenue / EBITDA / Net Profit by FY,
 // each row expandable to a per-broker breakdown table. Data comes
 // from data/financials.json (scripts/build-financials.js).
@@ -6584,7 +6642,7 @@ async function loadCompanyChart(name, tf){
   const isSector = currentCompany && (typeof SECTOR_NAMES!=='undefined') && SECTOR_NAMES.has(currentCompany);
   const chartCard = document.getElementById('cChartCard');
   if (chartCard) chartCard.hidden = !!isSector;
-  if (name) { updateCoDesc(); renderCompanyResearch(); renderCompanyNews(name); renderCompanyThesis(); renderCompanyDrivers(); renderCompanyHouseViews(); renderCompanyConflicts(); renderCompanyFinancials(); }
+  if (name) { updateCoDesc(); renderCompanyResearch(); renderCompanyNews(name); renderCompanyThesis(); renderCompanyDrivers(); renderCompanyQA(); renderCompanyHouseViews(); renderCompanyConflicts(); renderCompanyFinancials(); }
   if (isSector) return;
   // Sync the segmented control highlight to the current timeframe.
   document.querySelectorAll('#cRangeSeg button').forEach(b=>{
