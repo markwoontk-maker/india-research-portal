@@ -17,3 +17,7 @@ scripts/logs/
 # Charts pipeline scratch (rendered pages + per-PDF analyses)
 scripts/.charts-work/
 
+# Python bytecode cache (charts pipeline runs under uv)
+__pycache__/
+*.pyc
+
