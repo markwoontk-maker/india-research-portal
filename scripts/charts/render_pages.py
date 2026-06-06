@@ -30,13 +30,22 @@ def main():
             except Exception as e:
                 print("SKIP (open failed):", pdf.name, e)
                 continue
+            # outdir is not cleaned between runs; stale PNGs are harmless because
+            # Phase C is driven by index.json, not by globbing the dir.
             pages = []
-            for i, page in enumerate(doc, start=1):
-                png = outdir / f"p{i:02d}.png"
-                page.get_pixmap(dpi=DPI).save(png)
-                pages.append({"page": i, "png": str(png),
-                              "w_pt": page.rect.width, "h_pt": page.rect.height})
-            doc.close()
+            try:
+                for i, page in enumerate(doc, start=1):
+                    try:
+                        png = outdir / f"p{i:02d}.png"
+                        pix = page.get_pixmap(dpi=DPI)
+                        pix.save(png)
+                        del pix  # free native pixmap memory promptly across 1000s of pages
+                        pages.append({"page": i, "png": str(png),
+                                      "w_pt": page.rect.width, "h_pt": page.rect.height})
+                    except Exception as e:
+                        print(f"  SKIP page {i} of {pdf.name}: {e}")
+            finally:
+                doc.close()  # always release the file handle, even mid-loop
             pdfs.append({
                 "key": f'{meta["house"]}|{meta["yymmdd"]}|{folder}|{slug}',
                 "slug": slug, "folder": folder, "house": meta["house"],
