@@ -136,9 +136,17 @@ Step "build-positioning" {
   & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-positioning.ps1"
 }
 
+# 8d. Refresh the Company-tab Key Questions Q&A (data/company_qa.json +
+#     data/company_questions.json) via the two-pass questioner+answerer miner.
+#     Gated twice-monthly (2nd & 17th); resumable; NotebookLM-grounded.
+#     Per-file validate + selective revert. Always exits 0.
+Step "build-company-qa" {
+  & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-company-qa.ps1"
+}
+
 # 9. Commit + push if there are any changes. No-op on a quiet day.
 Step "git stage" {
-  & git add data/pdfdata.json data/pdfmap.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/highs.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
+  & git add data/pdfdata.json data/pdfmap.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/highs.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
 }
 Step "git commit + push" {
   $cached = & git diff --cached --stat
