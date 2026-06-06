@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "required": ["pages"],
+  "properties": {
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["page", "charts"],
+        "properties": {
+          "page": {"type": "integer"},
+          "charts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["bbox", "chart_title", "chart_type", "subject_company", "subject_sectors", "analyst_caption", "commentary"],
+              "properties": {
+                "bbox": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
+                "chart_title": {"type": "string"},
+                "chart_type": {"type": "string", "enum": ["line", "bar", "area", "scatter", "valuation_band", "table", "map", "diagram", "other"]},
+                "subject_company": {"type": ["string", "null"]},
+                "subject_sectors": {"type": "array", "items": {"type": "string"}},
+                "analyst_caption": {"type": ["string", "null"]},
+                "commentary": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
