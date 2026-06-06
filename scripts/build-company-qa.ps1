@@ -108,7 +108,7 @@ function Invoke-Batch([string]$basePromptPath, [string[]]$names, [string]$label)
 # $arg: optional argument passed to the node script (winStart for answerer).
 # $dataFile: the JSON this phase writes (for backup/validate/restore).
 # $valFile: node validation SCRIPT FILE for $dataFile.
-function Run-Phase([string]$promptPath, [string]$needFile, [string]$arg, [int]$batchSize, [string]$dataFile, [string]$valFile, [string]$label) {
+function Run-Phase([string]$promptPath, [string]$needFile, [string]$arg, [int]$batchSize, [string]$dataFile, [string]$valFile, [string]$label, [datetime]$phaseDeadline) {
   $get = {
     param($f,$a)
     if ($a) { @(& $node $f $a 2>$null) | Where-Object { $_ -and $_.Trim() } }
@@ -118,7 +118,7 @@ function Run-Phase([string]$promptPath, [string]$needFile, [string]$arg, [int]$b
   Out-Log ("${label}: $($need.Count) companies in queue.")
   $noProgress = 0
   $attempted = @{}
-  while ($need.Count -gt 0 -and (Get-Date) -lt $deadline -and $noProgress -lt $maxNoProgress) {
+  while ($need.Count -gt 0 -and (Get-Date) -lt $phaseDeadline -and $noProgress -lt $maxNoProgress) {
     $batch = @($need | Where-Object { -not $attempted[$_] } | Select-Object -First $batchSize)
     if ($batch.Count -eq 0) { break }
     Out-Log ("$label batch (" + $batch.Count + "): " + ($batch -join ', '))
@@ -146,10 +146,14 @@ function Run-Phase([string]$promptPath, [string]$needFile, [string]$arg, [int]$b
 }
 
 # --- phase 1: questioner (generate questions for in-scope companies) ----------
-Run-Phase $qPrompt $jsNeedQ $null $qBatch "data/company_questions.json" $jsValQ "questioner"
+# Capped at ~40% of the run so the answerer (which produces the VISIBLE answers)
+# always gets time; the questioner backlog is primed across runs.
+$qDeadline = (Get-Date).AddSeconds([int]($overallBudgetSec * 0.4))
+if ($qDeadline -gt $deadline) { $qDeadline = $deadline }
+Run-Phase $qPrompt $jsNeedQ $null $qBatch "data/company_questions.json" $jsValQ "questioner" $qDeadline
 
 # --- phase 2: answerer (ground answers for companies not yet fresh) -----------
-Run-Phase $aPrompt $jsNeedA $winStart $aBatch "data/company_qa.json" $jsValA "answerer"
+Run-Phase $aPrompt $jsNeedA $winStart $aBatch "data/company_qa.json" $jsValA "answerer" $deadline
 
 # --- advance watermark ONLY when nothing is left needing questions or answers --
 $remQ = @(& $node $jsNeedQ 2>$null | Where-Object { $_ -and $_.Trim() }).Count
