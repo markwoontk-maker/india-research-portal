@@ -7120,6 +7120,104 @@ function renderPositioning(){
     (rows.length? posDateFull(rows[0].date)+' – '+posDateFull(rows[rows.length-1].date) : 'no data in period');
   document.querySelectorAll('#posSeg button').forEach(b=>b.classList.toggle('on', b.dataset.p===posPeriod));
 }
+let _galAll=[], _galFilters={};
+async function loadCharts(){
+  const grid=document.getElementById('galGrid');
+  try{
+    const res=await fetch('data/charts.json',{cache:'no-store'});
+    if(!res.ok) throw new Error(res.status);
+    const data=await res.json();
+    _galAll=data.charts||[];
+  }catch(e){
+    grid.innerHTML='<p class="gal-empty">Charts data not available yet.</p>';
+    return;
+  }
+  document.getElementById('galCount').textContent=
+    `${_galAll.length} exhibits from ${new Set(_galAll.map(c=>c.report_key)).size} reports.`;
+  galBuildChips();
+  galRender();
+  document.getElementById('galSearch').addEventListener('input', galRender);
+}
+
+function galEsc(x){return String(x==null?'':x).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
+
+function galBuildChips(){
+  // Scalar facets (one value per chart) + the array-valued subject-sector facet.
+  const scalar={source:'Source', chart_type:'Type', house:'Broker'};
+  const wrap=document.getElementById('galChips');
+  wrap.innerHTML='';
+  _galFilters={};
+  const addChip=(key,v)=>{
+    const chip=document.createElement('button');
+    chip.type='button'; chip.className='gal-chip';
+    chip.textContent=v;
+    chip.addEventListener('click',()=>{
+      chip.classList.toggle('on');
+      const set=_galFilters[key]||(_galFilters[key]=new Set());
+      chip.classList.contains('on')?set.add(v):set.delete(v);
+      galRender();
+    });
+    wrap.appendChild(chip);
+  };
+  Object.keys(scalar).forEach(key=>{
+    [...new Set(_galAll.map(c=>c[key]).filter(Boolean))].sort().forEach(v=>addChip(key,v));
+  });
+  // subject_sectors is an array per chart — flatten to a single "__sector" facet.
+  const sectors=new Set();
+  _galAll.forEach(c=>(c.subject_sectors||[]).forEach(s=>s&&sectors.add(s)));
+  [...sectors].sort().forEach(v=>addChip('__sector',v));
+}
+
+function galMatch(c){
+  for(const [k,set] of Object.entries(_galFilters)){
+    if(!set.size) continue;
+    if(k==='__sector'){
+      if(!(c.subject_sectors||[]).some(s=>set.has(s))) return false;
+    }else if(!set.has(c[k])){
+      return false;
+    }
+  }
+  const q=document.getElementById('galSearch').value.trim().toLowerCase();
+  if(q){
+    const hay=[c.chart_title,c.subject_company,(c.subject_sectors||[]).join(' '),
+               c.analyst_caption,c.commentary,c.report_title].join(' ').toLowerCase();
+    if(!hay.includes(q)) return false;
+  }
+  return true;
+}
+
+function galRender(){
+  const grid=document.getElementById('galGrid');
+  const rows=_galAll.filter(galMatch);
+  document.getElementById('galEmpty').hidden=rows.length>0;
+  grid.innerHTML=rows.map(c=>{
+    const tags=[`<span class="gal-tag src">${galEsc(c.source)}</span>`];
+    if(c.subject_company) tags.push(`<span class="gal-tag co">${galEsc(c.subject_company)}</span>`);
+    (c.subject_sectors||[]).forEach(s=>tags.push(`<span class="gal-tag">${galEsc(s)}</span>`));
+    tags.push(`<span class="gal-tag">${galEsc(c.house)}</span>`);
+    tags.push(`<span class="gal-tag">${galEsc(c.date)}</span>`);
+    const analyst=c.analyst_caption?`<div class="gal-note"><b>Analyst:</b> ${galEsc(c.analyst_caption)}</div>`:'';
+    const comm=c.commentary?`<div class="gal-note"><b>Commentary:</b> ${galEsc(c.commentary)}</div>`:'';
+    const cap=galEsc(c.chart_title||c.report_title);
+    return `<div class="gal-card">
+      <img loading="lazy" src="${galEsc(c.image)}" alt="${cap}" data-cap="${cap}" />
+      <div class="gal-body">
+        ${c.chart_title?`<div class="gal-title">${galEsc(c.chart_title)}</div>`:''}
+        <div class="gal-tags">${tags.join('')}</div>
+        ${analyst}${comm}
+      </div></div>`;
+  }).join('');
+  grid.querySelectorAll('img').forEach(img=>img.addEventListener('click',()=>galLightbox(img.src,img.dataset.cap)));
+}
+
+function galLightbox(src,cap){
+  const lb=document.getElementById('galLightbox');
+  document.getElementById('galLbImg').src=src;
+  document.getElementById('galLbCap').textContent=cap||'';
+  lb.hidden=false;
+  lb.onclick=()=>{lb.hidden=true;};
+}
+
 async function loadPositioning(){
   try{
     const res=await fetch('data/fii_dii.json',{cache:'no-store'});
@@ -7539,9 +7637,10 @@ async function loadModelPortfolios(){
         vScr=document.getElementById('viewScreener'),
         vSec=document.getElementById('viewSector'),
         vP=document.getElementById('viewPositioning'),
+        vC=document.getElementById('viewCharts'),
         vS=document.getElementById('viewSoon'),
         title=document.querySelector('.topbar .title');
-  let marketsLoaded=false, watchlistLoaded=false, positioningLoaded=false, sectorLoaded=false, strategyLoaded=false;
+  let marketsLoaded=false, watchlistLoaded=false, positioningLoaded=false, sectorLoaded=false, strategyLoaded=false, chartsLoaded=false;
   function showView(v,label){
     vO.hidden=v!=='overview';
     vR.hidden=v!=='research';
@@ -7552,6 +7651,8 @@ async function loadModelPortfolios(){
     vScr.hidden=v!=='screener';
     if(vSec) vSec.hidden=v!=='sector';
     vP.hidden=v!=='positioning';
+    vC.hidden=v!=='charts';
+    if(v==='charts' && !chartsLoaded){ chartsLoaded=true; loadCharts(); }
     vS.hidden=v!=='soon';
     if(v==='positioning' && !positioningLoaded){ positioningLoaded=true; loadPositioning(); }
     if(v==='soon') document.getElementById('soonTitle').textContent=label;
