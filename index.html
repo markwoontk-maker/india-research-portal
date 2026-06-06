@@ -552,6 +552,20 @@
   .thesis-col.bull h4{color:var(--up)}
   .thesis-col.bear{border-color:rgba(240,106,106,.30)}
   .thesis-col.bear h4{color:var(--down)}
+  /* Key Questions card — collapsible Q&A by bull / bear / key-debate */
+  .qa-sec{margin-bottom:14px}
+  .qa-sec:last-child{margin-bottom:0}
+  .qa-sec-h{font-size:11px;text-transform:uppercase;letter-spacing:.14em;margin:0 0 8px}
+  .qa-sec-h.bull{color:var(--up)}
+  .qa-sec-h.bear{color:var(--down)}
+  .qa-sec-h.debates{color:var(--text-dim)}
+  .qa-item{background:var(--ink-2);border:1px solid var(--line);border-radius:8px;margin-bottom:6px;padding:9px 11px}
+  .qa-item:last-child{margin-bottom:0}
+  .qa-item summary{cursor:pointer;font-weight:600;color:var(--text-dim);font-size:13px;line-height:1.5;list-style:none}
+  .qa-item summary::-webkit-details-marker{display:none}
+  .qa-item summary::before{content:"\25B8\00a0";color:var(--text-mute)}
+  .qa-item[open] summary::before{content:"\25BE\00a0"}
+  .qa-item .qa-a{margin-top:8px;font-size:12.5px;line-height:1.65;color:var(--text-dim)}
   .thesis-col .co-desc{margin:0;font-size:13px;line-height:1.7}
   .thesis-col .empty{color:var(--text-mute);font-style:italic}
   .thesis-cite{font-size:11px;color:var(--text-mute);text-decoration:none;
@@ -1752,6 +1766,18 @@
           </div>
         </div>
         <p class="co-desc-src">Bull = positive-rated reports (Buy/Add/OW/Outperform). Bear = negative-rated reports (Sell/Reduce/UW/Underperform) plus cautious Hold/Neutral notes where flagged. Citations open the local PDF when available, the Trendlyne report PDF otherwise.</p>
+      </div>
+      <!-- Key Questions: per-company bull / bear / key-debate questions with
+           grounded answers from data/company_qa.json (built by the
+           questioner + answerer agents in scripts/build-company-qa.ps1).
+           Collapsible: question visible, click to expand the answer. -->
+      <div class="card reveal" id="cQACard" hidden>
+        <div class="card-h">
+          <div><h3>Key Questions</h3>
+          <p id="cQASub">Bull / bear / key-debate questions, answered from this company's NotebookLM broker library</p></div>
+        </div>
+        <div id="cQABody"></div>
+        <p class="co-desc-src">Questions are generated per company; answers are grounded in the company's NotebookLM broker-report library and evaluated by the answerer agent. Click a question to expand its answer. Citations open the source PDF where identifiable.</p>
       </div>
       <!-- Key drivers: sentences from broker PDFs that explicitly name a
            lever moving the stock (volumes, margins, capex, regulation,
