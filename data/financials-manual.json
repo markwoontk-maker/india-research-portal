@@ -667,60 +667,133 @@
   "Aditya Birla Capital": {
     "currency": "₹ mn",
     "metrics": {
-      "revenue": {},
-      "ebitda": {},
-      "netProfit": {
-        "FY26": {
+      "revenue": {
+        "FY25": {
           "tag": "A",
-          "avg": 31090,
+          "avg": 75717,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
-              "value": 31090
+              "value": 75717
+            }
+          ]
+        },
+        "FY26": {
+          "tag": "A",
+          "avg": 84731,
+          "brokers": [
+            {
+              "name": "Kotak",
+              "date": "260521",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
+              "value": 84731
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 40670,
+          "avg": 111139,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
-              "value": 40670
+              "value": 111139
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 49250,
+          "avg": 139412,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
-              "value": 49250
+              "value": 139412
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 60260,
+          "avg": 170073,
           "brokers": [
             {
               "name": "Kotak",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
-              "value": 60260
+              "value": 170073
+            }
+          ]
+        }
+      },
+      "ebitda": {},
+      "netProfit": {
+        "FY25": {
+          "tag": "A",
+          "avg": 29572,
+          "brokers": [
+            {
+              "name": "Kotak",
+              "date": "260521",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
+              "value": 29572
+            }
+          ]
+        },
+        "FY26": {
+          "tag": "A",
+          "avg": 31093,
+          "brokers": [
+            {
+              "name": "Kotak",
+              "date": "260521",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
+              "value": 31093
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 40667,
+          "brokers": [
+            {
+              "name": "Kotak",
+              "date": "260521",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
+              "value": 40667
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 49248,
+          "brokers": [
+            {
+              "name": "Kotak",
+              "date": "260521",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
+              "value": 49248
+            }
+          ]
+        },
+        "FY29": {
+          "tag": "E",
+          "avg": 60258,
+          "brokers": [
+            {
+              "name": "Kotak",
+              "date": "260521",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
+              "value": 60258
             }
           ]
         }
       }
     },
-    "notes": "Page 4 standalone — Profit after tax (Net Profit proxy)"
+    "notes": "Page 4 standalone — Net Total Income + Profit after tax"
   },
   "Alkem Laboratories": {
     "currency": "₹ mn",
@@ -2135,6 +2208,137 @@
       }
     },
     "notes": "Key Metrics (FYE Mar) — page 2"
+  },
+  "Bajaj Finserv": {
+    "currency": "₹ mn",
+    "metrics": {
+      "revenue": {
+        "FY25": {
+          "tag": "A",
+          "avg": 1329443,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260518",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bajaj%20Finserv/%5B260518%5D%20%5BJefferies%5D%20Bajaj%20Finserv%20-%20Roadshow%20Feedback%2C%20Core%20Growing%20Well%2C%20New%20Ventures%20Near%20Breakeven.pdf",
+              "value": 1329443
+            }
+          ]
+        },
+        "FY26": {
+          "tag": "A",
+          "avg": 1505304,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260518",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bajaj%20Finserv/%5B260518%5D%20%5BJefferies%5D%20Bajaj%20Finserv%20-%20Roadshow%20Feedback%2C%20Core%20Growing%20Well%2C%20New%20Ventures%20Near%20Breakeven.pdf",
+              "value": 1505304
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 1778975,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260518",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bajaj%20Finserv/%5B260518%5D%20%5BJefferies%5D%20Bajaj%20Finserv%20-%20Roadshow%20Feedback%2C%20Core%20Growing%20Well%2C%20New%20Ventures%20Near%20Breakeven.pdf",
+              "value": 1778975
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 2127551,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260518",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bajaj%20Finserv/%5B260518%5D%20%5BJefferies%5D%20Bajaj%20Finserv%20-%20Roadshow%20Feedback%2C%20Core%20Growing%20Well%2C%20New%20Ventures%20Near%20Breakeven.pdf",
+              "value": 2127551
+            }
+          ]
+        },
+        "FY29": {
+          "tag": "E",
+          "avg": 2542312,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260518",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bajaj%20Finserv/%5B260518%5D%20%5BJefferies%5D%20Bajaj%20Finserv%20-%20Roadshow%20Feedback%2C%20Core%20Growing%20Well%2C%20New%20Ventures%20Near%20Breakeven.pdf",
+              "value": 2542312
+            }
+          ]
+        }
+      },
+      "ebitda": {},
+      "netProfit": {
+        "FY25": {
+          "tag": "A",
+          "avg": 175576,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260518",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bajaj%20Finserv/%5B260518%5D%20%5BJefferies%5D%20Bajaj%20Finserv%20-%20Roadshow%20Feedback%2C%20Core%20Growing%20Well%2C%20New%20Ventures%20Near%20Breakeven.pdf",
+              "value": 175576
+            }
+          ]
+        },
+        "FY26": {
+          "tag": "A",
+          "avg": 196695,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260518",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bajaj%20Finserv/%5B260518%5D%20%5BJefferies%5D%20Bajaj%20Finserv%20-%20Roadshow%20Feedback%2C%20Core%20Growing%20Well%2C%20New%20Ventures%20Near%20Breakeven.pdf",
+              "value": 196695
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 253787,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260518",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bajaj%20Finserv/%5B260518%5D%20%5BJefferies%5D%20Bajaj%20Finserv%20-%20Roadshow%20Feedback%2C%20Core%20Growing%20Well%2C%20New%20Ventures%20Near%20Breakeven.pdf",
+              "value": 253787
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 315562,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260518",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bajaj%20Finserv/%5B260518%5D%20%5BJefferies%5D%20Bajaj%20Finserv%20-%20Roadshow%20Feedback%2C%20Core%20Growing%20Well%2C%20New%20Ventures%20Near%20Breakeven.pdf",
+              "value": 315562
+            }
+          ]
+        },
+        "FY29": {
+          "tag": "E",
+          "avg": 384045,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260518",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Bajaj%20Finserv/%5B260518%5D%20%5BJefferies%5D%20Bajaj%20Finserv%20-%20Roadshow%20Feedback%2C%20Core%20Growing%20Well%2C%20New%20Ventures%20Near%20Breakeven.pdf",
+              "value": 384045
+            }
+          ]
+        }
+      }
+    },
+    "notes": "Exhibit 25 — BFS Summary income statement"
   },
   "Belrise Industries": {
     "currency": "₹ mn",

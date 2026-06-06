@@ -135,19 +135,30 @@ existing['AWL Agri Business'] = brokerBlock('JPMorgan', '260526',
   });
 
 // --- Aditya Birla Capital (Kotak page 4 standalone NBFC) --------------
-// "Profit after tax" row (FY26 31,093 / FY27E 40,667 / FY28E 49,248 /
-// FY29E 60,258, all ₹mn) per user-supplied values. Net Total Income
-// (banks-proxy for Revenue) pending — user to provide; left blank.
-const abcapKotak = brokerBlock('Kotak', '260521',
+// Net Total Income → Revenue proxy. Profit after tax → Net Profit
+// proxy. All from the same standalone table the user pointed at, raw ₹mn.
+existing['Aditya Birla Capital'] = brokerBlock('Kotak', '260521',
   `${REPORTS}\\Aditya Birla Capital\\[260521] [Kotak] Aditya Birla Capital - Full sector coverage on KINSITE.pdf`,
-  'Page 4 standalone — Profit after tax (Net Profit proxy)',
-  { FY26: 'A', FY27: 'E', FY28: 'E', FY29: 'E' },
+  'Page 4 standalone — Net Total Income + Profit after tax',
+  { FY25: 'A', FY26: 'A', FY27: 'E', FY28: 'E', FY29: 'E' },
   {
-    revenue:  {},
+    revenue:  { FY25: 75717, FY26: 84731, FY27: 111139, FY28: 139412, FY29: 170073 },
     ebitda:   {},
-    netProfit:{ FY26: 3109, FY27: 4067, FY28: 4925, FY29: 6026 },
-  });
-existing['Aditya Birla Capital'] = abcapKotak;
+    netProfit:{ FY25: 29572, FY26: 31093, FY27:  40667, FY28:  49248, FY29:  60258 },
+  }, {_alreadyMn:true});
+
+// --- Bajaj Finserv (Jefferies 18 May 26 — Exhibit 25: BFS Summary income
+// statement). Total Income → Revenue proxy; Profit After Tax → Net
+// Profit proxy. Raw ₹mn.
+existing['Bajaj Finserv'] = brokerBlock('Jefferies', '260518',
+  `${REPORTS}\\Bajaj Finserv\\[260518] [Jefferies] Bajaj Finserv - Roadshow Feedback, Core Growing Well, New Ventures Near Breakeven.pdf`,
+  'Exhibit 25 — BFS Summary income statement',
+  { FY25: 'A', FY26: 'A', FY27: 'E', FY28: 'E', FY29: 'E' },
+  {
+    revenue:  { FY25: 1329443, FY26: 1505304, FY27: 1778975, FY28: 2127551, FY29: 2542312 },
+    ebitda:   {},
+    netProfit:{ FY25:  175576, FY26:  196695, FY27:  253787, FY28:  315562, FY29:  384045 },
+  }, {_alreadyMn:true});
 
 // --- Alkem Laboratories (JPMorgan 29 May 26, p2 Key Metrics) ----------
 existing['Alkem Laboratories'] = brokerBlock('JPMorgan', '260529',
