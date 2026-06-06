@@ -2,10 +2,40 @@
   "asOf": "2026-06-07",
   "companies": {
     "Adani Power": {
-      "notebookId": "2052a512-3b1a-4dd6-8ff4-f31a1250dbb3",
-      "bull":    [ { "q": "What underpins the volume growth outlook?", "pinned": false } ],
-      "bear":    [ { "q": "What is the single biggest downside risk?", "pinned": false } ],
-      "debates": [ { "q": "Is the current valuation justified by the growth runway?", "pinned": false } ]
+      "notebookId": "b94da6f2-483c-4f6b-a86b-e3a25eaedb0c",
+      "notebookTitle": "Indian Power",
+      "bull": [
+        { "q": "What underpins the volume and earnings growth outlook?", "pinned": false },
+        { "q": "How visible and funded is the capacity-expansion pipeline?", "pinned": false },
+        { "q": "What upside does merchant power exposure add in a tight-supply market?", "pinned": false }
+      ],
+      "bear": [
+        { "q": "What is the single biggest downside risk?", "pinned": false },
+        { "q": "How exposed are earnings to weak merchant tariffs or soft demand?", "pinned": false },
+        { "q": "What PPA, regulatory or balance-sheet risks do brokers flag?", "pinned": false }
+      ],
+      "debates": [
+        { "q": "Is the valuation premium versus NTPC justified by faster growth?", "pinned": false },
+        { "q": "How durable is the FCF turnaround and deleveraging?", "pinned": false }
+      ]
+    },
+    "Apollo Hospitals": {
+      "notebookId": "a8e9ddea-20a6-47fc-80d8-473ab4e74eab",
+      "notebookTitle": "Indian Healthcare",
+      "bull": [
+        { "q": "What underpins the core hospitals growth outlook?", "pinned": false },
+        { "q": "How is the digital/pharmacy business (Apollo 24/7, HealthCo) expected to add value?", "pinned": false },
+        { "q": "What margin levers do brokers highlight?", "pinned": false }
+      ],
+      "bear": [
+        { "q": "What is the single biggest downside risk?", "pinned": false },
+        { "q": "How much do digital and new-hospital losses weigh on earnings, and when do they break even?", "pinned": false },
+        { "q": "What competitive or regulatory risks do brokers flag?", "pinned": false }
+      ],
+      "debates": [
+        { "q": "Is the valuation justified given the HealthCo listing and growth?", "pinned": false },
+        { "q": "How will aggressive bed additions affect near-term margins versus long-term ROCE?", "pinned": false }
+      ]
     }
   }
 }

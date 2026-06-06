@@ -4,13 +4,35 @@
     "Adani Power": {
       "asOf": "2026-06-07",
       "bull": [
-        { "q": "What underpins the volume growth outlook?", "a": "Capacity additions and high plant load factors are the core upside lever cited by brokers.", "broker": "Jeff", "date": "260604", "url": "" }
+        { "q": "What underpins the volume and earnings growth outlook?", "a": "Capacity is expanding ~1.7x to ~31 GW by FY30E — equipment for the upcoming 23.7 GW is already ordered (L&T/BHEL) and land is secured — driving a ~23% EBITDA CAGR over FY26-30E.", "broker": "Jeff", "date": "260518", "url": "" },
+        { "q": "How visible and funded is the capacity-expansion pipeline?", "a": "Visibility is high: land is in place and equipment for the full 23.7 GW is ordered, funded by strong operating cash flow with net leverage staying below ~1x by FY30E.", "broker": "Jeff", "date": "260518", "url": "" },
+        { "q": "What upside does merchant power exposure add in a tight-supply market?", "a": "In a sharp-demand scenario merchant realisations could reach ~Rs7/unit (vs ~Rs5.3 base), lifting EBITDA CAGR to ~25%; Bernstein notes Adani 'completely dominates' the merchant market as data-centre demand builds.", "broker": "Jeff", "date": "260518", "url": "" }
       ],
       "bear": [
-        { "q": "What is the single biggest downside risk?", "a": "Merchant-tariff and fuel-cost volatility is flagged as the main risk to earnings.", "broker": "", "date": "", "url": "" }
+        { "q": "What is the single biggest downside risk?", "a": "Recurrence of past PPA issues hitting EBITDA, plus a sharp drop in merchant realisations on subdued power demand.", "broker": "Jeff", "date": "260518", "url": "" },
+        { "q": "How exposed are earnings to weak merchant tariffs or soft demand?", "a": "95% of operating capacity is PPA-tied, cushioning volatility, but a weak-demand case (~Rs3.5/unit merchant) cuts EBITDA CAGR to ~21-22% and implies ~21% downside to the target price.", "broker": "Jeff", "date": "260518", "url": "" },
+        { "q": "What PPA, regulatory or balance-sheet risks do brokers flag?", "a": "Mainly the recurrence of past PPA disputes affecting EBITDA; on the balance sheet, net debt/EBITDA peaks at ~3.4x in FY27 during peak capex before easing.", "broker": "Jeff", "date": "260518", "url": "" }
       ],
       "debates": [
-        { "q": "Is the current valuation justified by the growth runway?", "a": "Brokers differ on whether the re-rating already prices in the capacity pipeline.", "broker": "", "date": "", "url": "" }
+        { "q": "Is the valuation premium versus NTPC justified by faster growth?", "a": "Jefferies argues yes: APL's EBITDA rises ~2.3x through FY30E vs ~1.5x for NTPC, supporting a 20x EV/EBITDA (FY28E) target, a ~100% premium to NTPC's implied 10x.", "broker": "Jeff", "date": "260518", "url": "" },
+        { "q": "How durable is the FCF turnaround and deleveraging?", "a": "A ~20% OCF CAGR should turn FCF positive (~Rs155bn, 35% of EBITDA) by FY30E, with net debt/EBITDA falling from a ~3.4x FY27 peak to ~2x by FY30E, aided by locked-in PPAs.", "broker": "Jeff", "date": "260518", "url": "" }
+      ]
+    },
+    "Apollo Hospitals": {
+      "asOf": "2026-06-07",
+      "bull": [
+        { "q": "What underpins the core hospitals growth outlook?", "a": "Double-digit ARPOB growth (price hikes + richer case mix), ~1,400 new beds targeted by FY28 and rising occupancy (~68%) drive operating leverage; brokers guide mid-teens hospital revenue growth.", "broker": "Jeff", "date": "260521", "url": "" },
+        { "q": "How is the digital/pharmacy business (Apollo 24/7, HealthCo) expected to add value?", "a": "Apollo 24/7 is nearing cash breakeven (~1QFY27), clinics/pharmacy funnel patients into hospitals, and the HealthCo demerger and listing (est. Q4FY27) is seen as a major value-unlock.", "broker": "JP", "date": "260522", "url": "" },
+        { "q": "What margin levers do brokers highlight?", "a": "Occupancy-led operating leverage, better specialty case mix and cost optimisation drive ~100-125 bps margin expansion in established hospitals, offsetting the drag from maturing new units.", "broker": "JP", "date": "260522", "url": "" }
+      ],
+      "bear": [
+        { "q": "What is the single biggest downside risk?", "a": "Higher-than-expected losses/investment in the digital health (24/7) business, plus a slower hospital occupancy ramp, weighing on profitability.", "broker": "Jeff", "date": "260521", "url": "" },
+        { "q": "How much do digital and new-hospital losses weigh on earnings, and when do they break even?", "a": "In 4QFY26 new hospitals lost ~Rs414mn and digital cash burn was ~Rs164mn; management guides digital cash breakeven by 1QFY27 and new-hospital EBITDA breakeven by FY28.", "broker": "Kotak", "date": "260522", "url": "" },
+        { "q": "What competitive or regulatory risks do brokers flag?", "a": "Government price caps on procedures/diagnostics, intense local competition and the sustainability of current pricing; oncology price caps have already trimmed Apollo's onco share modestly (~100bps).", "broker": "JP", "date": "260522", "url": "" }
+      ],
+      "debates": [
+        { "q": "Is the valuation justified given the HealthCo listing and growth?", "a": "Brokers say yes: PTs of ~Rs9,520-9,900 on SOTP (~27-30x hospitals, ~18-25x HealthCo on FY28E EBITDA), with the HealthCo listing the key catalyst.", "broker": "Jeff", "date": "260521", "url": "" },
+        { "q": "How will aggressive bed additions affect near-term margins versus long-term ROCE?", "a": "New-unit losses (~Rs1.5bn in FY27) cap near-term hospital margins, but the expansion is value-accretive with ROCE improving to ~21-22% by FY28 as units mature.", "broker": "Jeff", "date": "260521", "url": "" }
       ]
     }
   }
