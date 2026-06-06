@@ -1,6 +1,40 @@
 {
   "asOf": "2026-06-07",
   "companies": {
+    "ASK Automotive": {
+      "asOf": "2026-06-07",
+      "bull": [
+        { "q": "How much revenue-per-vehicle uplift does ASK Automotive capture as two-wheeler OEMs deepen penetration of disc-brake calipers on mass-market bikes, shifting away from drum-brake dominance?", "a": "ASK Automotive has consistently grown revenue at a 1.5x–2.0x multiplier above domestic two-wheeler OEM volume growth — FY26 revenue rose 23% YoY versus 12% for 2W production volume — driven by higher content per vehicle as OEMs adopt advanced braking systems and new product additions. CLSA forecasts an 18% EBITDA CAGR over FY26–28 and a 20% EPS CAGR on the same thesis, while the company maintains one of the sector's highest ROCEs at ~27–28%.", "broker": "CLSA", "date": "", "url": "" },
+        { "q": "How large is the aluminium light-weighting content opportunity at ASK as OEMs pursue EV-readiness across scooter and motorcycle platforms?", "a": "The Aluminium Lightweighting Precision Solutions (ALPS) segment — already contributing over 50% of ASK's revenue — grew 30% YoY in FY26 (2.5x industry volume growth), with the EV transition acting as a further catalyst because electric platforms carry higher content per vehicle versus ICE. Alloy wheel supplies are targeted to begin in 2HFY27 with revenue potential of Rs0.9–1.0bn in FY27 rising to Rs2.2bn by FY28, supporting CLSA's 24% ALPS CAGR forecast over FY26–28.", "broker": "CLSA", "date": "", "url": "" },
+        { "q": "With customer concentration across the five largest two-wheeler OEMs and their combined volume recovery from a cyclical trough, what revenue and margin operating leverage can ASK deliver?", "a": "", "broker": "", "date": "", "url": "" }
+      ],
+      "bear": [
+        { "q": "How exposed is ASK's top-line to a slowdown at its top-two customers (Hero MotoCorp and Bajaj Auto), and how quickly could any volume miss cascade into EBITDA pressure given fixed-cost absorption?", "a": "", "broker": "", "date": "", "url": "" },
+        { "q": "What is the risk that two-wheeler OEMs bring disc-brake and aluminium-precision manufacturing in-house or dual-source aggressively as volumes scale, compressing ASK's wallet share?", "a": "", "broker": "", "date": "", "url": "" },
+        { "q": "How does the EV transition reshape ASK's product mix — does the disc-brake and wheel-assembly opportunity in EVs offset legacy drum-brake revenue erosion, and on what timeline?", "a": "", "broker": "", "date": "", "url": "" }
+      ],
+      "debates": [
+        { "q": "Is ASK's valuation premium over generic Tier-1 auto-component suppliers justified by its niche braking-technology moat, or does high customer concentration cap the re-rating?", "a": "", "broker": "", "date": "", "url": "" },
+        { "q": "At what point does the aluminium content-per-vehicle growth story materially shift ASK's revenue profile from a braking-focused niche to a broader light-weighting platform deserving a higher multiple?", "a": "", "broker": "", "date": "", "url": "" }
+      ]
+    },
+    "AIA Engineering": {
+      "asOf": "2026-06-07",
+      "bull": [
+        { "q": "How large is AIA's addressable replacement market in global mining grinding media, and what share-gain runway remains versus incumbent forged-steel suppliers given high-chrome's total-cost-of-ownership advantage?", "a": "The Nomura report does not quantify the global addressable market explicitly, but identifies mine conversions as the primary share-gain mechanism — a new South American customer immediately placed a second mine order after a successful trial, and the order book rose 33% y-y to ₹8.7bn. HCMI adoption breakthroughs remain the main growth driver for the mining segment.", "broker": "Nomura", "date": "260527", "url": "" },
+        { "q": "With cement capacity additions accelerating across India and the Middle East, how fast can AIA's domestic and export order pipeline convert into revenue, and what EBITDA-margin profile do these volumes carry?", "a": "Cement volumes grew 15% y-y in 4QFY26, outpacing the mining segment; management guided a sustainable realization of ~₹165/kg going forward (vs ₹178/kg in 4Q, aided by rupee depreciation) and expects operating margins to moderate to 23-24% as the favourable mix normalises.", "broker": "Nomura", "date": "260527", "url": "" },
+        { "q": "How much gross-margin expansion is achievable if ferro-chrome and chrome-ore input costs stay benign, and how structurally wide is the cost moat versus composite or rubber liner alternatives?", "a": "Gross margin reached 59.7% in 4QFY26 on a favourable product mix; Nomura does not quantify the specific sensitivity to ferro-chrome or chrome-ore costs, but notes management expects operating margins to moderate to 23-24% as the mix normalises — suggesting the 4QFY26 peak was mix-driven rather than a new cost-structure floor.", "broker": "Nomura", "date": "260527", "url": "" }
+      ],
+      "bear": [
+        { "q": "How vulnerable is AIA's mining revenue to a sustained capex freeze by global copper, gold or iron-ore majors that compresses mill-maintenance budgets?", "a": "Mining volumes declined 4% y-y in 4QFY26, and management flagged that geopolitical and macroeconomic headwinds have created an 'uncertain business environment' for global shipping and demand; AIA is partially mitigating this through value-added discharge system breakthroughs with a marquee South American customer to sustain future order flow.", "broker": "Nomura", "date": "260527", "url": "" },
+        { "q": "What is the risk that large mining groups accelerate in-house liner fabrication or permanently shift to rubber/composite media, structurally shrinking the high-chrome replacement annuity?", "a": "", "broker": "", "date": "", "url": "" },
+        { "q": "How exposed is the export business — which drives the bulk of revenue — to rupee appreciation and elevated ocean-freight costs, and how effectively does AIA hedge this?", "a": "AIA's export realizations benefited from rupee depreciation in 4QFY26, lifting realization 7% y-y to ₹178/kg, while management flagged that global shipping costs are 'severely impacted' by geopolitical headwinds; Nomura lists further USD appreciation as an upside risk (implying natural long-dollar revenue exposure), but specific hedging arrangements are not detailed.", "broker": "Nomura", "date": "260527", "url": "" }
+      ],
+      "debates": [
+        { "q": "At what milestone does AIA's penetration of large greenfield copper and lithium mining projects (longer wear-cycle, higher value per tonne) become large enough to shift the stock from a commodity-cycle multiple to a structural-growth re-rating?", "a": "Nomura maintains Reduce at 25x Mar'28F EPS (near the long-term -1SD PE), valuing AIA as a commodity-cycle business; 'better-than-expected HCMI adoption' is listed as a key upside risk rather than a base-case assumption, implying the market has not yet re-rated AIA, and the new South American discharge system breakthrough is viewed as a step in that direction but not yet a re-rating trigger.", "broker": "Nomura", "date": "260527", "url": "" },
+        { "q": "Which segment — the recurring cement-grinding annuity or the lumpier but higher-growth mining vertical — is the primary driver of the next earnings leg, and how should each be valued?", "a": "Nomura sees the mining vertical — specifically the breakthrough in new discharge system solutions for a marquee South American customer — as the key next growth driver, while valuing AIA on a single consolidated 25x Mar'28F EPS multiple (near long-term -1SD PE) rather than attributing separate segment multiples.", "broker": "Nomura", "date": "260527", "url": "" }
+      ]
+    },
     "Adani Power": {
       "asOf": "2026-06-07",
       "bull": [
