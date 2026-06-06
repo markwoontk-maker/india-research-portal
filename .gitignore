@@ -14,3 +14,6 @@ scripts/.strategy-state.json
 # Local probe / scratch outputs from financials tooling
 scripts/logs/
 
+# Charts pipeline scratch (rendered pages + per-PDF analyses)
+scripts/.charts-work/
+
