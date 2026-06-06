@@ -10,6 +10,7 @@ def test_parse_report_filename_basic():
 def test_parse_report_filename_brackets_in_house():
     r = lib.parse_report_filename("[260518] [MorganStanley] X - Y.pdf")
     assert r["house"] == "MorganStanley" and r["date"] == "2026-05-18"
+    assert r["title"] == "X - Y"  # title captured, not swallowed into house
 
 def test_parse_report_filename_rejects_junk():
     assert lib.parse_report_filename("notes.pdf") is None
@@ -18,6 +19,12 @@ def test_fs_slug_strips_illegal_chars():
     s = lib.fs_slug("Jefferies", "260603", "What's changed: a|b#c")
     assert "|" not in s and "#" not in s and "'" not in s and " " not in s
     assert s.startswith("Jefferies_260603_")
+
+def test_fs_slug_edges():
+    assert lib.fs_slug() == ""
+    assert lib.fs_slug("", "valid") == "valid"          # empty parts skipped
+    long = lib.fs_slug("a" * 119 + "__b")               # truncates at 120
+    assert len(long) <= 120 and not long.endswith("_")  # no trailing '_' after cut
 
 def test_pad_bbox_clamps():
     assert lib.pad_bbox([0.0, 0.0, 1.0, 1.0], 0.02) == [0.0, 0.0, 1.0, 1.0]
