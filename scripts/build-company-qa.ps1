@@ -31,7 +31,7 @@ $stateFile       = Join-Path $repo "scripts\.company-qa-state.json"
 $claude          = "C:\Users\admin\.local\bin\claude.exe"
 $model           = "sonnet"
 $qBatch          = 8      # companies per questioner call (generation only - light)
-$aBatch          = 2      # companies per answerer call (~8 nlm queries each - heavy)
+$aBatch          = 1      # ONE company per answerer call: ~8 nlm queries (~6-8 min) fits the per-call timeout and is written before moving on (batch>1 risked a mid-batch kill = lost work)
 $callTimeoutSec  = 900    # hard per-call kill ceiling
 $overallBudgetSec= if ($env:CQA_BUDGET) { [int]$env:CQA_BUDGET } else { 1500 }   # whole-run budget; remaining companies resume next run (override via $env:CQA_BUDGET)
 $maxNoProgress   = 3      # consecutive no-progress batches -> abort that phase
