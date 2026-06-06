@@ -7125,18 +7125,20 @@ async function loadCharts(){
   const grid=document.getElementById('galGrid');
   try{
     const res=await fetch('data/charts.json',{cache:'no-store'});
-    if(!res.ok) throw new Error(res.status);
+    if(!res.ok) throw new Error('http '+res.status);
     const data=await res.json();
     _galAll=data.charts||[];
   }catch(e){
     grid.innerHTML='<p class="gal-empty">Charts data not available yet.</p>';
     return;
   }
-  document.getElementById('galCount').textContent=
-    `${_galAll.length} exhibits from ${new Set(_galAll.map(c=>c.report_key)).size} reports.`;
   galBuildChips();
   galRender();
   document.getElementById('galSearch').addEventListener('input', galRender);
+  // Esc closes the lightbox (added once; loadCharts runs once per page-load).
+  document.addEventListener('keydown', e=>{
+    if(e.key==='Escape') document.getElementById('galLightbox').hidden=true;
+  });
 }
 
 function galEsc(x){return String(x==null?'':x).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
@@ -7168,7 +7170,7 @@ function galBuildChips(){
   [...sectors].sort().forEach(v=>addChip('__sector',v));
 }
 
-function galMatch(c){
+function galMatch(c, q){
   for(const [k,set] of Object.entries(_galFilters)){
     if(!set.size) continue;
     if(k==='__sector'){
@@ -7177,7 +7179,6 @@ function galMatch(c){
       return false;
     }
   }
-  const q=document.getElementById('galSearch').value.trim().toLowerCase();
   if(q){
     const hay=[c.chart_title,c.subject_company,(c.subject_sectors||[]).join(' '),
                c.analyst_caption,c.commentary,c.report_title].join(' ').toLowerCase();
@@ -7188,7 +7189,13 @@ function galMatch(c){
 
 function galRender(){
   const grid=document.getElementById('galGrid');
-  const rows=_galAll.filter(galMatch);
+  const q=document.getElementById('galSearch').value.trim().toLowerCase();
+  const rows=_galAll.filter(c=>galMatch(c,q));
+  const total=_galAll.length, reports=new Set(_galAll.map(c=>c.report_key)).size;
+  document.getElementById('galCount').textContent=
+    rows.length===total
+      ? `${total} exhibits from ${reports} reports.`
+      : `${rows.length} of ${total} exhibits shown.`;
   document.getElementById('galEmpty').hidden=rows.length>0;
   grid.innerHTML=rows.map(c=>{
     const tags=[`<span class="gal-tag src">${galEsc(c.source)}</span>`];
