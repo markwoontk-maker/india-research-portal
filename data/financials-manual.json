@@ -501,9 +501,58 @@
           ]
         }
       },
-      "netProfit": {}
+      "netProfit": {
+        "FY26": {
+          "tag": "A",
+          "avg": 11073,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260518",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
+              "value": 11073
+            }
+          ]
+        },
+        "FY27": {
+          "tag": "E",
+          "avg": 12388,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260518",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
+              "value": 12388
+            }
+          ]
+        },
+        "FY28": {
+          "tag": "E",
+          "avg": 15181,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260518",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
+              "value": 15181
+            }
+          ]
+        },
+        "FY29": {
+          "tag": "E",
+          "avg": 18344,
+          "brokers": [
+            {
+              "name": "Jefferies",
+              "date": "260518",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Adani%20Power/%5B260518%5D%20%5BJefferies%5D%20Adani%20Power%20-%20FCF%20to%20turn%20positive%20by%20FY30E.pdf",
+              "value": 18344
+            }
+          ]
+        }
+      }
     },
-    "notes": "Front-page FY (Mar) 2026A-2029E mini-table — Rev + EBITDA only"
+    "notes": "Front-page FY (Mar) mini-table + Adjusted PAT row (Net Profit proxy)"
   },
   "Aditya Birla Capital": {
     "currency": "₹ cr",
@@ -513,73 +562,55 @@
       "netProfit": {
         "FY26": {
           "tag": "A",
-          "avg": 5375,
+          "avg": 3109,
           "brokers": [
-            {
-              "name": "Jefferies",
-              "date": "260520",
-              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260520%5D%20%5BJefferies%5D%20Aditya%20Birla%20Capital%20-%20ABCAP%20Announces%20Equity%20Infusion%20Through%20Preferential%20Issue.pdf",
-              "value": 3750
-            },
             {
               "name": "Kotak",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
-              "value": 7000
+              "value": 3109
             }
           ]
         },
         "FY27": {
           "tag": "E",
-          "avg": 7031,
+          "avg": 4067,
           "brokers": [
-            {
-              "name": "Jefferies",
-              "date": "260520",
-              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260520%5D%20%5BJefferies%5D%20Aditya%20Birla%20Capital%20-%20ABCAP%20Announces%20Equity%20Infusion%20Through%20Preferential%20Issue.pdf",
-              "value": 4662
-            },
             {
               "name": "Kotak",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
-              "value": 9400
+              "value": 4067
             }
           ]
         },
         "FY28": {
           "tag": "E",
-          "avg": 8896,
+          "avg": 4925,
           "brokers": [
-            {
-              "name": "Jefferies",
-              "date": "260520",
-              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260520%5D%20%5BJefferies%5D%20Aditya%20Birla%20Capital%20-%20ABCAP%20Announces%20Equity%20Infusion%20Through%20Preferential%20Issue.pdf",
-              "value": 5892
-            },
             {
               "name": "Kotak",
               "date": "260521",
               "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
-              "value": 11900
+              "value": 4925
             }
           ]
         },
         "FY29": {
           "tag": "E",
-          "avg": 6893,
+          "avg": 6026,
           "brokers": [
             {
-              "name": "Jefferies",
-              "date": "260520",
-              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260520%5D%20%5BJefferies%5D%20Aditya%20Birla%20Capital%20-%20ABCAP%20Announces%20Equity%20Infusion%20Through%20Preferential%20Issue.pdf",
-              "value": 6893
+              "name": "Kotak",
+              "date": "260521",
+              "url": "file:///C%3A/Users/admin/Desktop/India%20Related%20Reports/Aditya%20Birla%20Capital/%5B260521%5D%20%5BKotak%5D%20Aditya%20Birla%20Capital%20-%20Full%20sector%20coverage%20on%20KINSITE.pdf",
+              "value": 6026
             }
           ]
         }
       }
     },
-    "notes": "Front-page EPS table · Forecasts/Valuations (page 1) — Net profits (Rs bn)"
+    "notes": "Page 4 standalone — Profit after tax (Net Profit proxy)"
   },
   "Alkem Laboratories": {
     "currency": "₹ cr",

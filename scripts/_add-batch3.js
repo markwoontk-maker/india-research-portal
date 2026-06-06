@@ -58,16 +58,18 @@ function mergeBlocks(...blocks){
   return out;
 }
 
-// --- Adani Power (Jefferies 18 May 26, page 1 FY (Mar) mini-table) -----
-// Rev + EBITDA only — Net Profit row not cleanly visible on page 1.
+// --- Adani Power (Jefferies 18 May 26, page 1) ------------------------
+// Rev + EBITDA from the FY (Mar) mini-table. Net Profit row uses
+// Jefferies' "Adjusted PAT" line from the same page (₹mn) per the
+// user's "Adj.PAT = Net Profit for our purposes" rule.
 existing['Adani Power'] = brokerBlock('Jefferies', '260518',
   `${REPORTS}\\Adani Power\\[260518] [Jefferies] Adani Power - FCF to turn positive by FY30E.pdf`,
-  'Front-page FY (Mar) 2026A-2029E mini-table — Rev + EBITDA only',
+  'Front-page FY (Mar) mini-table + Adjusted PAT row (Net Profit proxy)',
   { FY26: 'A', FY27: 'E', FY28: 'E', FY29: 'E' },
   {
-    revenue:  { FY26: 53782, FY27: 62124, FY28: 72858, FY29: 91077 },
-    ebitda:   { FY26: 19539, FY27: 24013, FY28: 29697, FY29: 37350 },
-    netProfit:{},
+    revenue:  { FY26: 53782, FY27: 62124, FY28: 72858, FY29:  91077 },
+    ebitda:   { FY26: 19539, FY27: 24013, FY28: 29697, FY29:  37350 },
+    netProfit:{ FY26: 11073, FY27: 12388, FY28: 15181, FY29:  18344 },
   });
 
 // --- AWL Agri Business (JPMorgan 26 May 26, page 2 Key Metrics) --------
@@ -81,30 +83,20 @@ existing['AWL Agri Business'] = brokerBlock('JPMorgan', '260526',
     netProfit:{ FY26: 1071,  FY27: 1016,  FY28: 1075,  FY29: 1131  },
   });
 
-// --- Aditya Birla Capital ----------------------------------------------
-// Jefferies (front-page EPS/ROAA — NBFC reporting) + Kotak (Net profits
-// shown in Rs bn). Both brokers contribute Net Profit rows.
-// Jefferies: EPS 14.35 / 17.84 / 22.55 / 26.38 × ~2,613 mn shares
-// Kotak Net profits (Rs bn): 70 / 94 / 119 for FY26 / FY27E / FY28E
-const abcapJeff = brokerBlock('Jefferies', '260520',
-  `${REPORTS}\\Aditya Birla Capital\\[260520] [Jefferies] Aditya Birla Capital - ABCAP Announces Equity Infusion Through Preferential Issue.pdf`,
-  'Front-page EPS table',
+// --- Aditya Birla Capital (Kotak page 4 standalone NBFC) --------------
+// "Profit after tax" row (FY26 31,093 / FY27E 40,667 / FY28E 49,248 /
+// FY29E 60,258, all ₹mn) per user-supplied values. Net Total Income
+// (banks-proxy for Revenue) pending — user to provide; left blank.
+const abcapKotak = brokerBlock('Kotak', '260521',
+  `${REPORTS}\\Aditya Birla Capital\\[260521] [Kotak] Aditya Birla Capital - Full sector coverage on KINSITE.pdf`,
+  'Page 4 standalone — Profit after tax (Net Profit proxy)',
   { FY26: 'A', FY27: 'E', FY28: 'E', FY29: 'E' },
   {
     revenue:  {},
     ebitda:   {},
-    netProfit:{ FY26: 3750, FY27: 4662, FY28: 5892, FY29: 6893 },
+    netProfit:{ FY26: 3109, FY27: 4067, FY28: 4925, FY29: 6026 },
   });
-const abcapKotak = brokerBlock('Kotak', '260521',
-  `${REPORTS}\\Aditya Birla Capital\\[260521] [Kotak] Aditya Birla Capital - Full sector coverage on KINSITE.pdf`,
-  'Forecasts/Valuations (page 1) — Net profits (Rs bn)',
-  { FY26: 'A', FY27: 'E', FY28: 'E' },
-  {
-    revenue:  {},
-    ebitda:   {},
-    netProfit:{ FY26: 7000, FY27: 9400, FY28: 11900 },
-  });
-existing['Aditya Birla Capital'] = mergeBlocks(abcapJeff, abcapKotak);
+existing['Aditya Birla Capital'] = abcapKotak;
 
 // --- Alkem Laboratories (JPMorgan 29 May 26, p2 Key Metrics) ----------
 existing['Alkem Laboratories'] = brokerBlock('JPMorgan', '260529',
