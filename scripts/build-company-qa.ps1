@@ -23,7 +23,7 @@ $aPrompt     = Join-Path $repo "docs\company-qa-answerer-prompt.md"
 $stateFile   = Join-Path $repo "scripts\.company-qa-state.json"
 $claude      = "C:\Users\admin\.local\bin\claude.exe"
 $model       = "sonnet"
-$timeoutSec  = 1200
+$timeoutSec  = 1500   # hard kill ceiling; answerer self-stops ~20 min, this leaves a margin so a kill rarely lands mid-write
 
 function Out-Log([string]$m){ Write-Output ("[build-company-qa] " + $m) }
 
@@ -68,25 +68,31 @@ foreach ($f in $files) {
 function Invoke-Pass([string]$promptPath, [string]$label) {
   $prompt = (Get-Content -LiteralPath $promptPath -Raw) +
     "`n`nWRAPPER OVERRIDE: Do NOT run git commit/push and do NOT branch. Only create/update the data file(s), then stop. The local wrapper commits + pushes."
-  $job = Start-Job -ScriptBlock {
-    param($claude,$prompt,$repo,$model)
-    Set-Location $repo
-    & $claude -p $prompt `
-        --permission-mode bypassPermissions `
-        --allowedTools Bash Read Write Edit `
-        --model $model 2>&1
-  } -ArgumentList $claude,$prompt,$repo,$model
-  if (Wait-Job $job -Timeout $script:timeoutSec) {
-    $out = Receive-Job $job
-    if ($out) { $out | ForEach-Object { Out-Log ("$label> " + ($_ | Out-String).TrimEnd()) } }
-    Remove-Job $job -Force -ErrorAction SilentlyContinue
-    return $true
+  # Run claude DIRECTLY via Start-Process, prompt fed on stdin (temp file), hard
+  # timeout via WaitForExit. An earlier Start-Job version returned empty / zero
+  # changes for long tool-using runs (the background runspace did not carry the
+  # CLI's tool/auth context a direct child process gets); stdin also sidesteps
+  # command-line length/quoting limits for the large prompt.
+  $tmpIn  = Join-Path $env:TEMP ("cqa-$label-in.txt")
+  $tmpOut = Join-Path $env:TEMP ("cqa-$label-out.txt")
+  $tmpErr = Join-Path $env:TEMP ("cqa-$label-err.txt")
+  $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+  [System.IO.File]::WriteAllText($tmpIn, $prompt, $utf8NoBom)
+  $procArgs = @('-p','--permission-mode','bypassPermissions','--allowedTools','Bash','Read','Write','Edit','--model',$model)
+  $p = Start-Process -FilePath $claude -ArgumentList $procArgs `
+        -WorkingDirectory $repo -NoNewWindow -PassThru `
+        -RedirectStandardInput $tmpIn -RedirectStandardOutput $tmpOut -RedirectStandardError $tmpErr
+  $done = $p.WaitForExit($script:timeoutSec * 1000)
+  if ($done) {
+    Get-Content -LiteralPath $tmpOut -ErrorAction SilentlyContinue | ForEach-Object { if ($_) { Out-Log ("$label> " + $_) } }
+    $err = Get-Content -LiteralPath $tmpErr -Raw -ErrorAction SilentlyContinue
+    if ($err -and $err.Trim()) { Out-Log ("$label-stderr> " + $err.Trim()) }
   } else {
-    Stop-Job $job -ErrorAction SilentlyContinue
-    Remove-Job $job -Force -ErrorAction SilentlyContinue
+    try { $p.Kill() } catch {}
     Out-Log "$label pass timed out."
-    return $false
   }
+  Remove-Item $tmpIn,$tmpOut,$tmpErr -Force -ErrorAction SilentlyContinue
+  return $done
 }
 
 # --- pass 1: questioner ------------------------------------------------------
@@ -111,14 +117,22 @@ foreach ($f in $files) {
   }
 }
 
-# --- advance watermark only if BOTH passes completed (not timed out) ----------
-# A timed-out answerer is resumable: leaving the watermark unset lets the next
-# daily run continue the remaining companies within the same window.
-if ($qDone -and $aDone) {
+# --- advance the watermark ONLY when every questioned company has a fresh answer
+# in this window. A run that timed out, was killed, or just made partial progress
+# leaves the watermark unset so the next daily run resumes the remaining names.
+# (Completion is measured by the data, not by "the passes returned" - a no-op or
+# self-stopped answerer must NOT burn the fortnight window.)
+$allFresh = $false
+if ($qDone) {
+  $winStart = if ($now.Day -ge 17) { $now.ToString('yyyy-MM-17') } else { $now.ToString('yyyy-MM-02') }
+  & $node -e "const q=require('./data/company_questions.json').companies||{};const a=(require('./data/company_qa.json').companies)||{};const ws=process.argv[1];const pending=Object.keys(q).filter(n=>!(a[n]&&a[n].asOf&&a[n].asOf>=ws));if(pending.length){console.error(pending.length+' company(ies) still pending');process.exit(1)}process.exit(0)" $winStart 2>&1 | Out-Null
+  $allFresh = ($LASTEXITCODE -eq 0)
+}
+if ($allFresh) {
   @{ lastWindow = $window; asOf = (Get-Date).ToString("s") } | ConvertTo-Json | Set-Content -LiteralPath $stateFile -Encoding utf8
-  Out-Log "window $window complete - watermark advanced."
+  Out-Log "window $window complete (all questioned companies have fresh answers) - watermark advanced."
 } else {
-  Out-Log "a pass timed out - watermark NOT advanced (will resume next run)."
+  Out-Log "window NOT complete (companies still pending or a pass failed) - watermark left unset; next run resumes."
 }
 Out-Log ("done - $changed file(s) updated this run.")
 exit 0
