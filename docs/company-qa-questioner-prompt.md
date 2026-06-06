@@ -24,8 +24,11 @@ sector notebook for its industry. The authoritative sector→notebook map is
      token before `" · "`, e.g. `"Power"`). Look up that title in `notebooks[]`
      to get the `id`. If the sector routes nowhere (no source-bearing notebook —
      e.g. Hotels, Media, Retail, Logistics, Travel), **skip the company**.
-   - Skip the company if it already has a full, non-empty set of questions whose
-     items are ALL `"pinned": true`.
+   - **Skip the company if it already has a non-empty question set** in
+     `data/company_questions.json` (this pass is additive — only generate for
+     companies that have no questions yet, so existing/curated entries and their
+     answers are never disturbed). The only exception: if some items are missing
+     and none are `"pinned": true`, you may top up to the target counts.
    - Generate company-specific questions tailored to that company's real drivers
      and risks, using its `desc` and your knowledge of the sector (not generic):
      **~3 bull-case**, **~3 bear-case**, **~2 key-debate**. Bull = upside drivers
