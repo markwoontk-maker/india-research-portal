@@ -144,11 +144,11 @@ Step "build-company-qa-sync" {
   & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-company-qa-sync.ps1"
 }
 
-# 8d. Refresh the Company-tab Key Questions Q&A (data/company_qa.json +
-#     data/company_questions.json) via the batched questioner+answerer miner.
-#     Runs daily (event-driven); only companies with no current answer (new, or
-#     blanked by the sync step above) are (re)answered - a quiet day is a no-op.
-#     Shares a lock with the sync step; NotebookLM-grounded. Always exits 0.
+# 8d. Generate the Company-tab Upside Opportunity / Downside Risk statements
+#     (data/company_qa.json) via the batched statement generator. Runs daily
+#     (event-driven); only companies with no current statements (new, or blanked
+#     by the sync step above) are (re)generated - a quiet day is a no-op. Shares a
+#     lock with the sync step; NotebookLM-grounded, else sourced to Claude. Exits 0.
 Step "build-company-qa" {
   & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-company-qa.ps1"
 }
