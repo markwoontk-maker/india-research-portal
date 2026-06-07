@@ -1,0 +1,6 @@
+# report_keys the charts auto-ingest should never chart (one per line; # = comment).
+# Format: House|YYMMDD|Folder|slug  (matches data/charts.json report_key).
+
+# Duplicate re-uploads of "Myntra at all time high" (same report, base already charted).
+CLSA|260604|Indian Consumer|CLSA_260604_India_Consumer_Myntra_at_all_time_high_2
+CLSA|260604|Indian Consumer|CLSA_260604_India_Consumer_Myntra_at_all_time_high_3

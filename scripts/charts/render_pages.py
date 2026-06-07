@@ -15,6 +15,7 @@ from lib import PILOT_FOLDERS, REPORTS_ROOT, parse_report_filename, fs_slug
 ROOT = Path(__file__).resolve().parents[2]
 WORK = ROOT / "scripts" / ".charts-work"
 CHARTS_JSON = ROOT / "data" / "charts.json"
+EXCLUDE_FILE = Path(__file__).resolve().parent / "_exclude_keys.txt"
 DPI = 180
 SKIP_DIRS = {"Sorting Folder"}
 
@@ -59,6 +60,13 @@ def existing_keys():
     except Exception:
         return set()
 
+def excluded_keys():
+    """report_keys to never chart (e.g. duplicate re-uploads). One per line; # comments ok."""
+    if not EXCLUDE_FILE.exists():
+        return set()
+    return {l.strip() for l in EXCLUDE_FILE.read_text(encoding="utf-8").splitlines()
+            if l.strip() and not l.lstrip().startswith("#")}
+
 def all_folders():
     return [d.name for d in sorted(REPORTS_ROOT.iterdir())
             if d.is_dir() and d.name not in SKIP_DIRS]
@@ -101,7 +109,7 @@ def _arg_limit():
 
 def main():
     if "--incremental" in sys.argv:
-        pdfs = run(all_folders(), existing_keys(), limit=_arg_limit())
+        pdfs = run(all_folders(), existing_keys() | excluded_keys(), limit=_arg_limit())
         newlist = [{"slug": p["slug"], "folder": p["folder"], "house": p["house"],
                     "date": p["date"], "report_title": p["report_title"],
                     "pages": len(p["pages"])} for p in pdfs]
