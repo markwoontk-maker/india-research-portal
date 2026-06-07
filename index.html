@@ -494,10 +494,13 @@
   .bk-row{display:flex;align-items:center;gap:8px;padding:6px 1px;
     border-bottom:1px solid var(--line-soft);font-size:12.5px}
   .bk-row:last-child{border-bottom:none}
-  .bk-row .bk-name{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;
+  .bk-row .bk-id{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+  .bk-row .bk-name{max-width:100%;width:fit-content;white-space:nowrap;overflow:hidden;
     text-overflow:ellipsis;color:var(--text);text-decoration:none;
     border-bottom:1px dotted transparent}
   .bk-row .bk-name:hover{border-bottom-color:var(--text-mute)}
+  .bk-row .bk-date{font-family:'Roboto Mono',monospace;font-size:9.5px;
+    color:var(--text-mute);line-height:1.2}
   .bk-row .bk-tp{font-family:'Roboto Mono',monospace;font-size:12px;
     color:var(--text-dim);white-space:nowrap}
   .bk-row .bk-tp.muted{color:var(--text-mute)}
@@ -5880,10 +5883,14 @@ function renderCompanyResearch(){
     const tp = (tpN!=null && isFinite(tpN) && tpRaw!=='')
       ? '₹'+tpN.toLocaleString('en-US')
       : (tpRaw ? '₹'+esc(tpRaw) : '—');
+    const dateLab = fmtD(d)+" '"+d.slice(0,2);
     return `<div class="bk-row">`+
-      `<a class="bk-name" href="${esc(href)}" target="_blank" rel="noopener"`+
-        (pd && pd.summary ? ` data-summary="${esc(pd.summary)}"` : '')+
-        ` title="${esc(h)} — ${esc(ti)}">${esc(h)}</a>`+
+      `<span class="bk-id">`+
+        `<a class="bk-name" href="${esc(href)}" target="_blank" rel="noopener"`+
+          (pd && pd.summary ? ` data-summary="${esc(pd.summary)}"` : '')+
+          ` title="${esc(h)} — ${esc(ti)}">${esc(h)}</a>`+
+        `<span class="bk-date">${dateLab}</span>`+
+      `</span>`+
       `<span class="bk-tp${currTP?'':' muted'}">${tp}</span>`+
       upd+
     `</div>`;
@@ -6768,6 +6775,35 @@ async function loadCompanyChart(name, tf){
   }
 }
 
+// Chart.js plugin — dashed vertical lines at each broker report's publication
+// date (matches the coverage panel: latest report per house, deduped by date).
+// Drawn on-canvas in afterDatasetsDraw, so it stays correct through the entry
+// animation, range changes and resizes with no overlay-timing issues.
+const reportLinePlugin = {
+  id:'reportLines',
+  afterDatasetsDraw(chart){
+    if(!chart.canvas || chart.canvas.id!=='cChart') return;
+    const times=chart._times; if(!times || !times.length) return;
+    const reps=(typeof getCompanyReportDates==='function') ? getCompanyReportDates(currentCompany) : [];
+    if(!reps.length) return;
+    const ctx=chart.ctx, ca=chart.chartArea, x=chart.scales.x;
+    if(!ca || !x) return;
+    const t0=times[0], t1=times[times.length-1], tol=3*864e5;
+    ctx.save();
+    ctx.lineWidth=1; ctx.setLineDash([3,4]); ctx.strokeStyle='rgba(130,140,156,.5)';
+    reps.forEach(r=>{
+      const ts=new Date(2000+ +r.d.slice(0,2), +r.d.slice(2,4)-1, +r.d.slice(4,6), 12).getTime();
+      if(ts < t0-tol || ts > t1+tol) return;
+      let bi=0, bd=Infinity;
+      for(let i=0;i<times.length;i++){ const df=Math.abs(times[i]-ts); if(df<bd){bd=df;bi=i;} }
+      const px=x.getPixelForValue(bi);
+      if(!isFinite(px)) return;
+      ctx.beginPath(); ctx.moveTo(px, ca.top); ctx.lineTo(px, ca.bottom); ctx.stroke();
+    });
+    ctx.restore();
+  }
+};
+
 function renderCompanyChart(data, times, sym, tf){
   const c = document.getElementById('cChart');
   if(!c) return;
@@ -6778,6 +6814,7 @@ function renderCompanyChart(data, times, sym, tf){
     gc.addColorStop(1,'rgba(233,162,59,0)');
     companyChart = new Chart(c, {
       type:'line',
+      plugins:[reportLinePlugin],
       data:{labels:[], datasets:[{data:[], borderColor:'#e9a23b', borderWidth:1.5,
         fill:true, backgroundColor:gc, tension:.18, pointRadius:0, pointHoverRadius:5,
         pointHoverBackgroundColor:'#e9a23b', borderJoinStyle:'round'}]},
@@ -6975,7 +7012,29 @@ function hideMarkerPop(){
   popHideTimer = setTimeout(()=>{ pop.classList.remove('show'); pop.dataset.markerT=''; }, 80);
 }
 
-// Reposition markers when the window resizes (chart re-lays-out).
+// Report dates for a company (latest report per house, deduped by date) —
+// powers the on-chart annotation lines (reportLinePlugin) and mirrors the
+// dates shown in the coverage panel.
+function getCompanyReportDates(name){
+  if(!name) return [];
+  if(typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(name)) return [];
+  const target=String(name).toLowerCase();
+  const pool=[];
+  [...(typeof notes==='undefined'?[]:notes),
+   ...(typeof notesExt==='undefined'?[]:notesExt),
+   ...(typeof notesPrior==='undefined'?[]:notesPrior)]
+    .forEach(n=>{ if(n&&n.length>=4 && String(n[2]).toLowerCase()===target && /^\d{6}$/.test(String(n[1]))) pool.push([n[0],String(n[1])]); });
+  const TL=(window.TRENDLYNE_COVERAGE||{})[name];
+  if(Array.isArray(TL)) TL.forEach(r=>{ if(r&&r.broker&&/^\d{6}$/.test(String(r.date))) pool.push([r.broker,String(r.date)]); });
+  const latest={};
+  pool.forEach(([h,d])=>{ if(!latest[h]||d>latest[h]) latest[h]=d; });
+  const byDate={};
+  Object.entries(latest).forEach(([h,d])=>{ (byDate[d]=byDate[d]||[]).push(h); });
+  return Object.keys(byDate).sort().map(d=>({d, brokers:byDate[d]}));
+}
+
+// Reposition abnormal-move markers when the window resizes (chart re-lays-out).
+// (Report lines are drawn by reportLinePlugin and need no manual reposition.)
 window.addEventListener('resize', ()=>{
   if(lastMarkerCtx) requestAnimationFrame(()=>paintMarkers(lastMarkerCtx.data, lastMarkerCtx.times, lastMarkerCtx.name, lastMarkerCtx.tf));
 });
