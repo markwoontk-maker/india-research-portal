@@ -153,9 +153,18 @@ Step "build-company-qa" {
   & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-company-qa.ps1"
 }
 
+# 8e. Generate House-View notes (data/house_view_notes.json): cross-house summary
+#     + per-broker change-vs-prior + the assistant's own view, overlaid on the
+#     House Views card. Pure reasoning over theses.json + pdfdata.json (NO
+#     NotebookLM, not rate-limited); regenerates a company when its houseViews
+#     signature changes. Always exits 0.
+Step "build-house-view-notes" {
+  & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-house-view-notes.ps1"
+}
+
 # 9. Commit + push if there are any changes. No-op on a quiet day.
 Step "git stage" {
-  & git add data/pdfdata.json data/pdfmap.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/highs.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
+  & git add data/pdfdata.json data/pdfmap.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/highs.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json data/house_view_notes.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
 }
 Step "git commit + push" {
   $cached = & git diff --cached --stat
