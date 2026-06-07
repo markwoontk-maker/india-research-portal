@@ -49,6 +49,37 @@ def source_type(folder):
         return "sector"
     return "company"
 
+# Sector labels are free-text from the vision pass, so casing varies
+# ("Quick commerce" vs "Quick Commerce"). Canonicalize so each sector is one
+# filter chip. All-caps acronyms and small connector words are preserved.
+_SECTOR_ACRONYMS = {"FMCG", "QSR", "UPI", "MCC", "EV", "EVS", "GST", "SUV",
+                    "IT", "NBFC", "BPC", "PSU", "OEM", "API", "BFSI"}
+_SECTOR_SMALL = {"&", "and", "of", "the", "to", "vs"}
+
+def norm_sector(s):
+    """Canonical-case a sector label; '' stays ''. Preserves acronyms/connectors."""
+    s = (s or "").strip()
+    if not s:
+        return ""
+    out = []
+    for w in s.split():
+        if w.upper() in _SECTOR_ACRONYMS:
+            out.append(w.upper())
+        elif w.lower() in _SECTOR_SMALL:
+            out.append(w.lower())
+        else:
+            out.append(w[0].upper() + w[1:].lower())
+    return " ".join(out)
+
+def norm_sectors(seq):
+    """Normalize a list of sector labels, dropping blanks and dupes (order kept)."""
+    seen, out = set(), []
+    for s in seq or []:
+        n = norm_sector(s)
+        if n and n not in seen:
+            seen.add(n); out.append(n)
+    return out
+
 _companies_cache = {}
 def company_sector(name, companies_path):
     """Look up a company's sector from companies.json; None if unknown."""

@@ -10,7 +10,7 @@ from datetime import date
 from pathlib import Path
 import fitz  # PyMuPDF
 from PIL import Image
-from lib import pad_bbox, norm_to_points, source_type, company_sector, fs_slug
+from lib import pad_bbox, norm_to_points, source_type, company_sector, fs_slug, norm_sectors
 
 ROOT = Path(__file__).resolve().parents[2]
 WORK = ROOT / "scripts" / ".charts-work"
@@ -65,7 +65,7 @@ def main():
                         "chart_title": c.get("chart_title") or "",
                         "chart_type": c.get("chart_type") or "other",
                         "subject_company": subj,
-                        "subject_sectors": c.get("subject_sectors") or [],
+                        "subject_sectors": norm_sectors(c.get("subject_sectors")),
                         "sector": company_sector(subj, COMPANIES),
                         "analyst_caption": c.get("analyst_caption"),
                         "commentary": c.get("commentary") or "",

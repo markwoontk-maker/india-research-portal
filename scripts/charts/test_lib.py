@@ -39,6 +39,17 @@ def test_source_type():
     assert lib.source_type("Indian Financials") == "sector"
     assert lib.source_type("Bajaj Finance") == "company"
 
+def test_norm_sector_casing_and_acronyms():
+    assert lib.norm_sector("quick commerce") == "Quick Commerce"
+    assert lib.norm_sector("Quick Commerce") == "Quick Commerce"
+    assert lib.norm_sector("E-Commerce") == lib.norm_sector("E-commerce")
+    assert lib.norm_sector("FMCG") == "FMCG"          # acronym preserved
+    assert lib.norm_sector("Beauty & Personal Care") == "Beauty & Personal Care"
+    assert lib.norm_sector("") == "" and lib.norm_sector(None) == ""
+
+def test_norm_sectors_dedupes_preserving_order():
+    assert lib.norm_sectors(["Quick commerce", "quick commerce", "FMCG", ""]) == ["Quick Commerce", "FMCG"]
+
 def test_company_sector(tmp_path):
     p = tmp_path / "companies.json"
     p.write_text(json.dumps({"Bajaj Finance":{"ticker":"X","sector":"NBFC","desc":"d"}}), encoding="utf-8")
