@@ -14,7 +14,8 @@ import fitz  # PyMuPDF
 from PIL import Image
 from lib import pad_bbox, norm_to_points, source_type, company_sector, fs_slug, norm_sectors
 
-_SRC_RE = re.compile(r'^\s*source\s*[:\-]', re.I)
+_SRC_RE = re.compile(r'source\s*[:\-]', re.I)        # "Source:" anywhere (often inside a "Note: … Source: …" block)
+_FIG_RE = re.compile(r'^\s*(fig|figure|exhibit|chart)\.?\s*\d+', re.I)  # a figure-title label
 
 def _chart_rects(page, top_limit, ybot, W, H):
     """Vector-drawing + raster-image rects within (top_limit, ybot), minus page-wide
@@ -56,7 +57,7 @@ def refine_rect(page, seed, siblings=(), is_chart=True):
         x0, y0, x1, y1, txt = b[0], b[1], b[2], b[3], (b[4] or "").strip()
         if txt and y1 > header_y and y0 < footer_y:
             blocks.append((x0, y0, x1, y1, txt))
-    sources = sorted([b for b in blocks if _SRC_RE.match(b[4])], key=lambda b: b[1])
+    sources = sorted([b for b in blocks if _SRC_RE.search(b[4])], key=lambda b: b[1])
     if not sources:
         return None
     spans, prev = [], header_y
@@ -91,16 +92,20 @@ def refine_rect(page, seed, siblings=(), is_chart=True):
             ctop, cbot = max(by0, seed.y0), min(by1, seed.y1)
         cw = max(1.0, colx1 - colx0)
         col = lambda b: (min(b[2], colx1) - max(b[0], colx0)) > 0.3 * min(b[2] - b[0], cw)
-        # walk up through contiguous short heading/caption lines in this column
+        # walk up through contiguous short heading/caption lines in this column,
+        # stopping AT a "Fig N / Exhibit N" label (don't pull in body text above it)
         headers, cur = [], ctop
         for b in sorted((b for b in band if b[3] <= ctop + 4 and col(b)), key=lambda b: -b[3]):
             if cur - b[3] > 0.035 * H or (b[3] - b[1]) > 0.045 * H:
                 break
             headers.append(b); cur = b[1]
+            if _FIG_RE.match(b[4]):
+                break
         y0 = min([ctop] + [b[1] for b in headers])
-        y1 = cbot
-        if min(target[2], colx1) - max(target[0], colx0) > 0:   # row source overlaps column
-            y1 = max(y1, target[3])
+        # bottom = chart + this column's own source line (handles per-column footers)
+        col_srcs = [s for s in sources if min(s[2], colx1) - max(s[0], colx0) > 0
+                    and by0 - 2 <= s[1] <= by1 + 0.02 * H]
+        y1 = max([cbot] + [s[3] for s in col_srcs])
         # x stays within the column (do NOT widen to a full-width source/heading)
         r = fitz.Rect(max(0, colx0 - px), max(0, y0 - py), min(W, colx1 + px), min(H, y1 + py))
         if r.width >= 0.12 * W and r.height >= 0.04 * H:
@@ -129,7 +134,14 @@ WORK = ROOT / "scripts" / ".charts-work"
 CHARTS_DIR = ROOT / "charts"
 COMPANIES = str(ROOT / "data" / "companies.json")
 OUT = ROOT / "data" / "charts.json"
+EXCLUDE_FILE = Path(__file__).resolve().parent / "_exclude_keys.txt"
 CHART_TYPES = {"line", "bar", "area", "scatter", "valuation_band", "map", "diagram"}  # charts + maps/diagrams; tables excluded
+
+def excluded_keys():
+    if not EXCLUDE_FILE.exists():
+        return set()
+    return {l.strip() for l in EXCLUDE_FILE.read_text(encoding="utf-8").splitlines()
+            if l.strip() and not l.lstrip().startswith("#")}
 CROP_DPI = 200      # render the clip at 200 dpi, then downscale to MAX_W for storage
 MAX_W = 1100        # cap stored image width (px); charts stay crisp, files stay small
 WEBP_Q = 80         # WebP quality
@@ -142,8 +154,11 @@ def main():
         existing = ex.get("charts", [])
         existing_keys = {c["report_key"] for c in existing}
     index = json.loads((WORK / "index.json").read_text(encoding="utf-8"))
+    excluded = excluded_keys()
     out = []
     for pdf in index["pdfs"]:
+        if pdf["key"] in excluded:
+            continue  # excluded report (duplicates / not wanted in gallery)
         if append and pdf["key"] in existing_keys:
             continue  # already charted — leave its rows/images untouched
         ana_path = WORK / pdf["slug"] / "analysis.json"
