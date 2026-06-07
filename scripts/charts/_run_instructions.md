@@ -1,0 +1,24 @@
+# Charts pilot — vision extraction instructions (shared)
+
+You extract every VISUAL EXHIBIT from ONE broker research report so it can appear in a charts gallery. Your dispatch message gives you: the source folder/theme, broker, date, title, the absolute folder holding the rendered page PNGs, and the page count. Pages are named `p01.png, p02.png, …`.
+
+## Steps
+1. Read EACH page image with the Read tool, one at a time (absolute folder path + `pNN.png`). Read every page; never guess the content of a page you have not read.
+2. For EVERY visual exhibit on EVERY page — line/bar/area/scatter graphs, valuation bands, DATA TABLES, maps, process/flow diagrams — emit one entry. Capture EVERYTHING visual (tables, maps and diagrams included). Skip ONLY pure decoration: the broker logo, analyst headshots, page headers/footers, and the disclaimer/legal/certification block.
+3. WRITE the result with the Write tool to the exact analysis.json path given in your dispatch. Then report: pages-with-exhibits count, total exhibit count, and one example commentary string.
+
+## Each exhibit object (ALL keys required)
+- `bbox`: `[x0,y0,x1,y1]` as fractions 0..1 of the page (x→right, y→down), tight around the exhibit INCLUDING its title and any source/footnote line directly attached to it.
+- `chart_title`: the exhibit's own heading/caption text, verbatim (`""` if none).
+- `chart_type`: one of `line bar area scatter valuation_band table map diagram other`.
+- `subject_company`: the single specific listed company the exhibit is about (a real company name as printed), else `null`. Most macro/strategy/sector exhibits are `null`; set it only when an exhibit is about ONE company (e.g. a single-stock valuation band or price chart).
+- `subject_sectors`: array of sectors/themes the exhibit depicts, e.g. `["Banks"]`, `["Macro"]`, `["Autos","2-wheelers"]` (`[]` if none).
+- `analyst_caption`: the report's OWN caption/source/footnote text for this exhibit, VERBATIM. `null` if it has none. NEVER invent or paraphrase.
+- `commentary`: YOUR OWN commentary — a CONCISE ANALYST READ: 1-2 sentences in a neutral buy-side voice stating what the exhibit shows AND the so-what (the implication for the stock/sector/market). Factual, no hype.
+
+## Output file shape (valid JSON, UTF-8, no trailing commas)
+```
+{"pages":[{"page":1,"charts":[ {…entry…}, … ]}, {"page":3,"charts":[ … ]}, …]}
+```
+Include a page entry ONLY for pages that have at least one exhibit; omit empty pages.
+Return Status DONE after writing, or BLOCKED if you cannot proceed.

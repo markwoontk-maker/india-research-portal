@@ -29,7 +29,7 @@ def main():
         if not ana_path.exists():
             print("no analysis yet:", pdf["slug"])
             continue
-        ana = json.loads(ana_path.read_text(encoding="utf-8"))
+        ana = json.loads(ana_path.read_text(encoding="utf-8-sig"))  # tolerate a BOM
         page_charts = {p["page"]: p.get("charts", []) for p in ana.get("pages", [])}
         if not page_charts:
             continue
