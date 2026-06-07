@@ -184,6 +184,10 @@
   .gal-tag.co{color:var(--text)}
   .gal-note{font-size:11.5px;line-height:1.45;color:var(--text-dim)}
   .gal-note b{color:var(--text-mute);font-weight:600}
+  .gal-rep{font-size:11.5px;line-height:1.4;margin-top:2px;padding-top:6px;border-top:1px solid var(--line)}
+  .gal-rep b{color:var(--text-mute);font-weight:600}
+  .gal-rep a{color:var(--saffron);text-decoration:none}
+  .gal-rep a:hover{text-decoration:underline}
   .gal-empty{padding:30px;text-align:center;color:var(--text-mute)}
   .gal-lb{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;
     flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:30px;cursor:zoom-out}
@@ -784,6 +788,11 @@
   .rl-tip.buy{border-left-color:var(--up)}
   .rl-tip.sell{border-left-color:var(--down)}
   .rl-tip.hold{border-left-color:var(--text-mute)}
+  .rl-tip .rlt-date{font-size:9px;color:var(--text-mute);letter-spacing:.06em;
+    text-transform:uppercase;margin-bottom:3px}
+  .rl-tip .rlt-row{display:flex;justify-content:space-between;gap:16px;line-height:1.55}
+  .rl-tip .rlt-h{color:var(--text-dim)}
+  .rl-tip .rlt-tp{color:var(--text);font-variant-numeric:tabular-nums}
   .cm-marker{position:absolute;width:9px;height:9px;border-radius:50%;
     background:rgba(255,255,255,.4);border:1.5px solid rgba(255,255,255,.95);
     transform:translate(-50%,-50%);cursor:pointer;pointer-events:auto;
@@ -5881,8 +5890,8 @@ function renderCompanyResearch(){
     const currTP=(pd&&pd.currTP)||tpOf(ti);
     const callObj=(pd&&pd.currCall)?{label:pd.currCall, cls:CT[String(pd.currCall).toUpperCase()]||'hold'}:callOf(ti);
     const currCall=callObj.label;
-    (lineAgg[d]=lineAgg[d]||{brokers:[],score:0}).brokers.push(h);
-    lineAgg[d].score += (callObj.cls==='buy'?1:callObj.cls==='sell'?-1:0);
+    const ag=(lineAgg[d]=lineAgg[d]||{score:0, items:[]});
+    ag.score += (callObj.cls==='buy'?1:callObj.cls==='sell'?-1:0);
     const priorPd=(PD&&prior)?PD[pdKey(prior[0],prior[1],prior[2],prior[3])]:null;
     const prevCall=(pd&&pd.prevCall)||(priorPd&&priorPd.currCall)||(prior?callOf(prior[3]).label:null);
     const cR=rankOf(currCall), pR=rankOf(prevCall);
@@ -5897,6 +5906,7 @@ function renderCompanyResearch(){
     const tp = (tpN!=null && isFinite(tpN) && tpRaw!=='')
       ? '₹'+tpN.toLocaleString('en-US')
       : (tpRaw ? '₹'+esc(tpRaw) : '—');
+    ag.items.push({house:h, tp});           // for the on-chart hover popup (house + TP)
     const dateLab = fmtD(d)+" '"+d.slice(0,2);
     return `<div class="bk-row">`+
       `<span class="bk-id">`+
@@ -5910,13 +5920,13 @@ function renderCompanyResearch(){
     `</div>`;
   }).join('');
   // Per-date metadata for the on-chart annotation lines (reportLinePlugin):
-  // net call colour (buy/sell/hold) + a "Broker(s) · date" hover label.
+  // net call colour (buy/sell/hold) + per-broker {house, TP} for the hover popup.
   const MONr=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   window._coReportMeta={ company: currentCompany, rows: Object.keys(lineAgg).sort().map(d=>{
-    const ag=lineAgg[d];
-    const cls=ag.score>0?'buy':ag.score<0?'sell':'hold';
-    const lbl=ag.brokers.join(', ')+" · "+(+d.slice(4,6))+' '+MONr[(+d.slice(2,4))-1]+" '"+d.slice(0,2);
-    return {d, cls, label:lbl};
+    const a=lineAgg[d];
+    const cls=a.score>0?'buy':a.score<0?'sell':'hold';
+    const dateLabel=(+d.slice(4,6))+' '+MONr[(+d.slice(2,4))-1]+" '"+d.slice(0,2);
+    return {d, cls, dateLabel, items:a.items};
   }) };
   if(typeof companyChart!=='undefined' && companyChart) companyChart.draw();
   if(side) side.style.display='';
@@ -6812,8 +6822,9 @@ const reportLinePlugin = {
     // Only draw when the metadata matches the company whose data is on screen.
     if(!meta || meta.company!==chart._company || !meta.rows || !meta.rows.length) return;
     if(!times || !times.length) return;
-    const ctx=chart.ctx, ca=chart.chartArea, x=chart.scales.x;
+    const ctx=chart.ctx, ca=chart.chartArea, x=chart.scales.x, y=chart.scales.y;
     if(!ca || !x) return;
+    const data=chart._data||[];
     const t0=times[0], t1=times[times.length-1], tol=3*864e5;
     const COL={buy:'rgba(46,160,67,.62)', sell:'rgba(248,81,73,.62)', hold:'rgba(150,160,176,.5)'};
     ctx.save();
@@ -6825,9 +6836,14 @@ const reportLinePlugin = {
       for(let i=0;i<times.length;i++){ const df=Math.abs(times[i]-ts); if(df<bd){bd=df;bi=i;} }
       const px=x.getPixelForValue(bi);
       if(!isFinite(px)) return;
+      // Draw only ABOVE the price line: chart top down to the price at that date.
+      let yEnd=ca.bottom;
+      const val=data[bi];
+      if(val!=null && y){ const yp=y.getPixelForValue(val); if(isFinite(yp)) yEnd=yp; }
       ctx.strokeStyle=COL[r.cls]||COL.hold;
-      ctx.beginPath(); ctx.moveTo(px, ca.top); ctx.lineTo(px, ca.bottom); ctx.stroke();
-      chart._reportLines.push({x:px, top:ca.top, bottom:ca.bottom, label:r.label, cls:r.cls});
+      ctx.beginPath(); ctx.moveTo(px, ca.top); ctx.lineTo(px, yEnd); ctx.stroke();
+      // Hover hit-area spans the full chart height at this x (hover the date anywhere).
+      chart._reportLines.push({x:px, top:ca.top, bottom:ca.bottom, cls:r.cls, dateLabel:r.dateLabel, items:r.items});
     });
     ctx.restore();
   }
@@ -7048,12 +7064,14 @@ window.addEventListener('resize', ()=>{
   if(lastMarkerCtx) requestAnimationFrame(()=>paintMarkers(lastMarkerCtx.data, lastMarkerCtx.times, lastMarkerCtx.name, lastMarkerCtx.tf));
 });
 
-// Hover a report annotation line → small tooltip with the broker(s) + date.
-// Hit-tests the cursor against the line x-positions the plugin recorded.
+// Hover the chart at a report date → popup box listing each research house
+// and its target price. Hit-tests the cursor x against the line x-positions
+// the plugin recorded (full chart height, so any y at that date triggers).
 (function(){
   const wrap=document.querySelector('#cChartCard .cm-wrap');
   const tip=document.getElementById('cRlTip');
   if(!wrap || !tip) return;
+  const escH=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   let shown=false;
   const hide=()=>{ if(shown){ tip.classList.remove('show'); shown=false; } };
   wrap.addEventListener('mousemove', e=>{
@@ -7070,7 +7088,9 @@ window.addEventListener('resize', ()=>{
       if(dx<best){ best=dx; hit=l; }
     }
     if(!hit){ hide(); return; }
-    tip.textContent=hit.label;
+    const rowsHtml=(hit.items||[]).map(it=>
+      `<div class="rlt-row"><span class="rlt-h">${escH(it.house)}</span><span class="rlt-tp">${escH(it.tp)}</span></div>`).join('');
+    tip.innerHTML=`<div class="rlt-date">${escH(hit.dateLabel||'')}</div>${rowsHtml}`;
     tip.className='rl-tip show '+(hit.cls||'hold');
     const offX=cr.left-wr.left;
     const tw=tip.offsetWidth;
@@ -7271,6 +7291,8 @@ async function loadCharts(){
 }
 
 function galEsc(x){return String(x==null?'':x).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
+// Local PDF path -> file:// URL (opens the source report when the dashboard is used locally).
+function galFileUrl(p){return p?'file:///'+encodeURI(String(p).replace(/\\/g,'/')).replace(/#/g,'%23'):'';}
 
 function galBuildChips(){
   // Scalar facets (one value per chart) + the array-valued subject-sector facet.
@@ -7345,13 +7367,19 @@ function galRender(){
     tags.push(`<span class="gal-tag">${galEsc(c.date)}</span>`);
     const analyst=c.analyst_caption?`<div class="gal-note"><b>Analyst:</b> ${galEsc(c.analyst_caption)}</div>`:'';
     const comm=c.commentary?`<div class="gal-note"><b>Commentary:</b> ${galEsc(c.commentary)}</div>`:'';
+    const rt=galEsc(c.report_title||'');
+    const repHtml = c.report_title
+      ? (c.report_path
+          ? `<div class="gal-rep"><b>Report:</b> <a href="${galFileUrl(c.report_path)}" target="_blank" rel="noopener" title="Open the source report (local PDF)">${rt}</a></div>`
+          : `<div class="gal-rep"><b>Report:</b> ${rt}</div>`)
+      : '';
     const cap=galEsc(c.chart_title||c.report_title);
     return `<div class="gal-card">
       <img loading="lazy" src="${galEsc(c.image)}" alt="${cap}" data-cap="${cap}" />
       <div class="gal-body">
         ${c.chart_title?`<div class="gal-title">${galEsc(c.chart_title)}</div>`:''}
         <div class="gal-tags">${tags.join('')}</div>
-        ${analyst}${comm}
+        ${analyst}${comm}${repHtml}
       </div></div>`;
   }).join('');
   grid.querySelectorAll('img').forEach(img=>img.addEventListener('click',()=>galLightbox(img.src,img.dataset.cap)));
