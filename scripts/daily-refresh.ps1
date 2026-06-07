@@ -162,17 +162,13 @@ Step "build-house-view-notes" {
   & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-house-view-notes.ps1"
 }
 
-# 8f. Charts auto-ingest: render any NEW report PDFs (not yet in data/charts.json),
-#     run the headless Claude vision miner per report, and append the new exhibits
-#     + WebP crops to data/charts.json. Idempotent by report_key; a quiet day is a
-#     no-op. Local-only (cloud routines can't push this repo). Always exits 0.
-Step "build-charts" {
-  & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\charts\build-charts.ps1"
-}
+# 8f. Charts auto-ingest runs as its OWN scheduled weekday task (chained after this
+#     refresh) so the slow headless-Claude vision pass doesn't hold up the refresh.
+#     See scripts/charts/build-charts.ps1 + scripts/charts/install-charts-task.ps1.
 
 # 9. Commit + push if there are any changes. No-op on a quiet day.
 Step "git stage" {
-  & git add data/pdfdata.json data/pdfmap.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/highs.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json data/house_view_notes.json data/charts.json charts/ index.html scripts/notes-recent.txt scripts/notes-prior.txt
+  & git add data/pdfdata.json data/pdfmap.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/highs.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json data/house_view_notes.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
 }
 Step "git commit + push" {
   $cached = & git diff --cached --stat

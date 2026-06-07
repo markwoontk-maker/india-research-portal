@@ -121,5 +121,15 @@ if ($bad) {
   exit 0
 }
 $postHash = if (Test-Path -LiteralPath $charts) { (Get-FileHash -LiteralPath $charts -Algorithm MD5).Hash } else { "" }
-if ($postHash -eq $preHash) { Out-Log "no new charts added." } else { Out-Log "charts.json updated." }
+if ($postHash -eq $preHash) { Out-Log "no new charts added - nothing to commit."; exit 0 }
+Out-Log "charts.json updated."
+
+# --- commit + push (self-contained; this runs as its own scheduled task) ------
+# Rebase on the remote first so we never clash with the daily-refresh push.
+& git pull --rebase --autostash origin main 2>&1 | ForEach-Object { Out-Log ("git> " + $_) }
+& git add data/charts.json charts/ 2>&1 | Out-Null
+$cached = & git diff --cached --stat
+if ([string]::IsNullOrWhiteSpace($cached)) { Out-Log "nothing staged."; exit 0 }
+& git commit -m ("Charts auto-ingest -- " + (Get-Date -f "yyyy-MM-dd HH:mm")) 2>&1 | ForEach-Object { Out-Log ("git> " + $_) }
+& git push origin main 2>&1 | ForEach-Object { Out-Log ("git> " + $_) }
 exit 0
