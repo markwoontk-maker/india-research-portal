@@ -582,22 +582,22 @@
   .thesis-col.bear{border-color:rgba(240,106,106,.30)}
   .thesis-col.bear h4{color:var(--down)}
   /* Key Questions card — collapsible Q&A by bull / bear / key-debate */
-  .qa-sec{margin-bottom:14px}
-  .qa-sec:last-child{margin-bottom:0}
-  .qa-sec-h{font-size:11px;text-transform:uppercase;letter-spacing:.14em;margin:0 0 8px}
-  .qa-sec-h.bull{color:var(--up)}
-  .qa-sec-h.bear{color:var(--down)}
-  .qa-sec-h.debates{color:var(--text-dim)}
-  .qa-item{background:var(--ink-2);border:1px solid var(--line);border-radius:8px;margin-bottom:6px;padding:9px 11px}
-  .qa-item:last-child{margin-bottom:0}
-  .qa-item summary{cursor:pointer;font-weight:600;color:var(--text-dim);font-size:13px;line-height:1.5;list-style:none}
-  .qa-item summary::-webkit-details-marker{display:none}
-  .qa-item summary::before{content:"\25B8\00a0";color:var(--text-mute)}
-  .qa-item[open] summary::before{content:"\25BE\00a0"}
-  .qa-item .qa-a{margin-top:8px;font-size:12.5px;line-height:1.65;color:var(--text-dim)}
-  /* "My take" — the assistant's own critical read of the broker answer (not broker-sourced) */
-  .qa-take{margin-top:8px;padding:7px 10px;border-left:2px solid var(--accent,#c79a3a);background:rgba(199,154,58,.06);border-radius:0 6px 6px 0;font-size:12px;line-height:1.6;color:var(--text-mute);font-style:italic}
-  .qa-take-lbl{font-style:normal;font-weight:600;color:var(--accent,#c79a3a);margin-right:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  /* Upside Opportunity / Downside Risk — statement lists with source tags */
+  .opp-sec{margin-bottom:16px}
+  .opp-sec:last-child{margin-bottom:0}
+  .opp-sec-h{font-size:11px;text-transform:uppercase;letter-spacing:.14em;margin:0 0 8px;display:flex;align-items:center;gap:8px}
+  .opp-sec-h.up{color:var(--up)}
+  .opp-sec-h.down{color:var(--down)}
+  .opp-n{font-size:10px;font-weight:600;color:var(--text-mute);background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:1px 7px;letter-spacing:0}
+  .opp-list{list-style:none;margin:0;padding:0}
+  .opp-list li{position:relative;padding:7px 10px 7px 22px;margin-bottom:5px;background:var(--ink-2);border:1px solid var(--line);border-radius:7px;font-size:12.5px;line-height:1.6;color:var(--text-dim)}
+  .opp-list li:last-child{margin-bottom:0}
+  .opp-sec-h.up + .opp-list li::before{content:"\25B2";position:absolute;left:8px;top:8px;font-size:8px;color:var(--up)}
+  .opp-sec-h.down + .opp-list li::before{content:"\25BC";position:absolute;left:8px;top:8px;font-size:8px;color:var(--down)}
+  .opp-cite{font-size:11px;color:var(--text-mute);white-space:nowrap}
+  a.opp-cite{text-decoration:none}
+  a.opp-cite:hover{color:var(--text-dim)}
+  .opp-cite.claude{color:var(--accent,#c79a3a);font-style:italic}
   .thesis-col .co-desc{margin:0;font-size:13px;line-height:1.7}
   .thesis-col .empty{color:var(--text-mute);font-style:italic}
   .thesis-cite{font-size:11px;color:var(--text-mute);text-decoration:none;
@@ -1783,37 +1783,17 @@
         <p id="cDesc" class="co-desc"></p>
         <p class="co-desc-src">Business profile only — sourced from the company's website and its latest annual report. Click the company name above to open the local offline reports folder.</p>
       </div>
-      <!-- Bull / Bear thesis distilled from the broker reports below,
-           with clickable (Broker, MM/YY) citations that open the
-           underlying PDF / Trendlyne report in a new tab. -->
-      <div class="card reveal" id="cThesisCard" hidden>
-        <div class="card-h">
-          <div><h3>Bull &amp; Bear Thesis</h3>
-          <p id="cThesisSub">Distilled from the broker reports below — citations link to the source PDF</p></div>
-        </div>
-        <div class="thesis-grid">
-          <div class="thesis-col bull">
-            <h4>Bull case</h4>
-            <p id="cBull" class="co-desc"></p>
-          </div>
-          <div class="thesis-col bear">
-            <h4>Bear case</h4>
-            <p id="cBear" class="co-desc"></p>
-          </div>
-        </div>
-        <p class="co-desc-src">Bull = positive-rated reports (Buy/Add/OW/Outperform). Bear = negative-rated reports (Sell/Reduce/UW/Underperform) plus cautious Hold/Neutral notes where flagged. Citations open the local PDF when available, the Trendlyne report PDF otherwise.</p>
-      </div>
-      <!-- Key Questions: per-company bull / bear / key-debate questions with
-           grounded answers from data/company_qa.json (built by the
-           questioner + answerer agents in scripts/build-company-qa.ps1).
-           Collapsible: question visible, click to expand the answer. -->
+      <!-- Upside Opportunity & Downside Risk: per-company statement lists from
+           data/company_qa.json (built by scripts/build-company-qa.ps1). Each
+           statement is sourced to the broker where grounded in a report, else to
+           Claude (the assistant's own point). -->
       <div class="card reveal" id="cQACard" hidden>
         <div class="card-h">
-          <div><h3>Key Questions</h3>
-          <p id="cQASub">Bull / bear / key-debate questions, answered from this company's NotebookLM broker library</p></div>
+          <div><h3>Upside Opportunity and Downside Risk</h3>
+          <p id="cQASub">Per-company upside opportunities and downside risks, each sourced to a broker or to Claude</p></div>
         </div>
         <div id="cQABody"></div>
-        <p class="co-desc-src">Questions are generated per company; answers are grounded in the company's NotebookLM broker-report library. Click a question to expand its answer; citations open the source PDF where identifiable. <b>⚖ My take</b> on the bull/bear items is the assistant's own critical read of the broker claim (is it well-supported, consensus, over-exaggerated, key caveat) — not sourced from the brokers and not investment advice.</p>
+        <p class="co-desc-src">Statements grounded in the company's NotebookLM broker-report library carry a <b>(Broker, MM/YY)</b> source; points that are the assistant's own analysis (not stated in a report) are sourced <b>(Claude)</b>. For research context only — not investment advice.</p>
       </div>
       <!-- Key drivers: sentences from broker PDFs that explicitly name a
            lever moving the stock (volumes, margins, capex, regulation,
@@ -6440,9 +6420,10 @@ function renderCompanyDrivers(){
   }
 }
 
-// Key Questions card — bull/bear/key-debate Q&A for the selected company.
-// Mirrors renderCompanyDrivers: keyed on currentCompany, hidden for sectors
-// and when there's no entry. Data from window.COMPANY_QA (data/company_qa.json).
+// Upside Opportunity & Downside Risk card — per-company statement lists for the
+// selected company. Each statement carries a source: a broker (with date) where
+// grounded in a report, else "Claude" (the assistant's own point). Keyed on
+// currentCompany; hidden for sectors / no entry. Data from window.COMPANY_QA.
 function renderCompanyQA(){
   const card=document.getElementById('cQACard');
   const body=document.getElementById('cQABody');
@@ -6455,37 +6436,36 @@ function renderCompanyQA(){
   const Q=(window.COMPANY_QA||{})[currentCompany];
   if(!Q){ card.hidden=true; return; }
   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  function fmtCite(item){
-    const d=String(item.date||'');
-    if(d.length<6) return '';
-    const yy=d.slice(0,2), mm=d.slice(2,4);
-    const label=`(${item.broker||'?'}, ${mm}/${yy})`;
-    if(item.url){
-      return `<a class="thesis-cite" href="${esc(item.url)}" target="_blank" rel="noopener" title="${esc(item.broker||'')} · ${esc(d)}">${esc(label)}</a>`;
+  function fmtCite(it){
+    const src=String(it.source||'').trim();
+    if(!src) return '';
+    if(src.toLowerCase()==='claude') return `<span class="opp-cite claude">(Claude)</span>`;
+    const d=String(it.date||'');
+    const label=(d.length>=6) ? `${src}, ${d.slice(2,4)}/${d.slice(0,2)}` : src;
+    if(it.url){
+      return `<a class="opp-cite" href="${esc(it.url)}" target="_blank" rel="noopener" title="${esc(src)} · ${esc(d)}">(${esc(label)})</a>`;
     }
-    return `<span class="thesis-cite">${esc(label)}</span>`;
+    return `<span class="opp-cite">(${esc(label)})</span>`;
   }
-  const sections=[['bull','Bull case'],['bear','Bear case'],['debates','Key debates']];
+  const sections=[['upside','Upside Opportunity','up'],['downside','Downside Risk','down']];
   let total=0, html='';
-  sections.forEach(([key,label])=>{
+  sections.forEach(([key,label,cls])=>{
     const items=Array.isArray(Q[key])?Q[key]:[];
-    if(!items.length) return;
-    total+=items.length;
-    html+=`<div class="qa-sec"><h4 class="qa-sec-h ${key}">${esc(label)}</h4>`;
-    html+=items.map(it=>{
-      const q=esc(it.q||'');
-      const a=esc(it.a||'').replace(/\s*$/,'');
-      const cite=it.a?fmtCite(it):'';
-      const take=it.comment?`<div class="qa-take"><span class="qa-take-lbl">⚖ My take</span> ${esc(it.comment)}</div>`:'';
-      return `<details class="qa-item"><summary>${q}</summary><div class="qa-a">${a||'<span class="empty">No grounded answer yet.</span>'} ${cite}</div>${take}</details>`;
+    const clean=items.filter(it=>(it.s||it.text||'').trim());
+    if(!clean.length) return;
+    total+=clean.length;
+    html+=`<div class="opp-sec"><h4 class="opp-sec-h ${cls}">${esc(label)} <span class="opp-n">${clean.length}</span></h4><ul class="opp-list">`;
+    html+=clean.map(it=>{
+      const s=esc(it.s||it.text||'').replace(/\s*$/,'');
+      return `<li>${s} ${fmtCite(it)}</li>`;
     }).join('');
-    html+='</div>';
+    html+='</ul></div>';
   });
   if(!total){ card.hidden=true; return; }
   card.hidden=false;
   body.innerHTML=html;
   if(sub){
-    sub.textContent=`${total} question${total===1?'':'s'} · answers grounded in this company's broker library · click to expand`;
+    sub.textContent=`${total} point${total===1?'':'s'} · sourced to the broker where grounded, else to Claude`;
   }
 }
 
