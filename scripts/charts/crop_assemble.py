@@ -140,7 +140,7 @@ WORK = ROOT / "scripts" / ".charts-work"
 CHARTS_DIR = ROOT / "charts"
 COMPANIES = str(ROOT / "data" / "companies.json")
 OUT = ROOT / "data" / "charts.json"
-CHART_TYPES = {"line", "bar", "area", "scatter", "valuation_band"}  # gallery = charts only
+CHART_TYPES = {"line", "bar", "area", "scatter", "valuation_band", "map", "diagram"}  # charts + maps/diagrams; tables excluded
 CROP_DPI = 200      # render the clip at 200 dpi, then downscale to MAX_W for storage
 MAX_W = 1100        # cap stored image width (px); charts stay crisp, files stay small
 WEBP_Q = 80         # WebP quality
@@ -182,7 +182,7 @@ def main():
                     n += 1
                     seed = fitz.Rect(*norm_to_points(c["bbox"], w_pt, h_pt))
                     is_chart = c.get("chart_type") in (
-                        "line", "bar", "area", "scatter", "valuation_band")
+                        "line", "bar", "area", "scatter", "valuation_band", "map", "diagram")
                     rect = refine_rect(page, seed, is_chart) or \
                         fitz.Rect(*norm_to_points(pad_bbox(c["bbox"]), w_pt, h_pt))
                     img_name = f'{pdf["slug"]}_p{pageno:02d}_{n}.webp'
