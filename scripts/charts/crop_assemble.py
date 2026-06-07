@@ -203,6 +203,7 @@ def main():
                         "report_key": pdf["key"], "house": pdf["house"], "date": pdf["date"],
                         "source": pdf["folder"], "source_type": source_type(pdf["folder"]),
                         "report_title": pdf["report_title"], "page": pageno,
+                        "report_path": pdf["path"],   # local source PDF (for the title link)
                         "image": f'charts/{folder_seg}/{img_name}',
                         "chart_title": c.get("chart_title") or "",
                         "chart_type": c.get("chart_type") or "other",
