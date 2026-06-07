@@ -6524,13 +6524,13 @@ function renderCompanyFinancials(){
   if(!hasAny){ card.hidden=true; return; }
   card.hidden=false;
   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  // Number formatter: ₹ mn with Indian-style comma grouping.
-  // Examples: 537,815 → "5,37,815"   1,015,142 → "10,15,142"
+  // Number formatter: ₹ mn with international (thousands) comma grouping.
+  // Examples: 537,815 → "537,815"   1,015,142 → "1,015,142"
   // For very small absolute values (< 100 mn = < 10 cr) keep one decimal.
   const fmt=v=>{
     if(v==null) return '—';
     const abs=Math.abs(v);
-    if(abs>=100) return Math.round(v).toLocaleString('en-IN');
+    if(abs>=100) return Math.round(v).toLocaleString('en-US');
     return v.toFixed(1);
   };
   const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
