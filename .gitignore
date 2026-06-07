@@ -11,6 +11,11 @@ Coverage Watchlist.docx
 # Local machine state (Strategy-tab refresh watermark)
 scripts/.strategy-state.json
 
+# Local machine state (Company Q&A: legacy watermark, sync seen-set, run lock)
+scripts/.company-qa-state.json
+scripts/.company-qa-synced.json
+scripts/.company-qa.lock
+
 # Local probe / scratch outputs from financials tooling
 scripts/logs/
 

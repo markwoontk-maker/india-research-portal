@@ -46,8 +46,11 @@ $valA = 'var P=require("path"),CWD=process.cwd();const d=require(P.join(CWD,"dat
 #  - needQ: in-scope companies (sector routes to a source-bearing notebook) that
 #    have no questions yet.
 $needQjs = 'var P=require("path"),CWD=process.cwd();const c=require(P.join(CWD,"data/companies.json"));const sn=require(P.join(CWD,"data/sector_notebooks.json"));const titles=new Set(sn.notebooks.map(n=>n.title));const r=sn.routing;var q={};try{q=require(P.join(CWD,"data/company_questions.json")).companies||{}}catch(e){}var SEP=" "+String.fromCharCode(183)+" ";function route(s){if(!s)return null;if(r[s])return r[s];var p=s.split(SEP);for(var i=p.length;i>=1;i--){var k=p.slice(0,i).join(SEP);if(r[k])return r[k];}return r[p[0]]||null;}console.log(Object.keys(c).filter(function(n){var t=route(c[n].sector);return t&&titles.has(t)&&!q[n];}).join("\n"));'
-#  - needA: companies that have questions but no fresh answer this window.
-$needAjs = 'var P=require("path"),CWD=process.cwd();var ws=process.argv[2];var q={};try{q=require(P.join(CWD,"data/company_questions.json")).companies||{}}catch(e){}var a={};try{a=require(P.join(CWD,"data/company_qa.json")).companies||{}}catch(e){}console.log(Object.keys(q).filter(function(n){return !(a[n]&&a[n].asOf&&a[n].asOf>=ws);}).join("\n"));'
+#  - needA: companies that have questions but NO current answer. Event-driven:
+#    a company is "answered" iff its qa entry has a non-empty asOf. The sync step
+#    blanks asOf when a new report lands, which puts the company back in this
+#    queue. (No fortnight window - that caused churn; freshness is report-driven.)
+$needAjs = 'var P=require("path"),CWD=process.cwd();var q={};try{q=require(P.join(CWD,"data/company_questions.json")).companies||{}}catch(e){}var a={};try{a=require(P.join(CWD,"data/company_qa.json")).companies||{}}catch(e){}console.log(Object.keys(q).filter(function(n){var e=a[n];return !(e&&e.asOf&&String(e.asOf).trim());}).join("\n"));'
 
 # --- locate claude -----------------------------------------------------------
 if (-not (Test-Path -LiteralPath $claude)) {
@@ -58,21 +61,21 @@ if (-not (Test-Path -LiteralPath $qPrompt) -or -not (Test-Path -LiteralPath $aPr
   Out-Log "prompt file(s) missing - skipping."; exit 0
 }
 
-# --- gate: fortnightly window ------------------------------------------------
-$now = Get-Date
-$ym  = $now.ToString("yyyy-MM")
-$window = if ($now.Day -ge 17) { "$ym-H2" } elseif ($now.Day -ge 2) { "$ym-H1" } else { $null }
-if (-not $window) { Out-Log "1st of month - too early; skipping."; exit 0 }
-$lastWindow = ""
-if (Test-Path -LiteralPath $stateFile) {
-  try { $lastWindow = (Get-Content -LiteralPath $stateFile -Raw | ConvertFrom-Json).lastWindow } catch { $lastWindow = "" }
+# --- single-run lock (shared with build-company-qa-sync.ps1) -----------------
+# Runs DAILY now - event-driven, no fortnight gate. needA only returns companies
+# with no current answer (new, or blanked by the sync step when a report lands),
+# so a quiet day is a fast no-op. The lock stops this from racing the one-off
+# backfill or a concurrent daily-refresh on the shared data files.
+$lock = Join-Path $repo "scripts\.company-qa.lock"
+if (Test-Path -LiteralPath $lock) {
+  $age = (New-TimeSpan -Start (Get-Item $lock).LastWriteTime -End (Get-Date)).TotalMinutes
+  if ($age -lt 90) { Out-Log "another Q&A run holds the lock ($([int]$age)m old) - skipping."; exit 0 }
 }
-if ($window -eq $lastWindow) { Out-Log "window $window already done - skipping."; exit 0 }
+Set-Content -LiteralPath $lock -Value (Get-Date).ToString("s") -Encoding utf8
 
 Set-Location $repo
-$winStart = if ($now.Day -ge 17) { $now.ToString('yyyy-MM-17') } else { $now.ToString('yyyy-MM-02') }
 $deadline = (Get-Date).AddSeconds($overallBudgetSec)
-Out-Log "window $window - running batched miner (budget $([int]($overallBudgetSec/60)) min)..."
+Out-Log "running batched miner (budget $([int]($overallBudgetSec/60)) min)..."
 
 # Write the node helpers to temp .js files and invoke them as `node file.js`.
 # (PowerShell 5.1 mangles the embedded double quotes when these are passed via
@@ -152,17 +155,14 @@ $qDeadline = (Get-Date).AddSeconds([int]($overallBudgetSec * 0.4))
 if ($qDeadline -gt $deadline) { $qDeadline = $deadline }
 Run-Phase $qPrompt $jsNeedQ $null $qBatch "data/company_questions.json" $jsValQ "questioner" $qDeadline
 
-# --- phase 2: answerer (ground answers for companies not yet fresh) -----------
-Run-Phase $aPrompt $jsNeedA $winStart $aBatch "data/company_qa.json" $jsValA "answerer" $deadline
+# --- phase 2: answerer (ground answers for companies needing one) -------------
+Run-Phase $aPrompt $jsNeedA $null $aBatch "data/company_qa.json" $jsValA "answerer" $deadline
 
-# --- advance watermark ONLY when nothing is left needing questions or answers --
+# --- report remaining; release the lock --------------------------------------
 $remQ = @(& $node $jsNeedQ 2>$null | Where-Object { $_ -and $_.Trim() }).Count
-$remA = @(& $node $jsNeedA $winStart 2>$null | Where-Object { $_ -and $_.Trim() }).Count
-if ($remQ -eq 0 -and $remA -eq 0) {
-  @{ lastWindow = $window; asOf = (Get-Date).ToString("s") } | ConvertTo-Json | Set-Content -LiteralPath $stateFile -Encoding utf8
-  Out-Log "window $window complete (0 pending) - watermark advanced."
-} else {
-  Out-Log "window incomplete (questions pending: $remQ, answers pending: $remA) - watermark left unset; next run resumes."
-}
+$remA = @(& $node $jsNeedA 2>$null | Where-Object { $_ -and $_.Trim() }).Count
+if ($remQ -eq 0 -and $remA -eq 0) { Out-Log "all in-scope companies covered (0 pending)." }
+else { Out-Log "remaining - questions pending: $remQ, answers pending: $remA (next run resumes)." }
+Remove-Item -LiteralPath $lock -Force -ErrorAction SilentlyContinue
 Out-Log "done."
 exit 0

@@ -136,10 +136,19 @@ Step "build-positioning" {
   & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-positioning.ps1"
 }
 
+# 8c2. Sync NEW broker reports into their NotebookLM sector notebooks and mark
+#      those companies stale (blank asOf), so the answerer below regenerates them.
+#      Event-driven: only companies that got a new report today are touched.
+#      Baselines on first run (no bulk upload). Always exits 0.
+Step "build-company-qa-sync" {
+  & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-company-qa-sync.ps1"
+}
+
 # 8d. Refresh the Company-tab Key Questions Q&A (data/company_qa.json +
-#     data/company_questions.json) via the two-pass questioner+answerer miner.
-#     Gated twice-monthly (2nd & 17th); resumable; NotebookLM-grounded.
-#     Per-file validate + selective revert. Always exits 0.
+#     data/company_questions.json) via the batched questioner+answerer miner.
+#     Runs daily (event-driven); only companies with no current answer (new, or
+#     blanked by the sync step above) are (re)answered - a quiet day is a no-op.
+#     Shares a lock with the sync step; NotebookLM-grounded. Always exits 0.
 Step "build-company-qa" {
   & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-company-qa.ps1"
 }
