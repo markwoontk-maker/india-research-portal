@@ -24,9 +24,9 @@ def _chart_rects(page, top_limit, ybot, W, H):
         r = d["rect"]
         if r.y0 < top_limit - 1 or r.y1 > ybot + 2 or r.width <= 0 or r.height <= 0:
             continue
-        if r.height < 3 and r.width > 0.6 * W:   # horizontal rule
+        if r.height < 3:                          # thin horizontal line: rule / gridline / border
             continue
-        if r.width < 3 and r.height > 0.6 * H:   # page-tall vertical rule
+        if r.width < 3 and r.height > 0.6 * H:    # page-tall vertical rule
             continue
         if r.height > 0.85 * H:                   # page-spanning frame
             continue
@@ -40,35 +40,14 @@ def _chart_rects(page, top_limit, ybot, W, H):
         rs.append([r[0], r[1], r[2], r[3]])
     return rs
 
-def _clusters(rs, W, H, gx=0.02, gy=0.05):
-    """Merge nearby rects into clusters (one per chart panel). A clean column gutter
-    or row gap separates side-by-side / stacked panels."""
-    gx, gy = gx * W, gy * H
-    cl = [r[:] for r in rs]
-    changed = True
-    while changed:
-        changed, out = False, []
-        while cl:
-            a = cl.pop()
-            i = 0
-            while i < len(cl):
-                b = cl[i]
-                if not (a[0] > b[2] + gx or b[0] > a[2] + gx or a[1] > b[3] + gy or b[1] > a[3] + gy):
-                    a = [min(a[0], b[0]), min(a[1], b[1]), max(a[2], b[2]), max(a[3], b[3])]
-                    cl.pop(i); changed = True
-                else:
-                    i += 1
-            out.append(a)
-        cl = out
-    return [c for c in cl if (c[3] - c[1]) > 0.06 * H and (c[2] - c[0]) > 0.06 * W]
-
-def refine_rect(page, seed, is_chart=False):
+def refine_rect(page, seed, siblings=(), is_chart=True):
     """Snap the rough (vision) rect to the exhibit's true extent using the PDF's own
-    geometry. 'Source:' lines delimit exhibits vertically; chart graphics cluster into
-    panels horizontally/vertically. For a chart we pick the panel matching the seed's
-    column (so side-by-side figures don't merge), anchor the top to its caption/heading
-    and the bottom to its source line. Tables use the band's text extent. Returns a
-    tight fitz.Rect, or None to fall back to the seed.
+    geometry. 'Source:' lines delimit exhibits vertically (rows). Within a row, if
+    another chart sits side-by-side (a sibling seed with a disjoint x-range), this is
+    a multi-up grid and the COLUMN is taken from the seed's reliable x-half; otherwise
+    the chart graphic's own extent is used (so a single chart with a too-narrow seed
+    still crops full-width). Top anchors to the chart's caption/heading; bottom to the
+    chart + its row source. Returns a tight fitz.Rect, or None to fall back to the seed.
     """
     H, W = page.rect.height, page.rect.width
     header_y, footer_y = 0.055 * H, 0.92 * H
@@ -86,42 +65,52 @@ def refine_rect(page, seed, is_chart=False):
     top_limit, target = max(spans, key=lambda sp: min(sp[1][3], seed.y1) - max(sp[0], seed.y0))
     if min(target[3], seed.y1) - max(top_limit, seed.y0) <= 0:
         return None
-    ybot = target[3]
-    band = [b for b in blocks if b[1] >= top_limit - 1 and b[3] <= ybot + 2]
+    by0, by1 = top_limit, target[3]
+    band = [b for b in blocks if b[1] >= by0 - 1 and b[3] <= by1 + 2]
     if not band:
         return None
     px, py = 0.006 * W, 0.006 * H
 
     if is_chart:
-        clusters = _clusters(_chart_rects(page, top_limit, ybot, W, H), W, H)
-        if clusters:
-            # pick the panel overlapping the seed's x-span most (else nearest centre)
-            chosen = max(clusters, key=lambda c: min(c[2], seed.x1) - max(c[0], seed.x0))
-            if min(chosen[2], seed.x1) - max(chosen[0], seed.x0) <= 0:
-                sc = (seed.x0 + seed.x1) / 2
-                chosen = min(clusters, key=lambda c: abs((c[0] + c[2]) / 2 - sc))
-            cx0, ctop, cx1, cbot = chosen
-            col = lambda b: not (b[2] < cx0 - 2 or b[0] > cx1 + 2)  # block overlaps this column
-            # walk up through contiguous short heading/caption lines in this column
-            headers, cur = [], ctop
-            for b in sorted((b for b in band if b[3] <= ctop + 4 and col(b)), key=lambda b: -b[3]):
-                if cur - b[3] > 0.035 * H or (b[3] - b[1]) > 0.045 * H:
-                    break
-                headers.append(b); cur = b[1]
-            incol = [b for b in band if b[1] >= ctop - 2 and col(b)]
-            colsrc = [s for s in sources if col(s) and top_limit - 1 <= s[1] <= ybot + 0.02 * H]
-            y0 = min([ctop] + [b[1] for b in headers])
-            y1 = max([cbot] + [s[3] for s in colsrc] + [b[3] for b in incol])
-            x0 = min([cx0] + [b[0] for b in headers + incol])
-            x1 = max([cx1] + [b[2] for b in headers + incol])
-            r = fitz.Rect(max(0, x0 - px), max(0, y0 - py), min(W, x1 + px), min(H, y1 + py))
-            return r if r.width >= 0.15 * W and r.height >= 0.04 * H else None
-        # no chart cluster found -> fall through to text-extent
+        rects = _chart_rects(page, by0, by1, W, H)
+        # is there a side-by-side sibling chart in this same row-band?
+        sibs = [s for s in siblings if s is not seed and by0 - 2 <= (s.y0 + s.y1) / 2 <= by1 + 2]
+        multicol = any(min(s.x1, seed.x1) - max(s.x0, seed.x0) <= 0.02 * W for s in sibs)
+        if multicol:
+            colx0, colx1 = seed.x0, seed.x1            # trust the vision column for grids
+        elif rects:
+            colx0, colx1 = min(r[0] for r in rects), max(r[2] for r in rects)  # full chart
+        else:
+            colx0, colx1 = seed.x0, seed.x1
+        # chart graphic pieces that live in this column -> precise top/bottom + x
+        prects = [r for r in rects if min(r[2], colx1) - max(r[0], colx0) > 0.3 * (r[2] - r[0])]
+        if prects:
+            ctop, cbot = min(r[1] for r in prects), max(r[3] for r in prects)
+            colx0, colx1 = max(colx0, min(r[0] for r in prects)), min(colx1, max(r[2] for r in prects))
+        else:
+            ctop, cbot = max(by0, seed.y0), min(by1, seed.y1)
+        cw = max(1.0, colx1 - colx0)
+        col = lambda b: (min(b[2], colx1) - max(b[0], colx0)) > 0.3 * min(b[2] - b[0], cw)
+        # walk up through contiguous short heading/caption lines in this column
+        headers, cur = [], ctop
+        for b in sorted((b for b in band if b[3] <= ctop + 4 and col(b)), key=lambda b: -b[3]):
+            if cur - b[3] > 0.035 * H or (b[3] - b[1]) > 0.045 * H:
+                break
+            headers.append(b); cur = b[1]
+        y0 = min([ctop] + [b[1] for b in headers])
+        y1 = cbot
+        if min(target[2], colx1) - max(target[0], colx0) > 0:   # row source overlaps column
+            y1 = max(y1, target[3])
+        # x stays within the column (do NOT widen to a full-width source/heading)
+        r = fitz.Rect(max(0, colx0 - px), max(0, y0 - py), min(W, colx1 + px), min(H, y1 + py))
+        if r.width >= 0.12 * W and r.height >= 0.04 * H:
+            return r
+        # else fall through to text-extent
 
     y0 = min(b[1] for b in band)
     x0 = min(b[0] for b in band)
     x1 = max(b[2] for b in band)
-    r = fitz.Rect(max(0, x0 - px), max(0, y0 - py), min(W, x1 + px), min(H, ybot + py))
+    r = fitz.Rect(max(0, x0 - px), max(0, y0 - py), min(W, x1 + px), min(H, by1 + py))
     return r if r.width >= 0.15 * W and r.height >= 0.04 * H else None
 
 def trim_white(img, thresh=244, pad=6):
@@ -175,15 +164,12 @@ def main():
                     continue
                 w_pt, h_pt = page_dims[pageno]
                 page = doc[pageno - 1]
+                kept = [c for c in charts if c.get("chart_type") in CHART_TYPES]  # charts/maps/diagrams; no tables
+                sib_seeds = [fitz.Rect(*norm_to_points(c["bbox"], w_pt, h_pt)) for c in kept]
                 n = 0
-                for c in charts:
-                    if c.get("chart_type") not in CHART_TYPES:
-                        continue  # charts only — skip tables/maps/diagrams/other
+                for c, seed in zip(kept, sib_seeds):
                     n += 1
-                    seed = fitz.Rect(*norm_to_points(c["bbox"], w_pt, h_pt))
-                    is_chart = c.get("chart_type") in (
-                        "line", "bar", "area", "scatter", "valuation_band", "map", "diagram")
-                    rect = refine_rect(page, seed, is_chart) or \
+                    rect = refine_rect(page, seed, sib_seeds, True) or \
                         fitz.Rect(*norm_to_points(pad_bbox(c["bbox"]), w_pt, h_pt))
                     img_name = f'{pdf["slug"]}_p{pageno:02d}_{n}.webp'
                     (CHARTS_DIR / folder_seg).mkdir(parents=True, exist_ok=True)
