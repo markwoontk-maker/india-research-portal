@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import fitz
 from lib import PILOT_FOLDERS, REPORTS_ROOT, parse_report_filename, fs_slug
 
-house = sys.argv[1]
+house = sys.argv[1]  # a broker name, or "ALL" for every report with an analysis
 WORK = Path(__file__).resolve().parents[2] / "scripts" / ".charts-work"
 pdfs = []
 for folder in PILOT_FOLDERS:
@@ -19,7 +19,7 @@ for folder in PILOT_FOLDERS:
         continue
     for pdf in sorted(d.glob("*.pdf")):
         meta = parse_report_filename(pdf.name)
-        if not meta or meta["house"] != house:
+        if not meta or (house != "ALL" and meta["house"] != house):
             continue
         slug = fs_slug(meta["house"], meta["yymmdd"], meta["title"])
         sdir = WORK / slug

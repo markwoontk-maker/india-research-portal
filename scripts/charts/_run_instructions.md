@@ -4,7 +4,10 @@ You extract every VISUAL EXHIBIT from ONE broker research report so it can appea
 
 ## Steps
 1. Read EACH page image with the Read tool, one at a time (absolute folder path + `pNN.png`). Read every page; never guess the content of a page you have not read.
-2. For EVERY visual exhibit on EVERY page — line/bar/area/scatter graphs, valuation bands, DATA TABLES, maps, process/flow diagrams — emit one entry. Capture EVERYTHING visual (tables, maps and diagrams included). Skip ONLY pure decoration: the broker logo, analyst headshots, page headers/footers, and the disclaimer/legal/certification block.
+2. Emit one entry for every **CHART** (a plotted data graph): line, bar, area,
+   scatter, and valuation-band/price-history charts. **DO NOT** include data tables,
+   maps, process/flow diagrams, org charts, logos, headshots, photos, headers/footers,
+   or the disclaimer block — **charts only**.
 3. WRITE the result with the Write tool to the exact analysis.json path given in your dispatch. Then report: pages-with-exhibits count, total exhibit count, and one example commentary string.
 
 ## Each exhibit object (ALL keys required)
