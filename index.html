@@ -162,7 +162,12 @@
   .gal-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:4px 0 14px}
   .gal-search{flex:1;min-width:200px;background:var(--panel-2);border:1px solid var(--line);
     color:var(--text);border-radius:8px;padding:8px 12px;font-size:13px;font-family:inherit}
-  .gal-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .gal-chips{display:flex;flex-direction:column;gap:8px;width:100%}
+  .gal-fgroup{display:flex;align-items:flex-start;gap:8px;width:100%}
+  .gal-flabel{flex:none;width:54px;font-size:10px;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--text-mute);padding-top:5px;font-family:'Roboto Mono'}
+  .gal-fchips{display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:0}
+  .gal-fgroup-sector .gal-fchips{max-height:84px;overflow-y:auto;padding-right:4px}
   .gal-chip{background:var(--panel-2);border:1px solid var(--line);color:var(--text-dim);
     font-size:11.5px;padding:4px 10px;border-radius:999px;cursor:pointer;transition:.12s;font-family:'Roboto Mono'}
   .gal-chip.on{background:var(--saffron);color:#1a1206;border-color:var(--saffron);font-weight:600}
