@@ -6,6 +6,7 @@ Crops are saved as capped-width WebP (q80) to keep the committed image set small
 """
 import io
 import json
+import sys
 from datetime import date
 from pathlib import Path
 import fitz  # PyMuPDF
@@ -22,9 +23,17 @@ MAX_W = 1100        # cap stored image width (px); charts stay crisp, files stay
 WEBP_Q = 80         # WebP quality
 
 def main():
+    append = "--append" in sys.argv
+    existing, existing_keys = [], set()
+    if append and OUT.exists():
+        ex = json.loads(OUT.read_text(encoding="utf-8-sig"))
+        existing = ex.get("charts", [])
+        existing_keys = {c["report_key"] for c in existing}
     index = json.loads((WORK / "index.json").read_text(encoding="utf-8"))
     out = []
     for pdf in index["pdfs"]:
+        if append and pdf["key"] in existing_keys:
+            continue  # already charted — leave its rows/images untouched
         ana_path = WORK / pdf["slug"] / "analysis.json"
         if not ana_path.exists():
             print("no analysis yet:", pdf["slug"])
@@ -73,10 +82,14 @@ def main():
         finally:
             doc.close()  # always release the file handle, even mid-PDF
         print("assembled", pdf["slug"], sum(len(v) for v in page_charts.values()), "exhibits")
-    out.sort(key=lambda r: (r["date"], r["source"], r["page"]))
-    OUT.write_text(json.dumps({"updated": date.today().isoformat(), "charts": out},
+    final = existing + out if append else out
+    final.sort(key=lambda r: (r["date"], r["source"], r["page"]))
+    OUT.write_text(json.dumps({"updated": date.today().isoformat(), "charts": final},
                               indent=2, ensure_ascii=False), encoding="utf-8")
-    print("TOTAL charts written:", len(out))
+    if append:
+        print(f"appended {len(out)} new charts; total now {len(final)}")
+    else:
+        print("TOTAL charts written:", len(final))
 
 if __name__ == "__main__":
     main()
