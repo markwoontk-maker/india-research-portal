@@ -775,6 +775,15 @@
   .cm-wrap{position:relative}
   /* Overlay covers the chart-box for positioned markers */
   .cm-markers{position:absolute;inset:0;pointer-events:none}
+  /* Hover tooltip for the report-publication annotation lines */
+  .rl-tip{position:absolute;z-index:6;pointer-events:none;display:none;
+    font-family:'Roboto Mono',monospace;font-size:10.5px;white-space:nowrap;
+    background:#11151c;border:1px solid #252c39;border-left-width:2px;border-radius:6px;
+    padding:4px 8px;color:var(--text-dim);box-shadow:0 6px 18px rgba(0,0,0,.45)}
+  .rl-tip.show{display:block}
+  .rl-tip.buy{border-left-color:var(--up)}
+  .rl-tip.sell{border-left-color:var(--down)}
+  .rl-tip.hold{border-left-color:var(--text-mute)}
   .cm-marker{position:absolute;width:9px;height:9px;border-radius:50%;
     background:rgba(255,255,255,.4);border:1.5px solid rgba(255,255,255,.95);
     transform:translate(-50%,-50%);cursor:pointer;pointer-events:auto;
@@ -1817,6 +1826,7 @@
               <div class="chart-box"><canvas id="cChart"></canvas></div>
               <div id="cChartMarkers" class="cm-markers"></div>
               <div id="cChartPop" class="cm-pop"></div>
+              <div id="cRlTip" class="rl-tip"></div>
             </div>
             <p id="cChartMsg" style="color:var(--text-mute);font-size:11px;text-align:center;margin-top:10px;display:none"></p>
           </div>
@@ -5754,7 +5764,7 @@ function renderCompanyResearch(){
   const side=document.getElementById('cCovSide');
   const el=document.getElementById('cBrokerNotes');
   if(!el) return;
-  const hideSide=()=>{ if(side) side.style.display='none'; el.innerHTML=''; };
+  const hideSide=()=>{ if(side) side.style.display='none'; el.innerHTML=''; window._coReportMeta={company:currentCompany||null, rows:[]}; if(typeof companyChart!=='undefined' && companyChart) companyChart.draw(); };
   if(!currentCompany){ hideSide(); return; }
   // Sectors have no per-name broker coverage panel.
   if (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany)){
@@ -5860,6 +5870,7 @@ function renderCompanyResearch(){
   // explicit ratings (sentiment-derived labels don't rank, so no false arrow).
   const CALL_RANK={BUY:3,OP:3,OW:3,ADD:3,ACCUMULATE:3,HOLD:2,NEUTRAL:2,EW:2,MP:2,REDUCE:1,SELL:0,UW:0,UP:0};
   const rankOf=lbl=>{ if(lbl==null) return null; const r=CALL_RANK[String(lbl).toUpperCase()]; return r==null?null:r; };
+  const lineAgg={};   // per report-date: brokers + a buy/sell score for the chart-line colour
   const rows=houses.map(h=>{
     const arr=byHouse[h];                 // newest-first
     const latest=arr[0];
@@ -5868,7 +5879,10 @@ function renderCompanyResearch(){
     const href=urlFor(co,h,ti,d,u);
     const pd=PD?PD[pdKey(h,d,co,ti)]:null;
     const currTP=(pd&&pd.currTP)||tpOf(ti);
-    const currCall=(pd&&pd.currCall)||callOf(ti).label;
+    const callObj=(pd&&pd.currCall)?{label:pd.currCall, cls:CT[String(pd.currCall).toUpperCase()]||'hold'}:callOf(ti);
+    const currCall=callObj.label;
+    (lineAgg[d]=lineAgg[d]||{brokers:[],score:0}).brokers.push(h);
+    lineAgg[d].score += (callObj.cls==='buy'?1:callObj.cls==='sell'?-1:0);
     const priorPd=(PD&&prior)?PD[pdKey(prior[0],prior[1],prior[2],prior[3])]:null;
     const prevCall=(pd&&pd.prevCall)||(priorPd&&priorPd.currCall)||(prior?callOf(prior[3]).label:null);
     const cR=rankOf(currCall), pR=rankOf(prevCall);
@@ -5895,6 +5909,16 @@ function renderCompanyResearch(){
       upd+
     `</div>`;
   }).join('');
+  // Per-date metadata for the on-chart annotation lines (reportLinePlugin):
+  // net call colour (buy/sell/hold) + a "Broker(s) · date" hover label.
+  const MONr=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  window._coReportMeta={ company: currentCompany, rows: Object.keys(lineAgg).sort().map(d=>{
+    const ag=lineAgg[d];
+    const cls=ag.score>0?'buy':ag.score<0?'sell':'hold';
+    const lbl=ag.brokers.join(', ')+" · "+(+d.slice(4,6))+' '+MONr[(+d.slice(2,4))-1]+" '"+d.slice(0,2);
+    return {d, cls, label:lbl};
+  }) };
+  if(typeof companyChart!=='undefined' && companyChart) companyChart.draw();
   if(side) side.style.display='';
   el.innerHTML=rows;
 }
@@ -6783,22 +6807,27 @@ const reportLinePlugin = {
   id:'reportLines',
   afterDatasetsDraw(chart){
     if(!chart.canvas || chart.canvas.id!=='cChart') return;
-    const times=chart._times; if(!times || !times.length) return;
-    const reps=(typeof getCompanyReportDates==='function') ? getCompanyReportDates(currentCompany) : [];
-    if(!reps.length) return;
+    chart._reportLines=[];                       // recomputed each draw, for hover hit-testing
+    const meta=window._coReportMeta, times=chart._times;
+    // Only draw when the metadata matches the company whose data is on screen.
+    if(!meta || meta.company!==chart._company || !meta.rows || !meta.rows.length) return;
+    if(!times || !times.length) return;
     const ctx=chart.ctx, ca=chart.chartArea, x=chart.scales.x;
     if(!ca || !x) return;
     const t0=times[0], t1=times[times.length-1], tol=3*864e5;
+    const COL={buy:'rgba(46,160,67,.62)', sell:'rgba(248,81,73,.62)', hold:'rgba(150,160,176,.5)'};
     ctx.save();
-    ctx.lineWidth=1; ctx.setLineDash([3,4]); ctx.strokeStyle='rgba(130,140,156,.5)';
-    reps.forEach(r=>{
+    ctx.lineWidth=1; ctx.setLineDash([3,4]);
+    meta.rows.forEach(r=>{
       const ts=new Date(2000+ +r.d.slice(0,2), +r.d.slice(2,4)-1, +r.d.slice(4,6), 12).getTime();
       if(ts < t0-tol || ts > t1+tol) return;
       let bi=0, bd=Infinity;
       for(let i=0;i<times.length;i++){ const df=Math.abs(times[i]-ts); if(df<bd){bd=df;bi=i;} }
       const px=x.getPixelForValue(bi);
       if(!isFinite(px)) return;
+      ctx.strokeStyle=COL[r.cls]||COL.hold;
       ctx.beginPath(); ctx.moveTo(px, ca.top); ctx.lineTo(px, ca.bottom); ctx.stroke();
+      chart._reportLines.push({x:px, top:ca.top, bottom:ca.bottom, label:r.label, cls:r.cls});
     });
     ctx.restore();
   }
@@ -6854,6 +6883,7 @@ function renderCompanyChart(data, times, sym, tf){
   }
   companyChart._ccy = ccy;
   companyChart._times = times;
+  companyChart._company = currentCompany;       // which company's data this is (for reportLinePlugin)
   companyChart._intraday = (tf==='1D' || tf==='1W');
   companyChart._data = data;
   const fmt = fmtTickFor(tf);
@@ -7012,32 +7042,45 @@ function hideMarkerPop(){
   popHideTimer = setTimeout(()=>{ pop.classList.remove('show'); pop.dataset.markerT=''; }, 80);
 }
 
-// Report dates for a company (latest report per house, deduped by date) —
-// powers the on-chart annotation lines (reportLinePlugin) and mirrors the
-// dates shown in the coverage panel.
-function getCompanyReportDates(name){
-  if(!name) return [];
-  if(typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(name)) return [];
-  const target=String(name).toLowerCase();
-  const pool=[];
-  [...(typeof notes==='undefined'?[]:notes),
-   ...(typeof notesExt==='undefined'?[]:notesExt),
-   ...(typeof notesPrior==='undefined'?[]:notesPrior)]
-    .forEach(n=>{ if(n&&n.length>=4 && String(n[2]).toLowerCase()===target && /^\d{6}$/.test(String(n[1]))) pool.push([n[0],String(n[1])]); });
-  const TL=(window.TRENDLYNE_COVERAGE||{})[name];
-  if(Array.isArray(TL)) TL.forEach(r=>{ if(r&&r.broker&&/^\d{6}$/.test(String(r.date))) pool.push([r.broker,String(r.date)]); });
-  const latest={};
-  pool.forEach(([h,d])=>{ if(!latest[h]||d>latest[h]) latest[h]=d; });
-  const byDate={};
-  Object.entries(latest).forEach(([h,d])=>{ (byDate[d]=byDate[d]||[]).push(h); });
-  return Object.keys(byDate).sort().map(d=>({d, brokers:byDate[d]}));
-}
-
 // Reposition abnormal-move markers when the window resizes (chart re-lays-out).
 // (Report lines are drawn by reportLinePlugin and need no manual reposition.)
 window.addEventListener('resize', ()=>{
   if(lastMarkerCtx) requestAnimationFrame(()=>paintMarkers(lastMarkerCtx.data, lastMarkerCtx.times, lastMarkerCtx.name, lastMarkerCtx.tf));
 });
+
+// Hover a report annotation line → small tooltip with the broker(s) + date.
+// Hit-tests the cursor against the line x-positions the plugin recorded.
+(function(){
+  const wrap=document.querySelector('#cChartCard .cm-wrap');
+  const tip=document.getElementById('cRlTip');
+  if(!wrap || !tip) return;
+  let shown=false;
+  const hide=()=>{ if(shown){ tip.classList.remove('show'); shown=false; } };
+  wrap.addEventListener('mousemove', e=>{
+    const lines=(typeof companyChart!=='undefined' && companyChart) ? companyChart._reportLines : null;
+    if(!lines || !lines.length){ hide(); return; }
+    const canvas=document.getElementById('cChart');
+    if(!canvas){ hide(); return; }
+    const cr=canvas.getBoundingClientRect(), wr=wrap.getBoundingClientRect();
+    const xRel=e.clientX-cr.left, yRel=e.clientY-cr.top;
+    let hit=null, best=6;
+    for(const l of lines){
+      if(yRel < l.top-6 || yRel > l.bottom+6) continue;
+      const dx=Math.abs(l.x-xRel);
+      if(dx<best){ best=dx; hit=l; }
+    }
+    if(!hit){ hide(); return; }
+    tip.textContent=hit.label;
+    tip.className='rl-tip show '+(hit.cls||'hold');
+    const offX=cr.left-wr.left;
+    const tw=tip.offsetWidth;
+    let left=Math.max(4, Math.min(wr.width-tw-4, offX+hit.x-tw/2));
+    tip.style.left=left+'px';
+    tip.style.top=(hit.top+4)+'px';
+    shown=true;
+  });
+  wrap.addEventListener('mouseleave', hide);
+})();
 
 // Wire the segmented timeframe selector. Each click re-fetches at the
 // new range while keeping the currently-selected company.
