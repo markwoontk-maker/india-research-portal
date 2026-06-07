@@ -595,6 +595,9 @@
   .qa-item summary::before{content:"\25B8\00a0";color:var(--text-mute)}
   .qa-item[open] summary::before{content:"\25BE\00a0"}
   .qa-item .qa-a{margin-top:8px;font-size:12.5px;line-height:1.65;color:var(--text-dim)}
+  /* "My take" — the assistant's own critical read of the broker answer (not broker-sourced) */
+  .qa-take{margin-top:8px;padding:7px 10px;border-left:2px solid var(--accent,#c79a3a);background:rgba(199,154,58,.06);border-radius:0 6px 6px 0;font-size:12px;line-height:1.6;color:var(--text-mute);font-style:italic}
+  .qa-take-lbl{font-style:normal;font-weight:600;color:var(--accent,#c79a3a);margin-right:6px;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
   .thesis-col .co-desc{margin:0;font-size:13px;line-height:1.7}
   .thesis-col .empty{color:var(--text-mute);font-style:italic}
   .thesis-cite{font-size:11px;color:var(--text-mute);text-decoration:none;
@@ -1810,7 +1813,7 @@
           <p id="cQASub">Bull / bear / key-debate questions, answered from this company's NotebookLM broker library</p></div>
         </div>
         <div id="cQABody"></div>
-        <p class="co-desc-src">Questions are generated per company; answers are grounded in the company's NotebookLM broker-report library and evaluated by the answerer agent. Click a question to expand its answer. Citations open the source PDF where identifiable.</p>
+        <p class="co-desc-src">Questions are generated per company; answers are grounded in the company's NotebookLM broker-report library. Click a question to expand its answer; citations open the source PDF where identifiable. <b>⚖ My take</b> on the bull/bear items is the assistant's own critical read of the broker claim (is it well-supported, consensus, over-exaggerated, key caveat) — not sourced from the brokers and not investment advice.</p>
       </div>
       <!-- Key drivers: sentences from broker PDFs that explicitly name a
            lever moving the stock (volumes, margins, capex, regulation,
@@ -6473,7 +6476,8 @@ function renderCompanyQA(){
       const q=esc(it.q||'');
       const a=esc(it.a||'').replace(/\s*$/,'');
       const cite=it.a?fmtCite(it):'';
-      return `<details class="qa-item"><summary>${q}</summary><div class="qa-a">${a||'<span class="empty">No grounded answer yet.</span>'} ${cite}</div></details>`;
+      const take=it.comment?`<div class="qa-take"><span class="qa-take-lbl">⚖ My take</span> ${esc(it.comment)}</div>`:'';
+      return `<details class="qa-item"><summary>${q}</summary><div class="qa-a">${a||'<span class="empty">No grounded answer yet.</span>'} ${cite}</div>${take}</details>`;
     }).join('');
     html+='</div>';
   });

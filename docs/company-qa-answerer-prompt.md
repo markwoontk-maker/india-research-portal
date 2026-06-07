@@ -39,6 +39,14 @@ covers many companies. Always phrase queries like:
      Jefferies→`Jeff`) and the date if the title encodes one (`YYMMDD`). If no
      clean source is identifiable, set `broker:"" , date:"", url:""` — DO NOT
      fabricate a citation.
+   - **"My take" (bull and bear items ONLY):** after writing the grounded
+     answer, add a `comment` field = YOUR OWN one-sentence critical assessment of
+     the broker claim — is it well-supported, consensus, over-exaggerated /
+     promotional, contrarian, or what key caveat applies? This is your analytical
+     judgement (reasoning over the answer + general market knowledge), NOT sourced
+     from the notebook and with no citation. Be candid: say when a claim looks
+     over-egged or, conversely, fair/understated. Do NOT add `comment` to
+     `debates` items, and skip it when the answer `a` is empty.
    - Write that company's entry into `data/company_qa.json` immediately (so
      partial progress persists), stamping the company's `asOf` to today.
 4. After each company, check elapsed time; if near a 20-minute budget, stop
@@ -52,8 +60,8 @@ covers many companies. Always phrase queries like:
      "companies": {
        "<Company Name>": {
          "asOf": "<today YYYY-MM-DD>",
-         "bull":    [ { "q": "...", "a": "...", "broker": "Jeff", "date": "260604", "url": "" } ],
-         "bear":    [ { "q": "...", "a": "...", "broker": "", "date": "", "url": "" } ],
+         "bull":    [ { "q": "...", "a": "...", "broker": "Jeff", "date": "260604", "url": "", "comment": "my critical take on this claim" } ],
+         "bear":    [ { "q": "...", "a": "...", "broker": "", "date": "", "url": "", "comment": "my critical take on this claim" } ],
          "debates": [ { "q": "...", "a": "...", "broker": "", "date": "", "url": "" } ]
        }
      }
