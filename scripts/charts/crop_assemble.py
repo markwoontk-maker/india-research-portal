@@ -62,11 +62,14 @@ def refine_rect(page, seed, is_chart=False):
     sources = sorted([b for b in blocks if _SRC_RE.match(b[4])], key=lambda b: b[1])
     if not sources:
         return None
-    cand = [s for s in sources if s[3] >= seed.y0 + 0.02 * H]
-    target = cand[0] if cand else sources[-1]
-    prevs = [s for s in sources if s[3] < target[1] - 1]
-    top_limit = prevs[-1][3] if prevs else header_y
-    if min(target[3], seed.y1) <= max(top_limit, seed.y0):  # no vertical overlap with seed
+    # 'Source:' lines delimit exhibits; pick the band that overlaps the seed most
+    # (robust to imprecise seeds + multi-figure pages, unlike "first source below").
+    spans, prev = [], header_y
+    for s in sources:
+        spans.append((prev, s))   # (band_top, source_block)
+        prev = s[3]
+    top_limit, target = max(spans, key=lambda sp: min(sp[1][3], seed.y1) - max(sp[0], seed.y0))
+    if min(target[3], seed.y1) - max(top_limit, seed.y0) <= 0:  # no overlap with any band
         return None
     band = [b for b in blocks if b[1] >= top_limit - 1 and b[3] <= target[3] + 2]
     if not band:
