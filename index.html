@@ -2763,7 +2763,7 @@ let HI_W52=[
 // Local price formatter (a different `inr` is defined later for the
 // movers section; both can't be `const` at the same scope).
 function inrPx(n){ if(n==null||!isFinite(n))return '—';
-  return '₹'+Number(n).toLocaleString('en-IN',{maximumFractionDigits:2}); }
+  return '₹'+Number(n).toLocaleString('en-US',{maximumFractionDigits:2}); }
 // Tag a row as "AT ATH" / "AT 52WH" when CMP is essentially equal to the high.
 function highRow(r, hiKey, isAth){
   const atHigh = r.cmp != null && r[hiKey] != null && r.cmp >= r[hiKey] - 0.5;
@@ -3309,7 +3309,7 @@ function last(s){
   return s.previousClose ?? s.chartPreviousClose ?? null;
 }
 function prevC(s){ return s? (s.chartPreviousClose ?? s.previousClose ?? null) : null; }
-const inr=n=>Number(n).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const inr=n=>Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 
 const IDX=[
   ['^NSEI','NIFTY 50'],['^BSESN','SENSEX'],['^CRSLDX','NIFTY 500'],
@@ -6390,7 +6390,7 @@ function renderCompanyConflicts(){
     const inner = `<span class="conf-chip ${cls}">${THESIS_ESC(broker)} · ${THESIS_ESC(label||'')}</span>`;
     return url ? `<a href="${THESIS_ESC(url)}" target="_blank" rel="noopener" class="conf-chip-a">${inner}</a>` : inner;
   }
-  const fmtCurr = v => '₹' + Number(v).toLocaleString('en-IN');
+  const fmtCurr = v => '₹' + Number(v).toLocaleString('en-US');
   const blocks = conflicts.map(c=>{
     if(c.topic==='Rating'){
       const bullish = (c.bullish||[]).map(b => chip(b.broker, b.label, b.url, 'bull')).join(' ');
@@ -6833,7 +6833,7 @@ function updateChartReturn(data, ccy, tf){
   const sign = pct >= 0 ? '+' : '−';
   elPct.className = 'cm-return '+cls;
   elPct.textContent = sign + Math.abs(pct).toFixed(2) + '%';
-  const fmtN = n => Number(n).toLocaleString('en-IN',{maximumFractionDigits:2});
+  const fmtN = n => Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
   elMeta.textContent = `${tf} · ${ccy}${fmtN(first)} → ${ccy}${fmtN(last)}  (${sign}${ccy}${fmtN(Math.abs(abs))})`;
 }
 
@@ -7034,7 +7034,7 @@ function posDateFull(iso){ const d=new Date(iso+'T00:00:00');
 function posDateShort(iso){ const d=new Date(iso+'T00:00:00');
   return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'}); }
 function posCr(v){ const s=v<0?'−':'+';
-  return s+'₹'+Math.abs(Math.round(v)).toLocaleString('en-IN')+' Cr'; }
+  return s+'₹'+Math.abs(Math.round(v)).toLocaleString('en-US')+' Cr'; }
 function posShort(v){ const a=Math.abs(v);
   if(a>=1000) return (v<0?'−':'')+(a/1000).toFixed(a>=10000?0:1)+'k';
   return String(Math.round(v)); }
@@ -7279,7 +7279,7 @@ async function loadPositioning(){
 }
 
 /* ---------- Positioning tab · FPI sector positioning ---------- */
-function secCr(v){ const s=v<0?'−':'+'; return s+'₹'+Math.abs(Math.round(v)).toLocaleString('en-IN'); }
+function secCr(v){ const s=v<0?'−':'+'; return s+'₹'+Math.abs(Math.round(v)).toLocaleString('en-US'); }
 let secPosData=null, secPosMonths=[], secPosSort={key:null,dir:-1}, secPosExpanded=null, secHistChart=null;   // dir: 1 asc, -1 desc
 function secSumHist(s,filterFn){ if(!Array.isArray(s.hist)) return null; let sum=0,any=false;
   s.hist.forEach((v,i)=>{ if(v!=null && filterFn(secPosMonths[i]||'',i)){ sum+=v; any=true; } }); return any?Math.round(sum):null; }
@@ -7287,7 +7287,7 @@ function secYtd(s){ const y=(secPosMonths[secPosMonths.length-1]||'').slice(0,4)
 function secOneY(s){ return secSumHist(s,()=>true); }
 function secPosGist(){
   if(!secPosData||!secPosData.length) return '';
-  const scr=v=>(v>=0?'+₹':'−₹')+Math.abs(Math.round(v)).toLocaleString('en-IN')+' cr';
+  const scr=v=>(v>=0?'+₹':'−₹')+Math.abs(Math.round(v)).toLocaleString('en-US')+' cr';
   const pp=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1)+'pp';
   const mon=iso=>{ const [y,m]=iso.split('-'); return new Date(y,m-1,1).toLocaleDateString('en-IN',{month:'short',year:'numeric'}); };
   const fl=secPosData.filter(s=>typeof s.flow==='number'); if(!fl.length) return '';
@@ -7441,7 +7441,7 @@ function mfCatGist(){
   const tot=totals[last];
   let s=lead+' drew the largest share of net inflows for the '+ord(streak)+' straight month ('+(leadShare!=null?leadShare+'%':'')+' in '+mon(mfCatMonths[last])+').';
   if(g&&g.m>0.3) s+=' '+g.n+' gained the most share (+'+g.m.toFixed(1)+'pp MoM).';
-  if(tot!=null) s+=' Total equity-MF net inflow ₹'+Math.round(tot).toLocaleString('en-IN')+' cr.';
+  if(tot!=null) s+=' Total equity-MF net inflow ₹'+Math.round(tot).toLocaleString('en-US')+' cr.';
   return s;
 }
 function mfCatVal(c,k){ if(k==='ytd') return mfCatYtd(c)??0; if(k==='oneY') return mfCatOneY(c)??0; if(k==='flowshare') return mfCatFlowShare(c)??-999; return c[k]; }
@@ -7556,7 +7556,7 @@ async function loadSipFlows(){
     const mon=iso=>{ const [y,m]=iso.split('-'); return new Date(y,m-1,1).toLocaleDateString('en-IN',{month:'short',year:'numeric'}); };
     const latest=d.sip[d.sip.length-1];
     const sub=document.getElementById('sipSub'); if(sub) sub.textContent=
-      'Monthly SIP contribution (₹ cr) · AMFI · latest ₹'+Math.round(latest).toLocaleString('en-IN')+' cr ('+mon(d.asOf)+')'+
+      'Monthly SIP contribution (₹ cr) · AMFI · latest ₹'+Math.round(latest).toLocaleString('en-US')+' cr ('+mon(d.asOf)+')'+
       (d.sipAum?' · SIP AUM ₹'+(d.sipAum/100000).toFixed(1)+'L cr':'')+(d.sipAccounts?' · '+d.sipAccounts+' cr accounts':'');
     if(sipChart){ sipChart.destroy(); sipChart=null; }
     const yoy=d.sip.map((v,i)=> (i>=12 && v!=null && d.sip[i-12]!=null) ? +((v/d.sip[i-12]-1)*100).toFixed(1) : null);
@@ -7569,7 +7569,7 @@ async function loadSipFlows(){
         interaction:{mode:'index',intersect:false},
         plugins:{legend:{display:true,position:'bottom',labels:{color:'#a9b0c0',font:{family:'IBM Plex Mono',size:10},boxWidth:14,boxHeight:8,padding:12,usePointStyle:true}},
           tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:10,
-            callbacks:{ label:x=>{ if(x.dataset.label==='YoY %') return x.parsed.y==null?'':'  YoY: '+(x.parsed.y>=0?'+':'')+x.parsed.y.toFixed(1)+'%'; return d.sip[x.dataIndex]==null?'  no data':'  ₹'+Math.round(d.sip[x.dataIndex]).toLocaleString('en-IN')+' cr'; } }}},
+            callbacks:{ label:x=>{ if(x.dataset.label==='YoY %') return x.parsed.y==null?'':'  YoY: '+(x.parsed.y>=0?'+':'')+x.parsed.y.toFixed(1)+'%'; return d.sip[x.dataIndex]==null?'  no data':'  ₹'+Math.round(d.sip[x.dataIndex]).toLocaleString('en-US')+' cr'; } }}},
         scales:{ x:{grid:{display:false},border:{display:false},ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},maxRotation:0,autoSkip:true,maxTicksLimit:14}},
           y:{position:'left',min:18000,grid:{color:'#1f2530'},border:{display:false},grace:'6%',ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},callback:v=>(v/1000).toFixed(0)+'k'},title:{display:true,text:'SIP (₹ cr)',color:'#646c7c',font:{family:'IBM Plex Mono',size:9}}},
           y1:{position:'right',grid:{display:false},border:{display:false},grace:'8%',ticks:{color:'#e9a23b',font:{family:'IBM Plex Mono',size:10},callback:v=>v+'%'},title:{display:true,text:'YoY %',color:'#e9a23b',font:{family:'IBM Plex Mono',size:9}}} } }
@@ -7737,7 +7737,7 @@ async function loadFiiKpi(){
     const chg=document.getElementById('kFiic');
     const meta=document.getElementById('kFiim');
     const sign=v>=0?'+':'−';
-    const fmt=Math.abs(v).toLocaleString('en-IN',{maximumFractionDigits:0});
+    const fmt=Math.abs(v).toLocaleString('en-US',{maximumFractionDigits:0});
     if(big) big.textContent=`${sign}₹${fmt} Cr`;
     if(chg){
       chg.textContent=v>=0?'▲ Net buyers in cash':'▼ Net sellers in cash';
