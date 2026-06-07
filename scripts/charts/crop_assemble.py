@@ -75,13 +75,20 @@ def refine_rect(page, seed, is_chart=False):
     cl = _chart_cluster(page, top_limit, y1, W, H) if is_chart else None
     if cl:
         cx0, ctop, cx1, _ = cl
-        # caption = a SHORT/NARROW line just above the chart (not a body paragraph)
-        caps = [b for b in band if ctop - 0.06 * H <= b[3] <= ctop + 4
-                and (b[2] - b[0]) < 0.62 * W and len(b[4]) < 90]
+        # Walk upward from the chart through the contiguous heading/caption lines
+        # (each a SHORT block, regardless of width — a bold section heading is wide
+        # but only one line tall), stopping at a tall body paragraph or a large gap.
+        headers, cur = [], ctop
+        for b in sorted((b for b in band if b[3] <= ctop + 4), key=lambda b: -b[3]):
+            if cur - b[3] > 0.035 * H:        # gap too large -> separate content above
+                break
+            if (b[3] - b[1]) > 0.045 * H:     # tall block = body paragraph -> stop
+                break
+            headers.append(b); cur = b[1]
         inchart = [b for b in band if b[1] >= ctop - 2]
-        y0 = min([ctop] + [b[1] for b in caps])
-        x0 = min([cx0] + [b[0] for b in caps + inchart])
-        x1 = max([cx1] + [b[2] for b in caps + inchart])
+        y0 = min([ctop] + [b[1] for b in headers])
+        x0 = min([cx0] + [b[0] for b in headers + inchart])
+        x1 = max([cx1] + [b[2] for b in headers + inchart])
     else:
         y0 = min(b[1] for b in band)
         x0 = min(b[0] for b in band)
