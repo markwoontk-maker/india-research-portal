@@ -631,11 +631,14 @@
   /* House-view overlay: cross-house summary + per-broker change-vs-prior + my view */
   .hv-summary{padding:11px 14px;margin-bottom:14px;background:rgba(0,0,0,.14);border:1px solid var(--line);border-radius:8px}
   .hv-summary-h{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--saffron);font-weight:600;margin-bottom:6px}
-  .hv-summary p{margin:0;font-size:12.5px;line-height:1.7;color:var(--text-dim)}
-  .hv-chg{margin-top:7px;font-size:12px;line-height:1.55;color:var(--text-dim)}
+  .hv-summary .thesis-p{margin:0 0 8px;font-size:12.5px;line-height:1.72;color:var(--text-dim)}
+  .hv-summary .thesis-p:last-child{margin-bottom:0}
+  .hv-chg{margin-top:8px;font-size:12px;line-height:1.55;color:var(--text-dim)}
   .hv-chg-lbl{font-weight:600;color:var(--text-mute);font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin-right:6px}
-  .hv-mine{margin-top:6px;padding:5px 9px;border-left:2px solid var(--saffron);background:rgba(0,0,0,.10);border-radius:0 5px 5px 0;font-size:12px;line-height:1.55;color:var(--text-mute);font-style:italic}
-  .hv-mine-lbl{font-style:normal;font-weight:600;color:var(--saffron);font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin-right:6px}
+  .hv-mine{margin-top:7px;padding:8px 11px;border-left:2px solid var(--saffron);background:rgba(0,0,0,.10);border-radius:0 6px 6px 0}
+  .hv-mine-lbl{display:block;font-weight:600;color:var(--saffron);font-size:10px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+  .hv-mine .thesis-p{margin:0 0 7px;font-size:12px;line-height:1.62;color:var(--text-mute);font-style:italic}
+  .hv-mine .thesis-p:last-child{margin-bottom:0}
   /* Conflicting Views card */
   .conf-block{padding:10px 0;border-top:1px solid var(--line-soft)}
   .conf-block:first-child{border-top:none;padding-top:0}
@@ -6336,9 +6339,11 @@ function renderCompanyHouseViews(){
   card.hidden=false;
   const notes=(window.HOUSE_VIEW_NOTES||{})[currentCompany]||{};
   const nb=notes.brokers||{};
+  // multi-paragraph markup: blank-line-separated paragraphs, each with **bold** support
+  const mlMarkup=t=>String(t||'').split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean).map(p=>renderParagraphMarkup(p)).join('');
   let html='';
   if(notes.summary){
-    html += `<div class="hv-summary"><div class="hv-summary-h">How the houses differ</div>${renderParagraphMarkup(notes.summary)}</div>`;
+    html += `<div class="hv-summary"><div class="hv-summary-h">How the houses differ — my read</div>${mlMarkup(notes.summary)}</div>`;
   }
   html += views.map(v=>{
     const para = renderParagraphMarkup(v.paragraph||'');
@@ -6348,7 +6353,7 @@ function renderCompanyHouseViews(){
     const dirCls = v.direction==='bull' ? 'bull' : v.direction==='bear' ? 'bear' : 'neutral';
     const n = nb[`${v.broker}|${v.date}`] || {};
     const chg = n.change ? `<div class="hv-chg"><span class="hv-chg-lbl">Δ vs prior</span> ${THESIS_ESC(n.change)}</div>` : '';
-    const mine = n.view ? `<div class="hv-mine"><span class="hv-mine-lbl">⚖ My view</span> ${THESIS_ESC(n.view)}</div>` : '';
+    const mine = n.view ? `<div class="hv-mine"><div class="hv-mine-lbl">⚖ My view</div>${mlMarkup(n.view)}</div>` : '';
     return `<div class="house-view ${dirCls}">
       <div class="house-view-h"><b>${THESIS_ESC(v.brokerFull||v.broker)}</b>
         <span class="house-view-meta">${mm}/${yy}</span></div>
@@ -7155,11 +7160,12 @@ function galEsc(x){return String(x==null?'':x).replace(/[&<>"]/g,m=>({'&':'&amp;
 
 function galBuildChips(){
   // Scalar facets (one value per chart) + the array-valued subject-sector facet.
+  // Chips are grouped under labels; the (long) sector group scrolls within a cap.
   const scalar={source:'Source', chart_type:'Type', house:'Broker'};
   const wrap=document.getElementById('galChips');
   wrap.innerHTML='';
   _galFilters={};
-  const addChip=(key,v)=>{
+  const addChip=(target,key,v)=>{
     const chip=document.createElement('button');
     chip.type='button'; chip.className='gal-chip';
     chip.textContent=v;
@@ -7169,15 +7175,25 @@ function galBuildChips(){
       chip.classList.contains('on')?set.add(v):set.delete(v);
       galRender();
     });
-    wrap.appendChild(chip);
+    target.appendChild(chip);
   };
-  Object.keys(scalar).forEach(key=>{
-    [...new Set(_galAll.map(c=>c[key]).filter(Boolean))].sort().forEach(v=>addChip(key,v));
+  const group=(label,extraCls)=>{
+    const g=document.createElement('div'); g.className='gal-fgroup'+(extraCls?' '+extraCls:'');
+    const l=document.createElement('span'); l.className='gal-flabel'; l.textContent=label;
+    const box=document.createElement('div'); box.className='gal-fchips';
+    g.appendChild(l); g.appendChild(box); wrap.appendChild(g); return box;
+  };
+  Object.entries(scalar).forEach(([key,label])=>{
+    const vals=[...new Set(_galAll.map(c=>c[key]).filter(Boolean))].sort();
+    if(vals.length){ const box=group(label); vals.forEach(v=>addChip(box,key,v)); }
   });
   // subject_sectors is an array per chart — flatten to a single "__sector" facet.
   const sectors=new Set();
   _galAll.forEach(c=>(c.subject_sectors||[]).forEach(s=>s&&sectors.add(s)));
-  [...sectors].sort().forEach(v=>addChip('__sector',v));
+  if(sectors.size){
+    const box=group('Sector','gal-fgroup-sector');
+    [...sectors].sort().forEach(v=>addChip(box,'__sector',v));
+  }
 }
 
 function galMatch(c, q){
