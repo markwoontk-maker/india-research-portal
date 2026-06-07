@@ -484,6 +484,31 @@
   .tp-arrow{margin-left:4px;font-size:10px;vertical-align:baseline}
   .tp-arrow.up{color:var(--up)}
   .tp-arrow.down{color:var(--down)}
+  /* Company tab: chart (left) + compact broker-coverage panel (right) */
+  .c-chart-split{display:flex;gap:18px;align-items:stretch}
+  .c-chart-main{flex:1 1 auto;min-width:0}
+  .cov-side{flex:0 0 232px;display:flex;flex-direction:column;overflow:hidden;
+    border-left:1px solid var(--line-soft);padding-left:16px}
+  .cov-side > #cBrokerNotes{flex:1 1 auto;min-height:0;overflow-y:auto;
+    display:flex;flex-direction:column}
+  .bk-row{display:flex;align-items:center;gap:8px;padding:6px 1px;
+    border-bottom:1px solid var(--line-soft);font-size:12.5px}
+  .bk-row:last-child{border-bottom:none}
+  .bk-row .bk-name{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis;color:var(--text);text-decoration:none;
+    border-bottom:1px dotted transparent}
+  .bk-row .bk-name:hover{border-bottom-color:var(--text-mute)}
+  .bk-row .bk-tp{font-family:'Roboto Mono',monospace;font-size:12px;
+    color:var(--text-dim);white-space:nowrap}
+  .bk-row .bk-tp.muted{color:var(--text-mute)}
+  .bk-arr{flex:0 0 auto;width:11px;text-align:center;font-size:10px}
+  .bk-arr.up{color:var(--up)}
+  .bk-arr.down{color:var(--down)}
+  @media(max-width:820px){
+    .c-chart-split{flex-direction:column}
+    .cov-side{flex-basis:auto;border-left:none;padding-left:0;
+      border-top:1px solid var(--line-soft);padding-top:12px;margin-top:4px}
+  }
   /* Upgrade / downgrade summary cards at the top of the Research tab.
      Two side-by-side cards (stack on mobile), each lists the names where
      the broker either raised the TP, cut it, upgraded the call, or
@@ -1779,16 +1804,23 @@
             <button data-r="10Y">10Y</button>
           </div>
         </div>
-        <div class="cm-return-row">
-          <span id="cRetPct" class="cm-return">—</span>
-          <span id="cRetMeta" class="cm-return-meta"></span>
+        <div class="c-chart-split">
+          <div class="c-chart-main">
+            <div class="cm-return-row">
+              <span id="cRetPct" class="cm-return">—</span>
+              <span id="cRetMeta" class="cm-return-meta"></span>
+            </div>
+            <div class="cm-wrap">
+              <div class="chart-box"><canvas id="cChart"></canvas></div>
+              <div id="cChartMarkers" class="cm-markers"></div>
+              <div id="cChartPop" class="cm-pop"></div>
+            </div>
+            <p id="cChartMsg" style="color:var(--text-mute);font-size:11px;text-align:center;margin-top:10px;display:none"></p>
+          </div>
+          <aside class="cov-side" id="cCovSide" style="display:none">
+            <div id="cBrokerNotes"></div>
+          </aside>
         </div>
-        <div class="cm-wrap">
-          <div class="chart-box"><canvas id="cChart"></canvas></div>
-          <div id="cChartMarkers" class="cm-markers"></div>
-          <div id="cChartPop" class="cm-pop"></div>
-        </div>
-        <p id="cChartMsg" style="color:var(--text-mute);font-size:11px;text-align:center;margin-top:10px;display:none"></p>
       </div>
       <!-- About the company: 3-4 sentence business description -->
       <div class="card reveal" id="cDescCard" hidden>
@@ -1853,16 +1885,6 @@
         </div>
         <div id="cFinBody"></div>
         <p class="co-desc-src">Sourced from each broker's most recent report on the company (PDF estimate tables, layout-extracted via pdftotext). Numbers normalised to ₹ million. Where a broker uses a different unit/convention, this normalisation may be off — see the per-broker breakdown for raw values.</p>
-      </div>
-      <!-- Broker coverage on the selected company: one row per research house,
-           latest TP/call + prior TP/call side-by-side. -->
-      <div class="card reveal" id="cBrokerCard" hidden>
-        <div class="card-h">
-          <div><h3>Broker Coverage</h3>
-          <p id="cBrokerSub">Latest call from each research house with the prior call alongside</p></div>
-        </div>
-        <div id="cBrokerNotes"></div>
-        <p class="co-desc-src">Latest = newest report we have on the selected name from each broker (local PDF library + Trendlyne broker calls). Curr TP / Curr Call come from the PDF body where parseable, else the headline; Prev TP / Prev Call come from the same broker's prior report. "—" = no parseable signal.</p>
       </div>
       <!-- Latest news on the selected company: free Google News RSS,
            same proxy/cache pipeline as the movers "why did it move?" modal. -->
@@ -5726,14 +5748,14 @@ function updateCoDesc(){
 // #cBrokerNotes using the same .n-header / .note / .n-tp / .n-call
 // classes so layout matches the Research tab.
 function renderCompanyResearch(){
-  const card=document.getElementById('cBrokerCard');
+  const side=document.getElementById('cCovSide');
   const el=document.getElementById('cBrokerNotes');
-  const sub=document.getElementById('cBrokerSub');
-  if(!card || !el) return;
-  if(!currentCompany){ card.hidden=true; return; }
-  // Sectors get the Sector Views paragraph instead of the broker table.
+  if(!el) return;
+  const hideSide=()=>{ if(side) side.style.display='none'; el.innerHTML=''; };
+  if(!currentCompany){ hideSide(); return; }
+  // Sectors have no per-name broker coverage panel.
   if (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany)){
-    card.hidden=true; el.innerHTML=''; return;
+    hideSide(); return;
   }
   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -5762,12 +5784,7 @@ function renderCompanyResearch(){
       all.push([r.broker, r.date, currentCompany, headline, r.url||null]);
     });
   }
-  card.hidden=false;
-  if(!all.length){
-    if(sub) sub.textContent='No broker reports found for this company in the local dataset.';
-    el.innerHTML='';
-    return;
-  }
+  if(!all.length){ hideSide(); return; }
   // Dedupe + sort newest-first, then group by house (each house keeps
   // its full sorted list so we can find a prior report for the latest).
   const normT=t=>String(t).replace(/\s*\(\d+\)\s*$/,'').trim().toLowerCase();
@@ -5834,55 +5851,45 @@ function renderCompanyResearch(){
     return 'https://www.google.com/search?q='+encodeURIComponent(`${h} ${folder} ${ti}`);
   };
   const tpNum=s=>{ if(!s) return null; const m=String(s).replace(/[,₹\s]/g,'').match(/^([\d.]+)/); return m?parseFloat(m[1]):null; };
-  // ---- render ---------------------------------------------------------
-  const header=
-    `<div class="n-header">`+
-      `<span class="n-date">Date</span>`+
-      `<span class="n-co">House</span>`+
-      `<span class="n-ti">Headline</span>`+
-      `<span class="n-tp">Curr TP</span>`+
-      `<span class="n-call-h">Curr</span>`+
-      `<span class="n-tp prev">Prev TP</span>`+
-      `<span class="n-call-h">Prev</span>`+
-    `</div>`;
+  // ---- render: compact panel — broker · current TP · upgrade/downgrade -
+  // The arrow flags a RATING change (current call vs the broker's prior
+  // call): green ▲ upgrade, red ▼ downgrade. Only fires when both calls are
+  // explicit ratings (sentiment-derived labels don't rank, so no false arrow).
+  const CALL_RANK={BUY:3,OP:3,OW:3,ADD:3,ACCUMULATE:3,HOLD:2,NEUTRAL:2,EW:2,MP:2,REDUCE:1,SELL:0,UW:0,UP:0};
+  const rankOf=lbl=>{ if(lbl==null) return null; const r=CALL_RANK[String(lbl).toUpperCase()]; return r==null?null:r; };
   const rows=houses.map(h=>{
-    const arr=byHouse[h];           // already sorted newest-first
+    const arr=byHouse[h];                 // newest-first
     const latest=arr[0];
     const prior =arr.find(r=>r[1]<latest[1])||null;
     const d=latest[1], co=latest[2], ti=latest[3], u=latest[4];
     const href=urlFor(co,h,ti,d,u);
     const pd=PD?PD[pdKey(h,d,co,ti)]:null;
     const currTP=(pd&&pd.currTP)||tpOf(ti);
-    const c=(pd&&pd.currCall)
-      ? {label:pd.currCall, cls:CT[pd.currCall]||'hold'}
-      : callOf(ti);
+    const currCall=(pd&&pd.currCall)||callOf(ti).label;
     const priorPd=(PD&&prior)?PD[pdKey(prior[0],prior[1],prior[2],prior[3])]:null;
-    const prevTP=(pd&&pd.prevTP)||(priorPd&&priorPd.currTP)||(prior?tpOf(prior[3]):null);
-    const prevCallStr=(pd&&pd.prevCall)||(priorPd&&priorPd.currCall);
-    const prevC=prevCallStr
-      ? {label:prevCallStr, cls:CT[prevCallStr]||'hold'}
-      : (prior?callOf(prior[3]):null);
-    const cN=tpNum(currTP), pN=tpNum(prevTP);
-    const arrow=(cN!=null&&pN!=null&&cN!==pN)
-      ? (cN>pN ? `<span class="tp-arrow up" title="Raised from ₹${esc(prevTP)}">▲</span>`
-               : `<span class="tp-arrow down" title="Cut from ₹${esc(prevTP)}">▼</span>`)
-      : '';
-    const tpCurrCell=currTP ? `<span class="n-tp">₹${esc(currTP)}${arrow}</span>` : `<span class="n-tp muted">—</span>`;
-    const tpPrevCell=prevTP ? `<span class="n-tp prev">₹${esc(prevTP)}</span>`     : `<span class="n-tp prev muted">—</span>`;
-    const callCurrCell=`<span class="n-call ${c.cls}">${esc(c.label)}</span>`;
-    const callPrevCell=prevC ? `<span class="n-call prev ${prevC.cls}">${esc(prevC.label)}</span>`
-                             : `<span class="n-call prev empty">—</span>`;
-    return `<div class="note">`+
-      `<span class="n-date">${fmtD(d)}</span>`+
-      `<span class="n-co" title="${esc(h)}">${esc(h)}</span>`+
-      `<a class="n-ti" href="${esc(href)}" target="_blank" rel="noopener"`+
+    const prevCall=(pd&&pd.prevCall)||(priorPd&&priorPd.currCall)||(prior?callOf(prior[3]).label:null);
+    const cR=rankOf(currCall), pR=rankOf(prevCall);
+    const upd=(cR!=null&&pR!=null&&cR!==pR)
+      ? (cR>pR ? `<span class="bk-arr up" title="Upgraded: ${esc(prevCall)} → ${esc(currCall)}">▲</span>`
+               : `<span class="bk-arr down" title="Downgraded: ${esc(prevCall)} → ${esc(currCall)}">▼</span>`)
+      : `<span class="bk-arr"></span>`;
+    // Normalise TP to thousands grouping when it's a clean number (source
+    // strings are mixed: "5046" vs "5,882"); fall back to raw otherwise.
+    const tpRaw = currTP ? String(currTP).replace(/^₹/,'').trim() : null;
+    const tpN = tpRaw ? Number(tpRaw.replace(/,/g,'')) : null;
+    const tp = (tpN!=null && isFinite(tpN) && tpRaw!=='')
+      ? '₹'+tpN.toLocaleString('en-US')
+      : (tpRaw ? '₹'+esc(tpRaw) : '—');
+    return `<div class="bk-row">`+
+      `<a class="bk-name" href="${esc(href)}" target="_blank" rel="noopener"`+
         (pd && pd.summary ? ` data-summary="${esc(pd.summary)}"` : '')+
-        ` title="${esc(ti)}">${esc(ti)}</a>`+
-      tpCurrCell+callCurrCell+tpPrevCell+callPrevCell+
+        ` title="${esc(h)} — ${esc(ti)}">${esc(h)}</a>`+
+      `<span class="bk-tp${currTP?'':' muted'}">${tp}</span>`+
+      upd+
     `</div>`;
   }).join('');
-  if(sub) sub.textContent=`${houses.length} broker${houses.length>1?'s':''} covering this name · sorted by most-recent report`;
-  el.innerHTML=header+rows;
+  if(side) side.style.display='';
+  el.innerHTML=rows;
 }
 
 // Latest-news segment for the selected company. Reuses newsViaProxy
