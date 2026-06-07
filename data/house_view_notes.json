@@ -1,0 +1,41 @@
+{
+  "asOf": "2026-06-07",
+  "companies": {
+    "Adani Power": {
+      "summary": "Both captured houses are bullish, but there is effectively only one *current* view: **Jefferies** (May-2026, Buy, PT ₹255) on the FCF-turnaround and capacity build-out. Asit C Mehta's positive note is a year old (May-2025) and thematic, so it adds little to today's debate. Net: a one-broker bull case with no live bear to weigh against — read the absence of fresh sell-side scrutiny as a reason for caution, not comfort.",
+      "brokers": {
+        "Jeff|260518": {
+          "change": "Maintained Buy; PT held at ₹255. Thesis recentred on FCF turning positive by FY30E and falling leverage.",
+          "view": "The most credible bull case on the name and recently refreshed — but a single covering house means limited triangulation; I'd want a second major broker before leaning on consensus."
+        },
+        "Asit|250521": {
+          "change": "Dated May-2025 thematic note — nothing recent to compare against.",
+          "view": "A year-old positive piece; treat as stale. The live read on Adani Power is essentially Jefferies' alone."
+        }
+      }
+    },
+    "Apollo Hospitals": {
+      "summary": "Near-unanimous bullish after a strong 4QFY26, and importantly the three *freshest* houses all RAISED targets on the print — **Jefferies** ₹9,250→₹9,700, **Kotak** ₹8,980→₹9,520, **CLSA** to ₹9,280 — clustering tightly around ₹9,300–9,700. The only cautious voice, **ICICI Securities** ('soft quarter, bed addition critical', Nov-2025), pre-dates the beat and now looks stale, as do Geojit/ICICI Direct's older ₹7,763–8,840 targets that the stock has since outrun. So this is a converged, upgraded consensus with no current bear — the genuine debate is execution on the new-hospital ramp and the HealthCo listing, not direction.",
+      "brokers": {
+        "CLSA|260522": { "change": "Maintained Outperform; PT ₹9,280 after the 4QFY26 beat.", "view": "In line with the pack; the post-results raise is incremental, not a new thesis." },
+        "Kotak|260522": { "change": "Maintained Buy; PT raised ₹8,980→₹9,520 on rapid bed additions and better HealthCo/diagnostics margins.", "view": "Fair — the raise is earnings-led, but Kotak itself stays cautious on 24/7, which I'd echo." },
+        "PL|260522": { "change": "Q4FY26 update; Buy retained (PT not parsed).", "view": "Adds confirmation, not new information." },
+        "Jeff|260521": { "change": "Maintained Buy; PT raised ₹9,250→₹9,700; FY27-28 EBITDA estimates +5%.", "view": "Top of the PT range; leans on the HealthCo value-unlock, which I'd treat as optionality rather than banked." },
+        "MO|260211": { "change": "Feb-2026 note (pre-4QFY26); bullish on hospital optimisation + HealthCo traction.", "view": "Directionally right but stale — superseded by the post-Q4 upgrades above." },
+        "Geojit|251219": { "change": "Dec-2025: upgraded to Buy, PT ₹7,763 — now well below the stock; dated.", "view": "Target has been overtaken by events; ignore the level, the call was early-correct." },
+        "ICICI|251109": { "change": "Nov-2025: cautious ('soft quarter; bed addition critical to revive growth').", "view": "The lone bear, but it pre-dates the strong 4QFY26 — its core worry (new-bed execution) is still the right thing to watch even if the timing call was wrong." },
+        "ICICI|251107": { "change": "Nov-2025: upgraded to Buy, PT ₹8,840; dated.", "view": "Superseded; useful only as evidence the buy-side turned positive early." }
+      }
+    },
+    "Sun Pharmaceuticals": {
+      "summary": "The one genuinely *split* book here. **Bernstein** is the bull (Outperform, PT ₹2,235) on the under-appreciated US innovation arm; **Kotak** is constructive (Add, PT raised ₹1,850→₹1,960). Against them, **CLSA** (Hold, ₹2,020) and **Jefferies** are neutral, and **JPMorgan** is the bear, flagging the 4QFY26 EBITDA/PAT miss (~11–13% below consensus). The fault line is clear: optimism on the specialty re-rating (Bernstein/Kotak) versus caution on near-term earnings quality and US compliance/pricing (JPMorgan/CLSA/Jefferies). I'd weight the sceptics slightly more — the bull case rests on pipeline/label catalysts not yet delivered, while the miss and Halol risk are concrete.",
+      "brokers": {
+        "Bern|260525": { "change": "Maintained Outperform; PT held ₹2,235. Doubles down on innovation arm as 'most underappreciated'.", "view": "The most bullish and most thesis-driven view; compelling if specialty delivers, but it's talking its book on a re-rating that hasn't happened yet." },
+        "CLSA|260524": { "change": "Hold; PT ₹2,020. India/other regions offsetting tepid US generics.", "view": "A sensible fence-sitter — captures the real tension (strong India, soft US) better than either extreme." },
+        "JP|260524": { "change": "Bearish; flags 4QFY26 EBITDA/PAT ~11–13% below consensus on higher costs.", "view": "The most useful counterweight — earnings quality and the miss are concrete, not narrative. I'd take this seriously against the bull case." },
+        "Kotak|260524": { "change": "Maintained Add; PT raised ₹1,850→₹1,960 despite muted Global Innovative Medicines sales.", "view": "Constructive but measured; the PT raise sits well below Bernstein's, which tells you even the bulls disagree on magnitude." },
+        "Jeff|260522": { "change": "Neutral; broadly in-line quarter (India formulations solid).", "view": "Adds to the cautious cluster — three of five houses are neutral-to-negative, which is the real message here." }
+      }
+    }
+  }
+}

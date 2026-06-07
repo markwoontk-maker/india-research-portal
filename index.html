@@ -628,6 +628,14 @@
   .house-view-meta{font-family:'Roboto Mono',monospace;font-size:10.5px;color:var(--text-mute)}
   .house-view-body{margin:0;font-size:13px;line-height:1.7}
   .house-view-body b{color:var(--text);font-weight:600}
+  /* House-view overlay: cross-house summary + per-broker change-vs-prior + my view */
+  .hv-summary{padding:11px 14px;margin-bottom:14px;background:rgba(0,0,0,.14);border:1px solid var(--line);border-radius:8px}
+  .hv-summary-h{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--saffron);font-weight:600;margin-bottom:6px}
+  .hv-summary p{margin:0;font-size:12.5px;line-height:1.7;color:var(--text-dim)}
+  .hv-chg{margin-top:7px;font-size:12px;line-height:1.55;color:var(--text-dim)}
+  .hv-chg-lbl{font-weight:600;color:var(--text-mute);font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin-right:6px}
+  .hv-mine{margin-top:6px;padding:5px 9px;border-left:2px solid var(--saffron);background:rgba(0,0,0,.10);border-radius:0 5px 5px 0;font-size:12px;line-height:1.55;color:var(--text-mute);font-style:italic}
+  .hv-mine-lbl{font-style:normal;font-weight:600;color:var(--saffron);font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin-right:6px}
   /* Conflicting Views card */
   .conf-block{padding:10px 0;border-top:1px solid var(--line-soft)}
   .conf-block:first-child{border-top:none;padding-top:0}
@@ -5538,6 +5546,15 @@ fetch('data/theses.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=
   if(typeof renderCompanyHouseViews==='function') renderCompanyHouseViews();
   if(typeof renderCompanyConflicts==='function') renderCompanyConflicts();
 }).catch(()=>{});
+// House-view notes overlay: per-company cross-house summary + per-broker change-
+// vs-prior-report + the assistant's own view, built by scripts/build-house-view-notes.ps1
+// (reasons over theses.json + pdfdata.json; no NotebookLM). Overlaid by renderCompanyHouseViews.
+window.HOUSE_VIEW_NOTES=null;
+fetch('data/house_view_notes.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
+  if(!j||typeof j!=='object'||!j.companies) return;
+  window.HOUSE_VIEW_NOTES=j.companies;
+  if(typeof renderCompanyHouseViews==='function') renderCompanyHouseViews();
+}).catch(()=>{});
 // Financial summary per company (Revenue / EBITDA / Net Profit by FY)
 // built by scripts/build-financials.js from each broker's latest report.
 window.FINANCIALS=null;
@@ -6317,21 +6334,30 @@ function renderCompanyHouseViews(){
   const views = (T && Array.isArray(T.houseViews)) ? T.houseViews : [];
   if(!views.length){ card.hidden=true; return; }
   card.hidden=false;
-  const blocks = views.map(v=>{
+  const notes=(window.HOUSE_VIEW_NOTES||{})[currentCompany]||{};
+  const nb=notes.brokers||{};
+  let html='';
+  if(notes.summary){
+    html += `<div class="hv-summary"><div class="hv-summary-h">How the houses differ</div>${renderParagraphMarkup(notes.summary)}</div>`;
+  }
+  html += views.map(v=>{
     const para = renderParagraphMarkup(v.paragraph||'');
     const yy = (v.date||'').slice(0,2);
     const mm = (v.date||'').slice(2,4);
     const cite = thesisCite(v.broker, v.date, v.url, v.page||1);
     const dirCls = v.direction==='bull' ? 'bull' : v.direction==='bear' ? 'bear' : 'neutral';
+    const n = nb[`${v.broker}|${v.date}`] || {};
+    const chg = n.change ? `<div class="hv-chg"><span class="hv-chg-lbl">Δ vs prior</span> ${THESIS_ESC(n.change)}</div>` : '';
+    const mine = n.view ? `<div class="hv-mine"><span class="hv-mine-lbl">⚖ My view</span> ${THESIS_ESC(n.view)}</div>` : '';
     return `<div class="house-view ${dirCls}">
       <div class="house-view-h"><b>${THESIS_ESC(v.brokerFull||v.broker)}</b>
         <span class="house-view-meta">${mm}/${yy}</span></div>
-      <p class="co-desc house-view-body">${para} ${cite}</p>
+      <p class="co-desc house-view-body">${para} ${cite}</p>${chg}${mine}
     </div>`;
   }).join('');
-  body.innerHTML = blocks;
+  body.innerHTML = html;
   if(sub){
-    sub.textContent = `${views.length} broker${views.length===1?'':'s'} covering this name · most-recent report first · click any citation to open the PDF at the source page`;
+    sub.textContent = `${views.length} broker${views.length===1?'':'s'} covering this name · most-recent first · Δ vs prior report and ⚖ My view shown where available`;
   }
 }
 
