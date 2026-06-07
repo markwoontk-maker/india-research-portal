@@ -8,7 +8,14 @@ You extract every VISUAL EXHIBIT from ONE broker research report so it can appea
 3. WRITE the result with the Write tool to the exact analysis.json path given in your dispatch. Then report: pages-with-exhibits count, total exhibit count, and one example commentary string.
 
 ## Each exhibit object (ALL keys required)
-- `bbox`: `[x0,y0,x1,y1]` as fractions 0..1 of the page (x→right, y→down), tight around the exhibit INCLUDING its title and any source/footnote line directly attached to it.
+- `bbox`: `[x0,y0,x1,y1]` as fractions 0..1 of the page (x→right, y→down). Bound it
+  **TIGHTLY** around THIS ONE exhibit — its own heading/"Exhibit N:" title at the top
+  down to its Source/footnote line at the bottom. **EXCLUDE**: the broker header band
+  / logo / page number at the very top of the page, page footers, AND any neighbouring
+  exhibit or section heading above/below this one. If a page has two exhibits, give two
+  bboxes that do NOT overlap each other or include the other's title. Do not default to
+  near-full-page boxes — crop to just the exhibit so it fills the frame with minimal
+  blank space.
 - `chart_title`: the exhibit's own heading/caption text, verbatim (`""` if none).
 - `chart_type`: one of `line bar area scatter valuation_band table map diagram other`.
 - `subject_company`: the single specific listed company the exhibit is about (a real company name as printed), else `null`. Most macro/strategy/sector exhibits are `null`; set it only when an exhibit is about ONE company (e.g. a single-stock valuation band or price chart).
