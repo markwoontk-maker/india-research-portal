@@ -22,11 +22,16 @@ reasoning over LOCAL data — **do NOT use NotebookLM / nlm** (no web, no keys).
 
 For `data/house_view_notes.json` → `companies[<exact companies.json / theses.json name>]`:
 
-- **`summary`** (2–4 sentences): How the houses DIFFER. Name the houses. Who is
-  bull / bear / neutral; where targets cluster and the spread; who upgraded/cut
-  or RAISED/LOWERED targets recently; which cautious/old views are now stale; and
-  where the *real* debate is. End with a brief steer on which side looks better
-  supported. Plain prose; you may **bold** house names with `**...**`.
+- **`summary`** — TWO paragraphs separated by a blank line (`\n\n`):
+  - Para 1 — **how the houses differ**: name them; who is bull/bear/neutral;
+    where targets cluster and the spread; who upgraded/cut or RAISED/LOWERED
+    recently; which cautious/old views are now stale; where the *real* debate is.
+  - Para 2 — **"My own read:"** your INDEPENDENT research view of the company
+    (not just a summary of the brokers): the quality of the franchise, the risks
+    the sell-side is glossing over, where you'd land vs the houses, and the 1–2
+    things you'd watch most. Bring your own knowledge of the company/sector — act
+    as the user's research assistant, not a broker aggregator.
+  - You may **bold** key names/terms with `**...**`. Be candid.
 - **`brokers`**: an object keyed by **`"<broker>|<date>"`** EXACTLY as in
   `houseViews` (e.g. `"Kotak|260522"`; note the same abbrev can appear twice on
   different dates — key by broker+date). Each value `{change, view}`:
@@ -36,9 +41,13 @@ For `data/house_view_notes.json` → `companies[<exact companies.json / theses.j
     to compare (no pdfdata match, no earlier trendlyne entry, or a >6-month-old
     note), say e.g. "Dated <Mon-YYYY>; no recent prior to compare" — never invent
     a delta.
-  - **`view`** — ONE sentence of YOUR OWN assessment of that house's stance: is
-    it credible, stale, talking its book, the useful counterweight, an outlier?
-    Be candid.
+  - **`view`** — YOUR OWN assessment of that house's stance, **1–2 short
+    paragraphs** (use `\n\n` between them) where the house is substantive; a
+    single sentence is fine for stale/minor notes. Go beyond the report: is the
+    call credible, stale, talking its book, the useful counterweight, an outlier?
+    What in it would you discount or stress-test, and what does it imply to
+    watch? Draw on your own research/knowledge of the company. Be candid — this
+    is the user's research-assistant view, not a paraphrase of the broker.
 - **`sig`** — the company's houseView signature: the `"broker|date"` keys sorted
   and comma-joined (e.g. `"Asit|250521,Jeff|260518"`). This lets the wrapper
   detect when houseViews change and regenerate. REQUIRED.
