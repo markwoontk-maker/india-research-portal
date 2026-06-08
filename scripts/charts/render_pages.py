@@ -67,9 +67,24 @@ def excluded_keys():
     return {l.strip() for l in EXCLUDE_FILE.read_text(encoding="utf-8").splitlines()
             if l.strip() and not l.lstrip().startswith("#")}
 
+import re as _re
+# sector / thematic decks (vs single-company folders) — charted first in the backfill.
+# Thematic decks use a geography prefix ("India X" / "Indian X" / "Asia X" / "Global X");
+# company folders are proper nouns (e.g. "Asian Paints", "Adani Power"). A few explicit
+# multi-company themes have no geo prefix. (Mis-bucketing a company is harmless — it just
+# gets charted a little earlier.)
+_SECTOR_RE = _re.compile(
+    r'^(india|indian|asia|asean|global)\s|'
+    r'^(automobiles & components|capital markets|strategy|economics)\b', _re.I)
+
+def _sector_first(folders):
+    """Order sector/thematic folders before single-company folders (harmless if a
+    company is mis-bucketed — it just gets charted a little earlier)."""
+    return sorted(folders, key=lambda f: (0 if _SECTOR_RE.search(f) else 1, f))
+
 def all_folders():
-    return [d.name for d in sorted(REPORTS_ROOT.iterdir())
-            if d.is_dir() and d.name not in SKIP_DIRS]
+    return _sector_first([d.name for d in REPORTS_ROOT.iterdir()
+                          if d.is_dir() and d.name not in SKIP_DIRS])
 
 def run(folders, skip_keys, limit=None):
     WORK.mkdir(parents=True, exist_ok=True)
