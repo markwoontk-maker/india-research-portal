@@ -32,12 +32,13 @@ const TRENDLYNE_PRIOR = [
   '  ["Prabhudas Lilladhar","260516","Steel Authority of India","Accumulate · TP ₹209 — Higher steel pricing drive Q4; stepped up capex"],',
 ].join("\n");
 
-// Strip U+FFFD replacement chars (from corrupted bytes in PDF filenames) and
-// trailing whitespace.
+// Keep U+FFFD intact — both data/pdfmap.json and the runtime renderer's
+// pdKey() preserve it as-is, so stripping it here would make the notes
+// array's folder key diverge from the pdfmap key and the headline-to-PDF
+// link would fall through to a Google search. Only normalise trailing
+// whitespace.
 function clean(s){
-  return s
-    .replace(/�/g, "")
-    .replace(/[ \t]+$/gm, "");
+  return s.replace(/[ \t]+$/gm, "");
 }
 
 const recent = clean(fs.readFileSync(RECENT, "utf8")).trimEnd();
