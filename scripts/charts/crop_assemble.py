@@ -23,6 +23,26 @@ _RATING_RE = re.compile(r'recommendation\s*(?:histor|chang)|rating\s*histor|'
 def is_rating_chart(c):
     return bool(_RATING_RE.search((c.get("chart_title") or "") + " | " + (c.get("commentary") or "")))
 
+_LABELNUM_RE = re.compile(r'^\s*(fig|figure|exhibit|chart)\.?\s*0*(\d+)', re.I)
+
+def snap_seed_to_label(page, title, seed):
+    """Vision bboxes can be mis-placed on dense grid pages. If the chart's title
+    carries a 'Exhibit N / Figure N' label, relocate the seed to that label's real
+    position on the page (the label text is reliable). Returns a new seed or None."""
+    if not title:
+        return None
+    m = _LABELNUM_RE.match(title)
+    if not m:
+        return None
+    H = page.rect.height
+    pat = re.compile(r'^\s*' + re.escape(m.group(1)) + r'\.?\s*0*' + m.group(2) + r'\b', re.I)
+    cands = [b for b in page.get_text("blocks") if pat.match((b[4] or "").strip())]
+    if not cands:
+        return None
+    scx, scy = (seed.x0 + seed.x1) / 2, (seed.y0 + seed.y1) / 2
+    fb = min(cands, key=lambda b: abs((b[0] + b[2]) / 2 - scx) + abs((b[1] + b[3]) / 2 - scy))
+    return fitz.Rect(fb[0], fb[1], fb[2], min(H, fb[1] + 0.14 * H))
+
 def _chart_rects(page, top_limit, ybot, W, H):
     """Vector-drawing + raster-image rects within (top_limit, ybot), minus page-wide
     rules and tiny icons — the raw pieces a chart graphic is made of."""
@@ -204,7 +224,12 @@ def main():
                 page = doc[pageno - 1]
                 kept = [c for c in charts if c.get("chart_type") in CHART_TYPES
                         and not is_rating_chart(c)]  # charts/maps/diagrams; no tables, no rating/TP-history charts
-                sib_seeds = [fitz.Rect(*norm_to_points(c["bbox"], w_pt, h_pt)) for c in kept]
+                # snap each seed to its figure-label's real position when the vision
+                # bbox is mis-placed (dense grid pages)
+                sib_seeds = []
+                for c in kept:
+                    s = fitz.Rect(*norm_to_points(c["bbox"], w_pt, h_pt))
+                    sib_seeds.append(snap_seed_to_label(page, c.get("chart_title"), s) or s)
                 n = 0
                 for c, seed in zip(kept, sib_seeds):
                     n += 1
