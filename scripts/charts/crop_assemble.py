@@ -266,7 +266,9 @@ def main():
             doc.close()  # always release the file handle, even mid-PDF
         print("assembled", pdf["slug"], sum(len(v) for v in page_charts.values()), "exhibits")
     final = existing + out if append else out
-    final.sort(key=lambda r: (r["date"], r["source"], r["page"]))
+    # newest reports first; within a report keep source/page order (stable sort)
+    final.sort(key=lambda r: (r["source"], r["page"]))
+    final.sort(key=lambda r: r["date"], reverse=True)
     OUT.write_text(json.dumps({"updated": date.today().isoformat(), "charts": final},
                               indent=2, ensure_ascii=False), encoding="utf-8")
     if append:
