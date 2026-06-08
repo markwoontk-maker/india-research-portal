@@ -57,7 +57,9 @@ def refine_rect(page, seed, siblings=(), is_chart=True):
     chart + its row source. Returns a tight fitz.Rect, or None to fall back to the seed.
     """
     H, W = page.rect.height, page.rect.width
-    header_y, footer_y = 0.055 * H, 0.92 * H
+    # footer cutoff is generous (0.965) so a low "Source:" line on a short/landscape
+    # page isn't mistaken for the page footer and dropped.
+    header_y, footer_y = 0.055 * H, 0.965 * H
     blocks = []
     for b in page.get_text("blocks"):
         x0, y0, x1, y1, txt = b[0], b[1], b[2], b[3], (b[4] or "").strip()
@@ -89,11 +91,23 @@ def refine_rect(page, seed, siblings=(), is_chart=True):
             colx0, colx1 = min(r[0] for r in rects), max(r[2] for r in rects)  # full chart
         else:
             colx0, colx1 = seed.x0, seed.x1
-        # chart graphic pieces that live in this column -> precise top/bottom + x
-        prects = [r for r in rects if min(r[2], colx1) - max(r[0], colx0) > 0.3 * (r[2] - r[0])]
-        if prects:
-            ctop, cbot = min(r[1] for r in prects), max(r[3] for r in prects)
-            colx0, colx1 = max(colx0, min(r[0] for r in prects)), min(colx1, max(r[2] for r in prects))
+        # chart graphic pieces in this column; sub-segment a stacked column into
+        # vertical panels (charts stacked with no per-chart source) and pick the
+        # panel the seed sits in.
+        prects = sorted((r for r in rects if min(r[2], colx1) - max(r[0], colx0) > 0.3 * (r[2] - r[0])),
+                        key=lambda r: r[1])
+        groups, g = [], []
+        for r in prects:
+            if g and r[1] - max(x[3] for x in g) > 0.05 * H:
+                groups.append(g); g = []
+            g.append(r)
+        if g:
+            groups.append(g)
+        if groups:
+            grp = max(groups, key=lambda gp: (min(max(r[3] for r in gp), seed.y1)
+                                              - max(min(r[1] for r in gp), seed.y0)))
+            ctop, cbot = min(r[1] for r in grp), max(r[3] for r in grp)
+            colx0, colx1 = max(colx0, min(r[0] for r in grp)), min(colx1, max(r[2] for r in grp))
         else:
             ctop, cbot = max(by0, seed.y0), min(by1, seed.y1)
         cw = max(1.0, colx1 - colx0)
@@ -108,10 +122,13 @@ def refine_rect(page, seed, siblings=(), is_chart=True):
             if _FIG_RE.match(b[4]):
                 break
         y0 = min([ctop] + [b[1] for b in headers])
-        # bottom = chart + this column's own source line (handles per-column footers)
-        col_srcs = [s for s in sources if min(s[2], colx1) - max(s[0], colx0) > 0
-                    and by0 - 2 <= s[1] <= by1 + 0.02 * H]
-        y1 = max([cbot] + [s[3] for s in col_srcs])
+        # walk DOWN through contiguous in-column text below the chart (x-axis labels,
+        # note, source), stopping at a gap (= next stacked chart). Fixes clipped axes.
+        y1, cur = cbot, cbot
+        for b in sorted((b for b in band if b[3] > cbot - 2 and col(b)), key=lambda b: b[1]):
+            if b[1] - cur > 0.05 * H:
+                break
+            y1 = max(y1, b[3]); cur = b[3]
         # x stays within the column (do NOT widen to a full-width source/heading)
         r = fitz.Rect(max(0, colx0 - px), max(0, y0 - py), min(W, colx1 + px), min(H, y1 + py))
         if r.width >= 0.12 * W and r.height >= 0.04 * H:
