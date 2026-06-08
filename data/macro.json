@@ -1,12 +1,13 @@
 {
-  "updated": "2026-06-04T03:05:00Z",
+  "updated": "2026-06-05T05:00:00Z",
+  "source_note": "Refreshed from Kotak Economy Tracker · 05 Jun 26 (which cites MoSPI/RBI/IMD)",
   "indicators": {
     "gdp": {
       "src": "MoSPI NSO · 29 May 26",
       "tone": "pos",
       "history": [
-        { "value": "+7.6%", "period": "FY2026" },
-        { "value": "+6.5%", "period": "FY2025" }
+        { "value": "+7.7%", "period": "FY2026" },
+        { "value": "+7.1%", "period": "FY2025" }
       ]
     },
     "iip": {
@@ -14,7 +15,7 @@
       "tone": "pos",
       "history": [
         { "value": "+4.9%", "period": "Apr 2026" },
-        { "value": "+4.1%", "period": "Mar 2026" }
+        { "value": "+3.2%", "period": "Mar 2026" }
       ]
     },
     "mfg": {
@@ -58,11 +59,11 @@
       ]
     },
     "repo": {
-      "src": "RBI MPC · 08 Apr 26",
+      "src": "RBI MPC · 05 Jun 26",
       "tone": "",
       "history": [
-        { "value": "5.25%", "period": "Apr 2026" },
-        { "value": "5.50%", "period": "Dec 2025" }
+        { "value": "5.25%", "period": "Jun 2026" },
+        { "value": "5.25%", "period": "Apr 2026" }
       ]
     },
     "monsoon": {
