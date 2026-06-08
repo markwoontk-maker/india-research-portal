@@ -173,8 +173,25 @@
   .gal-chip.on{background:var(--saffron);color:#1a1206;border-color:var(--saffron);font-weight:600}
   .gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
   .gal-card{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
-    overflow:hidden;display:flex;flex-direction:column}
+    overflow:hidden;display:flex;flex-direction:column;position:relative}
   .gal-card img{width:100%;display:block;background:#fff;cursor:zoom-in;border-bottom:1px solid var(--line)}
+  /* hover-to-delete button (top-right of each card) */
+  .gal-del{position:absolute;top:7px;right:7px;width:26px;height:26px;border-radius:50%;
+    border:none;background:rgba(20,15,10,.55);color:#fff;font-size:16px;line-height:1;
+    cursor:pointer;opacity:0;transition:opacity .12s,background .12s;z-index:2;
+    display:flex;align-items:center;justify-content:center}
+  .gal-card:hover .gal-del{opacity:1}
+  .gal-del:hover{background:#c0392b}
+  .gal-toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:10000;
+    display:flex;align-items:center;gap:14px;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:10px;padding:11px 16px;box-shadow:0 8px 28px rgba(0,0,0,.45);font-size:13px;color:var(--text)}
+  .gal-toast[hidden]{display:none}
+  .gal-toast button{background:none;border:none;font-family:'Roboto Mono';font-size:12px;
+    font-weight:600;cursor:pointer;padding:4px 8px;border-radius:6px}
+  .gal-toast .gal-undo{color:var(--saffron)}
+  .gal-toast .gal-undo:hover{background:var(--panel)}
+  .gal-toast .gal-confirm{color:var(--text-dim)}
+  .gal-toast .gal-confirm:hover{background:var(--panel);color:var(--text)}
   .gal-body{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
   .gal-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
   .gal-tags{display:flex;flex-wrap:wrap;gap:5px}
@@ -1974,6 +1991,7 @@
       </div>
     </div>
     <div id="galLightbox" class="gal-lb" hidden><img id="galLbImg" alt="" /><div id="galLbCap" class="gal-lb-cap"></div></div>
+    <div id="galToast" class="gal-toast" hidden><span id="galToastMsg">Chart deleted</span><button type="button" class="gal-undo" id="galUndoBtn">Undo</button><button type="button" class="gal-confirm" id="galConfirmBtn">Confirm</button></div>
     <div id="viewSoon" hidden>
       <div class="card reveal">
         <div class="card-h"><div><h3 id="soonTitle">Section</h3><p>On the roadmap</p></div></div>
@@ -7270,6 +7288,9 @@ function renderPositioning(){
   document.querySelectorAll('#posSeg button').forEach(b=>b.classList.toggle('on', b.dataset.p===posPeriod));
 }
 let _galAll=[], _galFilters={};
+// charts the user hid via hover-delete (persisted per-browser in localStorage)
+let _galDeleted=new Set(JSON.parse(localStorage.getItem('galDeleted')||'[]'));
+function galSaveDeleted(){localStorage.setItem('galDeleted',JSON.stringify([..._galDeleted]));}
 async function loadCharts(){
   const grid=document.getElementById('galGrid');
   try{
@@ -7352,8 +7373,9 @@ function galMatch(c, q){
 function galRender(){
   const grid=document.getElementById('galGrid');
   const q=document.getElementById('galSearch').value.trim().toLowerCase();
-  const rows=_galAll.filter(c=>galMatch(c,q));
-  const total=_galAll.length, reports=new Set(_galAll.map(c=>c.report_key)).size;
+  const live=_galAll.filter(c=>!_galDeleted.has(c.id));   // exclude hover-deleted charts
+  const rows=live.filter(c=>galMatch(c,q));
+  const total=live.length, reports=new Set(live.map(c=>c.report_key)).size;
   document.getElementById('galCount').textContent=
     rows.length===total
       ? `${total} exhibits from ${reports} reports.`
@@ -7375,6 +7397,7 @@ function galRender(){
       : '';
     const cap=galEsc(c.chart_title||c.report_title);
     return `<div class="gal-card">
+      <button type="button" class="gal-del" data-id="${galEsc(c.id)}" title="Delete this chart">&times;</button>
       <img loading="lazy" src="${galEsc(c.image)}" alt="${cap}" data-cap="${cap}" />
       <div class="gal-body">
         ${c.chart_title?`<div class="gal-title">${galEsc(c.chart_title)}</div>`:''}
@@ -7383,7 +7406,21 @@ function galRender(){
       </div></div>`;
   }).join('');
   grid.querySelectorAll('img').forEach(img=>img.addEventListener('click',()=>galLightbox(img.src,img.dataset.cap)));
+  grid.querySelectorAll('.gal-del').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();galDelete(btn.dataset.id);}));
 }
+
+let _galToastTimer=null;
+function galDelete(id){
+  _galDeleted.add(id); galSaveDeleted(); galRender();
+  const t=document.getElementById('galToast');
+  document.getElementById('galToastMsg').textContent='Chart deleted';
+  document.getElementById('galUndoBtn').onclick=()=>{ _galDeleted.delete(id); galSaveDeleted(); galRender(); galToastHide(); };
+  document.getElementById('galConfirmBtn').onclick=galToastHide;  // already persisted; just dismiss
+  t.hidden=false;
+  clearTimeout(_galToastTimer);
+  _galToastTimer=setTimeout(galToastHide,8000);  // no choice = stays deleted
+}
+function galToastHide(){ clearTimeout(_galToastTimer); document.getElementById('galToast').hidden=true; }
 
 function galLightbox(src,cap){
   const lb=document.getElementById('galLightbox');

@@ -16,6 +16,12 @@ from lib import pad_bbox, norm_to_points, source_type, company_sector, fs_slug, 
 
 _SRC_RE = re.compile(r'source\s*[:\-]', re.I)        # "Source:" anywhere (often inside a "Note: … Source: …" block)
 _FIG_RE = re.compile(r'^\s*(fig|figure|exhibit|chart)\.?\s*\d+', re.I)  # a figure-title label
+# broker's automated rating / target-price history chart — excluded from the gallery
+_RATING_RE = re.compile(r'recommendation\s*(?:histor|chang)|rating\s*histor|'
+                        r'target[\s-]price\s*chang|price\s*target\s*histor', re.I)
+
+def is_rating_chart(c):
+    return bool(_RATING_RE.search((c.get("chart_title") or "") + " | " + (c.get("commentary") or "")))
 
 def _chart_rects(page, top_limit, ybot, W, H):
     """Vector-drawing + raster-image rects within (top_limit, ybot), minus page-wide
@@ -179,7 +185,8 @@ def main():
                     continue
                 w_pt, h_pt = page_dims[pageno]
                 page = doc[pageno - 1]
-                kept = [c for c in charts if c.get("chart_type") in CHART_TYPES]  # charts/maps/diagrams; no tables
+                kept = [c for c in charts if c.get("chart_type") in CHART_TYPES
+                        and not is_rating_chart(c)]  # charts/maps/diagrams; no tables, no rating/TP-history charts
                 sib_seeds = [fitz.Rect(*norm_to_points(c["bbox"], w_pt, h_pt)) for c in kept]
                 n = 0
                 for c, seed in zip(kept, sib_seeds):
