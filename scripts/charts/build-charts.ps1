@@ -20,9 +20,9 @@ $claude  = "C:\Users\admin\.local\bin\claude.exe"
 $model   = "sonnet"
 $perCallTimeoutSec = 900     # 15 min hard cap per headless claude call
 $chunkSize = 20              # pages per agent call for long decks (image-budget safe)
-$maxNew    = 12              # cap reports charted per run, so it trickles (catches
-                            # up over days) instead of flooding the first run with
-                            # the entire un-charted library
+$maxNew    = 40              # cap reports charted per run; backfills the ~540-report
+                            # library over ~2 weeks of weekday runs, then settles into
+                            # a few new reports/day. Override per-run via CHARTS_MAX_NEW.
 if ($env:CHARTS_MAX_NEW) { $maxNew = [int]$env:CHARTS_MAX_NEW }
 
 function Out-Log([string]$m){ Write-Output ("[build-charts] " + $m) }
