@@ -22,10 +22,10 @@ $node            = "C:\Program Files\nodejs\node.exe"
 $prompt          = Join-Path $repo "docs\house-view-notes-prompt.md"
 $claude          = "C:\Users\admin\.local\bin\claude.exe"
 $model           = "sonnet"
-$batch           = 3      # companies per call (richer multi-paragraph output - keep small for reliability)
+$batch           = 2      # companies per call (richer multi-paragraph output - small batch limits blast radius if one write fails validation)
 $callTimeoutSec  = 600
 $overallBudgetSec= if ($env:HVN_BUDGET) { [int]$env:HVN_BUDGET } else { 1200 }
-$maxNoProgress   = 3
+$maxNoProgress   = 6      # tolerate a few bad/empty batches before aborting (run is resumable anyway)
 
 function Out-Log([string]$m){ Write-Output ("[build-house-view-notes] " + $m) }
 
@@ -33,7 +33,7 @@ function Out-Log([string]$m){ Write-Output ("[build-house-view-notes] " + $m) }
 $valJs = 'var P=require("path"),CWD=process.cwd();var d=require(P.join(CWD,"data/house_view_notes.json"));if(!d.companies)throw 0;Object.keys(d.companies).forEach(function(k){var c=d.companies[k];if(typeof c.summary!=="string")throw 0;if(!c.brokers||typeof c.brokers!=="object")throw 0;});'
 
 # needGen: companies with houseViews whose signature differs from the stored sig
-$needJs = 'var P=require("path"),CWD=process.cwd();var T=require(P.join(CWD,"data/theses.json"));var n={};try{n=require(P.join(CWD,"data/house_view_notes.json")).companies||{}}catch(e){}function sig(hv){return hv.map(function(v){return v.broker+"|"+v.date}).sort().join(",");}console.log(Object.keys(T).filter(function(c){var hv=T[c]&&T[c].houseViews;if(!hv||!hv.length)return false;var e=n[c];return !(e&&e.sig===sig(hv));}).join("\n"));'
+$needJs = 'var P=require("path"),CWD=process.cwd();var T=require(P.join(CWD,"data/theses.json"));var n={};try{n=require(P.join(CWD,"data/house_view_notes.json")).companies||{}}catch(e){}function sig(hv){return hv.map(function(v){return v.broker+"|"+v.date}).sort().join(",");}function norm(s){return String(s||"").split(",").map(function(x){return x.trim()}).filter(Boolean).sort().join(",");}console.log(Object.keys(T).filter(function(c){var hv=T[c]&&T[c].houseViews;if(!hv||!hv.length)return false;var e=n[c];return !(e&&norm(e.sig)===sig(hv));}).join("\n"));'
 
 # --- locate claude / prompt --------------------------------------------------
 if (-not (Test-Path -LiteralPath $claude)) {
