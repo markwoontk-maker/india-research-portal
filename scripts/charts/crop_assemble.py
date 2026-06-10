@@ -76,6 +76,37 @@ def _chart_rects(page, top_limit, ybot, W, H):
         rs.append([r[0], r[1], r[2], r[3]])
     return rs
 
+def _row_columns(rects, seeds, W):
+    """Split a side-by-side row into columns from the chart GRAPHICS, not the seeds
+    (vision seeds are often drawn far too narrow — JPMorgan — and would clip the chart).
+    Cluster graphics by a small x-gap, then merge the closest columns until there are as
+    many as there are distinct seed x-groups (K). Robust whether the inter-chart gutter is
+    wide (JPMorgan) or as thin as ~0.02*W (CLSA grids)."""
+    if not rects:
+        return []
+    # a per-chart graphic in a multi-up row can't span much more than one column, so drop
+    # rects that bridge the gutter (legends/annotations/strays spanning both charts) before
+    # clustering — otherwise they fuse the columns into one and the split fails.
+    narrow = [r for r in rects if (r[2] - r[0]) <= 0.55 * W]
+    iv = sorted((r[0], r[2]) for r in (narrow or rects))
+    cols = [list(iv[0])]
+    for a, b in iv[1:]:
+        if a > cols[-1][1] + 0.01 * W:
+            cols.append([a, b])
+        else:
+            cols[-1][1] = max(cols[-1][1], b)
+    # drop sub-chart slivers (edge icons / rate-this-research marks). Otherwise such a
+    # stray forms its own column and the merge-to-K below fuses the two REAL charts (whose
+    # gutter can be ~0.02*W) instead of the far-off sliver.
+    cols = [c for c in cols if c[1] - c[0] >= 0.06 * W] or cols
+    cx = sorted((s.x0 + s.x1) / 2 for s in seeds)
+    K = 1 + sum(1 for i in range(1, len(cx)) if cx[i] - cx[i - 1] > 0.15 * W)
+    while len(cols) > K and len(cols) > 1:
+        i = min(range(len(cols) - 1), key=lambda j: cols[j + 1][0] - cols[j][1])
+        cols[i][1] = max(cols[i][1], cols[i + 1][1])
+        del cols[i + 1]
+    return [(a, b) for a, b in cols]
+
 def refine_rect(page, seed, siblings=(), is_chart=True):
     """Snap the rough (vision) rect to the exhibit's true extent using the PDF's own
     geometry. 'Source:' lines delimit exhibits vertically (rows). Within a row, if
@@ -112,19 +143,29 @@ def refine_rect(page, seed, siblings=(), is_chart=True):
     if is_chart:
         rects = _chart_rects(page, by0, by1, W, H)
         # is there a side-by-side sibling chart in this same row-band? (a sibling seed
-        # whose x-range is ~disjoint from this seed's = a multi-up grid). The seed x is
-        # reliable for the column split here — more so than graphic-gutter clustering,
-        # whose inter-chart gap can be as small as ~0.02*W. Vertical sub-segmentation
-        # below then picks the row, so this also handles N×M grids.
-        # a sibling is "in this row" if its y-range OVERLAPS the band — not if its centre
-        # is inside it. Vision seeds are often drawn too tall (down into the footer), which
-        # pushes the centre below the row's source line and used to hide the neighbour, so
-        # the side-by-side split silently failed and both charts cropped full-width.
+        # whose x-range is ~disjoint from this seed's = a multi-up grid). A sibling is "in
+        # this row" if its y-range OVERLAPS the band — not if its centre is inside it.
+        # Vision seeds are often drawn too tall (down into the footer), which pushes the
+        # centre below the row's source line and used to hide the neighbour, so the
+        # side-by-side split silently failed and both charts cropped full-width.
         sibs = [s for s in siblings if s is not seed
                 and min(s.y1, by1) - max(s.y0, by0) > 0.2 * (by1 - by0)]
         multicol = any(min(s.x1, seed.x1) - max(s.x0, seed.x0) <= 0.02 * W for s in sibs)
         if multicol:
-            colx0, colx1 = seed.x0, seed.x1            # trust the vision column for grids
+            # take the column from the row's chart GRAPHICS (the seed x is often too narrow
+            # — JPMorgan — and would clip the chart). Assign this seed to the column it
+            # overlaps most (fallback: nearest centre). Vertical sub-segmentation below then
+            # picks the row, so this also handles N×M grids.
+            cols = _row_columns(rects, [seed] + sibs, W)
+            if len(cols) > 1:
+                ov = lambda c: min(seed.x1, c[1]) - max(seed.x0, c[0])
+                best = max(cols, key=ov)
+                if ov(best) <= 0:
+                    sc = (seed.x0 + seed.x1) / 2
+                    best = min(cols, key=lambda c: abs((c[0] + c[1]) / 2 - sc))
+                colx0, colx1 = best
+            else:
+                colx0, colx1 = seed.x0, seed.x1
         elif rects:
             colx0, colx1 = min(r[0] for r in rects), max(r[2] for r in rects)  # full chart
         else:
@@ -150,6 +191,14 @@ def refine_rect(page, seed, siblings=(), is_chart=True):
             ctop, cbot = max(by0, seed.y0), min(by1, seed.y1)
         cw = max(1.0, colx1 - colx0)
         col = lambda b: (min(b[2], colx1) - max(b[0], colx0)) > 0.3 * min(b[2] - b[0], cw)
+        # A chart's own "Fig N" label is a reliable top anchor. Don't let stray tall
+        # background bands / artifacts whose bbox extends above the label drag the panel top
+        # up into the body text above the chart (JPMorgan QMI cycle-shading bands do this).
+        labs = [b for b in band if col(b) and _FIG_RE.match(b[4]) and b[3] <= (seed.y0 + seed.y1) / 2]
+        if labs:
+            lab_y1 = max(b[3] for b in labs)
+            if ctop < lab_y1:
+                ctop = lab_y1
         # walk up through contiguous short heading/caption lines in this column,
         # stopping AT a "Fig N / Exhibit N" label (don't pull in body text above it)
         headers, cur = [], ctop
