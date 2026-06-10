@@ -69,15 +69,20 @@ function Invoke-Batch([string[]]$names) {
         -RedirectStandardInput $tmpIn -RedirectStandardOutput $tmpOut -RedirectStandardError $tmpErr
   $done = $p.WaitForExit($callTimeoutSec * 1000)
   if (-not $done) { try { $p.Kill() } catch {}; Out-Log "batch timed out (killed)." }
+  $out = Get-Content -LiteralPath $tmpOut -Raw -ErrorAction SilentlyContinue
+  if ($out -and ($out -match 'session limit' -or $out -match 'hit your')) { $script:limited = $true }
   Remove-Item $tmpIn,$tmpOut,$tmpErr -Force -ErrorAction SilentlyContinue
   return $done
 }
 
 function Get-Need { @(& $node $jsNeed 2>$null) | Where-Object { $_ -and $_.Trim() } }
+# accuracy-safe sig recovery first: fixes sig formatting on already-complete notes
+# so the (limited) claude quota is never spent regenerating them.
+& $node (Join-Path $repo "scripts\_hvn_canon.js") 2>&1 | ForEach-Object { Out-Log $_ }
 $need = @(Get-Need)
 Out-Log "$($need.Count) companies need house-view notes (new or changed)."
-$noProgress = 0; $attempted = @{}
-while ($need.Count -gt 0 -and (Get-Date) -lt $deadline -and $noProgress -lt $maxNoProgress) {
+$noProgress = 0; $attempted = @{}; $script:limited = $false
+while ($need.Count -gt 0 -and (Get-Date) -lt $deadline -and $noProgress -lt $maxNoProgress -and -not $script:limited) {
   $b = @($need | Where-Object { -not $attempted[$_] } | Select-Object -First $batch)
   if ($b.Count -eq 0) { break }
   Out-Log ("generate (" + $b.Count + "): " + ($b -join ', '))
@@ -95,7 +100,8 @@ while ($need.Count -gt 0 -and (Get-Date) -lt $deadline -and $noProgress -lt $max
   if ($need.Count -ge $before) { foreach ($n in $b) { $attempted[$n] = $true }; $noProgress++; Out-Log "batch made no progress ($noProgress/$maxNoProgress)." }
   else { $noProgress = 0 }
 }
-if ($noProgress -ge $maxNoProgress) { Out-Log "aborting after $maxNoProgress no-progress batches." }
+if ($script:limited) { Out-Log "claude session limit reached - stopping cleanly; the next daily run resumes." }
+elseif ($noProgress -ge $maxNoProgress) { Out-Log "aborting after $maxNoProgress no-progress batches." }
 $rem = @(Get-Need).Count
 Out-Log ("done - $rem companies still pending.")
 exit 0
