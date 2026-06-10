@@ -16,9 +16,12 @@ from lib import pad_bbox, norm_to_points, source_type, company_sector, fs_slug, 
 
 _SRC_RE = re.compile(r'source\s*[:\-]', re.I)        # "Source:" anywhere (often inside a "Note: … Source: …" block)
 _FIG_RE = re.compile(r'^\s*(fig|figure|exhibit|chart)\.?\s*\d+', re.I)  # a figure-title label
-# broker's automated rating / target-price history chart — excluded from the gallery
+# broker's automated rating / target-price history chart — excluded from the gallery.
+# Also excludes the regulatory "Distribution of ratings / investment banking
+# relationships" disclosure exhibit (Kotak et al.).
 _RATING_RE = re.compile(r'recommendation\s*(?:histor|chang)|rating\s*histor|'
-                        r'target[\s-]price\s*chang|price\s*target\s*histor', re.I)
+                        r'target[\s-]price\s*chang|price\s*target\s*histor|'
+                        r'distribution\s+of\s+ratings|investment\s+banking\s+relationship', re.I)
 
 def is_rating_chart(c):
     return bool(_RATING_RE.search((c.get("chart_title") or "") + " | " + (c.get("commentary") or "")))
@@ -41,6 +44,12 @@ def snap_seed_to_label(page, title, seed):
         return None
     scx, scy = (seed.x0 + seed.x1) / 2, (seed.y0 + seed.y1) / 2
     fb = min(cands, key=lambda b: abs((b[0] + b[2]) / 2 - scx) + abs((b[1] + b[3]) / 2 - scy))
+    # Don't snap to a WIDE block: PyMuPDF often merges the two column labels + title of a
+    # side-by-side row into one block ("Figure 1\nFigure 2\nTitle…"). Snapping to that
+    # widens the seed across both columns and destroys the side-by-side split. A genuine
+    # standalone label (the dense-grid case snap is for) is narrow.
+    if (fb[2] - fb[0]) > 0.35 * page.rect.width:
+        return None
     return fitz.Rect(fb[0], fb[1], fb[2], min(H, fb[1] + 0.14 * H))
 
 def _chart_rects(page, top_limit, ybot, W, H):
@@ -102,8 +111,17 @@ def refine_rect(page, seed, siblings=(), is_chart=True):
 
     if is_chart:
         rects = _chart_rects(page, by0, by1, W, H)
-        # is there a side-by-side sibling chart in this same row-band?
-        sibs = [s for s in siblings if s is not seed and by0 - 2 <= (s.y0 + s.y1) / 2 <= by1 + 2]
+        # is there a side-by-side sibling chart in this same row-band? (a sibling seed
+        # whose x-range is ~disjoint from this seed's = a multi-up grid). The seed x is
+        # reliable for the column split here — more so than graphic-gutter clustering,
+        # whose inter-chart gap can be as small as ~0.02*W. Vertical sub-segmentation
+        # below then picks the row, so this also handles N×M grids.
+        # a sibling is "in this row" if its y-range OVERLAPS the band — not if its centre
+        # is inside it. Vision seeds are often drawn too tall (down into the footer), which
+        # pushes the centre below the row's source line and used to hide the neighbour, so
+        # the side-by-side split silently failed and both charts cropped full-width.
+        sibs = [s for s in siblings if s is not seed
+                and min(s.y1, by1) - max(s.y0, by0) > 0.2 * (by1 - by0)]
         multicol = any(min(s.x1, seed.x1) - max(s.x0, seed.x0) <= 0.02 * W for s in sibs)
         if multicol:
             colx0, colx1 = seed.x0, seed.x1            # trust the vision column for grids
@@ -265,6 +283,29 @@ def main():
         finally:
             doc.close()  # always release the file handle, even mid-PDF
         print("assembled", pdf["slug"], sum(len(v) for v in page_charts.values()), "exhibits")
+    # Safety net: drop byte-identical sibling crops on the same report+page. Poorly drawn
+    # (over-tall / full-width) vision seeds can occasionally resolve two exhibits to the
+    # exact same region; without this the gallery would show visible duplicate cards.
+    import hashlib as _hl
+    seen, deduped = {}, []
+    for r in out:
+        p = CHARTS_DIR.parent / r["image"]
+        try:
+            h = _hl.md5(p.read_bytes()).hexdigest()
+        except OSError:
+            deduped.append(r); continue
+        k = (r["report_key"], r["page"], h)
+        if k in seen:
+            try:
+                p.unlink()
+            except OSError:
+                pass
+            continue
+        seen[k] = True
+        deduped.append(r)
+    if len(deduped) < len(out):
+        print(f"deduped {len(out) - len(deduped)} identical sibling crop(s)")
+    out = deduped
     final = existing + out if append else out
     # newest reports first; within a report keep source/page order (stable sort)
     final.sort(key=lambda r: (r["source"], r["page"]))
