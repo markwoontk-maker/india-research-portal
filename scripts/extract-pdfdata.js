@@ -133,11 +133,14 @@ function extractPrevTP(text, currTP) {
   // JPMorgan: "Prior (Dec-26):$110.00" line directly under Price Target
   m = text.match(new RegExp("\\bPrior\\s*\\([^)]*\\)\\s*:?\\s*" + RS + NUM, "i"));
   if (m) return cleanNum(m[1]);
-  // Nomura: "Target price Reduced from INR ... 845" / "Reduced from INR 1,513"
-  // The previous value sits 0-50 chars after "Reduced/Raised/Cut from",
-  // possibly with a "+X%" upside number in between. Require 3+ digits
-  // so we don't capture "8" from "+8.1%".
-  m = text.match(/(?:Reduced|Raised|Cut|Up|Down|Changed)\s+from(?:\s+(?:INR|Rs\.?|₹|\$|US\$|USD))?[\s\S]{0,50}?\b([\d,]{3,}(?:\.\d+)?)\b(?!\s*\.\d|\s*%)/i);
+  // Nomura: "Target price Reduced from INR 845" / "Reduced from INR 1,513".
+  // Tightened twice over: (1) require a TP keyword within 30 chars
+  // BEFORE the verb so prose like "BeYon targeting ~100 stores, up from
+  // Rs1bn pre-Covid" can't trigger the match; (2) dropped "Up"/"Down"
+  // from the verb alternation — they're far too prose-friendly. Keep
+  // "Raised/Reduced/Cut/Changed" which unambiguously indicate a TP
+  // modification (and Nomura's published table phrasing).
+  m = text.match(/(?:TP|PT|target\s+price|target|FV|fair\s+value|price\s+target)[\s\S]{0,30}?(?:Reduced|Raised|Cut|Changed)\s+from(?:\s+(?:INR|Rs\.?|₹|\$|US\$|USD))?\s*([\d,]{3,}(?:\.\d+)?)\b(?!\s*\.\d|\s*%)/i);
   if (m) return cleanNum(m[1]);
   // Inline "(INR1,513 previously)" / "(Rs1,300 prev)" / "(old Rs1,300)"
   m = text.match(new RegExp("\\((?:INR|Rs\\.?|₹|\\$|US\\$|USD)\\s*" + NUM + "\\s+(?:previously|prev(?:ious)?|earlier|old)\\s*\\)", "i"));
@@ -343,11 +346,105 @@ function extractFlow(p) {
   }
 }
 
+// ---- JPMorgan multi-company sector report parser --------------------
+//
+// JPM publishes sector wraps (India Pipes / India Banks / Asia Equity
+// Strategy etc.) with a structured "Equity Ratings and Price Targets"
+// table that holds per-company curr/prev TP and rating. A single-TP
+// regex on these PDFs picks up the wrong company's number; instead,
+// detect the table and emit one entry per company.
+//
+// flatNoLayout is `pdftotext` output without -layout (cleaner row flow
+// for multi-column tables). flatLayout is the -layout output (used by
+// the rest of the extractor).
+function isJpmSectorTable(flatNoLayout){
+  return /Equity\s+Ratings\s+and\s+Price\s+Targets/i.test(flatNoLayout) &&
+         /\bCompany\s+[\w\s.,'&()\-]+(?:Ltd|Limited|Inc)\b[\s\S]{0,400}?\bCompany|Ticker\s+\w+\s+IN\b[\s\S]{0,200}?\w+\s+IN\b/i.test(flatNoLayout);
+}
+// Normalise a company name from the table to our notebook-folder name.
+// JPM tables show "Astral Ltd" / "Supreme Industries Ltd" — strip the
+// suffix and apply a small alias map for known cases where the folder
+// label differs from the JPM-table label.
+const JPM_NAME_ALIAS = {
+  "Bharat Petroleum Corp": "Bharat Petroleum",
+  "Indian Oil Corp":       "Indian Oil Corporation",
+  "Reliance Industries":   "Reliance Industries",
+  "Bharti Airtel":         "Bharti Airtel",
+  "Hindustan Petroleum":   "Hindustan Petroleum",
+};
+function normCompanyName(raw){
+  const s = String(raw).replace(/\s+(Ltd\.?|Limited|Inc\.?)\b\s*$/i, "").trim();
+  return JPM_NAME_ALIAS[s] || s;
+}
+function parseJpmSectorTPs(flatNoLayout){
+  // Find the "Company A Company B" line then the "Ticker X IN Y IN" line.
+  const compM = flatNoLayout.match(/\bCompany\s+([\s\S]{0,500}?)\bTicker\b/i);
+  if (!compM) return [];
+  // Split company names at the "Ltd"/"Limited" boundary (each company
+  // ends with one of those). Lookbehind keeps the suffix attached.
+  const companies = compM[1]
+    .split(/(?<=\b(?:Ltd|Limited|Inc)\.?)\s+/i)
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map(normCompanyName);
+  if (companies.length < 2) return [];
+
+  // Ratings row: "Rating Cur Prev <CALL1> <change1> <CALL2> <change2> ..."
+  // Each company contributes two tokens (curr / prev), separated by
+  // "n/c" for unchanged. Parse positionally.
+  const CALL_T = "BUY|SELL|HOLD|NEUTRAL|OW|UW|EW|OVERWEIGHT|UNDERWEIGHT|OUTPERFORM|UNDERPERFORM";
+  const ratingM = flatNoLayout.match(new RegExp("\\bRating\\s+Cur\\s+Prev\\s+([\\s\\S]{0,400}?)\\bPrice\\b", "i"));
+  const callsByIdx = [];
+  if (ratingM) {
+    // Tokens of interest: rating words or "n/c"; everything else dropped.
+    const tokens = ratingM[1].split(/\s+/).filter(t =>
+      new RegExp("^(?:" + CALL_T + "|n\\/c)$", "i").test(t));
+    // Pattern per company: <CALL> <CALL|n/c> — for unchanged, the second
+    // is "n/c" meaning "same as Cur".
+    for (let i = 0; i < tokens.length; i += 2) {
+      const cur = tokens[i], prev = tokens[i + 1];
+      if (!cur) break;
+      callsByIdx.push({
+        curr: normCall(cur),
+        prev: /^n\/c$/i.test(prev) ? normCall(cur) : (prev ? normCall(prev) : null),
+      });
+    }
+  }
+  // Price Target rows: each is `<curTP> <month>-<yy> <prevTP> <change>`.
+  const ptIdx = flatNoLayout.search(/Price\s+Target\s+Cur\s+End\s+Date\s+Prev\s+End\s+Date/i);
+  if (ptIdx < 0) return [];
+  const tail = flatNoLayout.slice(ptIdx).slice(0, 4000);
+  const rowRe = /([\d,]+\.\d{2})\s+(?:[A-Z][a-z]+-\d{2})\s+([\d,]+\.\d{2})/g;
+  const tps = [];
+  let m;
+  while ((m = rowRe.exec(tail)) !== null) {
+    tps.push({ curr: cleanNum(m[1]), prev: cleanNum(m[2]) });
+    if (tps.length >= companies.length) break;
+  }
+  if (tps.length === 0) return [];
+
+  const out = [];
+  const n = Math.min(companies.length, tps.length);
+  for (let i = 0; i < n; i++) {
+    const calls = callsByIdx[i] || {};
+    out.push({
+      name:     companies[i],
+      currTP:   tps[i].curr,
+      prevTP:   tps[i].prev,
+      currCall: calls.curr || null,
+      prevCall: calls.prev || null,
+    });
+  }
+  return out;
+}
+
 const pdfs = listPdfs();
 console.log("PDFs in window (>=" + cutoff + "):", pdfs.length);
 
 const out = {};
+const sectorTPs = {};   // key = `${house}|${date}|${company}` → entry + source
 let done = 0, withCurrTP = 0, withPrevTP = 0, withCurrCall = 0, withPrevCall = 0;
+let sectorPdfs = 0, sectorRows = 0;
 const seen = new Set();
 for (const p of pdfs) {
   if (seen.has(p.key)) continue;
@@ -355,18 +452,51 @@ for (const p of pdfs) {
   const text = extractPage1(p.path);
   if (!text) { done++; continue; }
   const flat = text.replace(/\s+/g, " ");
-  const currTP = extractCurrTP(flat);
+
+  // Detect multi-company JPM sector tables and parse them per-company
+  // instead of trying to extract one TP from the whole PDF. The single
+  // -TP extractor on these PDFs picks up the first company's TP and
+  // labels the SECTOR folder with it — wrong.
+  const flatNoLayoutRaw = extractFlow(p.path);
+  const flatNoLayout = flatNoLayoutRaw.replace(/\s+/g, " ");
+  let isSector = false;
+  if (p.house === "JPMorgan" && isJpmSectorTable(flatNoLayout)) {
+    const rows = parseJpmSectorTPs(flatNoLayout);
+    if (rows.length >= 2) {
+      isSector = true;
+      sectorPdfs++;
+      sectorRows += rows.length;
+      const [, date,] = p.date;  // (unused — p.date is the YYMMDD string)
+      const [houseTag, dateTag, folder] = [p.house, p.date, p.key.split("|")[2]];
+      rows.forEach(r => {
+        const k = `${houseTag}|${dateTag}|${r.name}`;
+        sectorTPs[k] = {
+          currTP:       r.currTP,
+          prevTP:       r.prevTP,
+          currCall:     r.currCall,
+          prevCall:     r.prevCall,
+          sourceHouse:  houseTag,
+          sourceDate:   dateTag,
+          sourceFolder: folder,
+          sourceTitle:  p.title,
+          sourcePath:   p.path,
+        };
+      });
+    }
+  }
+
+  const currTP = isSector ? null : extractCurrTP(flat);
   const currCall = extractCurrCall(flat);
-  // Second pass without -layout for summary — gives natural prose
-  // flow instead of column interleaving.
-  const flowText = extractFlow(p.path).replace(/\s+/g, " ").trim();
+  // Reuse the non-layout pass for the hover summary too.
+  const flowText = flatNoLayoutRaw.replace(/\s+/g, " ").trim();
   const entry = {
     currTP,
-    prevTP: extractPrevTP(flat, currTP),
+    prevTP: isSector ? null : extractPrevTP(flat, currTP),
     currCall,
     prevCall: extractPrevCall(flat, currCall),
     summary: extractSummary(flowText || flat, p.title),
   };
+  if (isSector) entry.isSector = true;
   if (entry.currTP) withCurrTP++;
   if (entry.prevTP) withPrevTP++;
   if (entry.currCall) withCurrCall++;
@@ -377,5 +507,8 @@ for (const p of pdfs) {
 }
 
 fs.writeFileSync(OUT, JSON.stringify(out));
+const SECTOR_OUT = path.join(__dirname, "..", "data", "sector-tps.json");
+fs.writeFileSync(SECTOR_OUT, JSON.stringify(sectorTPs));
 console.log("\nDone. Wrote", Object.keys(out).length, "entries to", OUT);
 console.log("Coverage:  currTP", withCurrTP, "| prevTP", withPrevTP, "| currCall", withCurrCall, "| prevCall", withPrevCall);
+console.log("Sector tables:  parsed", sectorPdfs, "JPM sector PDFs →", sectorRows, "per-company entries → " + SECTOR_OUT);
