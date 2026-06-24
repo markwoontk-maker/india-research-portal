@@ -4295,19 +4295,36 @@ function wlRender(){
   if(typeof wlRenderResearch==='function') wlRenderResearch();
 }
 // Resolve a typed query (company name or ticker) to a [name, "TICKER.NS"] pair.
+// Merge Nifty 500 (NAMES) + research-covered (companies.json) names into the
+// add-box autocomplete; companies.json names cover off-Nifty-500 stocks.
+function wlFillDatalist(){
+  const dl=document.getElementById('wlCompanyList'); if(!dl) return;
+  const seen=new Set(), opts=[];
+  for(const tk in NAMES){ const nm=NAMES[tk], k=nm.toLowerCase(); if(seen.has(k)) continue; seen.add(k);
+    opts.push('<option value="'+nm.replace(/"/g,'&quot;')+'">'+tk+'</option>'); }
+  const CO=(typeof window!=='undefined' && window.COMPANIES)||{};
+  for(const nm in CO){ if(!CO[nm] || !CO[nm].ticker) continue; const k=nm.toLowerCase(); if(seen.has(k)) continue; seen.add(k);
+    opts.push('<option value="'+nm.replace(/"/g,'&quot;')+'">'+String(CO[nm].ticker).replace(/\.(NS|BO)$/,'')+'</option>'); }
+  dl.innerHTML=opts.join('');
+}
 function wlResolve(q){
   q=(q||'').trim(); if(!q) return null;
   const hasSuffix=s=>/[.^=]/.test(s);              // already carries an exchange/FX marker
-  const toSym=s=>{ const u=s.toUpperCase(); return hasSuffix(u)?u:u.replace(/\.(NS|BO)$/,'')+'.NS'; };
+  const toSym=s=>{ const u=String(s).toUpperCase(); return hasSuffix(u)?u:u.replace(/\.(NS|BO)$/,'')+'.NS'; };
   // "Company Name | TICKER" (or "Name : TICKER") — add any stock, even off-list.
   let m=q.match(/^(.+?)\s*[|:]\s*([A-Za-z0-9&.\-^=]+)$/);
   if(m) return [m[1].trim(), toSym(m[2])];
   const ql=q.toLowerCase();
-  // Known Nifty 500 name (exact) / ticker / partial.
+  const CO=(typeof window!=='undefined' && window.COMPANIES)||{};
+  // Exact name: Nifty 500 first, then research-covered (companies.json).
   for(const tk in NAMES){ if(NAMES[tk].toLowerCase()===ql) return [NAMES[tk],tk+'.NS']; }
+  for(const k in CO){ if(CO[k] && CO[k].ticker && k.toLowerCase()===ql) return [k, toSym(CO[k].ticker)]; }
+  // Ticker (known Nifty 500), with or without .NS/.BO.
   const upRaw=q.toUpperCase(), upBase=upRaw.replace(/\.(NS|BO)$/,'');
   if(NAMES[upBase]) return [NAMES[upBase], hasSuffix(upRaw)?upRaw:upBase+'.NS'];
+  // Partial name: Nifty 500, then companies.json.
   for(const tk in NAMES){ if(NAMES[tk].toLowerCase().includes(ql)) return [NAMES[tk],tk+'.NS']; }
+  for(const k in CO){ if(CO[k] && CO[k].ticker && k.toLowerCase().includes(ql)) return [k, toSym(CO[k].ticker)]; }
   // Any other single-token symbol (non-Nifty-500 / BSE / suffixed) — accept as typed.
   if(/^[A-Za-z0-9&.\-^=]+$/.test(q)) return [upBase, toSym(q)];
   // Multi-word text that isn't a known name and has no ticker — can't map to a symbol.
@@ -4343,7 +4360,7 @@ let wlInited=false;
 function wlInit(){
   if(wlInited) return; wlInited=true;
   const dl=document.getElementById('wlCompanyList');
-  if(dl) dl.innerHTML=Object.keys(NAMES).map(tk=>`<option value="${NAMES[tk]}">${tk}</option>`).join('');
+  wlFillDatalist();
   document.querySelectorAll('.wl-add').forEach(box=>{
     const inp=box.querySelector('input'), btn=box.querySelector('button'), sec=btn.dataset.sec;
     const go=()=>{ if(wlAdd(sec,inp.value)) inp.value=''; };
@@ -5165,7 +5182,7 @@ const SECTOR_NAMES=new Set([
 const COMPANY_TICKERS={
   'AWL Agri Business':'AWL', 'Adani Power':'ADANIPOWER',
   'Afcons Infrastructure':'AFCONS', 'Amber Enterprises':'AMBER',
-  'Anthem Biosciences':'ANTHEMBIO', 'Astral':'ASTRAL',
+  'Anthem Biosciences':'ANTHEM', 'Astral':'ASTRAL',
   'Avalon Technologies':'AVALON', 'Avenue Supermarts':'DMART',
   'Bajaj Finserv':'BAJAJFINSV', 'Bharat Electronics':'BEL',
   'Bharat Petroleum':'BPCL', 'CMS Info Systems':'CMSINFO',
@@ -5256,6 +5273,7 @@ fetch('data/companies.json',{cache:'no-store'})
   .then(j=>{
     if(!j) return;
     window.COMPANIES=j;
+    if(typeof wlFillDatalist==='function') wlFillDatalist();
     if(typeof wlRenderResearch==='function') wlRenderResearch();
     updateCoDesc();
     // If a company was selected before COMPANIES loaded, its chart
