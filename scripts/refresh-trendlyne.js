@@ -215,46 +215,34 @@ function rowJs(r){
       || (b.date < a.date ? -1 : b.date > a.date ? 1 : 0)
       || a.company.localeCompare(b.company));
 
-  let htmlOut = fs.readFileSync(HTML, "utf8");
+  // As of the 2026-06-23 outage, the inline notesExt array in index.html
+  // is a permanent empty stub. The canonical source is data/research.json
+  // (overlay fetch at the bottom of the page). Write the fresh batch
+  // there via the safe atomic writer; existing `prior` rows are preserved
+  // and stale Trendlyne externals get parked into them (deduped) so the
+  // Prev TP / Prev Call lookup still works.
+  const { readJson, patchResearchJson } = require("./safe-write-json");
+  const existing = readJson(path.join(__dirname, "..", "data", "research.json")) || {};
+  const oldExt   = Array.isArray(existing.ext)   ? existing.ext   : [];
+  const oldPrior = Array.isArray(existing.prior) ? existing.prior : [];
 
-  // Capture existing notesExt to park into notesPrior.
-  const extRe = /let notesExt = \[\r?\n([\s\S]*?)\r?\n\];/;
-  const extM = htmlOut.match(extRe);
-  if (!extM) { console.error("notesExt block not found"); process.exit(1); }
-  const oldExtBody = extM[1];
+  // Build the new ext array.
+  const newExt = fresh.map(r => [r.broker, r.date, r.company, fmtHeadline(r), r.url]);
 
-  // Replace notesExt.
-  const newExtBody = fresh.map(rowJs).join("\n");
-  htmlOut = htmlOut.replace(extRe, "let notesExt = [\n" + newExtBody + "\n];");
-
-  // Extend notesPrior with parked rows.
-  const priorRe = /const notesPrior = \[\r?\n([\s\S]*?)\r?\n\];/;
-  const priorM = htmlOut.match(priorRe);
-  if (!priorM) { console.error("notesPrior block not found"); process.exit(1); }
-  const priorBody = priorM[1];
-
-  // Only append the previous notesExt rows that are NOT already present
-  // in the prior pool (avoid runaway duplication on every refresh).
-  const priorKeys = new Set();
-  for (const line of priorBody.split("\n")) {
-    const m = line.match(/\["([^"]*)","(\d{6})","([^"]*)","([^"]*)"/);
-    if (m) priorKeys.add(m[1] + "|" + m[2] + "|" + m[3] + "|" + m[4].toLowerCase());
+  // Park yesterday's externals into prior, deduped by (house,date,co,title).
+  const priorKey = a => a[0] + "|" + a[1] + "|" + a[2] + "|" + String(a[3]).toLowerCase();
+  const priorSeen = new Set(oldPrior.map(priorKey));
+  const parked = [];
+  for (const row of oldExt) {
+    const k = priorKey(row);
+    if (priorSeen.has(k)) continue;
+    priorSeen.add(k);
+    parked.push(row);
   }
-  const addLines = oldExtBody.split("\n").filter(line => {
-    const m = line.match(/\["([^"]*)","(\d{6})","([^"]*)","([^"]*)"/);
-    if (!m) return false;
-    const k = m[1] + "|" + m[2] + "|" + m[3] + "|" + m[4].toLowerCase();
-    if (priorKeys.has(k)) return false;
-    priorKeys.add(k);
-    return true;
-  });
+  const newPrior = oldPrior.concat(parked);
 
-  if (addLines.length > 0) {
-    const newPriorBody = priorBody + "\n  // Parked from notesExt by refresh-trendlyne.js\n" + addLines.join("\n");
-    htmlOut = htmlOut.replace(priorRe, "const notesPrior = [\n" + newPriorBody + "\n];");
-  }
-
-  fs.writeFileSync(HTML, htmlOut);
-  console.log("notesExt updated:", fresh.length, "rows");
-  console.log("notesPrior extended by:", addLines.length, "rows");
+  patchResearchJson(path.join(__dirname, ".."), { ext: newExt, prior: newPrior });
+  console.log("data/research.json updated (atomic):");
+  console.log("  ext:    " + newExt.length + " rows");
+  console.log("  prior:  +" + parked.length + " parked from previous ext (" + newPrior.length + " total)");
 })();
