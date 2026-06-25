@@ -1,21 +1,22 @@
 # Daily research portal refresh.
 #
-# Triggered by Windows Task Scheduler ~90 s after the upstream
-# "Sorting Folder Rename" task finishes (event 102 on the rename task's
-# completion). That task downloads + renames + sorts any new broker PDFs
-# into the India Related Reports library on disk before this script runs;
-# we inherit its schedule (currently Mon-Fri, but if it's promoted to
-# every day this refresh follows automatically -- no edit needed here).
+# ONE scheduled task. Fires Mon-Fri 09:30 MYT (local time) via Windows
+# Task Scheduler and runs the full pipeline serially:
+#   Step 0:  rename + sort the new broker PDFs into the library
+#            (delegates to C:\Users\admin\.claude\sorting-folder-rename\run-rename.ps1
+#            so the user's existing rename logic + NotebookLM sync stay
+#            in one place). The separate "Sorting Folder Rename" task is
+#            kept disabled so it doesn't double-run at 09:30.
+#   Step 1+: rebuild pdfmap / pdfdata, regenerate notes arrays, refresh
+#            Trendlyne externals, theses / financials / Strategy / FII-DII
+#            / highs / Positioning / Company QA / House-View notes, then
+#            commit + push.
 #
-# End-to-end workflow:
-#   1. Rebuild data/pdfmap.json from the local PDF library on disk.
-#   2. Run pdftotext over every PDF, regex-extract TP/call into pdfdata.json.
-#   3. Rebuild the notes[] (last 2 days) and notesPrior[] (older) arrays
-#      from the current PDF library and patch them into index.html.
-#   4. Pull fresh external broker calls from Trendlyne, refresh notesExt.
-#   5. Rebuild data/theses.json (bull/bear theses, 2-yr freshness window).
-#   6. Rebuild data/financials.json (per-broker Revenue/EBITDA/Net Profit).
-#   7. Commit + push to GitHub (auto-publishes via Pages).
+# Install / reinstall the scheduled task with:
+#   powershell -ExecutionPolicy Bypass -File scripts\install-scheduled-task.ps1
+#
+# Manual run (any time):
+#   powershell -ExecutionPolicy Bypass -File scripts\daily-refresh.ps1
 #
 # Install / reinstall the scheduled task with:
 #   powershell -ExecutionPolicy Bypass -File scripts\install-scheduled-task.ps1
@@ -64,6 +65,21 @@ function Step([string]$desc, [scriptblock]$block){
 
 Log ("Daily research refresh -- repo: " + $repo)
 Log ("Log: " + $log)
+
+# 0. Rename + sort the new broker PDFs into the library, and push them
+#    into NotebookLM. Delegates to the user's own pipeline so all the
+#    rename heuristics stay in one place. Never aborts the refresh -- a
+#    rename failure must not block the data steps below.
+$renameScript = "C:\Users\admin\.claude\sorting-folder-rename\run-rename.ps1"
+if (Test-Path -LiteralPath $renameScript) {
+  Step "sort-and-rename" {
+    & powershell -NoProfile -ExecutionPolicy Bypass -File $renameScript
+    # Force success: rename errors are logged in run-rename's own log.
+    $global:LASTEXITCODE = 0
+  }
+} else {
+  Log ("WARN: rename script not found at " + $renameScript + " -- skipping Step 0.")
+}
 
 # 1. Rebuild data/pdfmap.json (filename -> absolute path map).
 Step "rebuild-pdfmap" { & $node "scripts\rebuild-pdfmap.js" }
@@ -168,7 +184,7 @@ Step "build-house-view-notes" {
 
 # 9. Commit + push if there are any changes. No-op on a quiet day.
 Step "git stage" {
-  & git add data/pdfdata.json data/pdfmap.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/highs.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json data/house_view_notes.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
+  & git add data/pdfdata.json data/pdfmap.json data/research.json data/sector-tps.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/highs.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json data/house_view_notes.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
 }
 Step "git commit + push" {
   $cached = & git diff --cached --stat
