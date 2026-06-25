@@ -1,56 +1,56 @@
 {
-  "_note": "AMFI monthly NET INFLOWS (Rs cr) for the 6 equity cap categories, plus latest-month AUM. asOf = latest COMPLETED/published AMFI month. May-2026 AMFI data not yet released as of 2026-06-05 (AMFI publishes ~10th of next month), so latest is April 2026. months now run 2024-01..2026-04 (28); each hist is aligned to months. The 2025-05..2026-04 tail (last 12) is unchanged. The earlier 16 months (2024-01..2025-04) were backfilled from AMFI monthly data as reported by Angel One, Upstox, Outlook Money, finnovate.in and Business Standard (per-category cap tables; cross-checked where two sources overlapped). Many 2024 articles disclose only a subset of the six cap categories in text (the rest sit in non-parseable images) and AMFI's own site/PDFs were unreachable from the build environment, so cells that could not be reliably sourced are null (NOT estimated). 2024-01/02/03 had no fetchable per-category table and are fully null. Mar-2026 column matches the supplied cross-check anchor exactly. Net flow can be negative (small/mid saw redemptions in the Feb-Mar 2025 correction) though no such cell was sourced here.",
-  "asOf": "2026-04",
-  "prevAsOf": "2026-03",
-  "months": ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04"],
+  "_note": "AMFI monthly NET INFLOWS (Rs cr) for the 6 equity cap categories, plus latest-month AUM. asOf = latest COMPLETED/published AMFI month = May 2026 (released ~10 Jun 2026; cross-checked across univest.in, Outlook Money and multibagg.ai -- all six cap figures reconcile to the Rs 22,907.77 cr total equity inflow). months now run 2024-01..2026-05 (29); each hist is aligned to months. May 2026 net flows (Rs cr): Flexi 5175.54, Small 4945.57, Mid 4385.06, Large&Mid 3278.22, Multi 2291.00, Large 1592.93. Per-category aum/aumShare are still the April 2026 snapshot -- AMFI's per-category AUM for May was not cleanly published in the news sources (only total equity AUM Rs 35,74,352 cr), so AUM was NOT updated rather than estimated. The earlier 16 months (2024-01..2025-04) were backfilled from AMFI monthly data as reported by Angel One, Upstox, Outlook Money, finnovate.in and Business Standard (per-category cap tables; cross-checked where two sources overlapped). Many 2024 articles disclose only a subset of the six cap categories in text (the rest sit in non-parseable images) and AMFI's own site/PDFs were unreachable from the build environment, so cells that could not be reliably sourced are null (NOT estimated). 2024-01/02/03 had no fetchable per-category table and are fully null. Mar-2026 column matches the supplied cross-check anchor exactly. Net flow can be negative (small/mid saw redemptions in the Feb-Mar 2025 correction) though no such cell was sourced here.",
+  "asOf": "2026-05",
+  "prevAsOf": "2026-04",
+  "months": ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05"],
   "categories": [
     {
       "name": "Flexi Cap",
-      "flow": 10147.85,
-      "flowPrev": 10054.12,
+      "flow": 5175.54,
+      "flowPrev": 10147.85,
       "aum": 559366,
       "aumShare": 23.4,
-      "hist": [null, null, null, 2172.93, 3155.07, null, null, 3513.16, null, null, null, null, 5698, 5104, 5615, 5542, 3841.32, 5733, 7654.33, 7679.40, 7029.26, 8928.71, null, 10019, 7672.36, 6924.65, 10054.12, 10147.85]
+      "hist": [null, null, null, 2172.93, 3155.07, null, null, 3513.16, null, null, null, null, 5698, 5104, 5615, 5542, 3841.32, 5733, 7654.33, 7679.40, 7029.26, 8928.71, null, 10019, 7672.36, 6924.65, 10054.12, 10147.85, 5175.54]
     },
     {
       "name": "Large Cap",
-      "flow": 2525,
-      "flowPrev": 2997.84,
+      "flow": 1592.93,
+      "flowPrev": 2525,
       "aum": 398835,
       "aumShare": 16.7,
-      "hist": [null, null, null, 357.56, 663.09, 970.49, 670.12, 2636, null, 3452, 2548, 2010, 3063, 2866, 2479.31, 2671.46, 1250.47, 1694, 2125.09, 2834.88, 2319.04, 971.97, 1640, null, 2004.98, 2111.68, 2997.84, 2525]
+      "hist": [null, null, null, 357.56, 663.09, 970.49, 670.12, 2636, null, 3452, 2548, 2010, 3063, 2866, 2479.31, 2671.46, 1250.47, 1694, 2125.09, 2834.88, 2319.04, 971.97, 1640, null, 2004.98, 2111.68, 2997.84, 2525, 1592.93]
     },
     {
       "name": "Large & Mid Cap",
-      "flow": 4490,
-      "flowPrev": 5307.25,
+      "flow": 3278.22,
+      "flowPrev": 4490,
       "aum": 335218,
       "aumShare": 14.0,
-      "hist": [null, null, null, 2638.91, 2396.91, null, null, 3293, null, null, null, 3811, null, null, null, null, null, 3497, 5034.71, 3325.66, 3805.17, null, null, 4094, 3181.89, 3137.73, 5307.25, 4490]
+      "hist": [null, null, null, 2638.91, 2396.91, null, null, 3293, null, null, null, 3811, null, null, null, null, null, 3497, 5034.71, 3325.66, 3805.17, null, null, 4094, 3181.89, 3137.73, 5307.25, 4490, 3278.22]
     },
     {
       "name": "Mid Cap",
-      "flow": 6551.40,
-      "flowPrev": 6063.53,
+      "flow": 4385.06,
+      "flowPrev": 6551.40,
       "aum": 475012,
       "aumShare": 19.9,
-      "hist": [null, null, null, 1793.07, 2605.70, null, 1644.2, 3054.68, 3130.42, 4682.90, 4883.40, 5093.22, 5147.87, 3406.95, 3438.87, null, 2808.7, 3754.40, 5182.49, 5390.62, 5085.40, 3807.11, 4487, 4176, 3185.47, 4002.99, 6063.53, 6551.40]
+      "hist": [null, null, null, 1793.07, 2605.70, null, 1644.2, 3054.68, 3130.42, 4682.90, 4883.40, 5093.22, 5147.87, 3406.95, 3438.87, null, 2808.7, 3754.40, 5182.49, 5390.62, 5085.40, 3807.11, 4487, 4176, 3185.47, 4002.99, 6063.53, 6551.40, 4385.06]
     },
     {
       "name": "Small Cap",
-      "flow": 6885.90,
-      "flowPrev": 6263.56,
+      "flow": 4945.57,
+      "flowPrev": 6885.90,
       "aum": 392772,
       "aumShare": 16.4,
-      "hist": [null, null, null, null, 2724.67, 2263.47, 2109.2, 3209.33, 3070.84, 3771.97, 4111.89, 4667.70, 5720.87, 3722.46, 4092.12, 3999.95, 3214.21, 4024.50, 6484.43, 4992.90, 4362.91, 3476.04, 4407, 3824, 2942.11, 3881.06, 6263.56, 6885.90]
+      "hist": [null, null, null, null, 2724.67, 2263.47, 2109.2, 3209.33, 3070.84, 3771.97, 4111.89, 4667.70, 5720.87, 3722.46, 4092.12, 3999.95, 3214.21, 4024.50, 6484.43, 4992.90, 4362.91, 3476.04, 4407, 3824, 2942.11, 3881.06, 6263.56, 6885.90, 4945.57]
     },
     {
       "name": "Multi Cap",
-      "flow": 3806.01,
-      "flowPrev": 2981.55,
+      "flow": 2291.00,
+      "flowPrev": 3806.01,
       "aum": 228691,
       "aumShare": 9.6,
-      "hist": [null, null, null, 2723.87, 2644.88, 4708.57, 7084.61, 2475.06, null, null, null, null, 3567, null, 2752.98, 2551.71, null, 2794, 3990.84, 3193.05, null, 2500.43, null, 2255, 1995.23, 1933.53, 2981.55, 3806.01]
+      "hist": [null, null, null, 2723.87, 2644.88, 4708.57, 7084.61, 2475.06, null, null, null, null, 3567, null, 2752.98, 2551.71, null, 2794, 3990.84, 3193.05, null, 2500.43, null, 2255, 1995.23, 1933.53, 2981.55, 3806.01, 2291.00]
     }
   ]
 }
