@@ -136,13 +136,10 @@ Step "build-strategy" {
 #     below actually publishes it. Append-only + idempotent; never throws.
 Step "refresh-fii-dii" { & $node "scripts\refresh-fii-dii.js" }
 
-# 8b2. Refresh the All-Time-High + 52-Week-High lists (data/highs.json) via the
-#      Claude headless miner (Dhan ATH list + Groww Nifty 500 52WH list + the
-#      Nifty 500 constituents CSV filter). Validates JSON + reverts on failure.
-#      Always exits 0.
-Step "build-highs" {
-  & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-highs.ps1"
-}
+# Note: the All-Time-High + 52-Week-High refresh (data/highs.json) was a step
+# here, but is now its own concurrent scheduled task ("India Research Portal
+# Highs Refresh", weekday 09:32) so the highs don't have to wait behind the
+# slow PDF/financial steps. See scripts/build-highs.ps1.
 
 # 8c. Refresh the monthly Positioning data files (fpi_sectors, mf_categories,
 #     sip_flows, model_portfolios) via the Claude headless miner. Gated to ~twice
@@ -184,7 +181,7 @@ Step "build-house-view-notes" {
 
 # 9. Commit + push if there are any changes. No-op on a quiet day.
 Step "git stage" {
-  & git add data/pdfdata.json data/pdfmap.json data/research.json data/sector-tps.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/highs.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json data/house_view_notes.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
+  & git add data/pdfdata.json data/pdfmap.json data/research.json data/sector-tps.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json data/house_view_notes.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
 }
 Step "git commit + push" {
   $cached = & git diff --cached --stat

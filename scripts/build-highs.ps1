@@ -1,9 +1,18 @@
-# Highs (ATH + 52-week-high) daily build step (invoked by daily-refresh.ps1).
+# Highs (ATH + 52-week-high) daily refresh -- STANDALONE scheduled task.
 #
-# Runs the Claude headless miner using docs/highs-refresher-prompt.md to refresh
-# data/highs.json from Dhan (ATH list) + Groww (Nifty 500 52-week-high list) +
-# the Nifty 500 constituents CSV. Validates JSON structure; reverts on any
-# failure. ALWAYS exits 0 so it never aborts the rest of the daily refresh.
+# Runs as the Windows Task Scheduler task "India Research Portal Highs Refresh"
+# (weekday 09:32), CONCURRENTLY with "Sorting Folder Rename" + "India Research
+# Portal Daily Refresh". Self-contained: runs the Claude headless miner against
+# docs/highs-refresher-prompt.md, validates the resulting data/highs.json, and
+# commits + pushes its own diff. Never touches any other file.
+#
+# Concurrency: a `git pull --rebase` precedes the commit so a parallel push
+# from the daily-refresh task doesn't race. The two tasks touch disjoint files
+# (this one only data/highs.json), so rebase is always trivial.
+#
+# Always exits 0 -- a flaky source must not raise the scheduled-task error
+# state. Failures show up in the log as "[build-highs] miner made no change"
+# or "[build-highs] Reverted ...".
 #
 # Manual run:  powershell -ExecutionPolicy Bypass -File scripts\build-highs.ps1
 
@@ -16,7 +25,15 @@ $claude     = "C:\Users\admin\.local\bin\claude.exe"
 $model      = "sonnet"          # cheap + capable; same convention as build-strategy
 $timeoutSec = 600               # 10 min hard cap on the headless run
 
-function Out-Log([string]$m){ Write-Output ("[build-highs] " + $m) }
+$logDir = Join-Path $repo "scripts\logs"
+New-Item -ItemType Directory -Force $logDir | Out-Null
+$log = Join-Path $logDir ("highs-" + (Get-Date -f "yyyyMMdd-HHmmss") + ".log")
+
+function Out-Log([string]$m){
+  $line = "[" + (Get-Date -f "HH:mm:ss") + "] [build-highs] " + $m
+  Write-Host $line
+  Add-Content -LiteralPath $log -Value $line
+}
 
 # --- locate claude ------------------------------------------------------------
 if (-not (Test-Path -LiteralPath $claude)) {
@@ -25,8 +42,14 @@ if (-not (Test-Path -LiteralPath $claude)) {
 }
 if (-not (Test-Path -LiteralPath $promptFile)) { Out-Log "prompt file missing - skipping."; exit 0 }
 
-# --- snapshot for revert ------------------------------------------------------
 Set-Location $repo
+Out-Log ("starting; log = " + $log)
+
+# --- pull latest main so a concurrent daily-refresh push doesn't conflict -----
+Out-Log "git pull --rebase origin main"
+& git pull --rebase origin main 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
+
+# --- snapshot for revert ------------------------------------------------------
 $preHash = if (Test-Path -LiteralPath $file) { (Get-FileHash -LiteralPath $file -Algorithm MD5).Hash } else { "" }
 
 # --- run the headless miner with a timeout ------------------------------------
@@ -87,5 +110,18 @@ if ($bad) {
   exit 0
 }
 
-Out-Log ("Refreshed data/highs.json (asOf " + $j.asOf + ", ath=" + $j.ath.Count + ", w52=" + $j.w52.Count + ").")
+# --- commit + push our diff (only data/highs.json) ----------------------------
+Out-Log ("Refreshed data/highs.json (asOf " + $j.asOf + ", ath=" + $j.ath.Count + ", w52=" + $j.w52.Count + "). Committing.")
+& git add data/highs.json 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
+$cached = & git diff --cached --stat
+if ([string]::IsNullOrWhiteSpace($cached)) { Out-Log "nothing staged after add - exiting."; exit 0 }
+
+$msg = "chore: refresh data/highs.json (" + $j.asOf + ")"
+& git commit -m $msg 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
+
+# Rebase once more in case daily-refresh pushed during the miner run.
+& git pull --rebase origin main 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
+& git push origin main 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
+
+Out-Log "done."
 exit 0
