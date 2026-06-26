@@ -50,37 +50,52 @@ $preHashMf = if (Test-Path -LiteralPath $mfFile) { (Get-FileHash -LiteralPath $m
 
 # --- run the headless miner with a timeout ------------------------------------
 if (-not (Test-Path -LiteralPath $promptFile)) { Out-Log "prompt file missing - skipping."; exit 0 }
-$prompt = Get-Content -LiteralPath $promptFile -Raw
 
-$job = Start-Job -ScriptBlock {
-  param($claude,$prompt,$repo,$dir,$model)
-  Set-Location $repo
-  & $claude -p $prompt `
-      --permission-mode bypassPermissions `
-      --allowedTools Bash Read Edit Grep Glob `
-      --add-dir $dir `
-      --model $model 2>&1
-} -ArgumentList $claude,$prompt,$repo,$strategyDir,$model
+# Feed the prompt via STDIN (the prompt file), NOT `-p <prompt>`: PowerShell 5.1
+# mangles long quoted native-command args, which split the prompt and made claude
+# parse words inside it (e.g. `-layout`) as CLI options. The strategy dir has a
+# space, so it is quoted inside the single arg string for the same reason.
+$outFile = Join-Path $env:TEMP ("strat-miner-out-" + $PID + ".log")
+$errFile = Join-Path $env:TEMP ("strat-miner-err-" + $PID + ".log")
+$argStr  = '-p --permission-mode bypassPermissions ' +
+           '--allowedTools Bash Read Edit Grep Glob ' +
+           '--add-dir "' + $strategyDir + '" --model ' + $model
+$proc = Start-Process -FilePath $claude -ArgumentList $argStr -NoNewWindow -PassThru `
+          -RedirectStandardInput $promptFile -RedirectStandardOutput $outFile -RedirectStandardError $errFile
 
-if (Wait-Job $job -Timeout $timeoutSec) {
-  $out = Receive-Job $job
-  if ($out) { $out | ForEach-Object { Out-Log ("claude> " + ($_ | Out-String).TrimEnd()) } }
-} else {
-  Stop-Job $job -ErrorAction SilentlyContinue
-  Remove-Job $job -Force -ErrorAction SilentlyContinue
+if (-not $proc.WaitForExit($timeoutSec * 1000)) {
+  try { $proc.Kill() } catch {}
   Out-Log "miner timed out - reverting."
   & git checkout -- index.html data/model_portfolios_house.json data/mf_sectors.json 2>&1 | Out-Null
+  Remove-Item -LiteralPath $outFile, $errFile -Force -ErrorAction SilentlyContinue
   exit 0
 }
-Remove-Job $job -Force -ErrorAction SilentlyContinue
+$exitCode = $proc.ExitCode
+$minerOut = ((Get-Content -LiteralPath $outFile -Raw -ErrorAction SilentlyContinue), (Get-Content -LiteralPath $errFile -Raw -ErrorAction SilentlyContinue)) -join "`n"
+Remove-Item -LiteralPath $outFile, $errFile -Force -ErrorAction SilentlyContinue
+foreach ($ln in ($minerOut -split "`r?`n")) { if ($ln.Trim()) { Out-Log ("claude> " + $ln.Trim()) } }
 
 # --- did anything change? -----------------------------------------------------
 $postHash   = (Get-FileHash -LiteralPath $html -Algorithm MD5).Hash
 $postHashMp = if (Test-Path -LiteralPath $mpFile) { (Get-FileHash -LiteralPath $mpFile -Algorithm MD5).Hash } else { "" }
 $postHashMf = if (Test-Path -LiteralPath $mfFile) { (Get-FileHash -LiteralPath $mfFile -Algorithm MD5).Hash } else { "" }
-if ($postHash -eq $preHash -and $postHashMp -eq $preHashMp -and $postHashMf -eq $preHashMf) {
-  Out-Log "miner made no change - updating watermark only."
-  @{ lastMaxTicks = $maxTicks; asOf = (Get-Date).ToString("s") } | ConvertTo-Json | Set-Content -LiteralPath $stateFile -Encoding utf8
+$noChange = ($postHash -eq $preHash -and $postHashMp -eq $preHashMp -and $postHashMf -eq $preHashMf)
+
+# Non-zero exit = the miner errored (CLI/arg/auth). Do NOT advance the watermark
+# (these reports would otherwise never retry); revert any partial edits.
+if ($exitCode -ne 0) {
+  Out-Log ("miner failed (exit " + $exitCode + ") - reverting; watermark NOT advanced.")
+  & git checkout -- index.html data/model_portfolios_house.json data/mf_sectors.json 2>&1 | Out-Null
+  exit 0
+}
+
+if ($noChange) {
+  if ($minerOut -match "STRATEGY UNCHANGED") {
+    Out-Log "miner reports no new content - advancing watermark only."
+    @{ lastMaxTicks = $maxTicks; asOf = (Get-Date).ToString("s") } | ConvertTo-Json | Set-Content -LiteralPath $stateFile -Encoding utf8
+  } else {
+    Out-Log "miner exited 0 but made no change and printed no UNCHANGED marker - watermark NOT advanced (treating as incomplete)."
+  }
   exit 0
 }
 
