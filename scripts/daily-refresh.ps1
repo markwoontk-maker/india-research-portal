@@ -124,12 +124,11 @@ Step "build-theses" { & $node "scripts\build-theses.js" }
 #    the slowest -- usually 5-10 min depending on library size.
 Step "build-financials" { & $node "scripts\build-financials.js" }
 
-# 8. Refresh the Strategy tab from new India strategy PDFs (gated: only runs the
-#    Claude headless miner when a new strategy report appeared; reverts on any
-#    validation failure). Always exits 0 so it never aborts the refresh.
-Step "build-strategy" {
-  & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-strategy.ps1"
-}
+# 8. (Strategy tab moved OUT of the daily pipeline.) It now refreshes WEEKLY via
+#    the standalone "India Research Portal Strategy Weekly" task (Fri 17:00 MYT,
+#    scripts\weekly-strategy-refresh.ps1 → scripts\build-strategy.ps1), which
+#    commits + pushes its own diff. Do not re-add build-strategy here, or the
+#    shared watermark would let the daily run consume new reports before Friday.
 
 # 8b. Append the latest daily FII/DII flows (data/fii_dii.json). Done here (not
 #     the cloud routine, whose git push silently fails) so the local git step
