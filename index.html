@@ -341,7 +341,8 @@
   #wlTradesBody td{padding:2px 4px}
   #wlTradesBody input,#wlTradesBody select{padding:2px 6px}
   /* always-visible delete in the trades table */
-  #wlTradesBody .wl-del{opacity:1;pointer-events:auto;position:static;color:var(--text-mute)}
+  #wlTradesBody .wl-del{opacity:0;pointer-events:auto;position:static;color:var(--text-mute);transition:opacity .12s}
+  #wlTradesBody tr:hover .wl-del{opacity:1}
   #wlTradesBody .wl-del:hover{color:var(--down)}
   /* sortable headers */
   #wlTradesCard th.wl-sort{cursor:pointer;user-select:none}
