@@ -4270,11 +4270,11 @@ async function wlLoadIdxHist(){
   try{
     const j=await getJSON('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent('^CRSLDX')+'?range=10y&interval=1d');
     const r=j&&j.chart&&j.chart.result&&j.chart.result[0];
-    const ts=r&&r.timestamp, q=r&&r.indicators&&r.indicators.quote&&r.indicators.quote[0], cl=q&&q.close;
-    if(ts&&cl){ const dates=[],close=[];
+    const ts=r&&r.timestamp, q=r&&r.indicators&&r.indicators.quote&&r.indicators.quote[0], cl=q&&q.close, op=q&&q.open;
+    if(ts&&cl){ const dates=[],close=[],open=[];
       for(let i=0;i<ts.length;i++){ if(cl[i]!=null){ const dt=new Date(ts[i]*1000);
-        dates.push(dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')); close.push(cl[i]); } }
-      if(dates.length) wlIdxHist={dates,close}; }
+        dates.push(dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')); close.push(cl[i]); open.push((op&&op[i]!=null)?op[i]:cl[i]); } }
+      if(dates.length) wlIdxHist={dates,close,open}; }
   }catch(e){}
   return wlIdxHist;
 }
@@ -4282,7 +4282,7 @@ function wlIdxAt(ymd){
   if(!wlIdxHist||!wlIdxHist.dates.length||!ymd) return null;
   const ds=wlIdxHist.dates; let lo=0,hi=ds.length-1,res=-1;
   while(lo<=hi){ const mid=(lo+hi)>>1; if(ds[mid]<=ymd){res=mid;lo=mid+1;} else hi=mid-1; }
-  return res>=0?wlIdxHist.close[res]:null;
+  return res>=0?((wlIdxHist.open?wlIdxHist.open[res]:wlIdxHist.close[res])):null;
 }
 // User-entered closed trades, persisted.
 const WL_TRADES_LS='irp_trades_v1';
@@ -4294,7 +4294,7 @@ function wlTradesSave(){ try{ localStorage.setItem(WL_TRADES_LS,JSON.stringify(w
 function wlPcSpan(v){ return (v==null||isNaN(v))?'<span style="color:var(--text-mute)">—</span>':'<span class="'+(v>=0?'up':'down')+'">'+(v>=0?'+':'')+v.toFixed(2)+'%</span>'; }
 function wlLatestClose(sym){ const h=wlPxHist[sym]; if(!h||!h.close||!h.close.length) return null; for(let i=h.close.length-1;i>=0;i--){ if(h.close[i]!=null) return h.close[i]; } return null; }
 function wlLatestOpen(sym){ const h=wlPxHist[sym]; if(!h||!h.open||!h.open.length) return null; for(let i=h.open.length-1;i>=0;i--){ if(h.open[i]!=null) return h.open[i]; } return null; }
-function wlIdxLatest(){ if(!wlIdxHist||!wlIdxHist.close||!wlIdxHist.close.length) return null; for(let i=wlIdxHist.close.length-1;i>=0;i--){ if(wlIdxHist.close[i]!=null) return wlIdxHist.close[i]; } return null; }
+function wlIdxLatest(){ if(!wlIdxHist) return null; const arr=wlIdxHist.open||wlIdxHist.close; if(!arr||!arr.length) return null; for(let i=arr.length-1;i>=0;i--){ if(arr[i]!=null) return arr[i]; } return null; }
 function wlTradeCalc(t){
   const ep=(t.ep!=null&&t.ep!=='')?+t.ep:null;
   // Open trade (no exit entered): notional exit = latest stock price / latest index.
