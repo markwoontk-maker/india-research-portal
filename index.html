@@ -4148,6 +4148,57 @@ function wlSetEntry(sym,field,val){
   try{ localStorage.setItem(WL_ENTRY_LS,JSON.stringify(wlEntry)); }catch(_){}
 }
 // The 4 Current-Holdings cells (after Stock): Entry price, Entry date, Return, vs N500.
+// DD/MM/YY display <-> ISO ('YYYY-MM-DD') storage.
+function wlFmtDMY(iso){ const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(iso||''); return m?(m[3]+'/'+m[2]+'/'+m[1].slice(2)):''; }
+function wlParseDMY(str){ const s=String(str==null?'':str).trim(); if(!s) return '';
+  const m=/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})$/.exec(s); if(!m) return null;
+  let d=+m[1],mo=+m[2],y=+m[3]; if(y<100) y+=2000; if(mo<1||mo>12||d<1||d>31) return null;
+  return y+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0'); }
+// Per-stock daily OPEN history (cached) so a date auto-fills its opening price.
+const wlPxHist={};
+async function wlLoadPxHist(sym){
+  if(!sym) return null; if(wlPxHist[sym]!==undefined) return wlPxHist[sym];
+  wlPxHist[sym]=null;
+  try{
+    const j=await getJSON('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?range=max&interval=1d');
+    const r=j&&j.chart&&j.chart.result&&j.chart.result[0];
+    const ts=r&&r.timestamp, q=r&&r.indicators&&r.indicators.quote&&r.indicators.quote[0], op=q&&q.open;
+    if(ts&&op){ const dates=[],open=[];
+      for(let i=0;i<ts.length;i++){ if(op[i]!=null){ const dt=new Date(ts[i]*1000);
+        dates.push(dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')); open.push(op[i]); } }
+      if(dates.length) wlPxHist[sym]={dates:dates,open:open}; }
+  }catch(e){}
+  return wlPxHist[sym];
+}
+function wlOpenAt(sym,ymd){ const h=wlPxHist[sym]; if(!h||!h.dates.length||!ymd) return null;
+  const ds=h.dates; let lo=0,hi=ds.length-1,res=-1;
+  while(lo<=hi){ const mid=(lo+hi)>>1; if(ds[mid]<=ymd){res=mid;lo=mid+1;} else hi=mid-1; }
+  return res>=0?h.open[res]:null; }
+function wlEnsureIdx(){ if(!wlIdxHist && !wlIdxLoading){ wlIdxLoading=true; return wlLoadIdxHist().then(function(){wlIdxLoading=false;}).catch(function(){wlIdxLoading=false;}); } return Promise.resolve(); }
+// Holding: entry-date set -> auto-fill entry price = stock's open on that date.
+function wlHoldFillFromDate(sym,tr,iso){
+  const fin=function(){
+    if(iso){ const o=wlOpenAt(sym,iso); if(o!=null){ wlSetEntry(sym,'price',o.toFixed(2)); const px=tr&&tr.querySelector('.wl-entry-px'); if(px) px.value=o.toFixed(2); } }
+    wlHoldUpdateRow(tr);
+  };
+  Promise.all([ wlEnsureIdx(), sym?wlLoadPxHist(sym):Promise.resolve() ]).then(fin).catch(fin);
+}
+// Trade: date(s) set -> auto-fill entry/exit price = stock's open on each date.
+function wlTradeFillPrices(i){
+  const t=wlTrades[i]; if(!t) return;
+  const fin=function(){
+    if(t.sym){
+      if(t.ed){ const o=wlOpenAt(t.sym,t.ed); if(o!=null) t.ep=o.toFixed(2); }
+      if(t.xd){ const o=wlOpenAt(t.sym,t.xd); if(o!=null) t.xp=o.toFixed(2); }
+      wlTradesSave();
+      const tr=document.querySelector('#wlTradesBody tr[data-i="'+i+'"]');
+      if(tr){ const ep=tr.querySelector('.wl-tr-ep'); if(ep&&t.ep!=null&&t.ep!=='') ep.value=t.ep;
+        const xp=tr.querySelector('.wl-tr-xp'); if(xp&&t.xp!=null&&t.xp!=='') xp.value=t.xp; }
+    }
+    wlTradeUpdateRow(i);
+  };
+  Promise.all([ wlEnsureIdx(), t.sym?wlLoadPxHist(t.sym):Promise.resolve() ]).then(fin).catch(fin);
+}
 function wlHoldUpdateRow(tr){
   if(!tr) return; const px=tr.querySelector('.wl-entry-px'); if(!px) return;
   const sym=px.dataset.sym, e=wlEntry[sym]||{}, d=wlMap[sym];
@@ -4171,7 +4222,7 @@ function wlHoldCells(sy,d){
   const rel=(ret!=null&&idxRet!=null)?(ret-idxRet):null;
   const sa=String(sy).replace(/"/g,'&quot;');
   return '<td class="r"><input class="wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-sym="'+sa+'" value="'+ep+'"></td>'+
-    '<td class="r"><input class="wl-entry-dt" type="date" data-sym="'+sa+'" value="'+ed+'"></td>'+
+    '<td class="r"><input class="wl-entry-dt" type="text" placeholder="DD/MM/YY" data-sym="'+sa+'" value="'+wlFmtDMY(ed)+'"></td>'+
     '<td class="r wl-ret">'+wlPcSpan(ret)+'</td>'+
     '<td class="r wl-rel">'+wlPcSpan(rel)+'</td>';
 }
@@ -4227,9 +4278,9 @@ function wlTradesRender(){
       return '<tr data-i="'+i+'">'+
         '<td><input class="wl-tr-name" list="wlCompanyList" placeholder="Stock" data-i="'+i+'" value="'+esc(t.name)+'"></td>'+
         '<td class="r"><input class="wl-tr-ep wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(ep)+'"></td>'+
-        '<td class="r"><input class="wl-tr-ed wl-entry-dt" type="date" data-i="'+i+'" value="'+esc(ed)+'"></td>'+
+        '<td class="r"><input class="wl-tr-ed wl-entry-dt" type="text" placeholder="DD/MM/YY" data-i="'+i+'" value="'+esc(wlFmtDMY(ed))+'"></td>'+
         '<td class="r"><input class="wl-tr-xp wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(xp)+'"></td>'+
-        '<td class="r"><input class="wl-tr-xd wl-entry-dt" type="date" data-i="'+i+'" value="'+esc(xd)+'"></td>'+
+        '<td class="r"><input class="wl-tr-xd wl-entry-dt" type="text" placeholder="DD/MM/YY" data-i="'+i+'" value="'+esc(wlFmtDMY(xd))+'"></td>'+
         '<td class="r wl-ret">'+pc(ret)+'</td>'+
         '<td class="r wl-ret">'+pc(n5)+'</td>'+
         '<td class="r wl-ret">'+pc(rel)+'</td>'+
@@ -4256,11 +4307,12 @@ function wlTradesInit(){
       const c=inp.className;
       const fld = c.indexOf('wl-tr-name')>=0?'name': c.indexOf('wl-tr-ep')>=0?'ep': c.indexOf('wl-tr-ed')>=0?'ed': c.indexOf('wl-tr-xp')>=0?'xp': c.indexOf('wl-tr-xd')>=0?'xd':null;
       if(!fld) return;
-      wlTrades[i][fld]=inp.value; wlTradesSave();
-      if((fld==='ed'||fld==='xd') && inp.value && !wlIdxHist && !wlIdxLoading){
-        wlIdxLoading=true; wlLoadIdxHist().then(function(){ wlIdxLoading=false; wlTrades.forEach(function(_,k){ wlTradeUpdateRow(k); }); }).catch(function(){ wlIdxLoading=false; });
-      }
-      wlTradeUpdateRow(i);
+      if(fld==='name'){ wlTrades[i].name=inp.value; const it=wlResolve(inp.value); wlTrades[i].sym=it?it[1].split('|')[0]:''; wlTradesSave(); wlTradeFillPrices(i); return; }
+      if(fld==='ep'||fld==='xp'){ wlTrades[i][fld]=inp.value; wlTradesSave(); wlTradeUpdateRow(i); return; }
+      const iso=wlParseDMY(inp.value);
+      if(iso===null){ inp.value=wlFmtDMY(wlTrades[i][fld]||''); return; }
+      wlTrades[i][fld]=iso; inp.value=wlFmtDMY(iso); wlTradesSave();
+      wlTradeFillPrices(i);
     });
     tb.addEventListener('click',function(e){
       const b=e.target.closest('.wl-del'); if(!b) return;
@@ -4531,9 +4583,12 @@ function wlInit(){
     });
     tb.addEventListener('change',e=>{
       const inp=e.target.closest('.wl-entry-px,.wl-entry-dt');
-      if(inp){ wlSetEntry(inp.dataset.sym, inp.classList.contains('wl-entry-px')?'price':'date', inp.value);
-        if(inp.classList.contains('wl-entry-dt') && inp.value && !wlIdxHist && !wlIdxLoading){ wlIdxLoading=true; wlLoadIdxHist().then(function(){ wlIdxLoading=false; document.querySelectorAll('#wlHold tr[data-sec="hold"]').forEach(wlHoldUpdateRow); }).catch(function(){ wlIdxLoading=false; }); }
-        wlHoldUpdateRow(inp.closest('tr')); return; }
+      if(inp){ const sym=inp.dataset.sym, tr=inp.closest('tr');
+        if(inp.classList.contains('wl-entry-px')){ wlSetEntry(sym,'price',inp.value); wlHoldUpdateRow(tr); return; }
+        const iso=wlParseDMY(inp.value);
+        if(iso===null){ inp.value=wlFmtDMY((wlEntry[sym]||{}).date||''); return; }
+        wlSetEntry(sym,'date',iso); inp.value=wlFmtDMY(iso);
+        wlHoldFillFromDate(sym,tr,iso); return; }
       const sel=e.target.closest('.wl-move'); if(!sel||!sel.value) return;
       const tr=sel.closest('tr'); wlMoveSection(tr.dataset.sec,+tr.dataset.i,sel.value);
     });
