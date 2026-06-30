@@ -335,8 +335,24 @@
   .wl-add-trade{background:var(--saffron-soft);color:var(--saffron);border:1px solid rgba(233,162,59,.22);
     border-radius:8px;padding:8px 13px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
   .wl-add-trade:hover{background:rgba(233,162,59,.18)}
-  .wl-tr-call{background:var(--panel);color:var(--text);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:3px 6px;font-size:12px;font-family:inherit;cursor:pointer}
+  .wl-tr-call{background:var(--panel);color:var(--text);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:2px 6px;font-size:12px;font-family:inherit;cursor:pointer}
   .wl-tr-call:focus{outline:none;border-color:var(--saffron)}
+  /* Historical Trades: compact rows */
+  #wlTradesBody td{padding:2px 4px}
+  #wlTradesBody input,#wlTradesBody select{padding:2px 6px}
+  /* always-visible delete in the trades table */
+  #wlTradesBody .wl-del{opacity:1;pointer-events:auto;position:static;color:var(--text-mute)}
+  #wlTradesBody .wl-del:hover{color:var(--down)}
+  /* sortable headers */
+  #wlTradesCard th.wl-sort{cursor:pointer;user-select:none}
+  #wlTradesCard th.wl-sort:hover{color:var(--saffron)}
+  #wlTradesCard .wl-arr{font-size:9px;color:var(--saffron)}
+  /* company name coloured by call */
+  .wl-nm-buy{color:var(--up)} .wl-nm-sell{color:var(--down)}
+  #wlCov .sym.wl-nm-buy{color:var(--up)} #wlCov .sym.wl-nm-sell{color:var(--down)}
+  .wl-cov-call{background:var(--panel);color:var(--text);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:2px 6px;font-size:12px;font-family:inherit;cursor:pointer}
+  .wl-cov-call:focus{outline:none;border-color:var(--saffron)}
+  .wl-tr-head-ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   #wlHold .wl-ret,#wlHold .wl-rel{font-family:'Roboto Mono';font-size:12px;white-space:nowrap}
   /* watchlist add bar (in card header) */
   .wl-add{display:flex;gap:8px;align-items:center;flex:none}
@@ -1819,7 +1835,7 @@
       <div class="card reveal">
         <div class="card-h"><div><h3>Coverage</h3><p>Live prices · NSE</p></div>
           <div class="wl-add"><input list="wlCompanyList" id="wlAddCov" placeholder="Add ticker or name…" autocomplete="off" title="Type a Nifty 500 name, or ANY ticker — TATAINVEST.NS (NSE), 543320.BO (BSE); a bare symbol defaults to .NS. For an off-list name use  Name | TICKER  e.g.  Tata Investment | TATAINVEST.NS"><button data-sec="cov">Add</button></div></div>
-        <table><thead><tr><th>Stock</th><th class="r">Mkt Cap</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
+        <table class="wl-holdings"><thead><tr><th>Stock</th><th class="r">Call</th><th class="r">Mkt Cap</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
           <tbody id="wlCov"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
       <div class="card reveal">
@@ -1829,9 +1845,12 @@
           <tbody id="wlWatch"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
       <div class="card reveal" id="wlTradesCard">
-        <div class="card-h"><div><h3>Historical Trades</h3><p>Closed trades — realized return vs the Nifty 500 over the same holding period</p></div>
-          <button id="wlTradeAdd" class="wl-add-trade">+ Add trade</button></div>
-        <table class="wl-holdings"><thead><tr><th>Stock</th><th class="r">Entry ₹</th><th class="r">Entry Date</th><th class="r">Exit ₹</th><th class="r">Exit Date</th><th class="r">Call</th><th class="r">Total Return</th><th class="r">Nifty 500</th><th class="r">Rel Outperf</th><th></th></tr></thead>
+        <div class="card-h"><div><h3>Historical Trades</h3><p>Click a header to sort · open trades on top, closed below</p></div>
+          <div class="wl-tr-head-ctl">
+            <div class="seg wl-tr-filter"><button data-filt="all" class="on">All</button><button data-filt="open">Open</button><button data-filt="closed">Closed</button></div>
+            <button id="wlTradeAdd" class="wl-add-trade">+ Add trade</button>
+          </div></div>
+        <table class="wl-holdings"><thead><tr><th class="wl-sort" data-sort="name">Stock<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="ep">Entry ₹<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="ed">Entry Date<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="xp">Exit ₹<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="xd">Exit Date<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="call">Call<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="ret">Total Return<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="n5">Nifty 500<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="rel">Rel Outperf<span class="wl-arr"></span></th><th></th></tr></thead>
           <tbody id="wlTradesBody"></tbody></table>
       </div>
     </div>
@@ -4153,9 +4172,14 @@ function wlSetEntry(sym,field,val){
 // DD/MM/YY display <-> ISO ('YYYY-MM-DD') storage.
 function wlFmtDMY(iso){ const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(iso||''); return m?(m[3]+'/'+m[2]+'/'+m[1].slice(2)):''; }
 function wlParseDMY(str){ const s=String(str==null?'':str).trim(); if(!s) return '';
-  const m=/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})$/.exec(s); if(!m) return null;
-  let d=+m[1],mo=+m[2],y=+m[3]; if(y<100) y+=2000; if(mo<1||mo>12||d<1||d>31) return null;
-  return y+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0'); }
+  let dd,mo,y, m=/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})$/.exec(s);
+  if(m){ dd=+m[1]; mo=+m[2]; y=+m[3]; }
+  else { const g=s.replace(/\D/g,'');
+    if(g.length===6){ dd=+g.slice(0,2); mo=+g.slice(2,4); y=+g.slice(4,6); }
+    else if(g.length===8){ dd=+g.slice(0,2); mo=+g.slice(2,4); y=+g.slice(4,8); }
+    else return null; }
+  if(y<100) y+=2000; if(mo<1||mo>12||dd<1||dd>31) return null;
+  return y+'-'+String(mo).padStart(2,'0')+'-'+String(dd).padStart(2,'0'); }
 // Per-stock daily OPEN history (cached) so a date auto-fills its opening price.
 const wlPxHist={};
 async function wlLoadPxHist(sym){
@@ -4186,7 +4210,7 @@ function wlHoldFillFromDate(sym,tr,iso){
   Promise.all([ wlEnsureIdx(), sym?wlLoadPxHist(sym):Promise.resolve() ]).then(fin).catch(fin);
 }
 // Trade: date(s) set -> auto-fill entry/exit price = stock's open on each date.
-function wlTradeFillPrices(i){
+function wlTradeFillPrices(i,full){
   const t=wlTrades[i]; if(!t) return;
   const fin=function(){
     if(t.sym){
@@ -4197,7 +4221,7 @@ function wlTradeFillPrices(i){
       if(tr){ const ep=tr.querySelector('.wl-tr-ep'); if(ep&&t.ep!=null&&t.ep!=='') ep.value=t.ep;
         const xp=tr.querySelector('.wl-tr-xp'); if(xp&&t.xp!=null&&t.xp!=='') xp.value=t.xp; }
     }
-    wlTradeUpdateRow(i);
+    if(full) wlTradesRender(); else wlTradeUpdateRow(i);
   };
   Promise.all([ wlEnsureIdx(), t.sym?wlLoadPxHist(t.sym):Promise.resolve() ]).then(fin).catch(fin);
 }
@@ -4211,6 +4235,15 @@ function wlHoldUpdateRow(tr){
   const rel=(ret!=null&&idxRet!=null)?(ret-idxRet):null;
   const rc=tr.querySelector('.wl-ret'), lc=tr.querySelector('.wl-rel');
   if(rc) rc.innerHTML=wlPcSpan(ret); if(lc) lc.innerHTML=wlPcSpan(rel);
+}
+// Coverage per-stock call (Buy/Hold/Sell), keyed by symbol; persisted.
+const WL_COVCALL_LS='irp_covcalls_v1';
+function wlCovCallLoad(){ try{ return JSON.parse(localStorage.getItem(WL_COVCALL_LS))||{}; }catch(e){ return {}; } }
+let wlCovCall=wlCovCallLoad();
+function wlSaveCovCall(){ try{ localStorage.setItem(WL_COVCALL_LS,JSON.stringify(wlCovCall)); }catch(e){} }
+function wlCovCallCell(sy){
+  const v=wlCovCall[sy]||'Hold'; const sa=String(sy).replace(/"/g,'&quot;');
+  return '<td class="r"><select class="wl-cov-call" data-sym="'+sa+'"><option'+(v==='Buy'?' selected':'')+'>Buy</option><option'+(v==='Hold'?' selected':'')+'>Hold</option><option'+(v==='Sell'?' selected':'')+'>Sell</option></select></td>';
 }
 function wlHoldCells(sy,d){
   const e=wlEntry[sy]||{};
@@ -4253,6 +4286,8 @@ function wlIdxAt(ymd){
 const WL_TRADES_LS='irp_trades_v1';
 function wlTradesLoad(){ try{ const a=JSON.parse(localStorage.getItem(WL_TRADES_LS)); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
 let wlTrades=wlTradesLoad();
+let wlTradeSort={key:'',dir:1};
+let wlTradeFilter='all';
 function wlTradesSave(){ try{ localStorage.setItem(WL_TRADES_LS,JSON.stringify(wlTrades)); }catch(e){} }
 function wlPcSpan(v){ return (v==null||isNaN(v))?'<span style="color:var(--text-mute)">—</span>':'<span class="'+(v>=0?'up':'down')+'">'+(v>=0?'+':'')+v.toFixed(2)+'%</span>'; }
 function wlTradeCalc(t){
@@ -4268,18 +4303,54 @@ function wlTradeUpdateRow(i){
   const c=wlTradeCalc(wlTrades[i]); const cells=tr.querySelectorAll('.wl-ret');
   if(cells.length>=3){ cells[0].innerHTML=wlPcSpan(c.ret); cells[1].innerHTML=wlPcSpan(c.n5); cells[2].innerHTML=wlPcSpan(c.rel); }
 }
+function wlTradeVal(t,key){
+  if(key==='name') return (t.name||'').toLowerCase();
+  if(key==='call') return t.call||'Buy';
+  if(key==='ep') return (t.ep!=null&&t.ep!=='')?+t.ep:null;
+  if(key==='xp') return (t.xp!=null&&t.xp!=='')?+t.xp:null;
+  if(key==='ed') return t.ed||'';
+  if(key==='xd') return t.xd||'';
+  const c=wlTradeCalc(t); if(key==='ret') return c.ret; if(key==='n5') return c.n5; if(key==='rel') return c.rel;
+  return null;
+}
+function wlTradesOrder(){
+  let arr=wlTrades.map(function(t,i){ return {t:t,i:i}; });
+  if(wlTradeFilter==='open') arr=arr.filter(function(o){ return !o.t.xd; });
+  else if(wlTradeFilter==='closed') arr=arr.filter(function(o){ return !!o.t.xd; });
+  if(wlTradeSort.key){
+    const k=wlTradeSort.key, dir=wlTradeSort.dir;
+    arr.sort(function(a,b){
+      const va=wlTradeVal(a.t,k), vb=wlTradeVal(b.t,k);
+      const na=(va==null||va===''), nb=(vb==null||vb==='');
+      if(na&&nb) return 0; if(na) return 1; if(nb) return -1;
+      if(va<vb) return -dir; if(va>vb) return dir; return 0;
+    });
+  } else {
+    arr.sort(function(a,b){
+      const ao=a.t.xd?1:0, bo=b.t.xd?1:0; if(ao!==bo) return ao-bo;     // open first, closed at bottom
+      const da=a.t.ed||'9999-99-99', db=b.t.ed||'9999-99-99';
+      if(da!==db) return da<db?1:-1;                                     // newest entry date first
+      return b.i-a.i;                                                    // newest added first
+    });
+  }
+  return arr;
+}
 function wlTradesRender(){
   const tb=document.getElementById('wlTradesBody'); if(!tb) return;
   const esc=function(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); };
   const pc=function(v){ return (v==null||isNaN(v))?'<span style="color:var(--text-mute)">—</span>':'<span class="'+(v>=0?'up':'down')+'">'+(v>=0?'+':'')+v.toFixed(2)+'%</span>'; };
-  if(!wlTrades.length){
-    tb.innerHTML='<tr><td class="pol-empty" colspan="10">No trades yet — click “+ Add trade”, then type the stock, entry/exit price and dates.</td></tr>';
+  const ths=document.querySelectorAll('#wlTradesCard th.wl-sort');
+  for(let z=0;z<ths.length;z++){ const a=ths[z].querySelector('.wl-arr'); if(a) a.textContent=(wlTradeSort.key===ths[z].dataset.sort)?(wlTradeSort.dir>0?' ▲':' ▼'):''; }
+  const order=wlTradesOrder();
+  if(!order.length){
+    tb.innerHTML='<tr><td class="pol-empty" colspan="10">'+(wlTrades.length?('No '+wlTradeFilter+' trades.'):'No trades yet — click “+ Add trade”, then type the stock, entry/exit price and dates.')+'</td></tr>';
   } else {
-    tb.innerHTML=wlTrades.map(function(t,i){
+    tb.innerHTML=order.map(function(o){ const t=o.t, i=o.i;
       const ep=(t.ep!=null&&t.ep!=='')?t.ep:'', ed=t.ed||'', xp=(t.xp!=null&&t.xp!=='')?t.xp:'', xd=t.xd||'';
       const cc=wlTradeCalc(t), ret=cc.ret, n5=cc.n5, rel=cc.rel;
+      const nmCls=(t.call==='Sell')?'wl-nm-sell':((!t.call||t.call==='Buy')?'wl-nm-buy':'');
       return '<tr data-i="'+i+'">'+
-        '<td><input class="wl-tr-name" list="wlCompanyList" placeholder="Stock" data-i="'+i+'" value="'+esc(t.name)+'"></td>'+
+        '<td><input class="wl-tr-name '+nmCls+'" list="wlCompanyList" placeholder="Stock" data-i="'+i+'" value="'+esc(t.name)+'"></td>'+
         '<td class="r"><input class="wl-tr-ep wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(ep)+'"></td>'+
         '<td class="r"><input class="wl-tr-ed wl-entry-dt" type="text" placeholder="DD/MM/YY" data-i="'+i+'" value="'+esc(wlFmtDMY(ed))+'"></td>'+
         '<td class="r"><input class="wl-tr-xp wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(xp)+'"></td>'+
@@ -4292,7 +4363,6 @@ function wlTradesRender(){
       '</tr>';
     }).join('');
   }
-  // lazy-load index history once a trade carries a date
   if(!wlIdxHist && !wlIdxLoading && wlTrades.some(function(t){ return t.ed||t.xd; })){
     wlIdxLoading=true; wlLoadIdxHist().then(function(){ wlIdxLoading=false; wlTradesRender(); }).catch(function(){ wlIdxLoading=false; });
   }
@@ -4301,24 +4371,36 @@ function wlTradesInit(){
   const addBtn=document.getElementById('wlTradeAdd');
   if(addBtn && !addBtn._wired){ addBtn._wired=true; addBtn.addEventListener('click',function(){
     wlTrades.push({name:'',ep:'',ed:'',xp:'',xd:'',call:'Buy'}); wlTradesSave(); wlTradesRender();
-    const ins=document.querySelectorAll('#wlTradesBody .wl-tr-name'); const last=ins[ins.length-1]; if(last) last.focus();
+    const ni=wlTrades.length-1; const el=document.querySelector('#wlTradesBody .wl-tr-name[data-i="'+ni+'"]'); if(el) el.focus();
+  }); }
+  const filt=document.querySelector('#wlTradesCard .wl-tr-filter');
+  if(filt && !filt._wired){ filt._wired=true; filt.addEventListener('click',function(e){ const b=e.target.closest('button'); if(!b) return;
+    wlTradeFilter=b.dataset.filt||'all';
+    const bs=filt.querySelectorAll('button'); for(let z=0;z<bs.length;z++) bs[z].classList.toggle('on', bs[z]===b);
+    wlTradesRender();
+  }); }
+  const thead=document.querySelector('#wlTradesCard thead');
+  if(thead && !thead._wired){ thead._wired=true; thead.addEventListener('click',function(e){ const th=e.target.closest('th.wl-sort'); if(!th) return;
+    const k=th.dataset.sort;
+    if(wlTradeSort.key===k) wlTradeSort.dir=-wlTradeSort.dir; else { wlTradeSort.key=k; wlTradeSort.dir=1; }
+    wlTradesRender();
   }); }
   const tb=document.getElementById('wlTradesBody');
   if(tb && !tb._wired){ tb._wired=true;
     tb.addEventListener('change',function(e){
       const selCall=e.target.closest('.wl-tr-call');
-      if(selCall){ const ci=+selCall.dataset.i; if(!isNaN(ci)&&wlTrades[ci]){ wlTrades[ci].call=selCall.value; wlTradesSave(); wlTradeUpdateRow(ci); } return; }
+      if(selCall){ const ci=+selCall.dataset.i; if(!isNaN(ci)&&wlTrades[ci]){ wlTrades[ci].call=selCall.value; wlTradesSave(); wlTradesRender(); } return; }
       const inp=e.target.closest('input'); if(!inp) return;
       const i=+inp.dataset.i; if(isNaN(i)||!wlTrades[i]) return;
       const c=inp.className;
       const fld = c.indexOf('wl-tr-name')>=0?'name': c.indexOf('wl-tr-ep')>=0?'ep': c.indexOf('wl-tr-ed')>=0?'ed': c.indexOf('wl-tr-xp')>=0?'xp': c.indexOf('wl-tr-xd')>=0?'xd':null;
       if(!fld) return;
-      if(fld==='name'){ wlTrades[i].name=inp.value; const it=wlResolve(inp.value); wlTrades[i].sym=it?it[1].split('|')[0]:''; wlTradesSave(); wlTradeFillPrices(i); return; }
+      if(fld==='name'){ wlTrades[i].name=inp.value; const it=wlResolve(inp.value); wlTrades[i].sym=it?it[1].split('|')[0]:''; wlTradesSave(); wlTradeFillPrices(i,false); return; }
       if(fld==='ep'||fld==='xp'){ wlTrades[i][fld]=inp.value; wlTradesSave(); wlTradeUpdateRow(i); return; }
       const iso=wlParseDMY(inp.value);
       if(iso===null){ inp.value=wlFmtDMY(wlTrades[i][fld]||''); return; }
       wlTrades[i][fld]=iso; inp.value=wlFmtDMY(iso); wlTradesSave();
-      wlTradeFillPrices(i);
+      wlTradeFillPrices(i,true);
     });
     tb.addEventListener('click',function(e){
       const b=e.target.closest('.wl-del'); if(!b) return;
@@ -4344,8 +4426,9 @@ function wlRows(list,map,sec){
     const tk=(hit||cands[0]).replace('.NS','');
     const px=d&&d.p!=null?'₹'+inr(d.p):'<span style="color:var(--text-mute)">—</span>';
     const mc=(d&&d.p!=null&&d.sh!=null&&wlUsdInr)?d.p*d.sh/wlUsdInr:null;
-    const wlExtra = sec==='hold' ? wlHoldCells(sy,d) : '';
-    return `<tr data-sec="${sec}" data-i="${i}"><td><span class="sym" draggable="true" title="Drag to reorder">${nm}</span><span class="wl-tk">${tk}</span></td>${wlExtra}
+    const wlExtra = sec==='hold' ? wlHoldCells(sy,d) : sec==='cov' ? wlCovCallCell(sy) : '';
+    const nmCls = (sec==='cov' && wlCovCall[sy]==='Sell') ? ' wl-nm-sell' : (sec==='cov' && wlCovCall[sy]==='Buy') ? ' wl-nm-buy' : '';
+    return `<tr data-sec="${sec}" data-i="${i}"><td><span class="sym${nmCls}" draggable="true" title="Drag to reorder">${nm}</span><span class="wl-tk">${tk}</span></td>${wlExtra}
       <td class="r wl-mc">${wlFmtUsd(mc)}</td>
       <td class="r px">${px}</td>
       ${wlPct(d&&d.d1)}${wlPct(d&&d.w1)}${wlPct(d&&d.m1)}${wlPct(d&&d.ytd)}
@@ -4518,6 +4601,8 @@ function wlFillDatalist(){
   const CO=(typeof window!=='undefined' && window.COMPANIES)||{};
   for(const nm in CO){ if(!CO[nm] || !CO[nm].ticker) continue; const k=nm.toLowerCase(); if(seen.has(k)) continue; seen.add(k);
     opts.push('<option value="'+nm.replace(/"/g,'&quot;')+'">'+String(CO[nm].ticker).replace(/\.(NS|BO)$/,'')+'</option>'); }
+  for(const wp of [].concat(WL_HOLD,WL_COV,WL_WATCH)){ const nm=wp[0], k=String(nm).toLowerCase(); if(seen.has(k)) continue; seen.add(k);
+    opts.push('<option value="'+String(nm).replace(/"/g,'&quot;')+'">'+String(wp[1]).split('|')[0].replace(/\.(NS|BO)$/,'')+'</option>'); }
   dl.innerHTML=opts.join('');
 }
 function wlResolve(q){
@@ -4532,12 +4617,14 @@ function wlResolve(q){
   // Exact name: Nifty 500 first, then research-covered (companies.json).
   for(const tk in NAMES){ if(NAMES[tk].toLowerCase()===ql) return [NAMES[tk],tk+'.NS']; }
   for(const k in CO){ if(CO[k] && CO[k].ticker && k.toLowerCase()===ql) return [k, toSym(CO[k].ticker)]; }
+  for(const wp of [].concat(WL_HOLD,WL_COV,WL_WATCH)){ if(String(wp[0]).toLowerCase()===ql) return [wp[0], wp[1].split('|')[0]]; }
   // Ticker (known Nifty 500), with or without .NS/.BO.
   const upRaw=q.toUpperCase(), upBase=upRaw.replace(/\.(NS|BO)$/,'');
   if(NAMES[upBase]) return [NAMES[upBase], hasSuffix(upRaw)?upRaw:upBase+'.NS'];
   // Partial name: Nifty 500, then companies.json.
   for(const tk in NAMES){ if(NAMES[tk].toLowerCase().includes(ql)) return [NAMES[tk],tk+'.NS']; }
   for(const k in CO){ if(CO[k] && CO[k].ticker && k.toLowerCase().includes(ql)) return [k, toSym(CO[k].ticker)]; }
+  for(const wp of [].concat(WL_HOLD,WL_COV,WL_WATCH)){ if(String(wp[0]).toLowerCase().includes(ql)) return [wp[0], wp[1].split('|')[0]]; }
   // Any other single-token symbol (non-Nifty-500 / BSE / suffixed) — accept as typed.
   if(/^[A-Za-z0-9&.\-^=]+$/.test(q)) return [upBase, toSym(q)];
   // Multi-word text that isn't a known name and has no ticker — can't map to a symbol.
@@ -4588,6 +4675,8 @@ function wlInit(){
       const tr=b.closest('tr'); wlDelete(tr.dataset.sec,+tr.dataset.i);
     });
     tb.addEventListener('change',e=>{
+      const covCall=e.target.closest('.wl-cov-call');
+      if(covCall){ wlCovCall[covCall.dataset.sym]=covCall.value; wlSaveCovCall(); wlRender(); return; }
       const inp=e.target.closest('.wl-entry-px,.wl-entry-dt');
       if(inp){ const sym=inp.dataset.sym, tr=inp.closest('tr');
         if(inp.classList.contains('wl-entry-px')){ wlSetEntry(sym,'price',inp.value); wlHoldUpdateRow(tr); return; }
