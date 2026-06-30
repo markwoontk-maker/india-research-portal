@@ -324,6 +324,17 @@
   #wlHold .sym,#wlCov .sym,#wlWatch .sym{display:inline}
   .wl-tk{font-family:'Roboto Mono';font-size:11px;color:var(--text-mute);margin-left:8px}
   #wlHold .wl-mc,#wlCov .wl-mc,#wlWatch .wl-mc{font-family:'Roboto Mono';font-size:12px;color:var(--text-dim);white-space:nowrap}
+  /* Historical Trades: input-bearing table sizes naturally */
+  #viewWatchlist table.wl-holdings{table-layout:auto}
+  #viewWatchlist table.wl-holdings th,#viewWatchlist table.wl-holdings td{width:auto}
+  .wl-entry-px,.wl-entry-dt,.wl-tr-name{background:var(--panel);color:var(--text);border:1px solid rgba(255,255,255,.14);
+    border-radius:6px;padding:3px 6px;font-size:12px;font-family:'Roboto Mono';box-sizing:border-box}
+  .wl-entry-px{width:78px} .wl-entry-dt{width:140px} .wl-tr-name{width:150px;font-family:inherit}
+  .wl-entry-px:focus,.wl-entry-dt:focus,.wl-tr-name:focus{outline:none;border-color:var(--saffron)}
+  #wlTradesBody .wl-ret{font-family:'Roboto Mono';font-size:12px;white-space:nowrap}
+  .wl-add-trade{background:var(--saffron-soft);color:var(--saffron);border:1px solid rgba(233,162,59,.22);
+    border-radius:8px;padding:8px 13px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .wl-add-trade:hover{background:rgba(233,162,59,.18)}
   /* watchlist add bar (in card header) */
   .wl-add{display:flex;gap:8px;align-items:center;flex:none}
   .wl-add input{background:var(--panel);color:var(--text);
@@ -1813,6 +1824,12 @@
           <div class="wl-add"><input list="wlCompanyList" id="wlAddWatch" placeholder="Add ticker or name…" autocomplete="off" title="Type a Nifty 500 name, or ANY ticker — TATAINVEST.NS (NSE), 543320.BO (BSE); a bare symbol defaults to .NS. For an off-list name use  Name | TICKER  e.g.  Tata Investment | TATAINVEST.NS"><button data-sec="watch">Add</button></div></div>
         <table><thead><tr><th>Stock</th><th class="r">Mkt Cap</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
           <tbody id="wlWatch"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
+      </div>
+      <div class="card reveal" id="wlTradesCard">
+        <div class="card-h"><div><h3>Historical Trades</h3><p>Closed trades — realized return vs the Nifty 500 over the same holding period</p></div>
+          <button id="wlTradeAdd" class="wl-add-trade">+ Add trade</button></div>
+        <table class="wl-holdings"><thead><tr><th>Stock</th><th class="r">Entry ₹</th><th class="r">Entry Date</th><th class="r">Exit ₹</th><th class="r">Exit Date</th><th class="r">Total Return</th><th class="r">Nifty 500</th><th class="r">Rel Outperf</th><th></th></tr></thead>
+          <tbody id="wlTradesBody"></tbody></table>
       </div>
     </div>
 
@@ -4119,6 +4136,101 @@ function wlLoad(){
 let WL=wlLoad();
 function wlSave(){ try{ localStorage.setItem(WL_LS,JSON.stringify(WL)); }catch(e){} }
 let wlMap={};
+// Nifty 500 (^CRSLDX) daily closes — for return vs index over a holding period.
+let wlIdxHist=null, wlIdxLoading=false;
+async function wlLoadIdxHist(){
+  if(wlIdxHist) return wlIdxHist;
+  try{
+    const j=await getJSON('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent('^CRSLDX')+'?range=max&interval=1d');
+    const r=j&&j.chart&&j.chart.result&&j.chart.result[0];
+    const ts=r&&r.timestamp, q=r&&r.indicators&&r.indicators.quote&&r.indicators.quote[0], cl=q&&q.close;
+    if(ts&&cl){ const dates=[],close=[];
+      for(let i=0;i<ts.length;i++){ if(cl[i]!=null){ const dt=new Date(ts[i]*1000);
+        dates.push(dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')); close.push(cl[i]); } }
+      if(dates.length) wlIdxHist={dates,close}; }
+  }catch(e){}
+  return wlIdxHist;
+}
+function wlIdxAt(ymd){
+  if(!wlIdxHist||!wlIdxHist.dates.length||!ymd) return null;
+  const ds=wlIdxHist.dates; let lo=0,hi=ds.length-1,res=-1;
+  while(lo<=hi){ const mid=(lo+hi)>>1; if(ds[mid]<=ymd){res=mid;lo=mid+1;} else hi=mid-1; }
+  return res>=0?wlIdxHist.close[res]:null;
+}
+// User-entered closed trades, persisted.
+const WL_TRADES_LS='irp_trades_v1';
+function wlTradesLoad(){ try{ const a=JSON.parse(localStorage.getItem(WL_TRADES_LS)); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
+let wlTrades=wlTradesLoad();
+function wlTradesSave(){ try{ localStorage.setItem(WL_TRADES_LS,JSON.stringify(wlTrades)); }catch(e){} }
+function wlPcSpan(v){ return (v==null||isNaN(v))?'<span style="color:var(--text-mute)">—</span>':'<span class="'+(v>=0?'up':'down')+'">'+(v>=0?'+':'')+v.toFixed(2)+'%</span>'; }
+function wlTradeCalc(t){
+  const ep=(t.ep!=null&&t.ep!=='')?+t.ep:null, xp=(t.xp!=null&&t.xp!=='')?+t.xp:null;
+  const ret=(ep!=null&&xp!=null&&ep!==0)?(xp/ep-1)*100:null;
+  const ie=t.ed?wlIdxAt(t.ed):null, ix=t.xd?wlIdxAt(t.xd):null;
+  const n5=(ie!=null&&ix!=null)?(ix/ie-1)*100:null;
+  return {ret:ret,n5:n5,rel:(ret!=null&&n5!=null)?(ret-n5):null};
+}
+function wlTradeUpdateRow(i){
+  const tr=document.querySelector('#wlTradesBody tr[data-i="'+i+'"]'); if(!tr||!wlTrades[i]) return;
+  const c=wlTradeCalc(wlTrades[i]); const cells=tr.querySelectorAll('.wl-ret');
+  if(cells.length>=3){ cells[0].innerHTML=wlPcSpan(c.ret); cells[1].innerHTML=wlPcSpan(c.n5); cells[2].innerHTML=wlPcSpan(c.rel); }
+}
+function wlTradesRender(){
+  const tb=document.getElementById('wlTradesBody'); if(!tb) return;
+  const esc=function(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); };
+  const pc=function(v){ return (v==null||isNaN(v))?'<span style="color:var(--text-mute)">—</span>':'<span class="'+(v>=0?'up':'down')+'">'+(v>=0?'+':'')+v.toFixed(2)+'%</span>'; };
+  if(!wlTrades.length){
+    tb.innerHTML='<tr><td class="pol-empty" colspan="9">No trades yet — click “+ Add trade”, then type the stock, entry/exit price and dates.</td></tr>';
+  } else {
+    tb.innerHTML=wlTrades.map(function(t,i){
+      const ep=(t.ep!=null&&t.ep!=='')?t.ep:'', ed=t.ed||'', xp=(t.xp!=null&&t.xp!=='')?t.xp:'', xd=t.xd||'';
+      const cc=wlTradeCalc(t), ret=cc.ret, n5=cc.n5, rel=cc.rel;
+      return '<tr data-i="'+i+'">'+
+        '<td><input class="wl-tr-name" list="wlCompanyList" placeholder="Stock" data-i="'+i+'" value="'+esc(t.name)+'"></td>'+
+        '<td class="r"><input class="wl-tr-ep wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(ep)+'"></td>'+
+        '<td class="r"><input class="wl-tr-ed wl-entry-dt" type="date" data-i="'+i+'" value="'+esc(ed)+'"></td>'+
+        '<td class="r"><input class="wl-tr-xp wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(xp)+'"></td>'+
+        '<td class="r"><input class="wl-tr-xd wl-entry-dt" type="date" data-i="'+i+'" value="'+esc(xd)+'"></td>'+
+        '<td class="r wl-ret">'+pc(ret)+'</td>'+
+        '<td class="r wl-ret">'+pc(n5)+'</td>'+
+        '<td class="r wl-ret">'+pc(rel)+'</td>'+
+        '<td class="wl-actions"><button class="wl-del" title="Delete trade" aria-label="Delete trade">✕</button></td>'+
+      '</tr>';
+    }).join('');
+  }
+  // lazy-load index history once a trade carries a date
+  if(!wlIdxHist && !wlIdxLoading && wlTrades.some(function(t){ return t.ed||t.xd; })){
+    wlIdxLoading=true; wlLoadIdxHist().then(function(){ wlIdxLoading=false; wlTradesRender(); }).catch(function(){ wlIdxLoading=false; });
+  }
+}
+function wlTradesInit(){
+  const addBtn=document.getElementById('wlTradeAdd');
+  if(addBtn && !addBtn._wired){ addBtn._wired=true; addBtn.addEventListener('click',function(){
+    wlTrades.push({name:'',ep:'',ed:'',xp:'',xd:''}); wlTradesSave(); wlTradesRender();
+    const ins=document.querySelectorAll('#wlTradesBody .wl-tr-name'); const last=ins[ins.length-1]; if(last) last.focus();
+  }); }
+  const tb=document.getElementById('wlTradesBody');
+  if(tb && !tb._wired){ tb._wired=true;
+    tb.addEventListener('change',function(e){
+      const inp=e.target.closest('input'); if(!inp) return;
+      const i=+inp.dataset.i; if(isNaN(i)||!wlTrades[i]) return;
+      const c=inp.className;
+      const fld = c.indexOf('wl-tr-name')>=0?'name': c.indexOf('wl-tr-ep')>=0?'ep': c.indexOf('wl-tr-ed')>=0?'ed': c.indexOf('wl-tr-xp')>=0?'xp': c.indexOf('wl-tr-xd')>=0?'xd':null;
+      if(!fld) return;
+      wlTrades[i][fld]=inp.value; wlTradesSave();
+      if((fld==='ed'||fld==='xd') && inp.value && !wlIdxHist && !wlIdxLoading){
+        wlIdxLoading=true; wlLoadIdxHist().then(function(){ wlIdxLoading=false; wlTrades.forEach(function(_,k){ wlTradeUpdateRow(k); }); }).catch(function(){ wlIdxLoading=false; });
+      }
+      wlTradeUpdateRow(i);
+    });
+    tb.addEventListener('click',function(e){
+      const b=e.target.closest('.wl-del'); if(!b) return;
+      const tr=b.closest('tr'); const i=+tr.dataset.i; if(isNaN(i)) return;
+      wlTrades.splice(i,1); wlTradesSave(); wlTradesRender();
+    });
+  }
+  wlTradesRender();
+}
 const WL_TBODY={hold:'wlHold',cov:'wlCov',watch:'wlWatch'};
 const WL_LABEL={hold:'Holdings',cov:'Coverage',watch:'Watchlist'};
 function wlPct(v){
@@ -4359,6 +4471,7 @@ function wlMoveSel(sec){
 let wlInited=false;
 function wlInit(){
   if(wlInited) return; wlInited=true;
+  wlTradesInit();
   const dl=document.getElementById('wlCompanyList');
   wlFillDatalist();
   document.querySelectorAll('.wl-add').forEach(box=>{
