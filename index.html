@@ -340,6 +340,7 @@
   /* Historical Trades: compact rows */
   #wlTradesBody td{padding:2px 4px}
   #wlTradesBody input,#wlTradesBody select{padding:2px 6px}
+  #wlTradesBody input.wl-xp-auto{color:var(--text-mute);font-style:italic}
   /* always-visible delete in the trades table */
   #wlTradesBody .wl-del{opacity:0;pointer-events:auto;position:static;color:var(--text-mute);transition:opacity .12s}
   #wlTradesBody tr:hover .wl-del{opacity:1}
@@ -4189,11 +4190,11 @@ async function wlLoadPxHist(sym){
   try{
     const j=await getJSON('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?range=max&interval=1d');
     const r=j&&j.chart&&j.chart.result&&j.chart.result[0];
-    const ts=r&&r.timestamp, q=r&&r.indicators&&r.indicators.quote&&r.indicators.quote[0], op=q&&q.open;
-    if(ts&&op){ const dates=[],open=[];
+    const ts=r&&r.timestamp, q=r&&r.indicators&&r.indicators.quote&&r.indicators.quote[0], op=q&&q.open, clz=q&&q.close;
+    if(ts&&op){ const dates=[],open=[],close=[];
       for(let i=0;i<ts.length;i++){ if(op[i]!=null){ const dt=new Date(ts[i]*1000);
-        dates.push(dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')); open.push(op[i]); } }
-      if(dates.length) wlPxHist[sym]={dates:dates,open:open}; }
+        dates.push(dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')); open.push(op[i]); close.push((clz&&clz[i]!=null)?clz[i]:op[i]); } }
+      if(dates.length) wlPxHist[sym]={dates:dates,open:open,close:close}; }
   }catch(e){}
   return wlPxHist[sym];
 }
@@ -4291,11 +4292,16 @@ let wlTradeSort={key:'',dir:1};
 let wlTradeFilter='all';
 function wlTradesSave(){ try{ localStorage.setItem(WL_TRADES_LS,JSON.stringify(wlTrades)); }catch(e){} }
 function wlPcSpan(v){ return (v==null||isNaN(v))?'<span style="color:var(--text-mute)">—</span>':'<span class="'+(v>=0?'up':'down')+'">'+(v>=0?'+':'')+v.toFixed(2)+'%</span>'; }
+function wlLatestClose(sym){ const h=wlPxHist[sym]; if(!h||!h.close||!h.close.length) return null; for(let i=h.close.length-1;i>=0;i--){ if(h.close[i]!=null) return h.close[i]; } return null; }
+function wlIdxLatest(){ if(!wlIdxHist||!wlIdxHist.close||!wlIdxHist.close.length) return null; for(let i=wlIdxHist.close.length-1;i>=0;i--){ if(wlIdxHist.close[i]!=null) return wlIdxHist.close[i]; } return null; }
 function wlTradeCalc(t){
-  const ep=(t.ep!=null&&t.ep!=='')?+t.ep:null, xp=(t.xp!=null&&t.xp!=='')?+t.xp:null;
+  const ep=(t.ep!=null&&t.ep!=='')?+t.ep:null;
+  // Open trade (no exit entered): notional exit = latest stock price / latest index.
+  const xp=(t.xp!=null&&t.xp!=='')?+t.xp:(t.sym?wlLatestClose(t.sym):null);
   let ret=(ep!=null&&xp!=null&&ep!==0)?(xp/ep-1)*100:null;
   if(ret!=null && t.call==='Sell') ret=-ret;
-  const ie=t.ed?wlIdxAt(t.ed):null, ix=t.xd?wlIdxAt(t.xd):null;
+  const ie=t.ed?wlIdxAt(t.ed):null;
+  const ix=t.xd?wlIdxAt(t.xd):wlIdxLatest();
   const n5=(ie!=null&&ix!=null)?(ix/ie-1)*100:null;
   return {ret:ret,n5:n5,rel:(ret!=null&&n5!=null)?(ret-n5):null};
 }
@@ -4348,13 +4354,15 @@ function wlTradesRender(){
   } else {
     tb.innerHTML=order.map(function(o){ const t=o.t, i=o.i;
       const ep=(t.ep!=null&&t.ep!=='')?t.ep:'', ed=t.ed||'', xp=(t.xp!=null&&t.xp!=='')?t.xp:'', xd=t.xd||'';
+      const autoXp=(xp===''&&t.sym)?wlLatestClose(t.sym):null;
+      const xpShown=(xp!=='')?xp:(autoXp!=null?autoXp.toFixed(2):''), xpCls=(xp===''&&autoXp!=null)?' wl-xp-auto':'';
       const cc=wlTradeCalc(t), ret=cc.ret, n5=cc.n5, rel=cc.rel;
       const nmCls=(t.call==='Sell')?'wl-nm-sell':((!t.call||t.call==='Buy')?'wl-nm-buy':'');
       return '<tr data-i="'+i+'">'+
         '<td><input class="wl-tr-name '+nmCls+'" list="wlCompanyList" placeholder="Stock" data-i="'+i+'" value="'+esc(t.name)+'"></td>'+
         '<td class="r"><input class="wl-tr-ep wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(ep)+'"></td>'+
         '<td class="r"><input class="wl-tr-ed wl-entry-dt" type="text" placeholder="DD/MM/YY" data-i="'+i+'" value="'+esc(wlFmtDMY(ed))+'"></td>'+
-        '<td class="r"><input class="wl-tr-xp wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(xp)+'"></td>'+
+        '<td class="r"><input class="wl-tr-xp wl-entry-px'+xpCls+'" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(xpShown)+'"'+(xpCls?' title="Latest price — open trade (no exit yet)"':'')+'></td>'+
         '<td class="r"><input class="wl-tr-xd wl-entry-dt" type="text" placeholder="DD/MM/YY" data-i="'+i+'" value="'+esc(wlFmtDMY(xd))+'"></td>'+
         '<td class="r"><select class="wl-tr-call" data-i="'+i+'"><option'+((t.call||'Buy')==='Buy'?' selected':'')+'>Buy</option><option'+((t.call||'Buy')==='Hold'?' selected':'')+'>Hold</option><option'+((t.call||'Buy')==='Sell'?' selected':'')+'>Sell</option></select></td>'+
         '<td class="r wl-ret">'+pc(ret)+'</td>'+
@@ -4367,6 +4375,7 @@ function wlTradesRender(){
   if(!wlIdxHist && !wlIdxLoading && wlTrades.some(function(t){ return t.ed||t.xd; })){
     wlIdxLoading=true; wlLoadIdxHist().then(function(){ wlIdxLoading=false; wlTradesRender(); }).catch(function(){ wlIdxLoading=false; });
   }
+  wlTrades.forEach(function(t){ if(t.sym && (t.xp==null||t.xp==='') && wlPxHist[t.sym]===undefined){ wlLoadPxHist(t.sym).then(function(){ wlTradesRender(); }); } });
 }
 function wlTradesInit(){
   const addBtn=document.getElementById('wlTradeAdd');
