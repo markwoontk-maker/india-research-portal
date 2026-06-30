@@ -335,6 +335,8 @@
   .wl-add-trade{background:var(--saffron-soft);color:var(--saffron);border:1px solid rgba(233,162,59,.22);
     border-radius:8px;padding:8px 13px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
   .wl-add-trade:hover{background:rgba(233,162,59,.18)}
+  .wl-tr-call{background:var(--panel);color:var(--text);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:3px 6px;font-size:12px;font-family:inherit;cursor:pointer}
+  .wl-tr-call:focus{outline:none;border-color:var(--saffron)}
   #wlHold .wl-ret,#wlHold .wl-rel{font-family:'Roboto Mono';font-size:12px;white-space:nowrap}
   /* watchlist add bar (in card header) */
   .wl-add{display:flex;gap:8px;align-items:center;flex:none}
@@ -1829,7 +1831,7 @@
       <div class="card reveal" id="wlTradesCard">
         <div class="card-h"><div><h3>Historical Trades</h3><p>Closed trades — realized return vs the Nifty 500 over the same holding period</p></div>
           <button id="wlTradeAdd" class="wl-add-trade">+ Add trade</button></div>
-        <table class="wl-holdings"><thead><tr><th>Stock</th><th class="r">Entry ₹</th><th class="r">Entry Date</th><th class="r">Exit ₹</th><th class="r">Exit Date</th><th class="r">Total Return</th><th class="r">Nifty 500</th><th class="r">Rel Outperf</th><th></th></tr></thead>
+        <table class="wl-holdings"><thead><tr><th>Stock</th><th class="r">Entry ₹</th><th class="r">Entry Date</th><th class="r">Exit ₹</th><th class="r">Exit Date</th><th class="r">Call</th><th class="r">Total Return</th><th class="r">Nifty 500</th><th class="r">Rel Outperf</th><th></th></tr></thead>
           <tbody id="wlTradesBody"></tbody></table>
       </div>
     </div>
@@ -4255,7 +4257,8 @@ function wlTradesSave(){ try{ localStorage.setItem(WL_TRADES_LS,JSON.stringify(w
 function wlPcSpan(v){ return (v==null||isNaN(v))?'<span style="color:var(--text-mute)">—</span>':'<span class="'+(v>=0?'up':'down')+'">'+(v>=0?'+':'')+v.toFixed(2)+'%</span>'; }
 function wlTradeCalc(t){
   const ep=(t.ep!=null&&t.ep!=='')?+t.ep:null, xp=(t.xp!=null&&t.xp!=='')?+t.xp:null;
-  const ret=(ep!=null&&xp!=null&&ep!==0)?(xp/ep-1)*100:null;
+  let ret=(ep!=null&&xp!=null&&ep!==0)?(xp/ep-1)*100:null;
+  if(ret!=null && t.call==='Sell') ret=-ret;
   const ie=t.ed?wlIdxAt(t.ed):null, ix=t.xd?wlIdxAt(t.xd):null;
   const n5=(ie!=null&&ix!=null)?(ix/ie-1)*100:null;
   return {ret:ret,n5:n5,rel:(ret!=null&&n5!=null)?(ret-n5):null};
@@ -4270,7 +4273,7 @@ function wlTradesRender(){
   const esc=function(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); };
   const pc=function(v){ return (v==null||isNaN(v))?'<span style="color:var(--text-mute)">—</span>':'<span class="'+(v>=0?'up':'down')+'">'+(v>=0?'+':'')+v.toFixed(2)+'%</span>'; };
   if(!wlTrades.length){
-    tb.innerHTML='<tr><td class="pol-empty" colspan="9">No trades yet — click “+ Add trade”, then type the stock, entry/exit price and dates.</td></tr>';
+    tb.innerHTML='<tr><td class="pol-empty" colspan="10">No trades yet — click “+ Add trade”, then type the stock, entry/exit price and dates.</td></tr>';
   } else {
     tb.innerHTML=wlTrades.map(function(t,i){
       const ep=(t.ep!=null&&t.ep!=='')?t.ep:'', ed=t.ed||'', xp=(t.xp!=null&&t.xp!=='')?t.xp:'', xd=t.xd||'';
@@ -4281,6 +4284,7 @@ function wlTradesRender(){
         '<td class="r"><input class="wl-tr-ed wl-entry-dt" type="text" placeholder="DD/MM/YY" data-i="'+i+'" value="'+esc(wlFmtDMY(ed))+'"></td>'+
         '<td class="r"><input class="wl-tr-xp wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(xp)+'"></td>'+
         '<td class="r"><input class="wl-tr-xd wl-entry-dt" type="text" placeholder="DD/MM/YY" data-i="'+i+'" value="'+esc(wlFmtDMY(xd))+'"></td>'+
+        '<td class="r"><select class="wl-tr-call" data-i="'+i+'"><option'+((t.call||'Buy')==='Buy'?' selected':'')+'>Buy</option><option'+((t.call||'Buy')==='Hold'?' selected':'')+'>Hold</option><option'+((t.call||'Buy')==='Sell'?' selected':'')+'>Sell</option></select></td>'+
         '<td class="r wl-ret">'+pc(ret)+'</td>'+
         '<td class="r wl-ret">'+pc(n5)+'</td>'+
         '<td class="r wl-ret">'+pc(rel)+'</td>'+
@@ -4296,12 +4300,14 @@ function wlTradesRender(){
 function wlTradesInit(){
   const addBtn=document.getElementById('wlTradeAdd');
   if(addBtn && !addBtn._wired){ addBtn._wired=true; addBtn.addEventListener('click',function(){
-    wlTrades.push({name:'',ep:'',ed:'',xp:'',xd:''}); wlTradesSave(); wlTradesRender();
+    wlTrades.push({name:'',ep:'',ed:'',xp:'',xd:'',call:'Buy'}); wlTradesSave(); wlTradesRender();
     const ins=document.querySelectorAll('#wlTradesBody .wl-tr-name'); const last=ins[ins.length-1]; if(last) last.focus();
   }); }
   const tb=document.getElementById('wlTradesBody');
   if(tb && !tb._wired){ tb._wired=true;
     tb.addEventListener('change',function(e){
+      const selCall=e.target.closest('.wl-tr-call');
+      if(selCall){ const ci=+selCall.dataset.i; if(!isNaN(ci)&&wlTrades[ci]){ wlTrades[ci].call=selCall.value; wlTradesSave(); wlTradeUpdateRow(ci); } return; }
       const inp=e.target.closest('input'); if(!inp) return;
       const i=+inp.dataset.i; if(isNaN(i)||!wlTrades[i]) return;
       const c=inp.className;
