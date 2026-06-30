@@ -46,8 +46,10 @@ Set-Location $repo
 Out-Log ("starting; log = " + $log)
 
 # --- pull latest main so a concurrent daily-refresh push doesn't conflict -----
-Out-Log "git pull --rebase origin main"
-& git pull --rebase origin main 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
+# --autostash so unrelated working-tree dirt (e.g. daily-refresh's untracked
+# scratch files) doesn't block the rebase.
+Out-Log "git pull --rebase --autostash origin main"
+& git pull --rebase --autostash origin main 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
 
 # --- snapshot for revert ------------------------------------------------------
 $preHash = if (Test-Path -LiteralPath $file) { (Get-FileHash -LiteralPath $file -Algorithm MD5).Hash } else { "" }
@@ -120,7 +122,7 @@ $msg = "chore: refresh data/highs.json (" + $j.asOf + ")"
 & git commit -m $msg 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
 
 # Rebase once more in case daily-refresh pushed during the miner run.
-& git pull --rebase origin main 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
+& git pull --rebase --autostash origin main 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
 & git push origin main 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
 
 Out-Log "done."
