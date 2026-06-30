@@ -4188,7 +4188,7 @@ async function wlLoadPxHist(sym){
   if(!sym) return null; if(wlPxHist[sym]!==undefined) return wlPxHist[sym];
   wlPxHist[sym]=null;
   try{
-    const j=await getJSON('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?range=max&interval=1d');
+    const j=await getJSON('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?range=10y&interval=1d');
     const r=j&&j.chart&&j.chart.result&&j.chart.result[0];
     const ts=r&&r.timestamp, q=r&&r.indicators&&r.indicators.quote&&r.indicators.quote[0], op=q&&q.open, clz=q&&q.close;
     if(ts&&op){ const dates=[],open=[],close=[];
@@ -4268,7 +4268,7 @@ let wlIdxHist=null, wlIdxLoading=false;
 async function wlLoadIdxHist(){
   if(wlIdxHist) return wlIdxHist;
   try{
-    const j=await getJSON('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent('^CRSLDX')+'?range=max&interval=1d');
+    const j=await getJSON('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent('^CRSLDX')+'?range=10y&interval=1d');
     const r=j&&j.chart&&j.chart.result&&j.chart.result[0];
     const ts=r&&r.timestamp, q=r&&r.indicators&&r.indicators.quote&&r.indicators.quote[0], cl=q&&q.close;
     if(ts&&cl){ const dates=[],close=[];
