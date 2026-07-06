@@ -62,6 +62,7 @@ $argStr  = '-p --permission-mode bypassPermissions ' +
            '--add-dir "' + $strategyDir + '" --model ' + $model
 $proc = Start-Process -FilePath $claude -ArgumentList $argStr -NoNewWindow -PassThru `
           -RedirectStandardInput $promptFile -RedirectStandardOutput $outFile -RedirectStandardError $errFile
+$null = $proc.Handle   # cache the handle NOW, or .ExitCode reads back $null after the process exits (PS/.NET gotcha)
 
 if (-not $proc.WaitForExit($timeoutSec * 1000)) {
   try { $proc.Kill() } catch {}
