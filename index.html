@@ -4411,8 +4411,8 @@ function wlRenderDaily(){
   if(!dates.length) return;
   wlDailyChart=new Chart(cv,{type:'bar',
     data:{labels:labels,datasets:[
-      {label:'Portfolio',data:pVals,backgroundColor:'#e9a23b',borderWidth:0,maxBarThickness:22,order:3},
-      {label:'Nifty 500',data:iVals,backgroundColor:'#6db4b4',borderWidth:0,maxBarThickness:22,order:3},
+      {label:'Portfolio',data:pVals,backgroundColor:'#e9a23b',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:3},
+      {label:'Nifty 500',data:iVals,backgroundColor:'#6db4b4',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:3},
       {label:'Relative (Port − Index)',type:'line',data:relVals,borderColor:'#b18cff',backgroundColor:'#b18cff',borderWidth:1.5,pointRadius:2,pointHoverRadius:4,tension:.2,order:1,spanGaps:true}
     ]},
     options:{responsive:true,maintainAspectRatio:false,devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
