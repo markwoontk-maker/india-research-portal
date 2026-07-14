@@ -4422,13 +4422,42 @@ function wlRenderDaily(){
       interaction:{intersect:false,mode:'index'},
       scales:{x:{grid:{display:false},ticks:{color:'#646c7c',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#646c7c',font:{size:10},callback:function(v){ return v+'%'; }}}}}});
 }
+function wlCloseAt(sym,ymd){ const h=wlPxHist[sym]; if(!h||!h.dates||!h.dates.length||!ymd) return null; const ds=h.dates; let lo=0,hi=ds.length-1,res=-1; while(lo<=hi){ const m=(lo+hi)>>1; if(ds[m]<=ymd){res=m;lo=m+1;} else hi=m-1; } return res>=0?h.close[res]:null; }
+function wlEnsureHoldPx(){
+  const syms=[]; WL.hold.forEach(function(row){ const sym=String(row[1]).split('|')[0]; if(sym&&syms.indexOf(sym)<0) syms.push(sym); });
+  const need=syms.filter(function(s){ return wlPxHist[s]===undefined; });
+  if(!need.length) return Promise.resolve();
+  return Promise.all(need.map(function(s){ return wlLoadPxHist(s).catch(function(){}); }));
+}
+function wlTodayIso(){ const dt=new Date(); return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
+const WL_DAILY_START_LS='irp_daily_start_v1';
+function wlDailyStart(){ let st=null; try{ st=localStorage.getItem(WL_DAILY_START_LS); }catch(e){}
+  if(!st){ const keys=Object.keys(wlDailyReturns).sort(); st=keys.length?keys[0]:wlTodayIso(); try{ localStorage.setItem(WL_DAILY_START_LS,st); }catch(e){} }
+  return st; }
+// Rebuild the series from END-OF-DAY (close-to-close) history — weighted holdings
+// + Nifty 500 — for every trading day from the start date onward.
 function wlCaptureDaily(){
-  const p=wlPortfolioDailyReturn();
-  const idx=(wlMap['^CRSLDX']&&wlMap['^CRSLDX'].d1!=null)?wlMap['^CRSLDX'].d1:null;
-  if(p!=null&&isFinite(p)){ const dt=new Date(); const key=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
-    const cur=wlDailyReturns[key]; const prevI=(cur&&typeof cur==='object'&&cur.i!=null)?cur.i:null;
-    wlDailyReturns[key]={p:p, i:(idx!=null?idx:prevI)}; wlDailySave(); }
-  wlRenderDaily();
+  const fin=function(){
+    if(!wlIdxHist||!wlIdxHist.dates||wlIdxHist.dates.length<2){ wlRenderDaily(); return; }
+    const start=wlDailyStart(), dates=wlIdxHist.dates, cl=wlIdxHist.close, nd={};
+    for(let k=1;k<dates.length;k++){ const d=dates[k]; if(d<start) continue; const dPrev=dates[k-1];
+      const iRet=(cl[k-1]!=null&&cl[k]!=null&&cl[k-1]!==0)?(cl[k]/cl[k-1]-1)*100:null;
+      let sw=0,acc=0,any=false,n=0,es=0;
+      WL.hold.forEach(function(row){ const sy=row[1], sym=String(sy).split('|')[0];
+        const c1=wlCloseAt(sym,d), c0=wlCloseAt(sym,dPrev);
+        const r=(c1!=null&&c0!=null&&c0!==0)?(c1/c0-1)*100:null; if(r==null) return;
+        const e=wlEntry[sy], w=(e&&e.w!=null&&e.w!=='')?+e.w:null;
+        if(w!=null&&!isNaN(w)&&w>0){ sw+=w; acc+=w*r; any=true; } es+=r; n++;
+      });
+      const pRet=(any&&sw>0)?(acc/sw):(n>0?es/n:null);
+      if(pRet!=null||iRet!=null) nd[d]={p:(pRet!=null?pRet:null),i:(iRet!=null?iRet:null)};
+    }
+    wlDailyReturns=nd; wlDailySave(); wlRenderDaily();
+  };
+  const tasks=[];
+  if(!wlIdxHist && !wlIdxLoading){ wlIdxLoading=true; tasks.push(wlLoadIdxHist().then(function(){wlIdxLoading=false;}).catch(function(){wlIdxLoading=false;})); }
+  tasks.push(wlEnsureHoldPx());
+  Promise.all(tasks).then(fin).catch(fin);
 }
 function wlHoldCells(sy,d){
   const e=wlEntry[sy]||{};
