@@ -4392,26 +4392,42 @@ function wlPortfolioDailyReturn(){
   return n>0?s/n:null;
 }
 let wlDailyChart=null;
+function wlDayP(v){ return (typeof v==='number')?v:(v&&v.p!=null?v.p:null); }
+function wlDayI(v){ return (typeof v==='number')?null:(v&&v.i!=null?v.i:null); }
 function wlRenderDaily(){
   const cv=document.getElementById('wlDailyCanvas'); if(!cv) return;
   const dates=Object.keys(wlDailyReturns).sort();
-  const vals=dates.map(function(d){ return wlDailyReturns[d]; });
   const labels=dates.map(function(d){ const p=d.split('-'); return p[2]+'/'+p[1]; });
-  const colors=vals.map(function(v){ return v>=0?'#3fc78a':'#e85a5a'; });
+  const pVals=dates.map(function(d){ return wlDayP(wlDailyReturns[d]); });
+  const iVals=dates.map(function(d){ return wlDayI(wlDailyReturns[d]); });
+  const relVals=dates.map(function(d,k){ const a=pVals[k], b=iVals[k]; return (a!=null&&b!=null)?(a-b):null; });
   const sub=document.getElementById('wlDailySub');
-  if(sub){ sub.textContent = dates.length ? ('Weighted daily return of Current Holdings · '+dates.length+' day'+(dates.length>1?'s':'')+' · latest '+(vals[vals.length-1]>=0?'+':'')+vals[vals.length-1].toFixed(2)+'%') : 'Weighted daily return of Current Holdings · starts today — a new bar is added each day'; }
+  const f=function(x){ return x==null?'—':((x>=0?'+':'')+x.toFixed(2)+'%'); };
+  if(sub){ sub.textContent = dates.length
+    ? ('Current Holdings (weighted) vs Nifty 500 · '+dates.length+' day'+(dates.length>1?'s':'')+' · latest — port '+f(pVals[pVals.length-1])+' · index '+f(iVals[iVals.length-1])+' · rel '+f(relVals[relVals.length-1]))
+    : 'Current Holdings (weighted) vs Nifty 500 · starts today — a new bar is added each day'; }
   if(typeof Chart==='undefined') return;
-  if(!dates.length){ if(wlDailyChart){ wlDailyChart.destroy(); wlDailyChart=null; } return; }
-  if(wlDailyChart){ wlDailyChart.data.labels=labels; wlDailyChart.data.datasets[0].data=vals; wlDailyChart.data.datasets[0].backgroundColor=colors; wlDailyChart.update(); return; }
+  if(wlDailyChart){ wlDailyChart.destroy(); wlDailyChart=null; }
+  if(!dates.length) return;
   wlDailyChart=new Chart(cv,{type:'bar',
-    data:{labels:labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:0,maxBarThickness:34}]},
+    data:{labels:labels,datasets:[
+      {label:'Portfolio',data:pVals,backgroundColor:'#e9a23b',borderWidth:0,maxBarThickness:22,order:3},
+      {label:'Nifty 500',data:iVals,backgroundColor:'#6db4b4',borderWidth:0,maxBarThickness:22,order:3},
+      {label:'Relative (Port − Index)',type:'line',data:relVals,borderColor:'#b18cff',backgroundColor:'#b18cff',borderWidth:1.5,pointRadius:2,pointHoverRadius:4,tension:.2,order:1,spanGaps:true}
+    ]},
     options:{responsive:true,maintainAspectRatio:false,devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
-      plugins:{legend:{display:false},tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,titleColor:'#646c7c',bodyColor:'#e9e6dd',displayColors:false,callbacks:{label:function(t){ return '  '+(t.parsed.y>=0?'+':'')+t.parsed.y.toFixed(2)+'%'; }}}},
+      plugins:{legend:{display:true,labels:{color:'#b8b3a8',boxWidth:12,font:{size:11}}},
+        tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,titleColor:'#646c7c',bodyColor:'#e9e6dd',
+          callbacks:{label:function(t){ return ' '+t.dataset.label+': '+(t.parsed.y>=0?'+':'')+t.parsed.y.toFixed(2)+'%'; }}}},
+      interaction:{intersect:false,mode:'index'},
       scales:{x:{grid:{display:false},ticks:{color:'#646c7c',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#646c7c',font:{size:10},callback:function(v){ return v+'%'; }}}}}});
 }
 function wlCaptureDaily(){
-  const r=wlPortfolioDailyReturn();
-  if(r!=null&&isFinite(r)){ const dt=new Date(); const key=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); wlDailyReturns[key]=r; wlDailySave(); }
+  const p=wlPortfolioDailyReturn();
+  const idx=(wlMap['^CRSLDX']&&wlMap['^CRSLDX'].d1!=null)?wlMap['^CRSLDX'].d1:null;
+  if(p!=null&&isFinite(p)){ const dt=new Date(); const key=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
+    const cur=wlDailyReturns[key]; const prevI=(cur&&typeof cur==='object'&&cur.i!=null)?cur.i:null;
+    wlDailyReturns[key]={p:p, i:(idx!=null?idx:prevI)}; wlDailySave(); }
   wlRenderDaily();
 }
 function wlHoldCells(sy,d){
