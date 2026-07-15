@@ -4382,7 +4382,7 @@ function wlCovCallCell(sy){
   return '<td class="r"><select class="wl-cov-call" data-sym="'+sa+'"><option'+(v==='Buy'?' selected':'')+'>Buy</option><option'+(v==='Hold'?' selected':'')+'>Hold</option><option'+(v==='Sell'?' selected':'')+'>Sell</option></select></td>';
 }
 // Custom-weighted daily return of Current Holdings — one bar per calendar day.
-const WL_DAILY_LS='irp_daily_returns_v2';
+const WL_DAILY_LS='irp_daily_returns_v3';
 function wlDailyLoad(){ try{ return JSON.parse(localStorage.getItem(WL_DAILY_LS))||{}; }catch(e){ return {}; } }
 let wlDailyReturns=wlDailyLoad();
 function wlDailySave(){ try{ localStorage.setItem(WL_DAILY_LS,JSON.stringify(wlDailyReturns)); }catch(e){} }
@@ -4453,29 +4453,46 @@ function wlDailyStart(){ let st=null; try{ st=localStorage.getItem(WL_DAILY_STAR
   return st; }
 // Rebuild the series from END-OF-DAY (close-to-close) history — weighted holdings
 // + Nifty 500 — for every trading day from the start date onward.
+// Index (^CRSLDX) close-to-close return ON an exact date (skips its data gaps).
+function wlIndexReturnOn(D){
+  const h=wlIdxHist; if(!h||!h.dates||!h.dates.length) return null;
+  let di=-1; for(let i=h.dates.length-1;i>=0;i--){ if(h.dates[i]===D){ di=i; break; } if(h.dates[i]<D) break; }
+  if(di<1) return null; const c1=h.close[di], c0=h.close[di-1];
+  return (c1!=null&&c0!=null&&c0!==0)?(c1/c0-1)*100:null;
+}
+// Portfolio return ON an exact date = sum-product of weight x each stock's OWN
+// close-to-close return that day (each stock uses its own consecutive closes).
+// Stocks with no data that day are skipped (weights renormalise over the rest).
+function wlPortfolioReturnOn(D){
+  let sw=0,acc=0,any=false,es=0,n=0;
+  WL.hold.forEach(function(row){ const sy=row[1], sym=String(sy).split('|')[0]; const h=wlPxHist[sym]; if(!h||!h.dates) return;
+    let di=-1; for(let i=h.dates.length-1;i>=0;i--){ if(h.dates[i]===D){ di=i; break; } if(h.dates[i]<D) break; }
+    if(di<1) return;
+    const c1=h.close[di], c0=h.close[di-1];
+    const r=(c1!=null&&c0!=null&&c0!==0)?(c1/c0-1)*100:null; if(r==null) return;
+    const e=wlEntry[sy], w=(e&&e.w!=null&&e.w!=='')?+e.w:null;
+    if(w!=null&&!isNaN(w)&&w>0){ sw+=w; acc+=w*r; any=true; } es+=r; n++;
+  });
+  return (any&&sw>0)?(acc/sw):(n>0?es/n:null);
+}
 function wlCaptureDaily(){
-  // Compute the bar for the latest MARKET trading day (keyed by that date, not the
-  // calendar day), from close-to-close (EOD) returns. Only the in-progress day is
-  // mutable: once a trading day is in the past it stays frozen — adding a stock or
-  // changing weights later never rewrites history.
+  // Record the last ~22 SETTLED trading days (strictly before today) as
+  // sum-product(weight x stock's own daily return). Once a day's portfolio
+  // return is recorded it is FROZEN (adding a stock / changing weights never
+  // rewrites it); the index value is filled in later if it was a Yahoo gap.
   const fin=function(){
-    if(!wlIdxHist||!wlIdxHist.dates||wlIdxHist.dates.length<2){ wlRenderDaily(); return; }
-    const dates=wlIdxHist.dates, cl=wlIdxHist.close;
-    const d=dates[dates.length-1], dPrev=dates[dates.length-2];
-    const iRet=(cl[cl.length-2]!=null&&cl[cl.length-1]!=null&&cl[cl.length-2]!==0)?(cl[cl.length-1]/cl[cl.length-2]-1)*100:null;
-    let sw=0,acc=0,any=false,n=0,es=0;
-    WL.hold.forEach(function(row){ const sy=row[1], sym=String(sy).split('|')[0];
-      const c1=wlCloseAt(sym,d), c0=wlCloseAt(sym,dPrev);
-      const r=(c1!=null&&c0!=null&&c0!==0)?(c1/c0-1)*100:null; if(r==null) return;
-      const e=wlEntry[sy], w=(e&&e.w!=null&&e.w!=='')?+e.w:null;
-      if(w!=null&&!isNaN(w)&&w>0){ sw+=w; acc+=w*r; any=true; } es+=r; n++;
-    });
-    const pRet=(any&&sw>0)?(acc/sw):(n>0?es/n:null);
     const today=wlTodayIso();
-    if((pRet!=null||iRet!=null) && (!wlDailyReturns[d] || d===today)){
-      wlDailyReturns[d]={p:(pRet!=null?pRet:null), i:(iRet!=null?iRet:null)}; wlDailySave();
+    const dset={};
+    WL.hold.forEach(function(row){ const sym=String(row[1]).split('|')[0]; const h=wlPxHist[sym]; if(!h||!h.dates) return;
+      h.dates.forEach(function(dd){ if(dd<today) dset[dd]=1; }); });
+    const settled=Object.keys(dset).sort();
+    const from=Math.max(0, settled.length-22);
+    for(let k=from;k<settled.length;k++){ const D=settled[k]; const ex=wlDailyReturns[D];
+      const pRet=(ex&&ex.p!=null)?ex.p:wlPortfolioReturnOn(D);
+      const iRet=(ex&&ex.i!=null)?ex.i:wlIndexReturnOn(D);
+      if(pRet!=null||iRet!=null) wlDailyReturns[D]={p:(pRet!=null?pRet:null), i:(iRet!=null?iRet:null)};
     }
-    wlRenderDaily();
+    wlDailySave(); wlRenderDaily();
   };
   const tasks=[];
   if(!wlIdxHist && !wlIdxLoading){ wlIdxLoading=true; tasks.push(wlLoadIdxHist().then(function(){wlIdxLoading=false;}).catch(function(){wlIdxLoading=false;})); }
