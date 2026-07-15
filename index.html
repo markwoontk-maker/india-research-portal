@@ -4453,6 +4453,39 @@ function wlDailyStart(){ let st=null; try{ st=localStorage.getItem(WL_DAILY_STAR
   return st; }
 // Rebuild the series from END-OF-DAY (close-to-close) history — weighted holdings
 // + Nifty 500 — for every trading day from the start date onward.
+// Workaround for Yahoo DAILY gaps (common on smaller names): reconstruct a
+// missing recent trading day's open/close from 60-minute intraday bars and merge
+// it into the stock's daily history. Self-caching: once filled it isn't re-fetched.
+function wlFillIntraday(sym){
+  return getJSON('https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?range=1mo&interval=60m').then(function(j){
+    const r=j&&j.chart&&j.chart.result&&j.chart.result[0]; if(!r||!r.timestamp) return;
+    const ts=r.timestamp, q=r.indicators&&r.indicators.quote&&r.indicators.quote[0]; if(!q) return;
+    const op=q.open, cl=q.close, dOpen={}, dClose={};
+    for(let i=0;i<ts.length;i++){ const dt=new Date(ts[i]*1000);
+      const dd=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
+      if(op&&op[i]!=null&&dOpen[dd]==null) dOpen[dd]=op[i];
+      if(cl&&cl[i]!=null) dClose[dd]=cl[i];
+    }
+    let H=wlPxHist[sym]; if(!H||!H.dates){ H=wlPxHist[sym]={dates:[],open:[],close:[]}; }
+    const has={}; H.dates.forEach(function(dd){ has[dd]=1; });
+    let changed=false;
+    Object.keys(dClose).forEach(function(dd){ if(!has[dd]){ H.dates.push(dd); H.close.push(dClose[dd]); H.open.push(dOpen[dd]!=null?dOpen[dd]:dClose[dd]); changed=true; } });
+    if(changed){ const ord=H.dates.map(function(_,i){return i;}).sort(function(a,b){ return H.dates[a]<H.dates[b]?-1:(H.dates[a]>H.dates[b]?1:0); });
+      H.dates=ord.map(function(i){return H.dates[i];}); H.open=ord.map(function(i){return H.open[i];}); H.close=ord.map(function(i){return H.close[i];}); }
+  }).catch(function(){});
+}
+function wlFillGaps(){
+  const today=wlTodayIso(), allD={};
+  WL.hold.forEach(function(row){ const sym=String(row[1]).split('|')[0]; const h=wlPxHist[sym]; if(!h||!h.dates) return; h.dates.forEach(function(dd){ if(dd<today) allD[dd]=1; }); });
+  const cal=Object.keys(allD).sort().slice(-25);
+  const need=[];
+  WL.hold.forEach(function(row){ const sym=String(row[1]).split('|')[0]; const h=wlPxHist[sym];
+    if(!h||!h.dates){ if(need.indexOf(sym)<0) need.push(sym); return; }
+    const has={}; h.dates.forEach(function(dd){ has[dd]=1; });
+    for(let k=0;k<cal.length;k++){ if(!has[cal[k]]){ if(need.indexOf(sym)<0) need.push(sym); break; } } });
+  if(!need.length) return Promise.resolve();
+  return Promise.all(need.map(function(sym){ return wlFillIntraday(sym); }));
+}
 // Index (^CRSLDX) close-to-close return ON an exact date (skips its data gaps).
 function wlIndexReturnOn(D){
   const h=wlIdxHist; if(!h||!h.dates||!h.dates.length) return null;
@@ -4496,7 +4529,7 @@ function wlCaptureDaily(){
   };
   const tasks=[];
   if(!wlIdxHist && !wlIdxLoading){ wlIdxLoading=true; tasks.push(wlLoadIdxHist().then(function(){wlIdxLoading=false;}).catch(function(){wlIdxLoading=false;})); }
-  tasks.push(wlEnsureHoldPx());
+  tasks.push(wlEnsureHoldPx().then(function(){ return wlFillGaps(); }));
   Promise.all(tasks).then(fin).catch(fin);
 }
 function wlHoldCells(sy,d){
