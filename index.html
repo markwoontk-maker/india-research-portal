@@ -4382,7 +4382,7 @@ function wlCovCallCell(sy){
   return '<td class="r"><select class="wl-cov-call" data-sym="'+sa+'"><option'+(v==='Buy'?' selected':'')+'>Buy</option><option'+(v==='Hold'?' selected':'')+'>Hold</option><option'+(v==='Sell'?' selected':'')+'>Sell</option></select></td>';
 }
 // Custom-weighted daily return of Current Holdings — one bar per calendar day.
-const WL_DAILY_LS='irp_daily_returns_v3';
+const WL_DAILY_LS='irp_daily_returns_v4';
 function wlDailyLoad(){ try{ return JSON.parse(localStorage.getItem(WL_DAILY_LS))||{}; }catch(e){ return {}; } }
 let wlDailyReturns=wlDailyLoad();
 function wlDailySave(){ try{ localStorage.setItem(WL_DAILY_LS,JSON.stringify(wlDailyReturns)); }catch(e){} }
@@ -4509,7 +4509,7 @@ function wlPortfolioReturnOn(D){
   return (any&&sw>0)?(acc/sw):(n>0?es/n:null);
 }
 function wlCaptureDaily(){
-  // Record the last ~22 SETTLED trading days (strictly before today) as
+  // Record ONLY the latest SETTLED trading day (strictly before today) as
   // sum-product(weight x stock's own daily return). Once a day's portfolio
   // return is recorded it is FROZEN (adding a stock / changing weights never
   // rewrites it); the index value is filled in later if it was a Yahoo gap.
@@ -4519,7 +4519,7 @@ function wlCaptureDaily(){
     WL.hold.forEach(function(row){ const sym=String(row[1]).split('|')[0]; const h=wlPxHist[sym]; if(!h||!h.dates) return;
       h.dates.forEach(function(dd){ if(dd<today) dset[dd]=1; }); });
     const settled=Object.keys(dset).sort();
-    const from=Math.max(0, settled.length-22);
+    const from=Math.max(0, settled.length-1);
     for(let k=from;k<settled.length;k++){ const D=settled[k]; const ex=wlDailyReturns[D];
       const pRet=(ex&&ex.p!=null)?ex.p:wlPortfolioReturnOn(D);
       const iRet=(ex&&ex.i!=null)?ex.i:wlIndexReturnOn(D);
