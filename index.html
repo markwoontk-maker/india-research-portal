@@ -4382,7 +4382,7 @@ function wlCovCallCell(sy){
   return '<td class="r"><select class="wl-cov-call" data-sym="'+sa+'"><option'+(v==='Buy'?' selected':'')+'>Buy</option><option'+(v==='Hold'?' selected':'')+'>Hold</option><option'+(v==='Sell'?' selected':'')+'>Sell</option></select></td>';
 }
 // Custom-weighted daily return of Current Holdings — one bar per calendar day.
-const WL_DAILY_LS='irp_daily_returns_v5';
+const WL_DAILY_LS='irp_daily_returns_v6';
 function wlDailyLoad(){ try{ return JSON.parse(localStorage.getItem(WL_DAILY_LS))||{}; }catch(e){ return {}; } }
 let wlDailyReturns=wlDailyLoad();
 function wlDailySave(){ try{ localStorage.setItem(WL_DAILY_LS,JSON.stringify(wlDailyReturns)); }catch(e){} }
@@ -4510,22 +4510,24 @@ function wlIndexReturnOn(D){
   const day=wlRet&&wlRet.dates&&wlRet.dates[D];
   return (day&&day.index!=null&&!isNaN(day.index))?day.index:null;
 }
-// Portfolio return ON an exact date = sum-product of CURRENT weight x each stock's
-// exact NSE daily return that day. Also records the per-stock contribution breakdown
-// (weight x return / total weight) in wlContrib[D] for the hover tooltip. Holdings
-// with no NSE data that day are skipped (weights renormalise over the rest).
+// Portfolio return ON an exact date = sum-product of the weight you TYPED x each
+// stock's exact NSE daily return that day (weights are NOT renormalised - this is
+// the same SUMPRODUCT the spreadsheet does, so e.g. 1.0% x +4.40% adds +4.40 to the
+// total). Records each holding's contribution (weight x return) in wlContrib[D] for
+// the hover tooltip. If no weights are entered at all, falls back to a simple average.
 function wlPortfolioReturnOn(D){
   const day=wlRet&&wlRet.dates&&wlRet.dates[D]; if(!day||!day.r) return null;
-  let sw=0,acc=0,any=false,es=0,n=0; const contrib=[];
+  let acc=0,any=false,es=0,n=0; const contrib=[];
   WL.hold.forEach(function(row){ const sy=row[1], r=day.r[wlNseSym(sy)];
     if(r==null||isNaN(r)) return;
     const e=wlEntry[sy], w=(e&&e.w!=null&&e.w!=='')?+e.w:null;
-    const wv=(w!=null&&!isNaN(w)&&w>0)?w:null;
-    if(wv!=null){ sw+=wv; acc+=wv*r; any=true; } es+=r; n++;
+    const wv=(w!=null&&!isNaN(w))?w:null;
+    if(wv!=null){ acc+=wv*r; any=true; }
+    es+=r; n++;
     contrib.push({name:row[0], w:wv, r:r});
   });
-  const port=(any&&sw>0)?(acc/sw):(n>0?es/n:null);
-  contrib.forEach(function(c){ c.contrib=(any&&sw>0)?(c.w!=null?c.w*c.r/sw:0):(n>0?c.r/n:null); });
+  const port=any?acc:(n>0?es/n:null);
+  contrib.forEach(function(c){ c.contrib=any?((c.w!=null)?c.w*c.r:0):(n>0?c.r/n:null); });
   contrib.sort(function(a,b){ return (b.contrib||0)-(a.contrib||0); });
   wlContrib[D]=contrib;
   return port;
