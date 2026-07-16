@@ -135,6 +135,14 @@ Step "build-financials" { & $node "scripts\build-financials.js" }
 #     below actually publishes it. Append-only + idempotent; never throws.
 Step "refresh-fii-dii" { & $node "scripts\refresh-fii-dii.js" }
 
+# 8b2. Append the latest Watchlist Daily-Return data (data/wl_returns.json) from
+#      the official NSE bhavcopy + index close. The dashboard is a static Pages
+#      site that can't reach NSE directly (no CORS; public proxies are dead), so
+#      the exact per-stock returns are fetched here and committed for the page to
+#      read. Append-only + idempotent (floored at 2026-07-14, no backdating);
+#      never throws.
+Step "refresh-wl-returns" { & $node "scripts\refresh-wl-returns.js" }
+
 # Note: the All-Time-High + 52-Week-High refresh (data/highs.json) was a step
 # here, but is now its own concurrent scheduled task ("India Research Portal
 # Highs Refresh", weekday 09:32) so the highs don't have to wait behind the
@@ -180,7 +188,7 @@ Step "build-house-view-notes" {
 
 # 9. Commit + push if there are any changes. No-op on a quiet day.
 Step "git stage" {
-  & git add data/pdfdata.json data/pdfmap.json data/research.json data/sector-tps.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json data/house_view_notes.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
+  & git add data/pdfdata.json data/pdfmap.json data/research.json data/sector-tps.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/wl_returns.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json data/house_view_notes.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
 }
 Step "git commit + push" {
   $cached = & git diff --cached --stat

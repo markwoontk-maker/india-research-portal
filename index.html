@@ -4382,10 +4382,24 @@ function wlCovCallCell(sy){
   return '<td class="r"><select class="wl-cov-call" data-sym="'+sa+'"><option'+(v==='Buy'?' selected':'')+'>Buy</option><option'+(v==='Hold'?' selected':'')+'>Hold</option><option'+(v==='Sell'?' selected':'')+'>Sell</option></select></td>';
 }
 // Custom-weighted daily return of Current Holdings — one bar per calendar day.
-const WL_DAILY_LS='irp_daily_returns_v4';
+const WL_DAILY_LS='irp_daily_returns_v5';
 function wlDailyLoad(){ try{ return JSON.parse(localStorage.getItem(WL_DAILY_LS))||{}; }catch(e){ return {}; } }
 let wlDailyReturns=wlDailyLoad();
 function wlDailySave(){ try{ localStorage.setItem(WL_DAILY_LS,JSON.stringify(wlDailyReturns)); }catch(e){} }
+// Exact per-stock daily returns (NSE official bhavcopy) committed at data/wl_returns.json.
+// A static Pages site cannot reach NSE directly (no CORS), so returns are fetched
+// server-side by scripts/refresh-wl-returns.js and read here. { dates: { 'YYYY-MM-DD':
+// { index:pchg, r:{NSESYM:retPct} } } }
+let wlRet=null, wlRetLoading=null, wlContrib={};
+function wlNseSym(sy){ return String(sy).split('|')[0].replace(/.(NS|BO)$/i,''); }
+function wlLoadReturns(){
+  if(wlRet) return Promise.resolve(wlRet);
+  if(wlRetLoading) return wlRetLoading;
+  wlRetLoading=fetch('data/wl_returns.json',{cache:'no-store'}).then(function(r){ return r.ok?r.json():null; })
+    .then(function(j){ wlRet=(j&&j.dates)?j:{dates:{}}; return wlRet; })
+    .catch(function(){ wlRet={dates:{}}; return wlRet; });
+  return wlRetLoading;
+}
 function wlHoldD1(sy){ const cands=String(sy).split('|'); const hit=cands.find(function(c){return wlMap[c]&&wlMap[c].p!=null;})||cands.find(function(c){return wlMap[c];}); return (hit&&wlMap[hit]&&wlMap[hit].d1!=null)?wlMap[hit].d1:null; }
 function wlPortfolioDailyReturn(){
   let sw=0, acc=0;
@@ -4433,7 +4447,12 @@ function wlRenderDaily(){
     options:{responsive:true,maintainAspectRatio:false,devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
       plugins:{legend:{display:true,labels:{color:'#b8b3a8',boxWidth:12,font:{size:11}}},
         tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,titleColor:'#646c7c',bodyColor:'#e9e6dd',
-          callbacks:{label:function(t){ return ' '+t.dataset.label+': '+(t.parsed.y>=0?'+':'')+t.parsed.y.toFixed(2)+'%'; }}}},
+          callbacks:{label:function(t){ if(t.parsed.y==null) return ''; return ' '+t.dataset.label+': '+(t.parsed.y>=0?'+':'')+t.parsed.y.toFixed(2)+'%'; },
+            afterBody:function(items){ if(!items.length) return ''; const D=dates[items[0].dataIndex]; const cc=wlContrib[D]; if(!cc||!cc.length) return '';
+              const out=['','Contribution (weight × return):'];
+              cc.forEach(function(c){ const wl=(c.w!=null)?(c.w+'%'):'ew'; const rl=(c.r>=0?'+':'')+c.r.toFixed(2)+'%'; const cl=(c.contrib!=null)?((c.contrib>=0?'+':'')+c.contrib.toFixed(3)+'%'):'—';
+                out.push('  '+c.name+': '+wl+' × '+rl+' = '+cl); });
+              return out; }}}},
       interaction:{intersect:false,mode:'index'},
       scales:{x:{grid:{display:false},ticks:{color:'#646c7c',font:{size:10}}},
         y:{position:'left',grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#646c7c',font:{size:10},callback:function(v){ return v+'%'; }}},
@@ -4486,51 +4505,48 @@ function wlFillGaps(){
   if(!need.length) return Promise.resolve();
   return Promise.all(need.map(function(sym){ return wlFillIntraday(sym); }));
 }
-// Index (^CRSLDX) close-to-close return ON an exact date (skips its data gaps).
+// Nifty 500 daily % change ON an exact date — exact NSE index close (data/wl_returns.json).
 function wlIndexReturnOn(D){
-  const h=wlIdxHist; if(!h||!h.dates||!h.dates.length) return null;
-  let di=-1; for(let i=h.dates.length-1;i>=0;i--){ if(h.dates[i]===D){ di=i; break; } if(h.dates[i]<D) break; }
-  if(di<1) return null; const c1=h.close[di], c0=h.close[di-1];
-  return (c1!=null&&c0!=null&&c0!==0)?(c1/c0-1)*100:null;
+  const day=wlRet&&wlRet.dates&&wlRet.dates[D];
+  return (day&&day.index!=null&&!isNaN(day.index))?day.index:null;
 }
-// Portfolio return ON an exact date = sum-product of weight x each stock's OWN
-// close-to-close return that day (each stock uses its own consecutive closes).
-// Stocks with no data that day are skipped (weights renormalise over the rest).
+// Portfolio return ON an exact date = sum-product of CURRENT weight x each stock's
+// exact NSE daily return that day. Also records the per-stock contribution breakdown
+// (weight x return / total weight) in wlContrib[D] for the hover tooltip. Holdings
+// with no NSE data that day are skipped (weights renormalise over the rest).
 function wlPortfolioReturnOn(D){
-  let sw=0,acc=0,any=false,es=0,n=0;
-  WL.hold.forEach(function(row){ const sy=row[1], sym=String(sy).split('|')[0]; const h=wlPxHist[sym]; if(!h||!h.dates) return;
-    let di=-1; for(let i=h.dates.length-1;i>=0;i--){ if(h.dates[i]===D){ di=i; break; } if(h.dates[i]<D) break; }
-    if(di<1) return;
-    const c1=h.close[di], c0=h.close[di-1];
-    const r=(c1!=null&&c0!=null&&c0!==0)?(c1/c0-1)*100:null; if(r==null) return;
+  const day=wlRet&&wlRet.dates&&wlRet.dates[D]; if(!day||!day.r) return null;
+  let sw=0,acc=0,any=false,es=0,n=0; const contrib=[];
+  WL.hold.forEach(function(row){ const sy=row[1], r=day.r[wlNseSym(sy)];
+    if(r==null||isNaN(r)) return;
     const e=wlEntry[sy], w=(e&&e.w!=null&&e.w!=='')?+e.w:null;
-    if(w!=null&&!isNaN(w)&&w>0){ sw+=w; acc+=w*r; any=true; } es+=r; n++;
+    const wv=(w!=null&&!isNaN(w)&&w>0)?w:null;
+    if(wv!=null){ sw+=wv; acc+=wv*r; any=true; } es+=r; n++;
+    contrib.push({name:row[0], w:wv, r:r});
   });
-  return (any&&sw>0)?(acc/sw):(n>0?es/n:null);
+  const port=(any&&sw>0)?(acc/sw):(n>0?es/n:null);
+  contrib.forEach(function(c){ c.contrib=(any&&sw>0)?(c.w!=null?c.w*c.r/sw:0):(n>0?c.r/n:null); });
+  contrib.sort(function(a,b){ return (b.contrib||0)-(a.contrib||0); });
+  wlContrib[D]=contrib;
+  return port;
 }
 function wlCaptureDaily(){
-  // Record ONLY the latest SETTLED trading day (strictly before today) as
-  // sum-product(weight x stock's own daily return). Once a day's portfolio
-  // return is recorded it is FROZEN (adding a stock / changing weights never
-  // rewrites it); the index value is filled in later if it was a Yahoo gap.
-  const fin=function(){
+  // Rebuild the daily series from the exact NSE returns file (data/wl_returns.json).
+  // Each day's portfolio bar = CURRENT weights applied to that day's NSE returns, so it
+  // always reflects your live portfolio (change a weight and it recomputes). Dates start
+  // at the file's floor (no backdating) and grow forward as the refresher appends days.
+  const build=function(){
     const today=wlTodayIso();
-    const dset={};
-    WL.hold.forEach(function(row){ const sym=String(row[1]).split('|')[0]; const h=wlPxHist[sym]; if(!h||!h.dates) return;
-      h.dates.forEach(function(dd){ if(dd<today) dset[dd]=1; }); });
-    const settled=Object.keys(dset).sort();
-    const from=Math.max(0, settled.length-1);
-    for(let k=from;k<settled.length;k++){ const D=settled[k]; const ex=wlDailyReturns[D];
-      const pRet=(ex&&ex.p!=null)?ex.p:wlPortfolioReturnOn(D);
-      const iRet=(ex&&ex.i!=null)?ex.i:wlIndexReturnOn(D);
-      if(pRet!=null||iRet!=null) wlDailyReturns[D]={p:(pRet!=null?pRet:null), i:(iRet!=null?iRet:null)};
-    }
-    wlDailySave(); wlRenderDaily();
+    const days=(wlRet&&wlRet.dates)?Object.keys(wlRet.dates).sort():[];
+    const nd={};
+    days.forEach(function(D){ if(D>=today) return;
+      const pRet=wlPortfolioReturnOn(D);   // also builds wlContrib[D]
+      const iRet=wlIndexReturnOn(D);
+      if(pRet!=null||iRet!=null) nd[D]={p:(pRet!=null?pRet:null), i:(iRet!=null?iRet:null)};
+    });
+    wlDailyReturns=nd; wlDailySave(); wlRenderDaily();
   };
-  const tasks=[];
-  if(!wlIdxHist && !wlIdxLoading){ wlIdxLoading=true; tasks.push(wlLoadIdxHist().then(function(){wlIdxLoading=false;}).catch(function(){wlIdxLoading=false;})); }
-  tasks.push(wlEnsureHoldPx().then(function(){ return wlFillGaps(); }));
-  Promise.all(tasks).then(fin).catch(fin);
+  if(wlRet) build(); else wlLoadReturns().then(build).catch(build);
 }
 function wlHoldCells(sy,d){
   const e=wlEntry[sy]||{};
