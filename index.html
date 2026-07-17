@@ -7809,7 +7809,7 @@ async function loadMfSectors(){
 }
 
 /* ---------- Positioning tab · MF category flows (AMFI, append-only) ---------- */
-let mfCatData=null, mfCatMonths=[], mfCatSort={key:null,dir:-1}, mfCatExpanded=null, mfCatChart=null;
+let mfCatData=null, mfCatMonths=[], mfCatEquityTotal=[], mfCatSort={key:null,dir:-1}, mfCatExpanded=null, mfCatChart=null;
 function mfAum(v){ return v==null?'—':'₹'+(v/100000).toFixed(1)+'L cr'; }
 function mfCatYtd(c){ if(!Array.isArray(c.hist)) return null; const y=(mfCatMonths[mfCatMonths.length-1]||'').slice(0,4);
   let s=0,a=false; c.hist.forEach((v,i)=>{ if(v!=null && (mfCatMonths[i]||'').slice(0,4)===y){ s+=v; a=true; } }); return a?Math.round(s):null; }
@@ -7871,19 +7871,23 @@ function mfTotalDraw(){
   const order=['Flexi Cap','Large Cap','Large & Mid Cap','Mid Cap','Small Cap','Multi Cap'];
   const byName=n=>mfCatData.find(x=>x.name===n);
   const labels=mfCatMonths.map(secMonLbl);
-  // YoY on a LIKE-FOR-LIKE basis: compare only the cap categories reported in BOTH
-  // the month and its year-ago month (>=4 of 6 required). The tooltip discloses the
-  // basis size per point (e.g. "4/6 cats"). This is the densest honest YoY the gappy
-  // 2024-25 per-category history supports without inventing any cell — a clean
-  // full-total series (AMFI monthly PDFs) isn't machine-reachable from here, so we
-  // never fabricate the missing cells.
+  // YoY line. Preferred basis = the TRUE total-equity YoY from equityTotal[] (the
+  // official AMFI all-equity net-inflow headline) wherever both the month and its
+  // year-ago month carry it. Where that clean total is missing (2024-early-2025,
+  // not machine-reachable), fall back to a LIKE-FOR-LIKE cap-category YoY: compare
+  // only the categories reported in BOTH months (>=4 of 6). Each point discloses
+  // its basis in the tooltip. No cell is ever fabricated; as the 17th refresher
+  // appends equityTotal each month, more points flip to the true total basis.
+  const et=mfCatEquityTotal||[];
   const yoyObj=mfCatMonths.map((m,i)=>{
     if(i<12) return null;
+    if(et[i]!=null && et[i-12]!=null && et[i-12]!==0)
+      return { y:+((et[i]/et[i-12]-1)*100).toFixed(1), mode:'total' };
     const shared=order.filter(n=>{ const c=byName(n); return c&&c.hist&&c.hist[i]!=null&&c.hist[i-12]!=null; });
     if(shared.length<4) return null;
     const cur=shared.reduce((s,n)=>s+byName(n).hist[i],0), prev=shared.reduce((s,n)=>s+byName(n).hist[i-12],0);
     if(!prev) return null;
-    return { y:+((cur/prev-1)*100).toFixed(1), n:shared.length };
+    return { y:+((cur/prev-1)*100).toFixed(1), mode:'l4l', n:shared.length };
   });
   const yoy=yoyObj.map(o=>o?o.y:null);
   const datasets=order.map(name=>{ const c=byName(name);
@@ -7899,7 +7903,7 @@ function mfTotalDraw(){
         tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:10,
           filter:it=>it.parsed.y!=null,
           callbacks:{
-            label:x=>{ if(x.dataset.label==='YoY %'){ const o=yoyObj[x.dataIndex]; return o==null?'':'  YoY: '+(o.y>=0?'+':'')+o.y.toFixed(1)+'% ('+(o.n<6?'like-for-like '+o.n+'/6 cats':'all 6 cats')+')'; } return '  '+x.dataset.label+': '+secCr(x.parsed.y)+' cr'; },
+            label:x=>{ if(x.dataset.label==='YoY %'){ const o=yoyObj[x.dataIndex]; if(o==null) return ''; const basis=o.mode==='total'?'total equity':'like-for-like '+o.n+'/6 cats'; return '  YoY: '+(o.y>=0?'+':'')+o.y.toFixed(1)+'% ('+basis+')'; } return '  '+x.dataset.label+': '+secCr(x.parsed.y)+' cr'; },
             footer:items=>{ let s=0,any=false; items.forEach(it=>{ if(it.dataset.type==='bar'&&it.parsed.y!=null){ s+=it.parsed.y; any=true; } }); return any?'Total: '+secCr(+s.toFixed(2))+' cr':''; } }}},
       scales:{ x:{stacked:true,grid:{display:false},border:{display:false},ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},maxRotation:0,autoSkip:true,maxTicksLimit:14}},
         y:{stacked:true,position:'left',grid:{color:'#1f2530'},border:{display:false},ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},callback:v=>(Math.abs(v)>=1000?(v/1000).toFixed(0)+'k':v)},title:{display:true,text:'Net flow (₹ cr)',color:'#646c7c',font:{family:'IBM Plex Mono',size:9}}},
@@ -7965,7 +7969,7 @@ async function loadMfCategories(){
     const res=await fetch('data/mf_categories.json',{cache:'no-store'});
     if(!res.ok) throw new Error('http '+res.status);
     const d=await res.json();
-    mfCatData=d.categories; mfCatMonths=d.months||[];
+    mfCatData=d.categories; mfCatMonths=d.months||[]; mfCatEquityTotal=d.equityTotal||[];
     const mon=iso=>{ const [y,m]=iso.split('-'); return new Date(y,m-1,1).toLocaleDateString('en-IN',{month:'short',year:'numeric'}); };
     const totalAum=d.categories.reduce((s,c)=>s+(c.aum||0),0);
     const sub=document.getElementById('mfCatSub'); if(sub) sub.textContent=

@@ -124,15 +124,21 @@ inflows + AUM for the **6 equity cap categories** (canonical names: `Large Cap`,
    flaky on a direct hit — try WebFetch/proxy); **fallback** the finnovate monthly
    MF blogs (`finnovate.in/learn/blog/mutual-fund-data-<month>-2026`) cross-checked
    vs upstox/ventura/moneycontrol. A category with no clean figure → `null`.
+   **Also capture the single headline `equityTotal`** = the month's **total net
+   inflow into ALL open-ended equity schemes (₹ cr)** as reported by AMFI (the
+   widely-quoted "equity mutual funds saw net inflows of ₹X cr" figure, e.g.
+   May-2026 = 22907.77). Cross-check 2 sources on the SAME definition (net inflow
+   into open-ended equity schemes — NOT gross, NOT equity+hybrid). No clean figure
+   → `null`. This drives the true YoY line on the Total Monthly Equity MF Flows card.
 2. **APPEND-ONLY:** if `asOf` advanced to a new month, append that month to
-   `months` and to each category's `hist`; update each category's `flow`(=hist
-   last), `flowPrev`(=hist 2nd-last), `aum`, `aumShare`(=round(aum/Σaum×100,1)).
+   `months`, to `equityTotal`, and to each category's `hist`; update each category's
+   `flow`(=hist last), `flowPrev`(=hist 2nd-last), `aum`, `aumShare`(=round(aum/Σaum×100,1)).
    **NEVER trim older months** — the history grows forever (a new bar each month).
    If `asOf` is unchanged (already current), leave the file untouched.
-3. Keep the shape: `{ asOf, prevAsOf, months:[…asc…],
+3. Keep the shape: `{ asOf, prevAsOf, months:[…asc…], equityTotal:[…aligned to months, null if unknown…],
    categories:[{ name, flow, flowPrev, aum, aumShare, hist:[…aligned to months…] }] }`,
-   exactly the 6 categories, `hist.length === months.length` per category, UTF-8
-   no BOM. Never fabricate a figure.
+   exactly the 6 categories, `hist.length === months.length` per category,
+   `equityTotal.length === months.length`, UTF-8 no BOM. Never fabricate a figure.
 
 ## 2c. `data/sip_flows.json` — monthly SIP contribution (AMFI, **APPEND-ONLY**)
 
@@ -154,7 +160,7 @@ plus latest SIP AUM + accounts. Run on the **17th** (after AMFI's ~10th release)
 ```bash
 node -e "const d=require('./data/fpi_sectors.json'); if(!d.sectors.length) throw 'empty'; if(!d.months||d.months.length!==12) throw 'months!=12'; d.sectors.forEach(s=>{['name','flow','flowPrev','fpiWt','idxWt','ow'].forEach(k=>{if(s[k]===undefined) throw k+' on '+s.name}); if(!Array.isArray(s.hist)||s.hist.length!==d.months.length) throw 'hist len '+s.name; if(s.hist[s.hist.length-1]!==s.flow) throw 'hist/flow mismatch '+s.name}); console.log('sectors ok', d.sectors.length, '| 12-mo hist ok')"
 node -e "const d=require('./data/model_portfolios.json'); const ok=new Set(['new','raised','trimmed','removed','held']); if(!d.houses.length) throw 'no houses'; d.houses.forEach(h=>h.overweight.concat(h.underweight).forEach(s=>{if(!('ticker' in s)||!s.stock) throw 'bad row '+h.broker; if(!ok.has(s.change)) throw 'bad change '+s.change})); console.log('houses ok', d.houses.length)"
-node -e "const d=require('./data/mf_categories.json'); if(d.categories.length!==6) throw 'cats'; if(!d.months.length) throw 'no months'; d.categories.forEach(c=>{['name','flow','flowPrev','aum','aumShare'].forEach(k=>{if(c[k]===undefined) throw k+' on '+c.name}); if(!Array.isArray(c.hist)||c.hist.length!==d.months.length) throw 'hist len '+c.name; if(c.hist[c.hist.length-1]!==c.flow) throw 'flow!=hist[last] '+c.name}); console.log('mf categories ok', d.categories.length, '|', d.months.length, 'months (append-only)')"
+node -e "const d=require('./data/mf_categories.json'); if(d.categories.length!==6) throw 'cats'; if(!d.months.length) throw 'no months'; if(!Array.isArray(d.equityTotal)||d.equityTotal.length!==d.months.length) throw 'equityTotal len'; d.categories.forEach(c=>{['name','flow','flowPrev','aum','aumShare'].forEach(k=>{if(c[k]===undefined) throw k+' on '+c.name}); if(!Array.isArray(c.hist)||c.hist.length!==d.months.length) throw 'hist len '+c.name; if(c.hist[c.hist.length-1]!==c.flow) throw 'flow!=hist[last] '+c.name}); console.log('mf categories ok', d.categories.length, '|', d.months.length, 'months (append-only) | equityTotal', d.equityTotal.filter(v=>v!=null).length, 'filled')"
 node -e "const d=require('./data/sip_flows.json'); if(d.sip.length!==d.months.length) throw 'sip len'; if(!d.months.length) throw 'no months'; if(typeof d.sipAum!=='number') throw 'aum'; console.log('sip ok', d.months.length, 'months (append-only)')"
 ```
 
