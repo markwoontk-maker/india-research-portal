@@ -1690,6 +1690,11 @@
               <button data-p="YTD" class="on">YTD</button>
               <button data-p="ALL">All</button>
             </div>
+            <div class="seg" id="posGran" title="Bar interval: Daily / Weekly / Monthly — drives both charts">
+              <button data-g="D" class="on">D</button>
+              <button data-g="W">W</button>
+              <button data-g="M">M</button>
+            </div>
             <div style="text-align:right">
               <div id="fiiCumLbl" style="font-size:9px;letter-spacing:.12em;color:var(--text-mute);text-transform:uppercase">YTD cumulative</div>
               <div class="mono" id="fiiCum" style="font-size:19px;font-weight:700;margin-top:2px">—</div>
@@ -1748,6 +1753,14 @@
           <p id="sipSub">Monthly SIP contribution · AMFI</p>
         </div></div>
         <div class="chart-box" id="sipBox" style="height:220px"><canvas id="sipChart"></canvas></div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-h"><div>
+          <h3>Total Monthly Equity MF Flows</h3>
+          <p id="mfTotalSub">Net equity-MF flow stacked by cap category · ₹ Cr · AMFI</p>
+        </div></div>
+        <div class="chart-box" id="mfTotalBox" style="height:240px"><canvas id="mfTotalChart"></canvas></div>
       </div>
 
       <div class="card reveal">
@@ -7374,7 +7387,10 @@ function posZeroAlign(daily, cumul, D){
   return {y:axis(e1), y1:axis(e2)};
 }
 
-function buildFlowChart(canvasId, labels, daily, cumul, name){
+// labels = pre-formatted x-axis strings; titles (optional) = parallel array of
+// tooltip-title strings (used for weekly/monthly buckets where the label alone
+// can't carry the full date range). Daily passes labels already short-formatted.
+function buildFlowChart(canvasId, labels, daily, cumul, name, titles){
   const ctx=document.getElementById(canvasId);
   const barColors=daily.map(v=>v>=0?'#3fc78a':'#f06a6a');
   const zal=posZeroAlign(daily, cumul, 8);
@@ -7396,20 +7412,20 @@ function buildFlowChart(canvasId, labels, daily, cumul, name){
         tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,
           titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:11,displayColors:true,
           callbacks:{
-            title:items=>items&&items[0]?posDateFull(items[0].label):'',
+            title:items=>items&&items[0]?(titles?titles[items[0].dataIndex]:items[0].label):'',
             label:c=>'  '+(c.dataset.label||'')+': '+posCr(c.parsed.y)}}},
       scales:{
         x:{grid:{display:false},border:{display:false},
           ticks:{color:'#646c7c',font:{family:'Roboto Mono',size:10},
             maxRotation:0,autoSkip:true,maxTicksLimit:11,
-            callback:function(val){ return posDateShort(this.getLabelForValue(val)); }}},
+            callback:function(val){ return this.getLabelForValue(val); }}},
         y:{position:'left',border:{display:false},
           min:zal.y.min,max:zal.y.max,
           grid:{color:c=>c.tick.value===0?'#3a4252':'#1f2530',
             lineWidth:c=>c.tick.value===0?1.4:1},
           ticks:{color:'#646c7c',font:{family:'Roboto Mono',size:10},
             stepSize:zal.y.step,callback:v=>posShort(v)},
-          title:{display:true,text:'Daily net (₹ Cr)',color:'#646c7c',
+          title:{display:true,text:'Net (₹ Cr)',color:'#646c7c',
             font:{family:'Roboto Mono',size:9}}},
         y1:{position:'right',grid:{display:false},border:{display:false},
           min:zal.y1.min,max:zal.y1.max,
@@ -7423,7 +7439,7 @@ function buildFlowChart(canvasId, labels, daily, cumul, name){
 
 // Full daily history is kept in posRows (never trimmed — so 2026 stays
 // available after we roll into 2027); the selector just windows the view.
-let posRows=[], posPeriod='YTD';
+let posRows=[], posPeriod='YTD', posGran='D';   // posGran: D=daily W=weekly M=monthly
 // Period boundaries are anchored on the most recent data point, not the wall
 // clock, so they stay correct even if the page is opened on a non-trading day.
 function posFilter(rows, period){
@@ -7438,16 +7454,41 @@ function posFilter(rows, period){
     return true;
   });
 }
+// Monday-of-week ISO key, for weekly bucketing.
+function posWeekKey(iso){ const d=new Date(iso+'T00:00:00'); const off=(d.getDay()+6)%7;
+  d.setDate(d.getDate()-off);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function posMonthFull(ym){ const [y,m]=ym.split('-'); return new Date(y,m-1,1).toLocaleDateString('en-IN',{month:'long',year:'numeric'}); }
+// Collapse the (period-filtered) daily rows into D/W/M buckets. Each bucket
+// carries a display label (x-axis), a tooltip title, and summed fii/dii. Daily
+// is a pass-through so that path renders exactly as before.
+function posAggregate(rows, gran){
+  if(gran==='D') return rows.map(r=>({label:posDateShort(r.date), title:posDateFull(r.date), fii:+r.fii_net, dii:+r.dii_net}));
+  const map=new Map();
+  for(const r of rows){
+    const key = gran==='M' ? r.date.slice(0,7) : posWeekKey(r.date);
+    let b=map.get(key);
+    if(!b){ b={key,first:r.date,last:r.date,fii:0,dii:0}; map.set(key,b); }
+    else { if(r.date<b.first) b.first=r.date; if(r.date>b.last) b.last=r.date; }
+    b.fii+=+r.fii_net; b.dii+=+r.dii_net;
+  }
+  return [...map.values()].sort((a,b)=>a.key<b.key?-1:1).map(b=>({
+    label: gran==='M' ? secMonLbl(b.key) : posDateShort(b.last),
+    title: gran==='M' ? posMonthFull(b.key) : ('Week '+posDateShort(b.first)+' – '+posDateShort(b.last)),
+    fii:+b.fii.toFixed(2), dii:+b.dii.toFixed(2)
+  }));
+}
 function renderPositioning(){
-  const rows=posFilter(posRows, posPeriod);
-  const labels=rows.map(r=>r.date);
-  const fii=rows.map(r=>+r.fii_net), dii=rows.map(r=>+r.dii_net);
-  const cf=[],cd=[]; let sf=0,sd=0;            // cumulative restarts at each period's first day
-  for(let i=0;i<rows.length;i++){ sf+=fii[i]; cf.push(+sf.toFixed(2)); sd+=dii[i]; cd.push(+sd.toFixed(2)); }
+  const base=posFilter(posRows, posPeriod);
+  const buckets=posAggregate(base, posGran);
+  const labels=buckets.map(b=>b.label), titles=buckets.map(b=>b.title);
+  const fii=buckets.map(b=>b.fii), dii=buckets.map(b=>b.dii);
+  const cf=[],cd=[]; let sf=0,sd=0;            // cumulative restarts at each period's first bucket
+  for(let i=0;i<buckets.length;i++){ sf+=fii[i]; cf.push(+sf.toFixed(2)); sd+=dii[i]; cd.push(+sd.toFixed(2)); }
   if(fiiFlowChart) fiiFlowChart.destroy();
   if(diiFlowChart) diiFlowChart.destroy();
-  fiiFlowChart=buildFlowChart('fiiChart',labels,fii,cf,'FII');
-  diiFlowChart=buildFlowChart('diiChart',labels,dii,cd,'DII');
+  fiiFlowChart=buildFlowChart('fiiChart',labels,fii,cf,'FII',titles);
+  diiFlowChart=buildFlowChart('diiChart',labels,dii,cd,'DII',titles);
   const f=cf.length?cf[cf.length-1]:0, d=cd.length?cd[cd.length-1]:0;
   const fe=document.getElementById('fiiCum'), de=document.getElementById('diiCum');
   fe.textContent=posCr(f); fe.className='mono '+(f>=0?'up':'down');
@@ -7455,9 +7496,11 @@ function renderPositioning(){
   const lbl=(posPeriod==='ALL'?'Cumulative':posPeriod+' cumulative');
   document.getElementById('fiiCumLbl').textContent=lbl;
   document.getElementById('diiCumLbl').textContent=lbl;
-  document.getElementById('posSub').textContent='Cash-market provisional net · ₹ Cr · daily · '+
-    (rows.length? posDateFull(rows[0].date)+' – '+posDateFull(rows[rows.length-1].date) : 'no data in period');
+  const granTxt={D:'daily',W:'weekly',M:'monthly'}[posGran]||'daily';
+  document.getElementById('posSub').textContent='Cash-market provisional net · ₹ Cr · '+granTxt+' · '+
+    (base.length? posDateFull(base[0].date)+' – '+posDateFull(base[base.length-1].date) : 'no data in period');
   document.querySelectorAll('#posSeg button').forEach(b=>b.classList.toggle('on', b.dataset.p===posPeriod));
+  document.querySelectorAll('#posGran button').forEach(b=>b.classList.toggle('on', b.dataset.g===posGran));
 }
 let _galAll=[], _galFilters={};
 // charts the user hid via hover-delete (persisted per-browser in localStorage)
@@ -7617,6 +7660,10 @@ async function loadPositioning(){
     const seg=document.getElementById('posSeg');
     if(seg && !seg.dataset.wired){ seg.dataset.wired='1';
       seg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ posPeriod=b.dataset.p; renderPositioning(); }));
+    }
+    const gran=document.getElementById('posGran');
+    if(gran && !gran.dataset.wired){ gran.dataset.wired='1';
+      gran.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ posGran=b.dataset.g; renderPositioning(); }));
     }
   }catch(e){
     ['fiiBox','diiBox'].forEach(id=>{ const b=document.getElementById(id);
@@ -7812,6 +7859,53 @@ function mfShareDraw(){
         y:{stacked:true,min:0,max:100,grid:{color:'#1f2530'},border:{display:false},ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},stepSize:25,callback:v=>v+'%'}} } }
   });
 }
+// Absolute-rupee companion to the 100%-share chart: monthly equity net flow
+// stacked by the 6 cap categories (bar height = total equity inflow that month)
+// + a YoY-growth line of that total (right axis). YoY only where BOTH the month
+// and its year-ago month have all 6 categories present, so partial-history 2024
+// months never produce a misleading growth reading.
+let mfTotalChart=null;
+function mfTotalDraw(){
+  const cv=document.getElementById('mfTotalChart'); if(!cv||!mfCatData) return;
+  if(mfTotalChart){ mfTotalChart.destroy(); mfTotalChart=null; }
+  const order=['Flexi Cap','Large Cap','Large & Mid Cap','Mid Cap','Small Cap','Multi Cap'];
+  const byName=n=>mfCatData.find(x=>x.name===n);
+  const labels=mfCatMonths.map(secMonLbl);
+  // YoY on a LIKE-FOR-LIKE basis: compare only the cap categories reported in BOTH
+  // the month and its year-ago month (>=4 of 6 required). The tooltip discloses the
+  // basis size per point (e.g. "4/6 cats"). This is the densest honest YoY the gappy
+  // 2024-25 per-category history supports without inventing any cell — a clean
+  // full-total series (AMFI monthly PDFs) isn't machine-reachable from here, so we
+  // never fabricate the missing cells.
+  const yoyObj=mfCatMonths.map((m,i)=>{
+    if(i<12) return null;
+    const shared=order.filter(n=>{ const c=byName(n); return c&&c.hist&&c.hist[i]!=null&&c.hist[i-12]!=null; });
+    if(shared.length<4) return null;
+    const cur=shared.reduce((s,n)=>s+byName(n).hist[i],0), prev=shared.reduce((s,n)=>s+byName(n).hist[i-12],0);
+    if(!prev) return null;
+    return { y:+((cur/prev-1)*100).toFixed(1), n:shared.length };
+  });
+  const yoy=yoyObj.map(o=>o?o.y:null);
+  const datasets=order.map(name=>{ const c=byName(name);
+    return { label:name,type:'bar',stack:'flows',data:mfCatMonths.map((m,i)=>c&&c.hist?c.hist[i]:null),
+      backgroundColor:MF_CAT_COLORS[name]||'#888',borderWidth:0,categoryPercentage:.85,barPercentage:.95,order:2,yAxisID:'y' }; });
+  datasets.push({ label:'YoY %',type:'line',data:yoy,borderColor:'#e9e6dd',borderWidth:1.6,borderDash:[4,3],
+    pointRadius:0,pointHoverRadius:4,pointHoverBackgroundColor:'#e9e6dd',tension:.15,spanGaps:true,fill:false,order:1,yAxisID:'y1' });
+  mfTotalChart=new Chart(cv,{
+    data:{labels,datasets},
+    options:{responsive:true,maintainAspectRatio:false,devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:true,position:'bottom',labels:{color:'#a9b0c0',font:{family:'IBM Plex Mono',size:9.5},boxWidth:11,boxHeight:11,padding:8,usePointStyle:true}},
+        tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,titleColor:'#646c7c',bodyColor:'#e9e6dd',padding:10,
+          filter:it=>it.parsed.y!=null,
+          callbacks:{
+            label:x=>{ if(x.dataset.label==='YoY %'){ const o=yoyObj[x.dataIndex]; return o==null?'':'  YoY: '+(o.y>=0?'+':'')+o.y.toFixed(1)+'% ('+(o.n<6?'like-for-like '+o.n+'/6 cats':'all 6 cats')+')'; } return '  '+x.dataset.label+': '+secCr(x.parsed.y)+' cr'; },
+            footer:items=>{ let s=0,any=false; items.forEach(it=>{ if(it.dataset.type==='bar'&&it.parsed.y!=null){ s+=it.parsed.y; any=true; } }); return any?'Total: '+secCr(+s.toFixed(2))+' cr':''; } }}},
+      scales:{ x:{stacked:true,grid:{display:false},border:{display:false},ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},maxRotation:0,autoSkip:true,maxTicksLimit:14}},
+        y:{stacked:true,position:'left',grid:{color:'#1f2530'},border:{display:false},ticks:{color:'#646c7c',font:{family:'IBM Plex Mono',size:10},callback:v=>(Math.abs(v)>=1000?(v/1000).toFixed(0)+'k':v)},title:{display:true,text:'Net flow (₹ cr)',color:'#646c7c',font:{family:'IBM Plex Mono',size:9}}},
+        y1:{position:'right',grid:{display:false},border:{display:false},grace:'12%',ticks:{color:'#e9e6dd',font:{family:'IBM Plex Mono',size:10},callback:v=>v+'%'},title:{display:true,text:'YoY %',color:'#e9e6dd',font:{family:'IBM Plex Mono',size:9}}} } }
+  });
+}
 function mfCatHistDraw(c){
   const cv=document.getElementById('mfCatChart'); if(!cv) return;
   if(mfCatChart){ mfCatChart.destroy(); mfCatChart=null; }
@@ -7876,6 +7970,8 @@ async function loadMfCategories(){
     const totalAum=d.categories.reduce((s,c)=>s+(c.aum||0),0);
     const sub=document.getElementById('mfCatSub'); if(sub) sub.textContent=
       'Net equity-MF flows + AUM by category · AMFI · '+(d.asOf?mon(d.asOf):'')+' · 6 cap categories ₹'+(totalAum/100000).toFixed(1)+'L cr · click a name for its monthly chart';
+    const totSub=document.getElementById('mfTotalSub'); if(totSub) totSub.textContent=
+      'Net equity-MF flow stacked by cap category (₹ cr) + YoY growth of the total (line, like-for-like where 2024–25 history has gaps) · AMFI · to '+(d.asOf?mon(d.asOf):'');
     const tbl=document.getElementById('mfCatTbl');
     if(tbl && !tbl.dataset.wired){ tbl.dataset.wired='1';
       tbl.querySelectorAll('th[data-key]').forEach(th=>th.addEventListener('click',()=>{
@@ -7887,6 +7983,7 @@ async function loadMfCategories(){
     }
     mfCatRender();
     mfShareDraw();
+    mfTotalDraw();
   }catch(e){
     body.innerHTML='<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--text-mute)">MF category data unavailable — could not load <code>data/mf_categories.json</code>.</td></tr>';
   }
