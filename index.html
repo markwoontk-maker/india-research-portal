@@ -430,6 +430,10 @@
   .ec-co{display:flex;flex-wrap:wrap;gap:6px}
   .ec-co b{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:6px;
     font-size:11.5px;font-weight:500;color:var(--text-dim);padding:4px 9px}
+  /* names in the portal's own coverage universe, floated to the front */
+  .ec-co b.mine{background:var(--saffron-soft);border-color:rgba(233,162,59,.45);
+    color:var(--text);font-weight:700}
+  .ec-more{font-size:11px;color:var(--text-mute);align-self:center;margin-left:2px}
   .ec-none{font-size:12px;color:var(--text-mute);font-style:italic}
 
   /* macro momentum heatmaps (CLSA activity indicators) */
@@ -1839,7 +1843,7 @@
       </div>
       <div class="card reveal">
         <div class="card-h"><div><h3>Earnings Calendar — Next 7 Business Days</h3>
-          <p id="calSub">Forthcoming results · BSE</p></div></div>
+          <p id="calSub">Forthcoming results · ICICI Direct</p></div></div>
         <div id="earnCal" class="earn-cal"><div class="pol-empty">Loading earnings calendar…</div></div>
       </div>
     </div>
@@ -5299,30 +5303,73 @@ function calLabel(d){
   const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
   return {dow:wk, date:mo+' '+d.getDate()};
 }
+// Normalised company key for matching the calendar's registered names
+// ("Adani Power Ltd") against the portal's own universe ("Adani Power").
+function ecKey(s){
+  return String(s||'').toLowerCase().replace(/&/g,'and')
+    .replace(/[^a-z0-9]+/g,'').replace(/(limited|ltd)$/,'');
+}
+// Set of company keys we actually cover (companies.json + the NOTEBOOKS map),
+// used to float the analyst's own names to the front of each day.
+function ecCoverage(){
+  const set=new Set();
+  const add=n=>{ const k=ecKey(n); if(k.length>2) set.add(k); };
+  if(window.COMPANIES) Object.keys(window.COMPANIES).forEach(add);
+  if(typeof NOTEBOOKS!=='undefined'&&Array.isArray(NOTEBOOKS)) NOTEBOOKS.forEach(n=>n&&n.name&&add(n.name));
+  return set;
+}
+const EC_CAP=60;                          // chips rendered per day before "+N more"
 function renderEarnCal(items,sourceLabel){
   const days=bizDays(7);
+  const cov=ecCoverage();
   const map={};
   (items||[]).forEach(it=>{ (map[it.date]=map[it.date]||[]).push(it.name); });
   document.getElementById('earnCal').innerHTML=days.map(d=>{
     const k=calKey(d), L=calLabel(d);
-    const cos=[...new Set(map[k]||[])];
+    let cos=[...new Set(map[k]||[])];
+    // Covered names first (alphabetical within each group) so the ~50-a-day
+    // peak-season lists still lead with the stocks under coverage.
+    cos=cos.map(c=>({c, mine:cov.has(ecKey(c))}))
+           .sort((a,b)=>(b.mine-a.mine)||a.c.localeCompare(b.c));
+    const mine=cos.filter(x=>x.mine).length;
+    const shown=cos.slice(0,EC_CAP), hidden=cos.length-shown.length;
+    const chips=shown.map(x=>
+      `<b class="${x.mine?'mine':''}" title="${String(x.c).replace(/"/g,'&quot;')}">`+
+      `${String(x.c).replace(/</g,'&lt;')}</b>`).join('');
+    const more=hidden>0?`<span class="ec-more">+${hidden} more</span>`:'';
     const body=cos.length
-      ? `<div class="ec-co">${cos.slice(0,40).map(c=>`<b>${String(c).replace(/</g,'&lt;')}</b>`).join('')}</div>`
+      ? `<div class="ec-co">${chips}${more}</div>`
       : `<div class="ec-none">No results scheduled / not yet announced</div>`;
+    const count=cos.length?`${cos.length} co.${mine?` · ${mine} covered`:''}`:'';
     return `<div class="ec-day"><div class="ec-date">${L.dow} · ${L.date}
-      <span>${cos.length?cos.length+' co.':''}</span></div>${body}</div>`;
+      <span>${count}</span></div>${body}</div>`;
   }).join('');
   if(sourceLabel) document.getElementById('calSub').textContent='Forthcoming results · '+sourceLabel;
 }
+// Committed data/earnings_calendar.json is the primary source. It's rebuilt
+// each weekday by scripts/refresh-earnings-calendar.js from ICICI Direct's
+// results-calendar API — that endpoint is a POST pinned by CORS to its own
+// origin, so the browser can't call it from Pages and the GET-only public
+// proxies can't forward it either. /api/earncal (BSE) stays as a fallback for
+// the deprecated Netlify path.
 async function loadEarnCal(){
+  try{
+    const r=await fetch('data/earnings_calendar.json',{cache:'no-store'});
+    if(r.ok){
+      const j=await r.json();
+      if(j&&Array.isArray(j.items)&&j.items.length){
+        renderEarnCal(j.items, (j.source||'ICICI Direct')+(j.asOf?' · as of '+j.asOf:''));
+        return;
+      }
+    }
+  }catch(e){}
   try{
     const r=await fetch('/api/earncal',{cache:'no-store'});
     if(r.ok){ const j=await r.json(); if(j&&Array.isArray(j.items)){ renderEarnCal(j.items,j.source); return; } }
   }catch(e){}
-  // No reliable free no-key client fallback for the forward calendar.
   renderEarnCal([], null);
   document.getElementById('calSub').textContent=
-    'Forthcoming results · live calendar needs the deployed backend (BSE)';
+    'Forthcoming results · calendar data unavailable (run scripts/refresh-earnings-calendar.js)';
 }
 // loadEarnNews / loadCorpEvents are no longer wired (the Companies tab
 // was removed); their feeds are now merged into loadNews() in the Macro
