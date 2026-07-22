@@ -30,12 +30,18 @@ $timeoutSec = 2100   # 35 min: a full 4-file refresh (NSDL fortnights + AMFI + m
 
 function Out-Log([string]$m){ Write-Output ("[build-positioning] " + $m) }
 
-# Each file -> a node validation expression (throws on a malformed result).
+# Each file -> a node validation script (throws on a malformed result).
+# These are written to a temp .js and run as `node <file>` -- NEVER `node -e`.
+# PS 5.1 strips the embedded double quotes out of a native command's arguments,
+# so `node -e` saw `require(./data/x.json)` -> SyntaxError -> exit 1 -> every
+# file was judged invalid and reverted, silently discarding good miner runs.
+# Requires are resolved against process.cwd() because a temp-dir script would
+# otherwise resolve "./data/..." relative to %TEMP%.
 $validators = [ordered]@{
-  "data/fpi_sectors.json"      = 'const d=require("./data/fpi_sectors.json"); if(!d.sectors||!d.sectors.length) throw 0; if(!d.months||!d.months.length) throw 0; d.sectors.forEach(s=>{if(!Array.isArray(s.hist)||s.hist.length!==d.months.length) throw 0});'
-  "data/mf_categories.json"    = 'const d=require("./data/mf_categories.json"); if(d.categories.length!==6) throw 0; if(!d.months.length) throw 0; if(!Array.isArray(d.equityTotal)||d.equityTotal.length!==d.months.length) throw 0; d.categories.forEach(c=>{if(!Array.isArray(c.hist)||c.hist.length!==d.months.length) throw 0});'
-  "data/sip_flows.json"        = 'const d=require("./data/sip_flows.json"); if(!d.months.length) throw 0; if(d.sip.length!==d.months.length) throw 0; if(typeof d.sipAum!=="number") throw 0;'
-  "data/model_portfolios.json" = 'const d=require("./data/model_portfolios.json"); if(!d.houses||!d.houses.length) throw 0;'
+  "data/fpi_sectors.json"      = 'const p=require("path"),d=require(p.resolve(process.cwd(),"data/fpi_sectors.json")); if(!d.sectors||!d.sectors.length) throw 0; if(!d.months||!d.months.length) throw 0; d.sectors.forEach(s=>{if(!Array.isArray(s.hist)||s.hist.length!==d.months.length) throw 0});'
+  "data/mf_categories.json"    = 'const p=require("path"),d=require(p.resolve(process.cwd(),"data/mf_categories.json")); if(d.categories.length!==6) throw 0; if(!d.months.length) throw 0; if(!Array.isArray(d.equityTotal)||d.equityTotal.length!==d.months.length) throw 0; d.categories.forEach(c=>{if(!Array.isArray(c.hist)||c.hist.length!==d.months.length) throw 0});'
+  "data/sip_flows.json"        = 'const p=require("path"),d=require(p.resolve(process.cwd(),"data/sip_flows.json")); if(!d.months.length) throw 0; if(d.sip.length!==d.months.length) throw 0; if(typeof d.sipAum!=="number") throw 0;'
+  "data/model_portfolios.json" = 'const p=require("path"),d=require(p.resolve(process.cwd(),"data/model_portfolios.json")); if(!d.houses||!d.houses.length) throw 0;'
 }
 $files = @($validators.Keys)
 
@@ -127,8 +133,12 @@ foreach ($f in $files) {
   $p = Join-Path $repo $f
   $post = if (Test-Path -LiteralPath $p) { (Get-FileHash -LiteralPath $p -Algorithm MD5).Hash } else { "" }
   if ($post -eq $pre[$f]) { continue }   # unchanged
-  & $node -e $validators[$f] 2>&1 | Out-Null
-  if ($LASTEXITCODE -ne 0) {
+  $tmpJs = Join-Path $env:TEMP ("pos-validate-" + ($f -replace '[\\/\.]','_') + ".js")
+  [System.IO.File]::WriteAllText($tmpJs, $validators[$f], $utf8nb)
+  & $node $tmpJs 2>&1 | Out-Null
+  $vExit = $LASTEXITCODE
+  Remove-Item -LiteralPath $tmpJs -Force -ErrorAction SilentlyContinue
+  if ($vExit -ne 0) {
     Out-Log "VALIDATION FAILED: $f - reverting just this file."
     & git checkout -- $f 2>&1 | Out-Null
   } else {
