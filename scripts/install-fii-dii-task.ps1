@@ -19,12 +19,22 @@ $action = New-ScheduledTaskAction -Execute "powershell.exe" `
 
 $trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At 9:00AM
 
+# These four are the difference between "runs every weekday" and "silently skipped":
+#   StartWhenAvailable      - PC asleep/off at 09:00 -> run as soon as it's back
+#   Allow/DontStop batteries- on battery, Task Scheduler otherwise REFUSES to start
+#                             (0x800710E0, no log written at all)
+#   RestartCount/Interval   - a transient failure retries instead of waiting a day
+# NOTE: do NOT recreate this task with schtasks.exe -- that applies Windows'
+# defaults (StartWhenAvailable off, batteries disallowed) and silently undoes all
+# of this. That is exactly how the 21-22 Jul runs were lost.
 $settings = New-ScheduledTaskSettingsSet `
   -StartWhenAvailable `
   -AllowStartIfOnBatteries `
   -DontStopIfGoingOnBatteries `
   -ExecutionTimeLimit (New-TimeSpan -Minutes 15) `
-  -MultipleInstances IgnoreNew
+  -MultipleInstances IgnoreNew `
+  -RestartCount 3 `
+  -RestartInterval (New-TimeSpan -Minutes 10)
 
 Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Settings $settings `
   -Description "Appends the latest daily FII/DII cash-market net flows to data/fii_dii.json and pushes to GitHub Pages. Runs Mon-Fri 9:00 AM local time. Idempotent." `
