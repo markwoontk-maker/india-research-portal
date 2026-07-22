@@ -69,26 +69,39 @@ foreach ($f in $files) {
 $prompt = (Get-Content -LiteralPath $promptFile -Raw) +
   "`n`nWRAPPER OVERRIDE: Do NOT run git commit or git push and do NOT branch. Only create/update + validate the data files, then stop. The local wrapper commits + pushes."
 
-$job = Start-Job -ScriptBlock {
-  param($claude,$prompt,$repo,$model)
-  Set-Location $repo
-  & $claude -p $prompt `
-      --permission-mode bypassPermissions `
-      --allowedTools Bash Read Write Edit WebFetch WebSearch `
-      --model $model 2>&1
-} -ArgumentList $claude,$prompt,$repo,$model
-
-if (Wait-Job $job -Timeout $timeoutSec) {
-  $out = Receive-Job $job
-  if ($out) { $out | ForEach-Object { Out-Log ("claude> " + ($_ | Out-String).TrimEnd()) } }
-} else {
-  Stop-Job $job -ErrorAction SilentlyContinue
-  Remove-Job $job -Force -ErrorAction SilentlyContinue
+# The prompt goes in on STDIN, never as an argv string. It embeds `node -e "..."`
+# validation snippets, and PS 5.1 mangles those embedded quotes when building a
+# native command's arguments -- claude then saw a stray `-e` and died instantly
+# with "unknown option '-e'", so the 2 Jul and 17 Jul windows were burned on
+# 0-file no-op runs. Same Start-Process + stdin pattern as build-house-view-notes.ps1.
+$utf8nb = New-Object System.Text.UTF8Encoding $false
+$tmpIn  = Join-Path $env:TEMP 'pos-in.txt'
+$tmpOut = Join-Path $env:TEMP 'pos-out.txt'
+$tmpErr = Join-Path $env:TEMP 'pos-err.txt'
+[System.IO.File]::WriteAllText($tmpIn, $prompt, $utf8nb)
+$procArgs = @('-p','--permission-mode','bypassPermissions',
+              '--allowedTools','Bash','Read','Write','Edit','WebFetch','WebSearch',
+              '--model',$model)
+$p = Start-Process -FilePath $claude -ArgumentList $procArgs `
+      -WorkingDirectory $repo -NoNewWindow -PassThru `
+      -RedirectStandardInput $tmpIn -RedirectStandardOutput $tmpOut -RedirectStandardError $tmpErr
+if (-not $p.WaitForExit($timeoutSec * 1000)) {
+  try { $p.Kill() } catch {}
   Out-Log "miner timed out - reverting any changes, NOT advancing watermark (retry next run)."
   foreach ($f in $files) { & git checkout -- $f 2>&1 | Out-Null }
   exit 0
 }
-Remove-Job $job -Force -ErrorAction SilentlyContinue
+$out    = Get-Content -LiteralPath $tmpOut -Raw -ErrorAction SilentlyContinue
+$errOut = Get-Content -LiteralPath $tmpErr -Raw -ErrorAction SilentlyContinue
+if ($out)    { Out-Log ("claude> "  + $out.TrimEnd()) }
+if ($errOut) { Out-Log ("claude!> " + $errOut.TrimEnd()) }
+# A crashed miner must NOT consume the fortnightly window, or one bad launch
+# freezes every positioning file until the next window (what happened in July).
+if ($p.ExitCode -ne 0) {
+  Out-Log ("miner FAILED (exit " + $p.ExitCode + ") - reverting, NOT advancing watermark (retry next run).")
+  foreach ($f in $files) { & git checkout -- $f 2>&1 | Out-Null }
+  exit 0
+}
 
 # --- per-file validate; revert only the bad ones -----------------------------
 $changed = 0
