@@ -24,7 +24,9 @@ $promptFile = Join-Path $repo "docs\positioning-data-refresher-prompt.md"
 $stateFile  = Join-Path $repo "scripts\.positioning-state.json"
 $claude     = "C:\Users\admin\.local\bin\claude.exe"
 $model      = "sonnet"
-$timeoutSec = 1200
+$timeoutSec = 2100   # 35 min: a full 4-file refresh (NSDL fortnights + AMFI + model
+                     # portfolios) ran right up against the old 20-min cap and one
+                     # attempt blew through it, losing all its work to the revert.
 
 function Out-Log([string]$m){ Write-Output ("[build-positioning] " + $m) }
 
@@ -66,7 +68,12 @@ foreach ($f in $files) {
 }
 
 # --- run the headless miner with a timeout -----------------------------------
-$prompt = (Get-Content -LiteralPath $promptFile -Raw) +
+# The routine file reads like a spec document, so without an explicit imperative
+# up front the miner treats it as pasted reference material and replies "what
+# would you like me to do with this?" -- a 0-file run. There is no interactive
+# user on the other end, so say so.
+$prompt = "Execute the positioning-data refresh routine below NOW, end to end. This is your assignment, not a document to review or summarise: do the fetching yourself, write the data files, and run the validations. Do NOT ask clarifying questions -- this runs unattended from a scheduled task, so a question wastes the entire run.`n`n" +
+  (Get-Content -LiteralPath $promptFile -Raw) +
   "`n`nWRAPPER OVERRIDE: Do NOT run git commit or git push and do NOT branch. Only create/update + validate the data files, then stop. The local wrapper commits + pushes."
 
 # The prompt goes in on STDIN, never as an argv string. It embeds `node -e "..."`
@@ -130,7 +137,15 @@ foreach ($f in $files) {
   }
 }
 
-# --- advance the watermark (run completed; daily-refresh's git step commits) --
-@{ lastWindow = $window; asOf = (Get-Date).ToString("s") } | ConvertTo-Json | Set-Content -LiteralPath $stateFile -Encoding utf8
-Out-Log ("done - $changed file(s) updated this run.")
+# --- advance the watermark ONLY on a run that actually produced something ------
+# A 0-file run means the miner crashed, asked a question, or couldn't reach its
+# sources -- never a reason to consume the fortnightly window. Burning the window
+# on a no-op is what froze every positioning file through July. The cost of the
+# other choice is one retry per day until data genuinely lands, which is cheap.
+if ($changed -gt 0) {
+  @{ lastWindow = $window; asOf = (Get-Date).ToString("s") } | ConvertTo-Json | Set-Content -LiteralPath $stateFile -Encoding utf8
+  Out-Log ("done - $changed file(s) updated; window $window marked complete.")
+} else {
+  Out-Log ("miner produced NO file changes - leaving window $window OPEN so it retries next run.")
+}
 exit 0
