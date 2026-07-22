@@ -420,21 +420,33 @@
   #earnList li{padding:3px 0}
   #earnList li::before{padding-top:0}
   #earnList .ec-sum{line-height:1.4}
-  /* earnings calendar */
-  .earn-cal{display:flex;flex-direction:column}
-  .ec-day{padding:12px 0;border-bottom:1px solid var(--line-soft)}
-  .earn-cal .ec-day:last-child{border:none;padding-bottom:0}
-  .ec-date{font-family:'Roboto Mono';font-size:12px;font-weight:600;color:var(--saffron);
-    margin-bottom:8px;display:flex;align-items:baseline;gap:10px}
-  .ec-date span{font-family:'Manrope';font-size:11px;color:var(--text-mute);font-weight:500}
-  .ec-co{display:flex;flex-wrap:wrap;gap:6px}
-  .ec-co b{background:var(--ink-2);border:1px solid var(--line-soft);border-radius:6px;
-    font-size:11.5px;font-weight:500;color:var(--text-dim);padding:4px 9px}
-  /* names in the portal's own coverage universe, floated to the front */
-  .ec-co b.mine{background:var(--saffron-soft);border-color:rgba(233,162,59,.45);
-    color:var(--text);font-weight:700}
-  .ec-more{font-size:11px;color:var(--text-mute);align-self:center;margin-left:2px}
-  .ec-none{font-size:12px;color:var(--text-mute);font-style:italic}
+  /* earnings calendar — week grid of day columns, logo-tile style.
+     NB: .ec-co / .ec-tk belong to the earnings NEWS feed above; the calendar
+     uses its own ecal-* names so the two can't collide. */
+  .earn-cal{display:flex;gap:10px;overflow-x:auto;align-items:flex-start;padding-bottom:6px}
+  .ec-day{flex:1 0 198px;min-width:198px;background:var(--ink-2);
+    border:1px solid var(--line-soft);border-radius:12px;padding:9px 9px 11px}
+  .ec-day.today{border-color:rgba(233,162,59,.55);background:var(--saffron-soft)}
+  .ec-date{display:flex;flex-direction:column;align-items:center;gap:2px;
+    font-family:'Manrope';margin-bottom:9px}
+  .ec-date b{font-size:12.5px;font-weight:700;color:var(--text);letter-spacing:.01em}
+  .ec-day.today .ec-date b{background:var(--saffron);color:#1a1200;border-radius:999px;
+    padding:2px 11px}
+  .ec-date span{font-size:10px;color:var(--text-mute);font-weight:500}
+  .ecal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+  .ecal-tile{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+  .ecal-logo{width:100%;aspect-ratio:1;border-radius:10px;display:flex;align-items:center;
+    justify-content:center;font-family:'Manrope';font-weight:800;font-size:14px;color:#fff;
+    letter-spacing:-.02em;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+  .ecal-tile.mine .ecal-logo{box-shadow:0 0 0 2px var(--saffron)}
+  .ecal-lbl{font-family:'Roboto Mono';font-size:9px;line-height:1.25;color:var(--text-mute);
+    max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+  .ecal-tile.mine .ecal-lbl{color:var(--text);font-weight:700}
+  .ecal-more{width:100%;aspect-ratio:1;border-radius:10px;display:flex;align-items:center;
+    justify-content:center;background:var(--panel);border:1px dashed var(--line-soft);
+    color:var(--text-mute);font-family:'Manrope';font-size:12px;font-weight:700;cursor:pointer}
+  .ecal-more:hover{color:var(--text);border-color:var(--saffron)}
+  .ec-none{font-size:11px;color:var(--text-mute);font-style:italic;text-align:center;padding:10px 0}
 
   /* macro momentum heatmaps (CLSA activity indicators) */
   .macro-wrap{overflow:auto;max-height:74vh;border:1px solid var(--line-soft);
@@ -5318,34 +5330,91 @@ function ecCoverage(){
   if(typeof NOTEBOOKS!=='undefined'&&Array.isArray(NOTEBOOKS)) NOTEBOOKS.forEach(n=>n&&n.name&&add(n.name));
   return set;
 }
-const EC_CAP=60;                          // chips rendered per day before "+N more"
+const EC_CAP=12;                          // tiles per day before the "+N" tile
+const ecExpanded=new Set();               // date keys the user opened via "+N"
+let ecItems=[];                           // last-rendered dataset (for re-render on expand)
+let ecSource='';
+// company key -> display ticker, from the coverage universe (companies.json
+// holds Yahoo symbols like ADANIPOWER.NS). Names outside coverage have no
+// ticker anywhere in the bundle, so those tiles fall back to the short name
+// ICICI ships (e.g. "Bansal Wire Inds").
+function ecTickers(){
+  const m={};
+  if(window.COMPANIES) Object.keys(window.COMPANIES).forEach(n=>{
+    const t=window.COMPANIES[n]&&window.COMPANIES[n].ticker;
+    if(t) m[ecKey(n)]=String(t).replace(/\.(NS|BO)$/i,'');
+  });
+  return m;
+}
+// Deterministic tile colour + monogram — the source has no logos, so each
+// company gets a stable colour hashed from its name and its initials.
+function ecHue(s){ let h=0; for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))%360; return h; }
+function ecMonogram(s){
+  const w=String(s).replace(/[^A-Za-z0-9 ]/g,' ').split(/\s+/)
+    .filter(x=>x&&!/^(the|of|and|ltd|limited|india|co)$/i.test(x));
+  if(!w.length) return String(s).slice(0,2).toUpperCase();
+  return (w.length>1?w[0][0]+w[1][0]:w[0].slice(0,2)).toUpperCase();
+}
 function renderEarnCal(items,sourceLabel){
+  if(items) ecItems=items;
+  if(sourceLabel) ecSource=sourceLabel;
   const days=bizDays(7);
-  const cov=ecCoverage();
+  const cov=ecCoverage(), TK=ecTickers();
+  const todayKey=calKey(new Date());
   const map={};
-  (items||[]).forEach(it=>{ (map[it.date]=map[it.date]||[]).push(it.name); });
+  (ecItems||[]).forEach(it=>{ (map[it.date]=map[it.date]||[]).push(it); });
   document.getElementById('earnCal').innerHTML=days.map(d=>{
     const k=calKey(d), L=calLabel(d);
-    let cos=[...new Set(map[k]||[])];
+    const seen=new Set();
+    let cos=(map[k]||[]).filter(it=>{
+      const kk=ecKey(it.name); if(seen.has(kk)) return false; seen.add(kk); return true;
+    }).map(it=>{
+      const key=ecKey(it.name);
+      return {name:it.name, label:TK[key]||it.short||it.name, mine:cov.has(key)};
+    });
     // Covered names first (alphabetical within each group) so the ~50-a-day
-    // peak-season lists still lead with the stocks under coverage.
-    cos=cos.map(c=>({c, mine:cov.has(ecKey(c))}))
-           .sort((a,b)=>(b.mine-a.mine)||a.c.localeCompare(b.c));
+    // peak-season columns still lead with the stocks under coverage.
+    cos.sort((a,b)=>(b.mine-a.mine)||a.name.localeCompare(b.name));
     const mine=cos.filter(x=>x.mine).length;
-    const shown=cos.slice(0,EC_CAP), hidden=cos.length-shown.length;
-    const chips=shown.map(x=>
-      `<b class="${x.mine?'mine':''}" title="${String(x.c).replace(/"/g,'&quot;')}">`+
-      `${String(x.c).replace(/</g,'&lt;')}</b>`).join('');
-    const more=hidden>0?`<span class="ec-more">+${hidden} more</span>`:'';
+    const open=ecExpanded.has(k);
+    const shown=open?cos:cos.slice(0,EC_CAP), hidden=cos.length-shown.length;
+    const tiles=shown.map(x=>{
+      const h=ecHue(x.name);
+      const nm=String(x.name).replace(/"/g,'&quot;');
+      return `<div class="ecal-tile${x.mine?' mine':''}" title="${nm}">`+
+        `<div class="ecal-logo" style="background:hsl(${h},52%,42%)">${ecMonogram(x.name)}</div>`+
+        `<div class="ecal-lbl">${String(x.label).replace(/</g,'&lt;')}</div></div>`;
+    }).join('');
+    const more=hidden>0
+      ? `<div class="ecal-tile"><div class="ecal-more" data-ecday="${k}" role="button" tabindex="0"
+           title="Show all ${cos.length}">+${hidden}</div></div>`
+      : (open&&cos.length>EC_CAP
+          ? `<div class="ecal-tile"><div class="ecal-more" data-ecday="${k}" role="button" tabindex="0"
+               title="Collapse">−</div></div>` : '');
     const body=cos.length
-      ? `<div class="ec-co">${chips}${more}</div>`
-      : `<div class="ec-none">No results scheduled / not yet announced</div>`;
-    const count=cos.length?`${cos.length} co.${mine?` · ${mine} covered`:''}`:'';
-    return `<div class="ec-day"><div class="ec-date">${L.dow} · ${L.date}
-      <span>${count}</span></div>${body}</div>`;
+      ? `<div class="ecal-grid">${tiles}${more}</div>`
+      : `<div class="ec-none">No results scheduled</div>`;
+    const count=cos.length?`${cos.length} co.${mine?` · ${mine} covered`:''}`:'—';
+    return `<div class="ec-day${k===todayKey?' today':''}">`+
+      `<div class="ec-date"><b>${L.dow} ${d.getDate()}</b><span>${count}</span></div>`+
+      `${body}</div>`;
   }).join('');
-  if(sourceLabel) document.getElementById('calSub').textContent='Forthcoming results · '+sourceLabel;
+  if(ecSource) document.getElementById('calSub').textContent='Forthcoming results · '+ecSource;
 }
+// "+N" / "−" toggles a day column between capped and full.
+(function(){
+  const host=document.getElementById('earnCal'); if(!host) return;
+  const hit=e=>{
+    const el=e.target.closest('.ecal-more'); if(!el) return;
+    if(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ') return;
+    e.preventDefault();
+    const k=el.dataset.ecday;
+    if(ecExpanded.has(k)) ecExpanded.delete(k); else ecExpanded.add(k);
+    renderEarnCal();
+  };
+  host.addEventListener('click',hit);
+  host.addEventListener('keydown',hit);
+})();
 // Committed data/earnings_calendar.json is the primary source. It's rebuilt
 // each weekday by scripts/refresh-earnings-calendar.js from ICICI Direct's
 // results-calendar API — that endpoint is a POST pinned by CORS to its own
