@@ -85,6 +85,10 @@ $procArgs = @('-p','--permission-mode','bypassPermissions',
 $p = Start-Process -FilePath $claude -ArgumentList $procArgs `
       -WorkingDirectory $repo -NoNewWindow -PassThru `
       -RedirectStandardInput $tmpIn -RedirectStandardOutput $tmpOut -RedirectStandardError $tmpErr
+# Touching .Handle caches the process handle. Without this, Start-Process
+# -PassThru hands back an object whose .ExitCode reads back as $null after the
+# process ends -- and `$null -ne 0` would then revert a perfectly good run.
+$null = $p.Handle
 if (-not $p.WaitForExit($timeoutSec * 1000)) {
   try { $p.Kill() } catch {}
   Out-Log "miner timed out - reverting any changes, NOT advancing watermark (retry next run)."
@@ -97,8 +101,15 @@ if ($out)    { Out-Log ("claude> "  + $out.TrimEnd()) }
 if ($errOut) { Out-Log ("claude!> " + $errOut.TrimEnd()) }
 # A crashed miner must NOT consume the fortnightly window, or one bad launch
 # freezes every positioning file until the next window (what happened in July).
-if ($p.ExitCode -ne 0) {
-  Out-Log ("miner FAILED (exit " + $p.ExitCode + ") - reverting, NOT advancing watermark (retry next run).")
+# Only a DEFINITE failure reverts. An unreadable exit code is treated as success:
+# discarding a good run is far more costly than letting the per-file validators
+# below catch a bad one. `unknown option` is the launch-mangling signature that
+# silently burned the 2 + 17 Jul windows, so trap that explicitly.
+$p.WaitForExit()
+$code = $null; try { $code = $p.ExitCode } catch { $code = $null }
+$launchFail = ($errOut -and $errOut -match 'unknown option|is not recognized|cannot find the path')
+if (($code -ne $null -and $code -ne 0) -or $launchFail) {
+  Out-Log ("miner FAILED (exit " + $code + ") - reverting, NOT advancing watermark (retry next run).")
   foreach ($f in $files) { & git checkout -- $f 2>&1 | Out-Null }
   exit 0
 }
