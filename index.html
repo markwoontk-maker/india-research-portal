@@ -433,18 +433,23 @@
   .ec-day.today .ec-date b{background:var(--saffron);color:#1a1200;border-radius:999px;
     padding:2px 11px}
   .ec-date span{font-size:10px;color:var(--text-mute);font-weight:500}
-  .ecal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-  .ecal-tile{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
-  .ecal-logo{width:100%;aspect-ratio:1;border-radius:10px;display:flex;align-items:center;
-    justify-content:center;font-family:'Manrope';font-weight:800;font-size:14px;color:#fff;
-    letter-spacing:-.02em;text-shadow:0 1px 2px rgba(0,0,0,.25)}
-  .ecal-tile.mine .ecal-logo{box-shadow:0 0 0 2px var(--saffron)}
-  .ecal-lbl{font-family:'Roboto Mono';font-size:9px;line-height:1.25;color:var(--text-mute);
-    max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
-  .ecal-tile.mine .ecal-lbl{color:var(--text);font-weight:700}
-  .ecal-more{width:100%;aspect-ratio:1;border-radius:10px;display:flex;align-items:center;
-    justify-content:center;background:var(--panel);border:1px dashed var(--line-soft);
-    color:var(--text-mute);font-family:'Manrope';font-size:12px;font-weight:700;cursor:pointer}
+  /* one row per company: name (left) + YTD return (right); covered
+     watchlist names float to the top, highlighted. */
+  .ecal-list{display:flex;flex-direction:column;gap:5px}
+  .ecal-item{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:8px;
+    background:var(--panel);border:1px solid var(--line-soft)}
+  .ecal-item.mine{background:var(--saffron-soft);border-color:rgba(233,162,59,.45)}
+  .ecal-nm{flex:1;min-width:0;font-family:'Manrope';font-size:11px;font-weight:600;
+    color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ecal-item.mine .ecal-nm{color:var(--text);font-weight:700}
+  .ecal-ytd{flex:none;font-family:'Roboto Mono';font-size:10.5px;font-weight:600;
+    font-variant-numeric:tabular-nums}
+  .ecal-ytd.up{color:var(--up)} .ecal-ytd.down{color:var(--down)}
+  .ecal-ytd.na{color:var(--text-mute);font-weight:500}
+  .ecal-div{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--text-mute);margin:4px 2px 1px}
+  .ecal-more{text-align:center;padding:5px 0;border-radius:8px;border:1px dashed var(--line-soft);
+    color:var(--text-mute);font-family:'Manrope';font-size:11px;font-weight:700;cursor:pointer}
   .ecal-more:hover{color:var(--text);border-color:var(--saffron)}
   .ec-none{font-size:11px;color:var(--text-mute);font-style:italic;text-align:center;padding:10px 0}
 
@@ -5321,45 +5326,57 @@ function ecKey(s){
   return String(s||'').toLowerCase().replace(/&/g,'and')
     .replace(/[^a-z0-9]+/g,'').replace(/(limited|ltd)$/,'');
 }
-// Set of company keys we actually cover (companies.json + the NOTEBOOKS map),
-// used to float the analyst's own names to the front of each day.
-function ecCoverage(){
-  const set=new Set();
-  const add=n=>{ const k=ecKey(n); if(k.length>2) set.add(k); };
-  if(window.COMPANIES) Object.keys(window.COMPANIES).forEach(add);
-  if(typeof NOTEBOOKS!=='undefined'&&Array.isArray(NOTEBOOKS)) NOTEBOOKS.forEach(n=>n&&n.name&&add(n.name));
-  return set;
-}
-const EC_CAP=12;                          // tiles per day before the "+N" tile
-const ecExpanded=new Set();               // date keys the user opened via "+N"
-let ecItems=[];                           // last-rendered dataset (for re-render on expand)
-let ecSource='';
-// company key -> display ticker, from the coverage universe (companies.json
-// holds Yahoo symbols like ADANIPOWER.NS). Names outside coverage have no
-// ticker anywhere in the bundle, so those tiles fall back to the short name
-// ICICI ships (e.g. "Bansal Wire Inds").
-function ecTickers(){
+// Coverage = the Watchlist tab universe (Holdings + Coverage + Watchlist),
+// including the user's localStorage edits (live WL object). Map each
+// normalised company key -> {name, sym} so a covered result can show the
+// analyst's own label and pull a YTD return by symbol.
+function ecWatch(){
   const m={};
-  if(window.COMPANIES) Object.keys(window.COMPANIES).forEach(n=>{
-    const t=window.COMPANIES[n]&&window.COMPANIES[n].ticker;
-    if(t) m[ecKey(n)]=String(t).replace(/\.(NS|BO)$/i,'');
+  ['hold','cov','watch'].forEach(g=>{
+    ((typeof WL!=='undefined'&&WL&&WL[g])||[]).forEach(row=>{
+      if(!row||!row[0]) return;
+      const k=ecKey(row[0]); if(k.length>2 && !m[k]) m[k]={name:row[0], sym:String(row[1]||'')};
+    });
   });
   return m;
 }
-// Deterministic tile colour + monogram — the source has no logos, so each
-// company gets a stable colour hashed from its name and its initials.
-function ecHue(s){ let h=0; for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))%360; return h; }
-function ecMonogram(s){
-  const w=String(s).replace(/[^A-Za-z0-9 ]/g,' ').split(/\s+/)
-    .filter(x=>x&&!/^(the|of|and|ltd|limited|india|co)$/i.test(x));
-  if(!w.length) return String(s).slice(0,2).toUpperCase();
-  return (w.length>1?w[0][0]+w[1][0]:w[0].slice(0,2)).toUpperCase();
+const EC_CAP=12;                          // rows per day before the "+N" toggle
+const ecExpanded=new Set();               // date keys the user opened via "+N"
+let ecItems=[];                           // last-rendered dataset (re-render on expand/YTD)
+let ecSource='';
+// Live YTD returns for covered names, keyed by primary NSE symbol. Filled by
+// ecFetchYtd() (Yahoo, same helpers as the Watchlist tab) after first render.
+let ecYtd={}, ecYtdInflight=false, ecYtdDone=false;
+function ecPrimSym(sym){ return String(sym||'').split('|')[0]; }
+// Match a calendar item to the watchlist by its full name or its short name.
+function ecMatch(wl, it){ return wl[ecKey(it.name)] || wl[ecKey(it.short||'')] || null; }
+function ecFmtYtd(v){ return v==null?'—':((v>=0?'+':'')+v.toFixed(1)+'%'); }
+// Pull YTD for every covered name in the current window (one Yahoo batch),
+// then re-render. Idempotent: runs once, caches, never blocks the calendar.
+async function ecFetchYtd(){
+  if(ecYtdInflight||ecYtdDone) return;
+  ecYtdInflight=true;
+  try{
+    if(typeof sparkR!=='function') return;
+    const wl=ecWatch(), need=new Set();
+    (ecItems||[]).forEach(it=>{ const h=ecMatch(wl,it); if(h&&h.sym) need.add(ecPrimSym(h.sym)); });
+    const syms=[...need].filter(Boolean);
+    if(!syms.length){ ecYtdDone=true; return; }
+    const res=await Promise.allSettled(chunk(syms,20).map(c=>sparkR(c,'ytd','1d').then(j=>({c,j}))));
+    res.forEach(x=>{
+      if(x.status!=='fulfilled'||!x.value||!x.value.j) return;
+      const {c,j}=x.value;
+      c.forEach(s=>{ const d=pick(j,s); if(!d) return; const v=pctOver(d,'YTD'); if(v!=null) ecYtd[s]=v; });
+    });
+    ecYtdDone=true;
+  }catch(e){}
+  finally{ ecYtdInflight=false; renderEarnCal(); }
 }
 function renderEarnCal(items,sourceLabel){
   if(items) ecItems=items;
   if(sourceLabel) ecSource=sourceLabel;
   const days=bizDays(7);
-  const cov=ecCoverage(), TK=ecTickers();
+  const wl=ecWatch();
   const todayKey=calKey(new Date());
   const map={};
   (ecItems||[]).forEach(it=>{ (map[it.date]=map[it.date]||[]).push(it); });
@@ -5369,30 +5386,34 @@ function renderEarnCal(items,sourceLabel){
     let cos=(map[k]||[]).filter(it=>{
       const kk=ecKey(it.name); if(seen.has(kk)) return false; seen.add(kk); return true;
     }).map(it=>{
-      const key=ecKey(it.name);
-      return {name:it.name, label:TK[key]||it.short||it.name, mine:cov.has(key)};
+      const h=ecMatch(wl,it);
+      const sym=h?ecPrimSym(h.sym):null;
+      const ytd=(sym&&sym in ecYtd)?ecYtd[sym]:undefined;   // number | undefined(pending/none)
+      return {name:h?h.name:(it.short||it.name), mine:!!h, ytd};
     });
-    // Covered names first (alphabetical within each group) so the ~50-a-day
-    // peak-season columns still lead with the stocks under coverage.
-    cos.sort((a,b)=>(b.mine-a.mine)||a.name.localeCompare(b.name));
+    // Covered names first; within a group, best YTD first (names without a
+    // YTD yet sort last), so the peak-season ~50/day columns lead with the
+    // analyst's own stocks ranked by performance.
+    cos.sort((a,b)=>(b.mine-a.mine)
+      || ((b.ytd==null?-1e9:b.ytd)-(a.ytd==null?-1e9:a.ytd))
+      || a.name.localeCompare(b.name));
     const mine=cos.filter(x=>x.mine).length;
     const open=ecExpanded.has(k);
     const shown=open?cos:cos.slice(0,EC_CAP), hidden=cos.length-shown.length;
-    const tiles=shown.map(x=>{
-      const h=ecHue(x.name);
+    const rows=shown.map(x=>{
       const nm=String(x.name).replace(/"/g,'&quot;');
-      return `<div class="ecal-tile${x.mine?' mine':''}" title="${nm}">`+
-        `<div class="ecal-logo" style="background:hsl(${h},52%,42%)">${ecMonogram(x.name)}</div>`+
-        `<div class="ecal-lbl">${String(x.label).replace(/</g,'&lt;')}</div></div>`;
+      const ycls=x.ytd==null?'na':(x.ytd>=0?'up':'down');
+      // Covered names always show a YTD cell (— while it loads); others don't.
+      const ycell=x.mine?`<span class="ecal-ytd ${ycls}">${ecFmtYtd(x.ytd==null?null:x.ytd)}</span>`:'';
+      return `<div class="ecal-item${x.mine?' mine':''}" title="${nm}">`+
+        `<span class="ecal-nm">${String(x.name).replace(/</g,'&lt;')}</span>${ycell}</div>`;
     }).join('');
     const more=hidden>0
-      ? `<div class="ecal-tile"><div class="ecal-more" data-ecday="${k}" role="button" tabindex="0"
-           title="Show all ${cos.length}">+${hidden}</div></div>`
+      ? `<div class="ecal-more" data-ecday="${k}" role="button" tabindex="0" title="Show all ${cos.length}">+${hidden} more</div>`
       : (open&&cos.length>EC_CAP
-          ? `<div class="ecal-tile"><div class="ecal-more" data-ecday="${k}" role="button" tabindex="0"
-               title="Collapse">−</div></div>` : '');
+          ? `<div class="ecal-more" data-ecday="${k}" role="button" tabindex="0" title="Collapse">show less</div>` : '');
     const body=cos.length
-      ? `<div class="ecal-grid">${tiles}${more}</div>`
+      ? `<div class="ecal-list">${rows}${more}</div>`
       : `<div class="ec-none">No results scheduled</div>`;
     const count=cos.length?`${cos.length} co.${mine?` · ${mine} covered`:''}`:'—';
     return `<div class="ec-day${k===todayKey?' today':''}">`+
@@ -5400,6 +5421,7 @@ function renderEarnCal(items,sourceLabel){
       `${body}</div>`;
   }).join('');
   if(ecSource) document.getElementById('calSub').textContent='Forthcoming results · '+ecSource;
+  ecFetchYtd();
 }
 // "+N" / "−" toggles a day column between capped and full.
 (function(){
