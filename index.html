@@ -483,6 +483,14 @@
   .macro-legend span{display:inline-flex;align-items:center;gap:6px}
   .macro-legend i{width:13px;height:13px;border-radius:3px;display:inline-block}
 
+  /* toggleable legend for the Portfolio Daily Return chart */
+  .wl-daily-legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;padding:10px 4px 2px}
+  .wl-leg-item{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);cursor:pointer;user-select:none}
+  .wl-leg-item.off{opacity:.42}
+  .wl-leg-item input{cursor:pointer;margin:0;width:13px;height:13px;accent-color:var(--accent,#e9a23b)}
+  .wl-leg-sw{width:12px;height:12px;border-radius:2px;display:inline-block;flex:0 0 auto}
+  .wl-leg-txt{white-space:nowrap}
+
   /* news modal */
   .nm-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;
     justify-content:center;background:rgba(6,8,12,.72);backdrop-filter:blur(3px);padding:24px}
@@ -1886,6 +1894,7 @@
         <div class="card-h"><div><h3>Portfolio Daily Return</h3><p id="wlDailySub">Weighted daily return of Current Holdings vs Nifty 500</p></div>
           <div class="seg" id="wlDailySeg"><button data-p="1W">1W</button><button data-p="1M" class="on">1M</button><button data-p="3M">3M</button><button data-p="6M">6M</button><button data-p="YTD">YTD</button><button data-p="1Y">1Y</button></div></div>
         <div style="position:relative;height:250px"><canvas id="wlDailyCanvas"></canvas></div>
+        <div id="wlDailyLegend" class="wl-daily-legend"></div>
       </div>
       <div class="card reveal">
         <div class="card-h"><div><h3>Coverage</h3><p>Live prices · NSE</p></div>
@@ -4444,6 +4453,28 @@ function wlPortfolioDailyReturn(){
   return n>0?s/n:null;
 }
 let wlDailyChart=null;
+// Toggleable check-box legend for the Portfolio Daily Return chart (per-series on/off, persisted).
+const WL_DAILY_VIS_LS='irp_daily_vis_v1';
+function wlDailyVisLoad(){ try{ return JSON.parse(localStorage.getItem(WL_DAILY_VIS_LS))||{}; }catch(e){ return {}; } }
+let wlDailyVis=wlDailyVisLoad();
+function wlDailyVisSave(){ try{ localStorage.setItem(WL_DAILY_VIS_LS,JSON.stringify(wlDailyVis)); }catch(e){} }
+function wlBuildDailyLegend(chart){
+  const box=document.getElementById('wlDailyLegend'); if(!box) return;
+  box.innerHTML='';
+  chart.data.datasets.forEach(function(ds,i){
+    const vis=wlDailyVis[ds.label]!==false;
+    const lab=document.createElement('label'); lab.className='wl-leg-item'+(vis?'':' off');
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=vis;
+    const sw=document.createElement('span'); sw.className='wl-leg-sw'; sw.style.background=(ds.type==='line')?ds.borderColor:ds.backgroundColor;
+    const txt=document.createElement('span'); txt.className='wl-leg-txt'; txt.textContent=ds.label;
+    cb.addEventListener('change',function(){
+      wlDailyVis[ds.label]=cb.checked; wlDailyVisSave();
+      chart.setDatasetVisibility(i, cb.checked); chart.update();
+      lab.classList.toggle('off', !cb.checked);
+    });
+    lab.appendChild(cb); lab.appendChild(sw); lab.appendChild(txt); box.appendChild(lab);
+  });
+}
 function wlDayP(v){ return (typeof v==='number')?v:(v&&v.p!=null?v.p:null); }
 function wlDayWA(v){ return (v&&typeof v==='object'&&v.pa!=null)?v.pa:null; }
 function wlDayI(v){ return (typeof v==='number')?null:(v&&v.i!=null?v.i:null); }
@@ -4477,12 +4508,12 @@ function wlRenderDaily(){
     data:{labels:labels,datasets:[
       {label:'Portfolio (daily, sum-product)',data:pVals,backgroundColor:'#e9a23b',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
       {label:'Nifty 500 (daily)',data:iVals,backgroundColor:'#6db4b4',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
-      {label:'Wtd avg return (daily)',type:'line',data:waVals,borderColor:'#f5c542',backgroundColor:'#f5c542',borderWidth:1.4,pointRadius:1.5,pointHoverRadius:4,tension:.2,order:3,yAxisID:'y1',spanGaps:true},
+      {label:'Wtd avg return (daily)',data:waVals,backgroundColor:'#3fc78a',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y1'},
       {label:'Relative (wtd avg vs Nifty 500)',type:'line',data:relVals,borderColor:'#b18cff',backgroundColor:'#b18cff',borderWidth:1,pointRadius:1.5,pointHoverRadius:4,tension:.2,order:2,yAxisID:'y1',spanGaps:true},
-      {label:'Cumulative (portfolio, compounded)',type:'line',data:cumVals,borderColor:'#3fc78a',backgroundColor:'rgba(63,199,138,.08)',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:true,order:1,yAxisID:'y1'}
+      {label:'Cumulative (portfolio, compounded)',type:'line',data:cumVals,borderColor:'#5aa9e6',backgroundColor:'rgba(90,169,230,.08)',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:true,order:1,yAxisID:'y1'}
     ]},
     options:{responsive:true,maintainAspectRatio:false,devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
-      plugins:{legend:{display:true,labels:{color:'#b8b3a8',boxWidth:12,font:{size:11}}},
+      plugins:{legend:{display:false},
         tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,titleColor:'#646c7c',bodyColor:'#e9e6dd',
           callbacks:{label:function(t){ if(t.parsed.y==null) return ''; return ' '+t.dataset.label+': '+(t.parsed.y>=0?'+':'')+t.parsed.y.toFixed(2)+'%'; },
             afterBody:function(items){ if(!items.length) return ''; const D=dates[items[0].dataIndex]; const cc=wlContrib[D]; if(!cc||!cc.length) return '';
@@ -4494,6 +4525,9 @@ function wlRenderDaily(){
       scales:{x:{grid:{display:false},ticks:{color:'#646c7c',font:{size:10}}},
         y:{position:'left',grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#646c7c',font:{size:10},callback:function(v){ return v+'%'; }}},
         y1:{position:'right',title:{display:true,text:'weighted-avg %',color:'#8a93a6',font:{size:9}},grid:{display:false},ticks:{color:'#8a93a6',font:{size:10},callback:function(v){ return v+'%'; }}}}}});
+  wlDailyChart.data.datasets.forEach(function(ds,i){ wlDailyChart.setDatasetVisibility(i, wlDailyVis[ds.label]!==false); });
+  wlDailyChart.update();
+  wlBuildDailyLegend(wlDailyChart);
 }
 function wlCloseAt(sym,ymd){ const h=wlPxHist[sym]; if(!h||!h.dates||!h.dates.length||!ymd) return null; const ds=h.dates; let lo=0,hi=ds.length-1,res=-1; while(lo<=hi){ const m=(lo+hi)>>1; if(ds[m]<=ymd){res=m;lo=m+1;} else hi=m-1; } return res>=0?h.close[res]:null; }
 function wlEnsureHoldPx(){
