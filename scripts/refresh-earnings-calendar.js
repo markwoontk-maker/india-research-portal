@@ -45,6 +45,46 @@ function parseEventDate(s){
   return `${m[3]}-${String(mi+1).padStart(2,"0")}-${String(m[2]).padStart(2,"0")}`;
 }
 
+// Normalised company key — MUST mirror ecKey() in index.html so the same name
+// resolves the same way on both sides.
+function nkey(s){
+  return String(s||"").toLowerCase().replace(/&/g,"and")
+    .replace(/[^a-z0-9]+/g,"").replace(/(limited|ltd)$/,"");
+}
+
+// NSE equity master (SYMBOL <-> company name) so each result gets a Yahoo
+// symbol the page can price for YTD. ~74% of the calendar matches; the rest
+// are BSE-only microcaps with no NSE line (they just render without a YTD).
+// Best-effort: on any failure the calendar still ships, just without symbols.
+async function fetchNseSymbolMap(){
+  const urls = [
+    "https://archives.nseindia.com/content/equities/EQUITY_L.csv",
+    "https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv"
+  ];
+  for (const u of urls){
+    try{
+      const r = await fetch(u, { headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/150.0.0.0 Safari/537.36",
+        "Accept": "text/csv,*/*", "Referer": "https://www.nseindia.com/" } });
+      if (!r.ok) continue;
+      const csv = await r.text();
+      if (csv.length < 1000) continue;
+      const lines = csv.split(/\r?\n/);
+      const map = {};
+      for (let i = 1; i < lines.length; i++){
+        const c = lines[i].split(",");
+        const sym = (c[0]||"").trim(), name = (c[1]||"").trim(), series = (c[2]||"").trim();
+        if (!sym || !name) continue;
+        if (series && series !== "EQ" && series !== "BE") continue;   // tradeable equity series
+        const k = nkey(name);
+        if (k && !map[k]) map[k] = sym;
+      }
+      if (Object.keys(map).length > 500) return map;
+    }catch(e){ /* try next url */ }
+  }
+  return null;
+}
+
 async function fetchPage(from, to, pageNumber){
   const body = new URLSearchParams();
   body.set("Method", "Get_EquityCompanyEvents");
@@ -82,8 +122,12 @@ async function fetchPage(from, to, pageNumber){
       pageNumber++;
     }
 
+    // NSE symbol lookup (best-effort; null if the master can't be fetched).
+    const nseMap = await fetchNseSymbolMap();
+
     // Keep results events only, normalise, dedupe by date+company.
     const seen = new Set(), items = [];
+    let symHits = 0;
     for (const r of rows) {
       if (String(r.EVENTTYPE || "").toLowerCase() !== "result") continue;
       const date = parseEventDate(r.EVENTDATE);
@@ -92,7 +136,11 @@ async function fetchPage(from, to, pageNumber){
       const key = date + "|" + name.toLowerCase();
       if (seen.has(key)) continue;
       seen.add(key);
-      items.push({ date, name, short: String(r.CO_NAME || "").trim() || undefined });
+      const short = String(r.CO_NAME || "").trim() || undefined;
+      // Match on full name first, then the short name.
+      const nse = nseMap && (nseMap[nkey(name)] || (short && nseMap[nkey(short)]));
+      if (nse) symHits++;
+      items.push({ date, name, short, sym: nse ? nse + ".NS" : undefined });
     }
 
     if (!items.length) {
@@ -112,7 +160,7 @@ async function fetchPage(from, to, pageNumber){
     };
     fs.writeFileSync(FILE, JSON.stringify(out, null, 2) + "\n", "utf8");
     const days = new Set(items.map(i => i.date)).size;
-    console.log(`earnings-calendar: wrote ${items.length} results across ${days} dates (${out.from} -> ${out.to})`);
+    console.log(`earnings-calendar: wrote ${items.length} results across ${days} dates (${out.from} -> ${out.to}); NSE symbols on ${symHits}/${items.length}`);
   } catch (e) {
     console.log("earnings-calendar: refresh failed -- leaving existing file (" + (e && e.message ? e.message : e) + ")");
   }
