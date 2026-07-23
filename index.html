@@ -4416,7 +4416,7 @@ function wlCovCallCell(sy){
   return '<td class="r"><select class="wl-cov-call" data-sym="'+sa+'"><option'+(v==='Buy'?' selected':'')+'>Buy</option><option'+(v==='Hold'?' selected':'')+'>Hold</option><option'+(v==='Sell'?' selected':'')+'>Sell</option></select></td>';
 }
 // Custom-weighted daily return of Current Holdings — one bar per calendar day.
-const WL_DAILY_LS='irp_daily_returns_v6';
+const WL_DAILY_LS='irp_daily_returns_v7';
 function wlDailyLoad(){ try{ return JSON.parse(localStorage.getItem(WL_DAILY_LS))||{}; }catch(e){ return {}; } }
 let wlDailyReturns=wlDailyLoad();
 function wlDailySave(){ try{ localStorage.setItem(WL_DAILY_LS,JSON.stringify(wlDailyReturns)); }catch(e){} }
@@ -4445,6 +4445,7 @@ function wlPortfolioDailyReturn(){
 }
 let wlDailyChart=null;
 function wlDayP(v){ return (typeof v==='number')?v:(v&&v.p!=null?v.p:null); }
+function wlDayWA(v){ return (v&&typeof v==='object'&&v.pa!=null)?v.pa:null; }
 function wlDayI(v){ return (typeof v==='number')?null:(v&&v.i!=null?v.i:null); }
 let wlDailyPeriod='1M';
 function wlDailyPeriodStart(all){ if(!all.length) return null; const last=all[all.length-1], pr=last.split('-');
@@ -4460,23 +4461,25 @@ function wlRenderDaily(){
   const start=wlDailyPeriodStart(all);
   const dates=all.filter(function(d){ return !start || d>=start; });
   const labels=dates.map(function(d){ const p=d.split('-'); return p[2]+'/'+p[1]; });
-  const pVals=dates.map(function(d){ return wlDayP(wlDailyReturns[d]); });
+  const pVals=dates.map(function(d){ return wlDayP(wlDailyReturns[d]); });    // sum-product (drives bars)
+  const waVals=dates.map(function(d){ return wlDayWA(wlDailyReturns[d]); });  // weighted average (drives lines)
   const iVals=dates.map(function(d){ return wlDayI(wlDailyReturns[d]); });
-  const relVals=dates.map(function(d,k){ const a=pVals[k], b=iVals[k]; return (a!=null&&b!=null)?(a-b):null; });
-  let cum=1; const cumVals=pVals.map(function(v){ if(v!=null) cum*=(1+v/100); return (cum-1)*100; });
+  const relVals=dates.map(function(d,k){ const a=waVals[k], b=iVals[k]; return (a!=null&&b!=null)?(a-b):null; }); // wtd-avg minus benchmark
+  let cum=1; const cumVals=waVals.map(function(v){ if(v!=null) cum*=(1+v/100); return (cum-1)*100; });            // compound the weighted average
   const f=function(x){ return x==null?'—':((x>=0?'+':'')+x.toFixed(2)+'%'); };
   if(sub){ sub.textContent = dates.length
-    ? ('Current Holdings (weighted) vs Nifty 500 · '+wlDailyPeriod+' · '+dates.length+' day'+(dates.length>1?'s':'')+' · cumulative '+f(cumVals[cumVals.length-1]))
+    ? ('Current Holdings vs Nifty 500 · '+wlDailyPeriod+' · '+dates.length+' day'+(dates.length>1?'s':'')+' · cumulative (wtd avg, compounded) '+f(cumVals[cumVals.length-1]))
     : 'Current Holdings (weighted) vs Nifty 500 · building — check back as trading days close'; }
   if(typeof Chart==='undefined') return;
   if(wlDailyChart){ wlDailyChart.destroy(); wlDailyChart=null; }
   if(!dates.length) return;
   wlDailyChart=new Chart(cv,{type:'bar',
     data:{labels:labels,datasets:[
-      {label:'Portfolio (daily)',data:pVals,backgroundColor:'#e9a23b',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:4,yAxisID:'y'},
-      {label:'Nifty 500 (daily)',data:iVals,backgroundColor:'#6db4b4',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:4,yAxisID:'y'},
-      {label:'Relative (daily)',type:'line',data:relVals,borderColor:'#b18cff',backgroundColor:'#b18cff',borderWidth:1,pointRadius:1.5,pointHoverRadius:4,tension:.2,order:2,yAxisID:'y',spanGaps:true},
-      {label:'Cumulative (portfolio)',type:'line',data:cumVals,borderColor:'#3fc78a',backgroundColor:'rgba(63,199,138,.08)',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:true,order:1,yAxisID:'y1'}
+      {label:'Portfolio (daily, sum-product)',data:pVals,backgroundColor:'#e9a23b',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
+      {label:'Nifty 500 (daily)',data:iVals,backgroundColor:'#6db4b4',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
+      {label:'Wtd avg return (daily)',type:'line',data:waVals,borderColor:'#f5c542',backgroundColor:'#f5c542',borderWidth:1.4,pointRadius:1.5,pointHoverRadius:4,tension:.2,order:3,yAxisID:'y1',spanGaps:true},
+      {label:'Relative (wtd avg vs Nifty 500)',type:'line',data:relVals,borderColor:'#b18cff',backgroundColor:'#b18cff',borderWidth:1,pointRadius:1.5,pointHoverRadius:4,tension:.2,order:2,yAxisID:'y1',spanGaps:true},
+      {label:'Cumulative (portfolio, compounded)',type:'line',data:cumVals,borderColor:'#3fc78a',backgroundColor:'rgba(63,199,138,.08)',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:true,order:1,yAxisID:'y1'}
     ]},
     options:{responsive:true,maintainAspectRatio:false,devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
       plugins:{legend:{display:true,labels:{color:'#b8b3a8',boxWidth:12,font:{size:11}}},
@@ -4490,7 +4493,7 @@ function wlRenderDaily(){
       interaction:{intersect:false,mode:'index'},
       scales:{x:{grid:{display:false},ticks:{color:'#646c7c',font:{size:10}}},
         y:{position:'left',grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#646c7c',font:{size:10},callback:function(v){ return v+'%'; }}},
-        y1:{position:'right',grid:{display:false},ticks:{color:'#3fc78a',font:{size:10},callback:function(v){ return v+'%'; }}}}}});
+        y1:{position:'right',title:{display:true,text:'weighted-avg %',color:'#8a93a6',font:{size:9}},grid:{display:false},ticks:{color:'#8a93a6',font:{size:10},callback:function(v){ return v+'%'; }}}}}});
 }
 function wlCloseAt(sym,ymd){ const h=wlPxHist[sym]; if(!h||!h.dates||!h.dates.length||!ymd) return null; const ds=h.dates; let lo=0,hi=ds.length-1,res=-1; while(lo<=hi){ const m=(lo+hi)>>1; if(ds[m]<=ymd){res=m;lo=m+1;} else hi=m-1; } return res>=0?h.close[res]:null; }
 function wlEnsureHoldPx(){
@@ -4551,20 +4554,23 @@ function wlIndexReturnOn(D){
 // the hover tooltip. If no weights are entered at all, falls back to a simple average.
 function wlPortfolioReturnOn(D){
   const day=wlRet&&wlRet.dates&&wlRet.dates[D]; if(!day||!day.r) return null;
-  let acc=0,any=false,es=0,n=0; const contrib=[];
+  let sw=0,acc=0,any=false,es=0,n=0; const contrib=[];
   WL.hold.forEach(function(row){ const sy=row[1], r=day.r[wlNseSym(sy)];
     if(r==null||isNaN(r)) return;
     const e=wlEntry[sy], w=(e&&e.w!=null&&e.w!=='')?+e.w:null;
     const wv=(w!=null&&!isNaN(w))?w:null;
-    if(wv!=null){ acc+=wv*r; any=true; }
+    if(wv!=null){ acc+=wv*r; sw+=wv; any=true; }
     es+=r; n++;
     contrib.push({name:row[0], w:wv, r:r});
   });
-  const port=any?acc:(n>0?es/n:null);
+  // sp = raw SUMPRODUCT (spreadsheet basis, drives the bar); wa = weighted AVERAGE
+  // (normalised: sp / total weight) - a proper daily % return, drives the lines + cumulative.
+  const sp=any?acc:(n>0?es/n:null);
+  const wa=any?(sw!==0?acc/sw:0):(n>0?es/n:null);
   contrib.forEach(function(c){ c.contrib=any?((c.w!=null)?c.w*c.r:0):(n>0?c.r/n:null); });
   contrib.sort(function(a,b){ return (b.contrib||0)-(a.contrib||0); });
   wlContrib[D]=contrib;
-  return port;
+  return {sp:sp, wa:wa};
 }
 function wlCaptureDaily(){
   // Rebuild the daily series from the exact NSE returns file (data/wl_returns.json).
@@ -4576,9 +4582,10 @@ function wlCaptureDaily(){
     const days=(wlRet&&wlRet.dates)?Object.keys(wlRet.dates).sort():[];
     const nd={};
     days.forEach(function(D){ if(D>=today) return;
-      const pRet=wlPortfolioReturnOn(D);   // also builds wlContrib[D]
+      const pr=wlPortfolioReturnOn(D);   // {sp, wa} or null; also builds wlContrib[D]
       const iRet=wlIndexReturnOn(D);
-      if(pRet!=null||iRet!=null) nd[D]={p:(pRet!=null?pRet:null), i:(iRet!=null?iRet:null)};
+      const sp=pr?pr.sp:null, wa=pr?pr.wa:null;
+      if(sp!=null||wa!=null||iRet!=null) nd[D]={p:(sp!=null?sp:null), pa:(wa!=null?wa:null), i:(iRet!=null?iRet:null)};
     });
     wlDailyReturns=nd; wlDailySave(); wlRenderDaily();
   };
