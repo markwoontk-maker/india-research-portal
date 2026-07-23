@@ -1,44 +1,51 @@
 {
-  "asOf": "2026-06",
+  "asOf": "2026-07",
   "houses": [
     {
       "broker": "Axis Securities",
-      "asOf": "2026-06",
+      "asOf": "2026-07",
       "benchmark": "Nifty 50",
-      "source": "Axis Securities 'Top Picks' June 2026 (Uttam K Srimal), prices as of 29 May 2026; Dec'26 Nifty target 27,220",
+      "url": "https://www.goodreturns.in/personal-finance/top-15-stocks-to-buy-in-july-2026-axis-securities-picks-bajaj-finance-icici-bank-bharti-airtel-an-1520163.html",
+      "source": "Axis Securities 'Top Picks' July 2026 (01 Jul 2026); profits booked in Kalpataru Projects & Navin Fluorine; APL Apollo Tubes & HCG added",
       "overweight": [
-        { "stock": "ICICI Bank", "ticker": "ICICIBANK.NS", "change": "new", "note": "Added this month; OW 'industry view', best RoA delivery among peers" },
-        { "stock": "Varun Beverages", "ticker": "VBL.NS", "change": "new", "note": "Added this month into Top Picks; geared for growth" },
-        { "stock": "Bajaj Finance", "ticker": "BAJFINANCE.NS", "change": "held", "note": "OW; asset-quality entering favourable phase, RoA improvement underway" },
-        { "stock": "Bharti Airtel", "ticker": "BHARTIARTL.NS", "change": "held", "note": "OW; highest ARPU in industry, Telecom is a preferred sector" },
-        { "stock": "Eternal", "ticker": "ETERNAL.NS", "change": "held", "note": "OW; quick-commerce + food delivery growth, turning adj-EBITDA positive" },
-        { "stock": "LG Electronics India", "ticker": "LGEINDIA.NS", "change": "held", "note": "OW; consumer-durables leader, localisation/export-led margin story" },
-        { "stock": "Navin Fluorine International", "ticker": "NAVINFLUOR.NS", "change": "held", "note": "OW; synergistic growth across HPP, specialty chem and CDMO" },
-        { "stock": "Minda Corporation", "ticker": "MINDACORP.NS", "change": "held", "note": "OW; premium electronics + EV platforms, record order book" }
+        { "stock": "ICICI Bank", "ticker": "ICICIBANK.NS", "wt": "", "change": "held", "note": "OW; steady credit growth & healthy profitability" },
+        { "stock": "Bajaj Finance", "ticker": "BAJFINANCE.NS", "wt": "", "change": "held", "note": "OW; asset-quality entering favourable phase, RoA improvement underway" },
+        { "stock": "Kotak Mahindra Bank", "ticker": "KOTAKBANK.NS", "wt": "", "change": "held", "note": "OW; entering stable, high-quality growth phase; easing stress in unsecured portfolio" },
+        { "stock": "Bharti Airtel", "ticker": "BHARTIARTL.NS", "wt": "", "change": "held", "note": "OW; highest ARPU in industry, data centre expansion supports long-term growth" },
+        { "stock": "Varun Beverages", "ticker": "VBL.NS", "wt": "", "change": "held", "note": "OW; geared for growth across beverage segments" },
+        { "stock": "APL Apollo Tubes", "ticker": "APLAPOLLO.NS", "wt": "", "change": "new", "note": "Added July 2026; structural steel tubes leader, benefits from infra / housing demand" },
+        { "stock": "Healthcare Global Enterprises", "ticker": "HCG.NS", "wt": "", "change": "new", "note": "Added July 2026 (HCG Ltd); largest cancer-care network in India" },
+        { "stock": "LG Electronics India", "ticker": "LGEINDIA.NS", "wt": "", "change": "held", "note": "OW; consumer-durables leader, localisation / export-led margin story" },
+        { "stock": "Avenue Supermarts (DMart)", "ticker": "DMART.NS", "wt": "", "change": "held", "note": "OW; EDLC / EDLP model with consistent same-store growth" },
+        { "stock": "Nestle India", "ticker": "NESTLEIND.NS", "wt": "", "change": "held", "note": "OW; premium packaged food portfolio, rural penetration upside" },
+        { "stock": "Eternal", "ticker": "ETERNAL.NS", "wt": "", "change": "held", "note": "OW; quick-commerce + food delivery growth, adj-EBITDA positive trajectory" },
+        { "stock": "Ujjivan Small Finance Bank", "ticker": "UJJIVANSFB.NS", "wt": "", "change": "held", "note": "OW; micro-credit recovery, strong deposit franchise" },
+        { "stock": "Chalet Hotels", "ticker": "CHALET.NS", "wt": "", "change": "held", "note": "OW; India hospitality recovery, premium segment RevPAR growth" },
+        { "stock": "Minda Corporation", "ticker": "MINDACORP.NS", "wt": "", "change": "held", "note": "OW; premium electronics + EV platforms, record order book" },
+        { "stock": "Dalmia Bharat", "ticker": "DALBHARAT.NS", "wt": "", "change": "held", "note": "OW; highest upside in mid-cap cement; East India capacity ramp" }
       ],
       "underweight": [
-        { "stock": "State Bank of India", "ticker": "SBIN.NS", "change": "removed", "note": "Exited this month by booking profits in SBIN" },
-        { "stock": "Max Healthcare", "ticker": "MAXHEALTH.NS", "change": "removed", "note": "Exited from Top Picks this month" }
+        { "stock": "Kalpataru Projects", "ticker": "KPIL.NS", "wt": "", "change": "removed", "note": "Exited July 2026; profits booked" },
+        { "stock": "Navin Fluorine International", "ticker": "NAVINFLUOR.NS", "wt": "", "change": "removed", "note": "Exited July 2026; profits booked" }
       ]
     },
     {
       "broker": "Motilal Oswal",
-      "asOf": "2026-04",
+      "asOf": "2026-07",
       "benchmark": "Nifty 50",
-      "source": "Motilal Oswal model-portfolio overhaul, reported 7 Apr 2026; OW autos/PSU banks/diversified financials/manufacturing, UW oil & gas/private banks/staples",
+      "url": "https://investmentguruindia.com/newsdetail/focus-investment-ideas---july-2026-by-motilal-oswal-wealth-mangement-ltd386545",
+      "source": "Motilal Oswal Wealth Management 'Focus Investment Ideas' July 2026 + India Strategy (MOSL, Jul 6 2026): OW diversified financials, manufacturing, autos, new-age tech; UW private banks, commodities, energy, FMCG",
       "overweight": [
-        { "stock": "State Bank of India", "ticker": "SBIN.NS", "change": "raised", "note": "Weight raised ~100 bps, top banking pick; funded by trimming HDFC Bank" },
-        { "stock": "Infosys", "ticker": "INFY.NS", "change": "raised", "note": "Weight raised ~100 bps despite house staying UW on IT" },
-        { "stock": "Jio Financial Services", "ticker": "JIOFIN.NS", "change": "new", "note": "Added in the overhaul on diversified-financials overweight" },
-        { "stock": "AU Small Finance Bank", "ticker": "AUBANK.NS", "change": "new", "note": "Added in the overhaul" },
-        { "stock": "ICICI Prudential AMC", "ticker": "", "change": "new", "note": "Added for rising market share and fund performance (not yet listed on NSE/Yahoo — no price shown)" },
-        { "stock": "Hindustan Aeronautics", "ticker": "HAL.NS", "change": "new", "note": "Added; attractive valuations within domestic defence" },
-        { "stock": "Jindal Stainless", "ticker": "JSL.NS", "change": "new", "note": "Added; capacity expansion, value-added mix, market leadership" },
-        { "stock": "Mankind Pharma", "ticker": "MANKIND.NS", "change": "new", "note": "Added on anticipated recovery in domestic formulations" }
+        { "stock": "State Bank of India", "ticker": "SBIN.NS", "wt": "", "change": "held", "note": "Top banking pick; OW PSU banks, strong deposit base and balance sheet" },
+        { "stock": "Titan Company", "ticker": "TITAN.NS", "wt": "", "change": "held", "note": "Tanishq brand strength; 15-20% medium-term revenue growth, 1,349 stores" },
+        { "stock": "Shriram Finance", "ticker": "SHRIRAMFIN.NS", "wt": "", "change": "held", "note": "MUFG partnership ($4.4bn) strengthens liability profile; borrowing cost to fall ~1pp" },
+        { "stock": "Cummins India", "ticker": "CUMMINSIND.NS", "wt": "", "change": "held", "note": "Powergen division benefits from data-centre and manufacturing demand" },
+        { "stock": "UNO Minda", "ticker": "UNOMINDA.NS", "wt": "", "change": "held", "note": "Diversified auto ancillary; EV adoption + vehicle premiumization tailwinds" },
+        { "stock": "Delhivery", "ticker": "DELHIVERY.NS", "wt": "", "change": "held", "note": "Express parcel momentum; Ecom Express integration to improve network efficiency" },
+        { "stock": "Granules India", "ticker": "GRANULES.NS", "wt": "", "change": "held", "note": "Formulation-led platform; 75%+ finished dosages, complex generics expansion" },
+        { "stock": "Arvind", "ticker": "ARVIND.NS", "wt": "", "change": "held", "note": "Garment-led and technical textiles; Advanced Materials Division as growth engine" }
       ],
-      "underweight": [
-        { "stock": "HDFC Bank", "ticker": "HDFCBANK.NS", "change": "trimmed", "note": "Reduced to fund the ~100 bps SBI weight increase; house UW private banks" }
-      ]
+      "underweight": []
     }
   ]
 }
