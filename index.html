@@ -500,6 +500,9 @@
   .wl-leg-item input{cursor:pointer;margin:0;width:13px;height:13px;accent-color:var(--accent,#e9a23b)}
   .wl-leg-sw{width:12px;height:12px;border-radius:2px;display:inline-block;flex:0 0 auto}
   .wl-leg-txt{white-space:nowrap}
+  .wl-daily-ctl{display:flex;align-items:center;gap:8px}
+  .wl-daily-reset{background:var(--ink-2);border:1px solid var(--line);border-radius:8px;color:var(--text-dim);font-size:11px;padding:4px 9px;cursor:pointer;white-space:nowrap}
+  .wl-daily-reset:hover{color:var(--saffron);border-color:var(--saffron)}
 
   /* news modal */
   .nm-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;
@@ -1902,7 +1905,7 @@
       </div>
       <div class="card reveal" id="wlDailyCard">
         <div class="card-h"><div><h3>Portfolio Daily Return</h3><p id="wlDailySub">Weighted daily return of Current Holdings vs Nifty 500</p></div>
-          <div class="seg" id="wlDailySeg"><button data-p="1W">1W</button><button data-p="1M" class="on">1M</button><button data-p="3M">3M</button><button data-p="6M">6M</button><button data-p="YTD">YTD</button><button data-p="1Y">1Y</button></div></div>
+          <div class="wl-daily-ctl"><button id="wlDailyReset" class="wl-daily-reset" title="Recompute &amp; re-freeze every past day at the current weights + transactions">↻ Recompute</button><div class="seg" id="wlDailySeg"><button data-p="1W">1W</button><button data-p="1M" class="on">1M</button><button data-p="3M">3M</button><button data-p="6M">6M</button><button data-p="YTD">YTD</button><button data-p="1Y">1Y</button></div></div></div>
         <div style="position:relative;height:250px"><canvas id="wlDailyCanvas"></canvas></div>
         <div id="wlDailyLegend" class="wl-daily-legend"></div>
       </div>
@@ -4441,7 +4444,7 @@ function wlCovCallCell(sy){
   return '<td class="r"><select class="wl-cov-call" data-sym="'+sa+'"><option'+(v==='Buy'?' selected':'')+'>Buy</option><option'+(v==='Hold'?' selected':'')+'>Hold</option><option'+(v==='Sell'?' selected':'')+'>Sell</option></select></td>';
 }
 // Custom-weighted daily return of Current Holdings — one bar per calendar day.
-const WL_DAILY_LS='irp_daily_returns_v7';
+const WL_DAILY_LS='irp_daily_returns_v8';
 function wlDailyLoad(){ try{ return JSON.parse(localStorage.getItem(WL_DAILY_LS))||{}; }catch(e){ return {}; } }
 let wlDailyReturns=wlDailyLoad();
 function wlDailySave(){ try{ localStorage.setItem(WL_DAILY_LS,JSON.stringify(wlDailyReturns)); }catch(e){} }
@@ -4648,14 +4651,17 @@ function wlCaptureDaily(){
   const build=function(){
     const today=wlTodayIso();
     const days=(wlRet&&wlRet.dates)?Object.keys(wlRet.dates).sort():[];
-    const nd={};
     days.forEach(function(D){ if(D>=today) return;
+      // FROZEN: once a settled day is recorded it is kept as-is, so later weight /
+      // transaction edits never rewrite past returns. Only new settled days are added.
+      // Use the Recompute button to deliberately re-freeze everything at current weights.
+      if(wlDailyReturns[D] && wlDailyReturns[D].p!=null){ if(wlDailyReturns[D].contrib) wlContrib[D]=wlDailyReturns[D].contrib; return; }
       const pr=wlPortfolioReturnOn(D);   // {sp, wa} or null; also builds wlContrib[D]
       const iRet=wlIndexReturnOn(D);
       const sp=pr?pr.sp:null, wa=pr?pr.wa:null;
-      if(sp!=null||wa!=null||iRet!=null) nd[D]={p:(sp!=null?sp:null), pa:(wa!=null?wa:null), i:(iRet!=null?iRet:null)};
+      if(sp!=null||wa!=null||iRet!=null) wlDailyReturns[D]={p:(sp!=null?sp:null), pa:(wa!=null?wa:null), i:(iRet!=null?iRet:null), contrib:(wlContrib[D]||null)};
     });
-    wlDailyReturns=nd; wlDailySave(); wlRenderDaily();
+    wlDailySave(); wlRenderDaily();
   };
   const ensureTxnPx=function(){ const need=[]; wlTxns.forEach(function(t){ if(t.sym && wlPxHist[t.sym]===undefined && need.indexOf(t.sym)<0) need.push(t.sym); }); return need.length?Promise.all(need.map(function(sx){ return wlLoadPxHist(sx).catch(function(){}); })):Promise.resolve(); };
   if(wlRet) ensureTxnPx().then(build); else wlLoadReturns().then(ensureTxnPx).then(build).catch(build);
@@ -5181,6 +5187,8 @@ function wlInit(){
     dseg.addEventListener('click',function(e){ const b=e.target.closest('button'); if(!b) return; wlDailyPeriod=b.dataset.p||'1M';
       const bs=dseg.querySelectorAll('button'); for(let z=0;z<bs.length;z++) bs[z].classList.toggle('on',bs[z]===b);
       if(typeof wlRenderDaily==='function') wlRenderDaily(); }); } })();
+  (function(){ const rb=document.getElementById('wlDailyReset'); if(rb && !rb._wired){ rb._wired=true;
+    rb.addEventListener('click',function(){ wlDailyReturns={}; wlContrib={}; wlDailySave(); if(typeof wlCaptureDaily==='function') wlCaptureDaily(); }); } })();
   document.querySelectorAll('.wl-add').forEach(box=>{
     const inp=box.querySelector('input'), btn=box.querySelector('button'), sec=btn.dataset.sec;
     const go=()=>{ if(wlAdd(sec,inp.value)) inp.value=''; };
