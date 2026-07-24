@@ -4446,7 +4446,7 @@ function wlCovCallCell(sy){
   return '<td class="r"><select class="wl-cov-call" data-sym="'+sa+'"><option'+(v==='Buy'?' selected':'')+'>Buy</option><option'+(v==='Hold'?' selected':'')+'>Hold</option><option'+(v==='Sell'?' selected':'')+'>Sell</option></select></td>';
 }
 // Custom-weighted daily return of Current Holdings — one bar per calendar day.
-const WL_DAILY_LS='irp_daily_returns_v9';
+const WL_DAILY_LS='irp_daily_returns_v10';
 function wlDailyLoad(){ try{ return JSON.parse(localStorage.getItem(WL_DAILY_LS))||{}; }catch(e){ return {}; } }
 let wlDailyReturns=wlDailyLoad();
 function wlDailySave(){ try{ localStorage.setItem(WL_DAILY_LS,JSON.stringify(wlDailyReturns)); }catch(e){} }
@@ -4515,9 +4515,10 @@ function wlRenderDaily(){
   const labels=dates.map(function(d){ const p=d.split('-'); return p[2]+'/'+p[1]; });
   const pVals=dates.map(function(d){ return wlDayP(wlDailyReturns[d]); });   // WR portfolio daily return
   const iVals=dates.map(function(d){ return wlDayI(wlDailyReturns[d]); });
-  const relDaily=dates.map(function(d,k){ const a=pVals[k], b=iVals[k]; return (a!=null&&b!=null)?(a-b):null; }); // daily relative = WR - Nifty 500
-  let crel=1; const cumRelVals=relDaily.map(function(v){ if(v!=null) crel*=(1+v/100); return (crel-1)*100; });     // compound the daily relative
-  let cum=1; const cumVals=pVals.map(function(v){ if(v!=null) cum*=(1+v/100); return (cum-1)*100; });              // compound the WR portfolio return
+  // Cumulative portfolio = compound daily WR; cumulative relative = cumulative portfolio
+  // MINUS cumulative index (difference of the two compounded curves), matching sheet col BI.
+  let cumP=1, cumI=1; const cumVals=[], cumRelVals=[];
+  for(let k=0;k<pVals.length;k++){ if(pVals[k]!=null) cumP*=(1+pVals[k]/100); if(iVals[k]!=null) cumI*=(1+iVals[k]/100); const cp=(cumP-1)*100; cumVals.push(cp); cumRelVals.push(cp-(cumI-1)*100); }
   // Align the 0 line across both y-axes: same fraction of each axis sits below zero.
   const zAxisAlign=function(leftArr,rightArr,D){
     const ext=function(a){ a=a.filter(function(v){ return v!=null&&!isNaN(v); }); return {mn:Math.min.apply(null,[0].concat(a)), mx:Math.max.apply(null,[0].concat(a))}; };
@@ -4622,18 +4623,16 @@ function wlIndexReturnOn(D){
 // and NSE closes (day.c) from data/wl_returns.json.
 function wlPortfolioReturnOn(D){
   const day=wlRet&&wlRet.dates&&wlRet.dates[D]; if(!day||!day.c||!day.r) return null;
-  const days=Object.keys(wlRet.dates).sort(); const di=days.indexOf(D); const prevDay=(di>0)?wlRet.dates[days[di-1]]:null;
-  let mv0=0, mv1=0, any=false; const rows=[];
+  // Daily WR = SUM(same-day market-value weight x that stock's return). Weight uses the
+  // SAME day's close (qty x close_D / total MV_D); matches the spreadsheet's BD column.
+  let mvD=0; const items=[];
   WL.hold.forEach(function(row){ const sy=row[1], nse=wlNseSym(sy);
     const e=wlEntry[sy], q=(e&&e.qty!=null&&e.qty!=='')?+e.qty:null; if(q==null||isNaN(q)||q<=0) return;
     const cD=day.c[nse], rD=day.r[nse]; if(cD==null||rD==null||isNaN(cD)||isNaN(rD)) return;
-    const cPrev=prevDay?prevDay.c[nse]:(cD/(1+rD/100));
-    if(cPrev==null||isNaN(cPrev)||cPrev<=0) return;
-    mv0+=q*cPrev; mv1+=q*cD; any=true; rows.push({name:row[0], v0:q*cPrev, r:rD});
+    mvD+=q*cD; items.push({name:row[0], mvD:q*cD, r:rD});
   });
-  if(!any||mv0<=0){ wlContrib[D]=[]; return null; }
-  const port=(mv1/mv0-1)*100;
-  const contrib=rows.map(function(x){ const w=x.v0/mv0*100; return {name:x.name, w:w, r:x.r, contrib:w*x.r/100}; });
+  if(!items.length||mvD<=0){ wlContrib[D]=[]; return null; }
+  let port=0; const contrib=items.map(function(x){ const w=x.mvD/mvD*100; port+=w*x.r/100; return {name:x.name, w:w, r:x.r, contrib:w*x.r/100}; });
   contrib.sort(function(a,b){ return (b.contrib||0)-(a.contrib||0); });
   wlContrib[D]=contrib;
   return {p:port};
