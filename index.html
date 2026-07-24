@@ -330,8 +330,10 @@
   .wl-entry-px,.wl-entry-dt,.wl-tr-name{background:var(--panel);color:var(--text);border:1px solid rgba(255,255,255,.14);
     border-radius:6px;padding:3px 6px;font-size:12px;font-family:'Roboto Mono';box-sizing:border-box}
   .wl-entry-px{width:78px} .wl-entry-dt{width:140px} .wl-tr-name{width:150px;font-family:inherit}
-  .wl-w{background:var(--panel);color:var(--text);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:2px 6px;font-size:12px;font-family:'Roboto Mono';box-sizing:border-box;width:56px}
-  .wl-w:focus{outline:none;border-color:var(--saffron)}
+  .wl-w,.wl-qty{background:var(--panel);color:var(--text);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:2px 6px;font-size:12px;font-family:'Roboto Mono';box-sizing:border-box;width:56px}
+  .wl-qty{width:74px}
+  .wl-wt{font-family:'Roboto Mono';font-size:12px;color:var(--text-dim);white-space:nowrap}
+  .wl-w:focus,.wl-qty:focus{outline:none;border-color:var(--saffron)}
   #wlHold tr.wl-total td{border-top:1px solid var(--line);padding-top:5px}
   .wl-total-lbl{color:var(--text-mute);font-size:11px;letter-spacing:.04em}
   .wl-total-w{font-family:'Roboto Mono';font-size:12.5px;font-weight:700;color:var(--text)}
@@ -1900,7 +1902,7 @@
       <div class="card reveal">
         <div class="card-h"><div><h3>Current Holdings</h3><p>Live prices · NSE</p></div>
           <div class="wl-add"><input list="wlCompanyList" id="wlAddHold" placeholder="Add ticker or name…" autocomplete="off" title="Type a Nifty 500 name, or ANY ticker — TATAINVEST.NS (NSE), 543320.BO (BSE); a bare symbol defaults to .NS. For an off-list name use  Name | TICKER  e.g.  Tata Investment | TATAINVEST.NS"><button data-sec="hold">Add</button></div></div>
-        <table class="wl-holdings"><thead><tr><th>Stock</th><th class="r">Weight</th><th class="r">Entry ₹</th><th class="r">Entry Date</th><th class="r">Return</th><th class="r">vs N500</th><th class="r">Mkt Cap</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
+        <table class="wl-holdings"><thead><tr><th>Stock</th><th class="r">Qty</th><th class="r">Weight</th><th class="r">Entry ₹</th><th class="r">Entry Date</th><th class="r">Return</th><th class="r">vs N500</th><th class="r">Mkt Cap</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
           <tbody id="wlHold"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
       <div class="card reveal" id="wlDailyCard">
@@ -4444,7 +4446,7 @@ function wlCovCallCell(sy){
   return '<td class="r"><select class="wl-cov-call" data-sym="'+sa+'"><option'+(v==='Buy'?' selected':'')+'>Buy</option><option'+(v==='Hold'?' selected':'')+'>Hold</option><option'+(v==='Sell'?' selected':'')+'>Sell</option></select></td>';
 }
 // Custom-weighted daily return of Current Holdings — one bar per calendar day.
-const WL_DAILY_LS='irp_daily_returns_v8';
+const WL_DAILY_LS='irp_daily_returns_v9';
 function wlDailyLoad(){ try{ return JSON.parse(localStorage.getItem(WL_DAILY_LS))||{}; }catch(e){ return {}; } }
 let wlDailyReturns=wlDailyLoad();
 function wlDailySave(){ try{ localStorage.setItem(WL_DAILY_LS,JSON.stringify(wlDailyReturns)); }catch(e){} }
@@ -4511,12 +4513,11 @@ function wlRenderDaily(){
   const start=wlDailyPeriodStart(all);
   const dates=all.filter(function(d){ return !start || d>=start; });
   const labels=dates.map(function(d){ const p=d.split('-'); return p[2]+'/'+p[1]; });
-  const pVals=dates.map(function(d){ return wlDayP(wlDailyReturns[d]); });    // sum-product (drives bars)
-  const waVals=dates.map(function(d){ return wlDayWA(wlDailyReturns[d]); });  // weighted average (drives lines)
+  const pVals=dates.map(function(d){ return wlDayP(wlDailyReturns[d]); });   // WR portfolio daily return
   const iVals=dates.map(function(d){ return wlDayI(wlDailyReturns[d]); });
-  const relDaily=dates.map(function(d,k){ const a=waVals[k], b=iVals[k]; return (a!=null&&b!=null)?(a-b):null; }); // WA daily relative = WA - Nifty 500
-  let crel=1; const cumRelVals=relDaily.map(function(v){ if(v!=null) crel*=(1+v/100); return (crel-1)*100; });     // compound the daily relative return
-  let cum=1; const cumVals=waVals.map(function(v){ if(v!=null) cum*=(1+v/100); return (cum-1)*100; });             // compound the WA daily return
+  const relDaily=dates.map(function(d,k){ const a=pVals[k], b=iVals[k]; return (a!=null&&b!=null)?(a-b):null; }); // daily relative = WR - Nifty 500
+  let crel=1; const cumRelVals=relDaily.map(function(v){ if(v!=null) crel*=(1+v/100); return (crel-1)*100; });     // compound the daily relative
+  let cum=1; const cumVals=pVals.map(function(v){ if(v!=null) cum*=(1+v/100); return (cum-1)*100; });              // compound the WR portfolio return
   // Align the 0 line across both y-axes: same fraction of each axis sits below zero.
   const zAxisAlign=function(leftArr,rightArr,D){
     const ext=function(a){ a=a.filter(function(v){ return v!=null&&!isNaN(v); }); return {mn:Math.min.apply(null,[0].concat(a)), mx:Math.max.apply(null,[0].concat(a))}; };
@@ -4528,21 +4529,20 @@ function wlRenderDaily(){
     const ax=function(e){ const bel=Math.max(0,-e.mn)*1.08, abv=Math.max(0,e.mx)*1.08; const step=Math.max(bel/below,abv/above)||1; return {min:-below*step, max:above*step, step:step}; };
     return {y:ax(e1), y1:ax(e2)};
   };
-  const zal=zAxisAlign(pVals.concat(iVals), waVals.concat(cumRelVals,cumVals), 8);
+  const zal=zAxisAlign(pVals.concat(iVals), cumVals.concat(cumRelVals), 8);
   const f=function(x){ return x==null?'—':((x>=0?'+':'')+x.toFixed(2)+'%'); };
   if(sub){ sub.textContent = dates.length
-    ? ('Current Holdings vs Nifty 500 · '+wlDailyPeriod+' · '+dates.length+' day'+(dates.length>1?'s':'')+' · cum WA '+f(cumVals[cumVals.length-1])+' · cum rel '+f(cumRelVals[cumRelVals.length-1]))
+    ? ('Current Holdings vs Nifty 500 · '+wlDailyPeriod+' · '+dates.length+' day'+(dates.length>1?'s':'')+' · cum WR '+f(cumVals[cumVals.length-1])+' · cum rel '+f(cumRelVals[cumRelVals.length-1]))
     : 'Current Holdings (weighted) vs Nifty 500 · building — check back as trading days close'; }
   if(typeof Chart==='undefined') return;
   if(wlDailyChart){ wlDailyChart.destroy(); wlDailyChart=null; }
   if(!dates.length) return;
   wlDailyChart=new Chart(cv,{type:'bar',
     data:{labels:labels,datasets:[
-      {label:'Return (daily)',data:pVals,backgroundColor:'#e9a23b',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
+      {label:'WR return (daily)',data:pVals,backgroundColor:'#3fc78a',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
       {label:'Nifty 500 (daily)',data:iVals,backgroundColor:'#6db4b4',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
-      {label:'WA return (daily)',data:waVals,backgroundColor:'#3fc78a',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y1'},
-      {label:'Cumulative (WA relative, compounded)',type:'line',data:cumRelVals,borderColor:'#b18cff',backgroundColor:'#b18cff',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:false,order:2,yAxisID:'y1',spanGaps:true},
-      {label:'Cumulative (WA portfolio, compounded)',type:'line',data:cumVals,borderColor:'#5aa9e6',backgroundColor:'rgba(90,169,230,.08)',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:true,order:1,yAxisID:'y1'}
+      {label:'Cumulative (WR relative, compounded)',type:'line',data:cumRelVals,borderColor:'#b18cff',backgroundColor:'#b18cff',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:false,order:2,yAxisID:'y1',spanGaps:true},
+      {label:'Cumulative (WR portfolio, compounded)',type:'line',data:cumVals,borderColor:'#5aa9e6',backgroundColor:'rgba(90,169,230,.08)',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:true,order:1,yAxisID:'y1'}
     ]},
     options:{responsive:true,maintainAspectRatio:false,devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
       plugins:{legend:{display:false},
@@ -4550,13 +4550,13 @@ function wlRenderDaily(){
           callbacks:{label:function(t){ if(t.parsed.y==null) return ''; return ' '+t.dataset.label+': '+(t.parsed.y>=0?'+':'')+t.parsed.y.toFixed(2)+'%'; },
             afterBody:function(items){ if(!items.length) return ''; const D=dates[items[0].dataIndex]; const cc=wlContrib[D]; if(!cc||!cc.length) return '';
               const out=['','Contribution (weight × return):'];
-              cc.forEach(function(c){ const wl=(c.w!=null)?(c.w+'%'):'ew'; const rl=(c.r>=0?'+':'')+c.r.toFixed(2)+'%'; const cl=(c.contrib!=null)?((c.contrib>=0?'+':'')+c.contrib.toFixed(3)+'%'):'—';
+              cc.forEach(function(c){ const wl=(c.w!=null)?(c.w.toFixed(2)+'%'):'ew'; const rl=(c.r>=0?'+':'')+c.r.toFixed(2)+'%'; const cl=(c.contrib!=null)?((c.contrib>=0?'+':'')+c.contrib.toFixed(3)+'%'):'—';
                 out.push('  '+c.name+': '+wl+' × '+rl+' = '+cl); });
               return out; }}}},
       interaction:{intersect:false,mode:'index'},
       scales:{x:{grid:{display:false},ticks:{color:'#646c7c',font:{size:10}}},
-        y:{position:'left',min:zal.y.min,max:zal.y.max,grid:{color:'rgba(255,255,255,.06)'},ticks:{stepSize:zal.y.step,color:'#646c7c',font:{size:10},callback:function(v){ return v.toFixed(1)+'%'; }}},
-        y1:{position:'right',min:zal.y1.min,max:zal.y1.max,title:{display:true,text:'WA %',color:'#8a93a6',font:{size:9}},grid:{display:false},ticks:{stepSize:zal.y1.step,color:'#8a93a6',font:{size:10},callback:function(v){ return v.toFixed(2)+'%'; }}}}}});
+        y:{position:'left',min:zal.y.min,max:zal.y.max,grid:{color:'rgba(255,255,255,.06)'},ticks:{stepSize:zal.y.step,color:'#646c7c',font:{size:10},callback:function(v){ return v.toFixed(2)+'%'; }}},
+        y1:{position:'right',min:zal.y1.min,max:zal.y1.max,title:{display:true,text:'cumulative %',color:'#8a93a6',font:{size:9}},grid:{display:false},ticks:{stepSize:zal.y1.step,color:'#8a93a6',font:{size:10},callback:function(v){ return v.toFixed(2)+'%'; }}}}}});
   wlDailyChart.data.datasets.forEach(function(ds,i){ wlDailyChart.setDatasetVisibility(i, wlDailyVis[ds.label]!==false); });
   wlDailyChart.update();
   wlBuildDailyLegend(wlDailyChart);
@@ -4614,34 +4614,29 @@ function wlIndexReturnOn(D){
   const day=wlRet&&wlRet.dates&&wlRet.dates[D];
   return (day&&day.index!=null&&!isNaN(day.index))?day.index:null;
 }
-// Portfolio return ON an exact date = SUMPRODUCT(weight x that stock's return that day),
-// summed over Current Holdings PLUS any Portfolio Transactions settling on D. A stock
-// that trades on D is priced by its transaction leg (BUY = close/entry-1 ; SELL =
-// exit/prev-close-1), not by close-to-close, so it never double-counts. sp = raw
-// sum-product (drives the bar); wa = sp / total weight (normalised, drives the lines).
+// Portfolio return ON an exact date = daily change in TOTAL MARKET VALUE (fixed share
+// quantities): MVi = qtyi x close. Return = ((sum MV today / sum MV prev) - 1) =
+// sum(start-of-day weight x stock return), where weight = qtyi x close / total MV
+// (market-value weights that sum to 100%). Each holding's contribution (start weight x
+// return) is kept in wlContrib[D] for the hover tooltip. Needs qty in wlEntry[sym].qty
+// and NSE closes (day.c) from data/wl_returns.json.
 function wlPortfolioReturnOn(D){
-  const day=wlRet&&wlRet.dates&&wlRet.dates[D]; if(!day||!day.r) return null;
-  const txnOn={}; wlTxns.forEach(function(t){ if(t.sym && (t.ed===D||t.xd===D)) txnOn[wlNseSym(t.sym)]=1; });
-  let sw=0,acc=0,any=false,es=0,n=0; const contrib=[];
-  WL.hold.forEach(function(row){ const sy=row[1], nse=wlNseSym(sy), r=day.r[nse];
-    if(r==null||isNaN(r)) return;
-    if(txnOn[nse]) return;
-    const e=wlEntry[sy], w=(e&&e.w!=null&&e.w!=='')?+e.w:null;
-    const wv=(w!=null&&!isNaN(w))?w:null;
-    if(wv!=null){ acc+=wv*r; sw+=wv; any=true; }
-    es+=r; n++;
-    contrib.push({name:row[0], w:wv, r:r});
+  const day=wlRet&&wlRet.dates&&wlRet.dates[D]; if(!day||!day.c||!day.r) return null;
+  const days=Object.keys(wlRet.dates).sort(); const di=days.indexOf(D); const prevDay=(di>0)?wlRet.dates[days[di-1]]:null;
+  let mv0=0, mv1=0, any=false; const rows=[];
+  WL.hold.forEach(function(row){ const sy=row[1], nse=wlNseSym(sy);
+    const e=wlEntry[sy], q=(e&&e.qty!=null&&e.qty!=='')?+e.qty:null; if(q==null||isNaN(q)||q<=0) return;
+    const cD=day.c[nse], rD=day.r[nse]; if(cD==null||rD==null||isNaN(cD)||isNaN(rD)) return;
+    const cPrev=prevDay?prevDay.c[nse]:(cD/(1+rD/100));
+    if(cPrev==null||isNaN(cPrev)||cPrev<=0) return;
+    mv0+=q*cPrev; mv1+=q*cD; any=true; rows.push({name:row[0], v0:q*cPrev, r:rD});
   });
-  wlTxns.forEach(function(t){ if(!t.sym) return; const w=(t.w!=null&&t.w!=='')?+t.w:null; if(w==null||isNaN(w)) return;
-    if(t.ed===D && t.ep!=null && t.ep!=='' && +t.ep>0){ const cD=wlCloseAt(t.sym,D); if(cD!=null){ const r=(cD/(+t.ep)-1)*100; acc+=w*r; sw+=w; any=true; es+=r; n++; contrib.push({name:(t.name||t.sym)+' · buy', w:w, r:r}); } }
-    if(t.xd===D && t.xp!=null && t.xp!=='' && +t.xp>0){ const c0=wlCloseBefore(t.sym,D); if(c0!=null&&c0!==0){ const r=((+t.xp)/c0-1)*100; acc+=w*r; sw+=w; any=true; es+=r; n++; contrib.push({name:(t.name||t.sym)+' · sell', w:w, r:r}); } }
-  });
-  const sp=any?acc:(n>0?es/n:null);
-  const wa=any?(sw!==0?acc/sw:0):(n>0?es/n:null);
-  contrib.forEach(function(c){ c.contrib=any?((c.w!=null)?c.w*c.r:0):(n>0?c.r/n:null); });
+  if(!any||mv0<=0){ wlContrib[D]=[]; return null; }
+  const port=(mv1/mv0-1)*100;
+  const contrib=rows.map(function(x){ const w=x.v0/mv0*100; return {name:x.name, w:w, r:x.r, contrib:w*x.r/100}; });
   contrib.sort(function(a,b){ return (b.contrib||0)-(a.contrib||0); });
   wlContrib[D]=contrib;
-  return {sp:sp, wa:wa};
+  return {p:port};
 }
 function wlCaptureDaily(){
   // Rebuild the daily series from the exact NSE returns file (data/wl_returns.json).
@@ -4656,16 +4651,18 @@ function wlCaptureDaily(){
       // transaction edits never rewrite past returns. Only new settled days are added.
       // Use the Recompute button to deliberately re-freeze everything at current weights.
       if(wlDailyReturns[D] && wlDailyReturns[D].p!=null){ if(wlDailyReturns[D].contrib) wlContrib[D]=wlDailyReturns[D].contrib; return; }
-      const pr=wlPortfolioReturnOn(D);   // {sp, wa} or null; also builds wlContrib[D]
+      const pr=wlPortfolioReturnOn(D);   // {p} or null; also builds wlContrib[D]
       const iRet=wlIndexReturnOn(D);
-      const sp=pr?pr.sp:null, wa=pr?pr.wa:null;
-      if(sp!=null||wa!=null||iRet!=null) wlDailyReturns[D]={p:(sp!=null?sp:null), pa:(wa!=null?wa:null), i:(iRet!=null?iRet:null), contrib:(wlContrib[D]||null)};
+      const p=pr?pr.p:null;
+      if(p!=null||iRet!=null) wlDailyReturns[D]={p:(p!=null?p:null), i:(iRet!=null?iRet:null), contrib:(wlContrib[D]||null)};
     });
     wlDailySave(); wlRenderDaily();
   };
   const ensureTxnPx=function(){ const need=[]; wlTxns.forEach(function(t){ if(t.sym && wlPxHist[t.sym]===undefined && need.indexOf(t.sym)<0) need.push(t.sym); }); return need.length?Promise.all(need.map(function(sx){ return wlLoadPxHist(sx).catch(function(){}); })):Promise.resolve(); };
   if(wlRet) ensureTxnPx().then(build); else wlLoadReturns().then(ensureTxnPx).then(build).catch(build);
 }
+function wlHoldMVTotal(){ let t=0; WL.hold.forEach(function(row){ const sy=row[1], sym=String(sy).split('|')[0]; const e=wlEntry[sy], q=(e&&e.qty!=null&&e.qty!=='')?+e.qty:null; const p=(wlMap[sym]&&wlMap[sym].p!=null)?wlMap[sym].p:null; if(q>0&&p) t+=q*p; }); return t; }
+function wlHoldWt(sy){ const sym=String(sy).split('|')[0]; const e=wlEntry[sy], q=(e&&e.qty!=null&&e.qty!=='')?+e.qty:null; const p=(wlMap[sym]&&wlMap[sym].p!=null)?wlMap[sym].p:null; const tot=wlHoldMVTotal(); return (q>0&&p&&tot>0)?(q*p/tot*100):null; }
 function wlHoldCells(sy,d){
   const e=wlEntry[sy]||{};
   const ep=(e.price!=null&&e.price!=='')?e.price:'';
@@ -4677,8 +4674,10 @@ function wlHoldCells(sy,d){
   const idxRet=(idxNow!=null&&idxEntry!=null)?(idxNow/idxEntry-1)*100:null;
   const rel=(ret!=null&&idxRet!=null)?(ret-idxRet):null;
   const sa=String(sy).replace(/"/g,'&quot;');
-  const wv=(e.w!=null&&e.w!=='')?e.w:'';
-  return '<td class="r"><input class="wl-w" type="number" step="0.01" min="0" inputmode="decimal" placeholder="wt" data-sym="'+sa+'" value="'+wv+'"></td>'+
+  const qv=(e.qty!=null&&e.qty!=='')?e.qty:'';
+  const wtd=wlHoldWt(sy);
+  return '<td class="r"><input class="wl-qty" type="number" step="1" min="0" inputmode="numeric" placeholder="qty" data-sym="'+sa+'" value="'+qv+'"></td>'+
+    '<td class="r wl-wt">'+(wtd!=null?wtd.toFixed(2)+'%':'<span style="color:var(--text-mute)">—</span>')+'</td>'+
     '<td class="r"><input class="wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-sym="'+sa+'" value="'+ep+'"></td>'+
     '<td class="r"><input class="wl-entry-dt" type="text" placeholder="DD/MM/YY" data-sym="'+sa+'" value="'+wlFmtDMY(ed)+'"></td>'+
     '<td class="r wl-ret">'+wlPcSpan(ret)+'</td>'+
@@ -4946,14 +4945,14 @@ function wlRows(list,map,sec){
 }
 function wlHoldTotalRow(){
   let sum=0, has=false;
-  WL.hold.forEach(function(row){ const e=wlEntry[row[1]]; if(e&&e.w!=null&&e.w!==''&&!isNaN(+e.w)){ sum+=+e.w; has=true; } });
-  return '<tr class="wl-total"><td class="wl-total-lbl">Total</td><td class="r wl-total-w">'+(has?String(Math.round(sum*100)/100):'—')+'</td><td colspan="11"></td></tr>';
+  WL.hold.forEach(function(row){ const w=wlHoldWt(row[1]); if(w!=null){ sum+=w; has=true; } });
+  return '<tr class="wl-total"><td class="wl-total-lbl">Total</td><td class="r"></td><td class="r wl-total-w">'+(has?((Math.round(sum*100)/100)+'%'):'—')+'</td><td colspan="11"></td></tr>';
 }
 function wlUpdateWeightTotal(){
   const cell=document.querySelector('#wlHold .wl-total-w'); if(!cell) return;
   let sum=0, has=false;
-  WL.hold.forEach(function(row){ const e=wlEntry[row[1]]; if(e&&e.w!=null&&e.w!==''&&!isNaN(+e.w)){ sum+=+e.w; has=true; } });
-  cell.textContent = has?String(Math.round(sum*100)/100):'—';
+  WL.hold.forEach(function(row){ const w=wlHoldWt(row[1]); if(w!=null){ sum+=w; has=true; } });
+  cell.textContent = has?((Math.round(sum*100)/100)+'%'):'—';
 }
 let wlUsdInr=null;
 function wlFmtUsd(v){
@@ -5204,8 +5203,8 @@ function wlInit(){
     tb.addEventListener('change',e=>{
       const covCall=e.target.closest('.wl-cov-call');
       if(covCall){ wlCovCall[covCall.dataset.sym]=covCall.value; wlSaveCovCall(); wlRender(); return; }
-      const wIn=e.target.closest('.wl-w');
-      if(wIn){ wlSetEntry(wIn.dataset.sym,'w',wIn.value); if(typeof wlUpdateWeightTotal==='function') wlUpdateWeightTotal(); if(typeof wlCaptureDaily==='function') wlCaptureDaily(); return; }
+      const qIn=e.target.closest('.wl-qty');
+      if(qIn){ wlSetEntry(qIn.dataset.sym,'qty',qIn.value); if(typeof wlRender==='function') wlRender(); if(typeof wlCaptureDaily==='function') wlCaptureDaily(); return; }
       const inp=e.target.closest('.wl-entry-px,.wl-entry-dt');
       if(inp){ const sym=inp.dataset.sym, tr=inp.closest('tr');
         if(inp.classList.contains('wl-entry-px')){ wlSetEntry(sym,'price',inp.value); wlHoldUpdateRow(tr); return; }

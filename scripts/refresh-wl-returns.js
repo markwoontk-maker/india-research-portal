@@ -47,17 +47,18 @@ function ddmmyyyy(d) {
 function round(x) { return Math.round(x * 1e4) / 1e4; }
 
 function parseEquities(csv) {
-  const r = {};
+  const r = {}, c = {};
   csv.split(/\r?\n/).forEach((line) => {
-    const c = line.split(',').map((s) => s.trim());
-    if (c.length < 9) return;
-    const series = c[1];
+    const cols = line.split(',').map((s) => s.trim());
+    if (cols.length < 9) return;
+    const series = cols[1];
     if (series !== 'EQ' && series !== 'BE') return;
-    const sym = c[0], prev = +c[3], close = +c[8];
+    const sym = cols[0], prev = +cols[3], close = +cols[8];
     if (!sym || !isFinite(prev) || !isFinite(close) || prev <= 0) return;
-    r[sym] = round((close / prev - 1) * 100);
+    r[sym] = round((close / prev - 1) * 100);   // close-to-close % return
+    c[sym] = round(close);                       // absolute close (for market-value weights)
   });
-  return r;
+  return { r: r, c: c };
 }
 
 function parseIndex(csv) {
@@ -91,15 +92,15 @@ async function main() {
 
     const eq = await get('https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_' + ddmmyyyy(d) + '.csv');
     if (eq.status !== 200) { console.log(key + ': no bhavcopy (status ' + eq.status + ') — holiday/weekend, skip'); continue; }
-    const r = parseEquities(eq.body);
-    if (!Object.keys(r).length) { console.log(key + ': empty bhavcopy, skip'); continue; }
+    const eqp = parseEquities(eq.body);
+    if (!Object.keys(eqp.r).length) { console.log(key + ': empty bhavcopy, skip'); continue; }
 
     const idxRes = await get('https://nsearchives.nseindia.com/content/indices/ind_close_all_' + ddmmyyyy(d) + '.csv');
     const index = idxRes.status === 200 ? parseIndex(idxRes.body) : null;
 
-    data.dates[key] = { index: index, r: r };
+    data.dates[key] = { index: index, r: eqp.r, c: eqp.c };
     added++;
-    console.log(key + ': added ' + Object.keys(r).length + ' stocks, Nifty 500 = ' + (index == null ? 'n/a' : index + '%'));
+    console.log(key + ': added ' + Object.keys(eqp.r).length + ' stocks, Nifty 500 = ' + (index == null ? 'n/a' : index + '%'));
   }
 
   if (added) {
