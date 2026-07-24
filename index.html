@@ -4495,22 +4495,35 @@ function wlRenderDaily(){
   const pVals=dates.map(function(d){ return wlDayP(wlDailyReturns[d]); });    // sum-product (drives bars)
   const waVals=dates.map(function(d){ return wlDayWA(wlDailyReturns[d]); });  // weighted average (drives lines)
   const iVals=dates.map(function(d){ return wlDayI(wlDailyReturns[d]); });
-  const relVals=dates.map(function(d,k){ const a=waVals[k], b=iVals[k]; return (a!=null&&b!=null)?(a-b):null; }); // wtd-avg minus benchmark
-  let cum=1; const cumVals=waVals.map(function(v){ if(v!=null) cum*=(1+v/100); return (cum-1)*100; });            // compound the weighted average
+  const relDaily=dates.map(function(d,k){ const a=waVals[k], b=iVals[k]; return (a!=null&&b!=null)?(a-b):null; }); // WA daily relative = WA - Nifty 500
+  let crel=1; const cumRelVals=relDaily.map(function(v){ if(v!=null) crel*=(1+v/100); return (crel-1)*100; });     // compound the daily relative return
+  let cum=1; const cumVals=waVals.map(function(v){ if(v!=null) cum*=(1+v/100); return (cum-1)*100; });             // compound the WA daily return
+  // Align the 0 line across both y-axes: same fraction of each axis sits below zero.
+  const zAxisAlign=function(leftArr,rightArr,D){
+    const ext=function(a){ a=a.filter(function(v){ return v!=null&&!isNaN(v); }); return {mn:Math.min.apply(null,[0].concat(a)), mx:Math.max.apply(null,[0].concat(a))}; };
+    const e1=ext(leftArr), e2=ext(rightArr);
+    const ratio=function(e){ return (e.mn<0&&e.mx>0)?(-e.mn/(e.mx-e.mn)):null; };
+    const rs=[ratio(e1),ratio(e2)].filter(function(r){ return r!=null; });
+    const r=rs.length?Math.max.apply(null,rs):((e1.mn<0||e2.mn<0)?0.85:0.15);
+    const below=Math.min(D-1,Math.max(1,Math.round(r*D))), above=D-below;
+    const ax=function(e){ const bel=Math.max(0,-e.mn)*1.08, abv=Math.max(0,e.mx)*1.08; const step=Math.max(bel/below,abv/above)||1; return {min:-below*step, max:above*step, step:step}; };
+    return {y:ax(e1), y1:ax(e2)};
+  };
+  const zal=zAxisAlign(pVals.concat(iVals), waVals.concat(cumRelVals,cumVals), 8);
   const f=function(x){ return x==null?'—':((x>=0?'+':'')+x.toFixed(2)+'%'); };
   if(sub){ sub.textContent = dates.length
-    ? ('Current Holdings vs Nifty 500 · '+wlDailyPeriod+' · '+dates.length+' day'+(dates.length>1?'s':'')+' · cumulative (wtd avg, compounded) '+f(cumVals[cumVals.length-1]))
+    ? ('Current Holdings vs Nifty 500 · '+wlDailyPeriod+' · '+dates.length+' day'+(dates.length>1?'s':'')+' · cum WA '+f(cumVals[cumVals.length-1])+' · cum rel '+f(cumRelVals[cumRelVals.length-1]))
     : 'Current Holdings (weighted) vs Nifty 500 · building — check back as trading days close'; }
   if(typeof Chart==='undefined') return;
   if(wlDailyChart){ wlDailyChart.destroy(); wlDailyChart=null; }
   if(!dates.length) return;
   wlDailyChart=new Chart(cv,{type:'bar',
     data:{labels:labels,datasets:[
-      {label:'Portfolio (daily, sum-product)',data:pVals,backgroundColor:'#e9a23b',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
+      {label:'Return (daily)',data:pVals,backgroundColor:'#e9a23b',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
       {label:'Nifty 500 (daily)',data:iVals,backgroundColor:'#6db4b4',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
-      {label:'Wtd avg return (daily)',data:waVals,backgroundColor:'#3fc78a',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y1'},
-      {label:'Relative (wtd avg vs Nifty 500)',type:'line',data:relVals,borderColor:'#b18cff',backgroundColor:'#b18cff',borderWidth:1,pointRadius:1.5,pointHoverRadius:4,tension:.2,order:2,yAxisID:'y1',spanGaps:true},
-      {label:'Cumulative (portfolio, compounded)',type:'line',data:cumVals,borderColor:'#5aa9e6',backgroundColor:'rgba(90,169,230,.08)',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:true,order:1,yAxisID:'y1'}
+      {label:'WA return (daily)',data:waVals,backgroundColor:'#3fc78a',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y1'},
+      {label:'Cumulative (WA relative, compounded)',type:'line',data:cumRelVals,borderColor:'#b18cff',backgroundColor:'#b18cff',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:false,order:2,yAxisID:'y1',spanGaps:true},
+      {label:'Cumulative (WA portfolio, compounded)',type:'line',data:cumVals,borderColor:'#5aa9e6',backgroundColor:'rgba(90,169,230,.08)',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:true,order:1,yAxisID:'y1'}
     ]},
     options:{responsive:true,maintainAspectRatio:false,devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
       plugins:{legend:{display:false},
@@ -4523,8 +4536,8 @@ function wlRenderDaily(){
               return out; }}}},
       interaction:{intersect:false,mode:'index'},
       scales:{x:{grid:{display:false},ticks:{color:'#646c7c',font:{size:10}}},
-        y:{position:'left',grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#646c7c',font:{size:10},callback:function(v){ return v+'%'; }}},
-        y1:{position:'right',title:{display:true,text:'weighted-avg %',color:'#8a93a6',font:{size:9}},grid:{display:false},ticks:{color:'#8a93a6',font:{size:10},callback:function(v){ return v+'%'; }}}}}});
+        y:{position:'left',min:zal.y.min,max:zal.y.max,grid:{color:'rgba(255,255,255,.06)'},ticks:{stepSize:zal.y.step,color:'#646c7c',font:{size:10},callback:function(v){ return v.toFixed(1)+'%'; }}},
+        y1:{position:'right',min:zal.y1.min,max:zal.y1.max,title:{display:true,text:'WA %',color:'#8a93a6',font:{size:9}},grid:{display:false},ticks:{stepSize:zal.y1.step,color:'#8a93a6',font:{size:10},callback:function(v){ return v.toFixed(2)+'%'; }}}}}});
   wlDailyChart.data.datasets.forEach(function(ds,i){ wlDailyChart.setDatasetVisibility(i, wlDailyVis[ds.label]!==false); });
   wlDailyChart.update();
   wlBuildDailyLegend(wlDailyChart);
