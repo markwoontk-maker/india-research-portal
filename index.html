@@ -357,6 +357,7 @@
   #wlTxnBody td{padding:2px 4px}
   #wlTxnBody input,#wlTxnBody select{padding:2px 6px}
   #wlTxnBody .wl-ret{font-family:'Roboto Mono';font-size:12px;white-space:nowrap}
+  #wlTxnBody input.wl-xp-auto{color:var(--text-mute);font-style:italic}
   #viewWatchlist #wlTxnBody .wl-del{opacity:0;pointer-events:auto;position:static;color:var(--text-mute);transition:opacity .12s}
   #viewWatchlist #wlTxnBody tr:hover .wl-del{opacity:1;pointer-events:auto}
   #viewWatchlist #wlTxnBody .wl-del:hover{color:var(--down)}
@@ -1908,7 +1909,7 @@
       <div class="card reveal" id="wlTxnCard">
         <div class="card-h"><div><h3>Portfolio Transactions</h3><p>Log intraday buys / sells &middot; click a header to sort</p></div>
           <button id="wlTxnAdd" class="wl-add-trade">+ Add transaction</button></div>
-        <table class="wl-holdings"><thead><tr><th class="wl-sort" data-sort="date">Date<span class="wl-arr"></span></th><th class="wl-sort" data-sort="name">Stock<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="side">Side<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="price">Price &#8377;<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="qty">Qty<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="val">Value &#8377;<span class="wl-arr"></span></th><th></th></tr></thead>
+        <table class="wl-holdings"><thead><tr><th class="wl-sort" data-sort="name">Stock<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="w">Weight<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="ep">Entry &#8377;<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="ed">Entry Date<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="xp">Exit &#8377;<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="xd">Exit Date<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="call">Call<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="ret">Total Return<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="n5">Nifty 500<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="rel">Rel Outperf<span class="wl-arr"></span></th><th></th></tr></thead>
           <tbody id="wlTxnBody"></tbody></table>
       </div>
       <div class="card reveal">
@@ -4558,6 +4559,7 @@ function wlRenderDaily(){
   wlBuildDailyLegend(wlDailyChart);
 }
 function wlCloseAt(sym,ymd){ const h=wlPxHist[sym]; if(!h||!h.dates||!h.dates.length||!ymd) return null; const ds=h.dates; let lo=0,hi=ds.length-1,res=-1; while(lo<=hi){ const m=(lo+hi)>>1; if(ds[m]<=ymd){res=m;lo=m+1;} else hi=m-1; } return res>=0?h.close[res]:null; }
+function wlCloseBefore(sym,ymd){ const h=wlPxHist[sym]; if(!h||!h.dates||!h.dates.length||!ymd) return null; let res=null; for(let k=0;k<h.dates.length;k++){ if(h.dates[k]<ymd) res=h.close[k]; else break; } return res; }
 function wlEnsureHoldPx(){
   const syms=[]; WL.hold.forEach(function(row){ const sym=String(row[1]).split('|')[0]; if(sym&&syms.indexOf(sym)<0) syms.push(sym); });
   const need=syms.filter(function(s){ return wlPxHist[s]===undefined; });
@@ -4609,24 +4611,28 @@ function wlIndexReturnOn(D){
   const day=wlRet&&wlRet.dates&&wlRet.dates[D];
   return (day&&day.index!=null&&!isNaN(day.index))?day.index:null;
 }
-// Portfolio return ON an exact date = sum-product of the weight you TYPED x each
-// stock's exact NSE daily return that day (weights are NOT renormalised - this is
-// the same SUMPRODUCT the spreadsheet does, so e.g. 1.0% x +4.40% adds +4.40 to the
-// total). Records each holding's contribution (weight x return) in wlContrib[D] for
-// the hover tooltip. If no weights are entered at all, falls back to a simple average.
+// Portfolio return ON an exact date = SUMPRODUCT(weight x that stock's return that day),
+// summed over Current Holdings PLUS any Portfolio Transactions settling on D. A stock
+// that trades on D is priced by its transaction leg (BUY = close/entry-1 ; SELL =
+// exit/prev-close-1), not by close-to-close, so it never double-counts. sp = raw
+// sum-product (drives the bar); wa = sp / total weight (normalised, drives the lines).
 function wlPortfolioReturnOn(D){
   const day=wlRet&&wlRet.dates&&wlRet.dates[D]; if(!day||!day.r) return null;
+  const txnOn={}; wlTxns.forEach(function(t){ if(t.sym && (t.ed===D||t.xd===D)) txnOn[wlNseSym(t.sym)]=1; });
   let sw=0,acc=0,any=false,es=0,n=0; const contrib=[];
-  WL.hold.forEach(function(row){ const sy=row[1], r=day.r[wlNseSym(sy)];
+  WL.hold.forEach(function(row){ const sy=row[1], nse=wlNseSym(sy), r=day.r[nse];
     if(r==null||isNaN(r)) return;
+    if(txnOn[nse]) return;
     const e=wlEntry[sy], w=(e&&e.w!=null&&e.w!=='')?+e.w:null;
     const wv=(w!=null&&!isNaN(w))?w:null;
     if(wv!=null){ acc+=wv*r; sw+=wv; any=true; }
     es+=r; n++;
     contrib.push({name:row[0], w:wv, r:r});
   });
-  // sp = raw SUMPRODUCT (spreadsheet basis, drives the bar); wa = weighted AVERAGE
-  // (normalised: sp / total weight) - a proper daily % return, drives the lines + cumulative.
+  wlTxns.forEach(function(t){ if(!t.sym) return; const w=(t.w!=null&&t.w!=='')?+t.w:null; if(w==null||isNaN(w)) return;
+    if(t.ed===D && t.ep!=null && t.ep!=='' && +t.ep>0){ const cD=wlCloseAt(t.sym,D); if(cD!=null){ const r=(cD/(+t.ep)-1)*100; acc+=w*r; sw+=w; any=true; es+=r; n++; contrib.push({name:(t.name||t.sym)+' · buy', w:w, r:r}); } }
+    if(t.xd===D && t.xp!=null && t.xp!=='' && +t.xp>0){ const c0=wlCloseBefore(t.sym,D); if(c0!=null&&c0!==0){ const r=((+t.xp)/c0-1)*100; acc+=w*r; sw+=w; any=true; es+=r; n++; contrib.push({name:(t.name||t.sym)+' · sell', w:w, r:r}); } }
+  });
   const sp=any?acc:(n>0?es/n:null);
   const wa=any?(sw!==0?acc/sw:0):(n>0?es/n:null);
   contrib.forEach(function(c){ c.contrib=any?((c.w!=null)?c.w*c.r:0):(n>0?c.r/n:null); });
@@ -4651,7 +4657,8 @@ function wlCaptureDaily(){
     });
     wlDailyReturns=nd; wlDailySave(); wlRenderDaily();
   };
-  if(wlRet) build(); else wlLoadReturns().then(build).catch(build);
+  const ensureTxnPx=function(){ const need=[]; wlTxns.forEach(function(t){ if(t.sym && wlPxHist[t.sym]===undefined && need.indexOf(t.sym)<0) need.push(t.sym); }); return need.length?Promise.all(need.map(function(sx){ return wlLoadPxHist(sx).catch(function(){}); })):Promise.resolve(); };
+  if(wlRet) ensureTxnPx().then(build); else wlLoadReturns().then(ensureTxnPx).then(build).catch(build);
 }
 function wlHoldCells(sy,d){
   const e=wlEntry[sy]||{};
@@ -4829,61 +4836,80 @@ function wlTradesInit(){
   }
   wlTradesRender();
 }
-// Portfolio Transactions - intraday buy/sell log (mirrors Historical Trades mechanics).
-const WL_TXN_LS='irp_portfolio_txns_v1';
+// Portfolio Transactions - intraday buy/sell log. Mirrors Historical Trades (+ a Weight
+// column) and FEEDS the Portfolio Daily Return on each trade's entry/exit day
+// (see wlPortfolioReturnOn: buy = close/entry-1, sell = exit/prevclose-1).
+const WL_TXN_LS='irp_portfolio_txns_v2';
 function wlTxnsLoad(){ try{ const a=JSON.parse(localStorage.getItem(WL_TXN_LS)); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
 let wlTxns=wlTxnsLoad();
-let wlTxnSort={key:'date',dir:-1};
+let wlTxnSort={key:'ed',dir:-1};
 function wlTxnsSave(){ try{ localStorage.setItem(WL_TXN_LS,JSON.stringify(wlTxns)); }catch(e){} }
-function wlTxnVal(t){ const p=(t.price===''||t.price==null)?null:+t.price, q=(t.qty===''||t.qty==null)?null:+t.qty; return (p!=null&&q!=null&&!isNaN(p)&&!isNaN(q))?p*q:null; }
-function wlTxnsOrder(){
-  const rows=wlTxns.map(function(t,i){ return {t:t,i:i}; }); const k=wlTxnSort.key, d=wlTxnSort.dir;
-  const key=function(t){ if(k==='name') return (t.name||'').toLowerCase(); if(k==='side') return t.side||''; if(k==='price') return (t.price===''||t.price==null)?-Infinity:+t.price; if(k==='qty') return (t.qty===''||t.qty==null)?-Infinity:+t.qty; if(k==='val'){ const v=wlTxnVal(t); return v==null?-Infinity:v; } return t.date||''; };
-  rows.sort(function(a,b){ const va=key(a.t), vb=key(b.t); if(va<vb) return -d; if(va>vb) return d; return a.i-b.i; });
-  return rows;
+function wlTxnSortVal(t,key){
+  if(key==='name') return (t.name||'').toLowerCase();
+  if(key==='w') return (t.w!=null&&t.w!=='')?+t.w:-Infinity;
+  if(key==='call') return t.call||'Buy';
+  if(key==='ep') return (t.ep!=null&&t.ep!=='')?+t.ep:-Infinity;
+  if(key==='xp') return (t.xp!=null&&t.xp!=='')?+t.xp:-Infinity;
+  if(key==='ed') return t.ed||''; if(key==='xd') return t.xd||'';
+  const c=wlTradeCalc(t); if(key==='ret') return c.ret==null?-Infinity:c.ret; if(key==='n5') return c.n5==null?-Infinity:c.n5; if(key==='rel') return c.rel==null?-Infinity:c.rel;
+  return '';
 }
+function wlTxnsOrder(){ const rows=wlTxns.map(function(t,i){ return {t:t,i:i}; }); const k=wlTxnSort.key, d=wlTxnSort.dir;
+  rows.sort(function(a,b){ const va=wlTxnSortVal(a.t,k), vb=wlTxnSortVal(b.t,k); if(va<vb) return -d; if(va>vb) return d; return a.i-b.i; }); return rows; }
 function wlTxnsRender(){
   const tb=document.getElementById('wlTxnBody'); if(!tb) return;
   const esc=function(x){ return String(x==null?'':x).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); };
   const ths=document.querySelectorAll('#wlTxnCard th.wl-sort');
   for(let z=0;z<ths.length;z++){ const a=ths[z].querySelector('.wl-arr'); if(a) a.textContent=(wlTxnSort.key===ths[z].dataset.sort)?(wlTxnSort.dir>0?' ▲':' ▼'):''; }
   const order=wlTxnsOrder();
-  if(!order.length){ tb.innerHTML='<tr><td class="pol-empty" colspan="7">No transactions yet — click “+ Add transaction”, then log the date, stock, side, price and quantity.</td></tr>'; return; }
-  tb.innerHTML=order.map(function(o){ const t=o.t, i=o.i; const price=(t.price!=null&&t.price!=='')?t.price:'', qty=(t.qty!=null&&t.qty!=='')?t.qty:''; const v=wlTxnVal(t);
-    const nmCls=(t.side==='Sell')?'wl-nm-sell':'wl-nm-buy';
+  if(!order.length){ tb.innerHTML='<tr><td class="pol-empty" colspan="11">No transactions yet — click “+ Add transaction”, then log the stock, weight, entry/exit price and dates.</td></tr>'; return; }
+  tb.innerHTML=order.map(function(o){ const t=o.t, i=o.i;
+    const wv=(t.w!=null&&t.w!=='')?t.w:'', ep=(t.ep!=null&&t.ep!=='')?t.ep:'', ed=t.ed||'', xp=(t.xp!=null&&t.xp!=='')?t.xp:'', xd=t.xd||'';
+    const autoXp=(xp===''&&t.sym)?(t.xd?wlOpenAt(t.sym,t.xd):wlLatestOpen(t.sym)):null;
+    const xpShown=(xp!=='')?xp:(autoXp!=null?autoXp.toFixed(2):''), xpCls=(xp===''&&autoXp!=null)?' wl-xp-auto':'';
+    const cc=wlTradeCalc(t), ret=cc.ret, n5=cc.n5, rel=cc.rel;
+    const nmCls=(t.call==='Sell')?'wl-nm-sell':((!t.call||t.call==='Buy')?'wl-nm-buy':'');
     return '<tr data-i="'+i+'">'+
-      '<td><input class="wl-tx-date wl-entry-dt" type="text" placeholder="DD/MM/YY" data-i="'+i+'" value="'+esc(wlFmtDMY(t.date||''))+'"></td>'+
       '<td><input class="wl-tx-name '+nmCls+'" list="wlCompanyList" placeholder="Stock" data-i="'+i+'" value="'+esc(t.name)+'"></td>'+
-      '<td class="r"><select class="wl-tx-side" data-i="'+i+'"><option'+((t.side||'Buy')==='Buy'?' selected':'')+'>Buy</option><option'+((t.side||'Buy')==='Sell'?' selected':'')+'>Sell</option></select></td>'+
-      '<td class="r"><input class="wl-tx-price wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(price)+'"></td>'+
-      '<td class="r"><input class="wl-tx-qty" type="number" step="1" min="0" inputmode="numeric" placeholder="qty" data-i="'+i+'" value="'+esc(qty)+'"></td>'+
-      '<td class="r wl-ret">'+((v!=null)?('₹'+v.toLocaleString('en-IN',{maximumFractionDigits:0})):'<span style="color:var(--text-mute)">—</span>')+'</td>'+
+      '<td class="r"><input class="wl-tx-w" type="number" step="0.01" min="0" inputmode="decimal" placeholder="wt" data-i="'+i+'" value="'+esc(wv)+'"></td>'+
+      '<td class="r"><input class="wl-tx-ep wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(ep)+'"></td>'+
+      '<td class="r"><input class="wl-tx-ed wl-entry-dt" type="text" placeholder="DD/MM/YY" data-i="'+i+'" value="'+esc(wlFmtDMY(ed))+'"></td>'+
+      '<td class="r"><input class="wl-tx-xp wl-entry-px'+xpCls+'" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(xpShown)+'"'+(xpCls?' title="Latest price - open (no exit yet)"':'')+'></td>'+
+      '<td class="r"><input class="wl-tx-xd wl-entry-dt" type="text" placeholder="DD/MM/YY" data-i="'+i+'" value="'+esc(wlFmtDMY(xd))+'"></td>'+
+      '<td class="r"><select class="wl-tx-call" data-i="'+i+'"><option'+((t.call||'Buy')==='Buy'?' selected':'')+'>Buy</option><option'+((t.call||'Buy')==='Hold'?' selected':'')+'>Hold</option><option'+((t.call||'Buy')==='Sell'?' selected':'')+'>Sell</option></select></td>'+
+      '<td class="r wl-ret">'+wlPcSpan(ret)+'</td>'+
+      '<td class="r wl-ret">'+wlPcSpan(n5)+'</td>'+
+      '<td class="r wl-ret">'+wlPcSpan(rel)+'</td>'+
       '<td class="wl-actions"><button class="wl-del" title="Delete transaction" aria-label="Delete transaction">✕</button></td>'+
     '</tr>';
   }).join('');
+  if(!wlIdxHist && !wlIdxLoading && wlTxns.some(function(t){ return t.ed||t.xd; })){ wlIdxLoading=true; wlLoadIdxHist().then(function(){ wlIdxLoading=false; wlTxnsRender(); }).catch(function(){ wlIdxLoading=false; }); }
+  wlTxns.forEach(function(t){ if(t.sym && wlPxHist[t.sym]===undefined){ wlLoadPxHist(t.sym).then(function(){ wlTxnsRender(); }); } });
 }
 function wlTxnsInit(){
   const addBtn=document.getElementById('wlTxnAdd');
   if(addBtn && !addBtn._wired){ addBtn._wired=true; addBtn.addEventListener('click',function(){
-    wlTxns.push({date:wlTodayIso(),name:'',sym:'',side:'Buy',price:'',qty:''}); wlTxnsSave(); wlTxnsRender();
+    wlTxns.push({name:'',sym:'',w:'',ep:'',ed:'',xp:'',xd:'',call:'Buy'}); wlTxnsSave(); wlTxnsRender();
     const ni=wlTxns.length-1; const el=document.querySelector('#wlTxnBody .wl-tx-name[data-i="'+ni+'"]'); if(el) el.focus();
   }); }
   const thead=document.querySelector('#wlTxnCard thead');
   if(thead && !thead._wired){ thead._wired=true; thead.addEventListener('click',function(e){ const th=e.target.closest('th.wl-sort'); if(!th) return;
-    const k=th.dataset.sort; if(wlTxnSort.key===k) wlTxnSort.dir=-wlTxnSort.dir; else { wlTxnSort.key=k; wlTxnSort.dir=(k==='date')?-1:1; } wlTxnsRender();
+    const k=th.dataset.sort; if(wlTxnSort.key===k) wlTxnSort.dir=-wlTxnSort.dir; else { wlTxnSort.key=k; wlTxnSort.dir=1; } wlTxnsRender();
   }); }
   const tb=document.getElementById('wlTxnBody');
   if(tb && !tb._wired){ tb._wired=true;
+    const recompute=function(){ if(typeof wlCaptureDaily==='function') wlCaptureDaily(); };
     tb.addEventListener('change',function(e){
-      const sel=e.target.closest('.wl-tx-side');
-      if(sel){ const si=+sel.dataset.i; if(!isNaN(si)&&wlTxns[si]){ wlTxns[si].side=sel.value; wlTxnsSave(); wlTxnsRender(); } return; }
+      const sel=e.target.closest('.wl-tx-call');
+      if(sel){ const si=+sel.dataset.i; if(!isNaN(si)&&wlTxns[si]){ wlTxns[si].call=sel.value; wlTxnsSave(); wlTxnsRender(); recompute(); } return; }
       const inp=e.target.closest('input'); if(!inp) return; const i=+inp.dataset.i; if(isNaN(i)||!wlTxns[i]) return; const c=inp.className;
-      if(c.indexOf('wl-tx-name')>=0){ wlTxns[i].name=inp.value; const it=wlResolve(inp.value); wlTxns[i].sym=it?it[1].split('|')[0]:''; wlTxnsSave(); wlTxnsRender(); return; }
-      if(c.indexOf('wl-tx-price')>=0){ wlTxns[i].price=inp.value; wlTxnsSave(); wlTxnsRender(); return; }
-      if(c.indexOf('wl-tx-qty')>=0){ wlTxns[i].qty=inp.value; wlTxnsSave(); wlTxnsRender(); return; }
-      if(c.indexOf('wl-tx-date')>=0){ const iso=wlParseDMY(inp.value); if(iso===null){ inp.value=wlFmtDMY(wlTxns[i].date||''); return; } wlTxns[i].date=iso; inp.value=wlFmtDMY(iso); wlTxnsSave(); wlTxnsRender(); return; }
+      if(c.indexOf('wl-tx-name')>=0){ wlTxns[i].name=inp.value; const it=wlResolve(inp.value); wlTxns[i].sym=it?it[1].split('|')[0]:''; wlTxnsSave(); wlTxnsRender(); recompute(); return; }
+      if(c.indexOf('wl-tx-w')>=0){ wlTxns[i].w=inp.value; wlTxnsSave(); recompute(); return; }
+      if(c.indexOf('wl-tx-ep')>=0){ wlTxns[i].ep=inp.value; wlTxnsSave(); wlTxnsRender(); recompute(); return; }
+      if(c.indexOf('wl-tx-xp')>=0){ wlTxns[i].xp=inp.value; wlTxnsSave(); wlTxnsRender(); recompute(); return; }
+      if(c.indexOf('wl-tx-ed')>=0||c.indexOf('wl-tx-xd')>=0){ const fld=c.indexOf('wl-tx-ed')>=0?'ed':'xd'; const iso=wlParseDMY(inp.value); if(iso===null){ inp.value=wlFmtDMY(wlTxns[i][fld]||''); return; } wlTxns[i][fld]=iso; inp.value=wlFmtDMY(iso); wlTxnsSave(); wlTxnsRender(); recompute(); return; }
     });
-    tb.addEventListener('click',function(e){ const b=e.target.closest('.wl-del'); if(!b) return; const tr=b.closest('tr'); const i=+tr.dataset.i; if(isNaN(i)) return; wlTxns.splice(i,1); wlTxnsSave(); wlTxnsRender(); });
+    tb.addEventListener('click',function(e){ const b=e.target.closest('.wl-del'); if(!b) return; const tr=b.closest('tr'); const i=+tr.dataset.i; if(isNaN(i)) return; wlTxns.splice(i,1); wlTxnsSave(); wlTxnsRender(); recompute(); });
   }
   wlTxnsRender();
 }
