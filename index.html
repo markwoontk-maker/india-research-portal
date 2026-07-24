@@ -4446,7 +4446,7 @@ function wlCovCallCell(sy){
   return '<td class="r"><select class="wl-cov-call" data-sym="'+sa+'"><option'+(v==='Buy'?' selected':'')+'>Buy</option><option'+(v==='Hold'?' selected':'')+'>Hold</option><option'+(v==='Sell'?' selected':'')+'>Sell</option></select></td>';
 }
 // Custom-weighted daily return of Current Holdings — one bar per calendar day.
-const WL_DAILY_LS='irp_daily_returns_v10';
+const WL_DAILY_LS='irp_daily_returns_v11';
 function wlDailyLoad(){ try{ return JSON.parse(localStorage.getItem(WL_DAILY_LS))||{}; }catch(e){ return {}; } }
 let wlDailyReturns=wlDailyLoad();
 function wlDailySave(){ try{ localStorage.setItem(WL_DAILY_LS,JSON.stringify(wlDailyReturns)); }catch(e){} }
@@ -4623,16 +4623,23 @@ function wlIndexReturnOn(D){
 // and NSE closes (day.c) from data/wl_returns.json.
 function wlPortfolioReturnOn(D){
   const day=wlRet&&wlRet.dates&&wlRet.dates[D]; if(!day||!day.c||!day.r) return null;
-  // Daily WR = SUM(same-day market-value weight x that stock's return). Weight uses the
-  // SAME day's close (qty x close_D / total MV_D); matches the spreadsheet's BD column.
-  let mvD=0; const items=[];
+  // Daily WR = daily change in TOTAL MARKET VALUE of fixed quantities = SUM(start-of-day
+  // weight x return). START-of-day weight uses the PREVIOUS close (qty x close_prev /
+  // total MV_prev) => port = (sum MV_today / sum MV_prev - 1), the exact money-return
+  // (unbiased; the professional standard). Prev close = previous file date's c, or for
+  // the floor date derived as c/(1+r/100).
+  const days=Object.keys(wlRet.dates).sort(); const di=days.indexOf(D); const prevDay=(di>0)?wlRet.dates[days[di-1]]:null;
+  let mv0=0, mv1=0, any=false; const rows=[];
   WL.hold.forEach(function(row){ const sy=row[1], nse=wlNseSym(sy);
     const e=wlEntry[sy], q=(e&&e.qty!=null&&e.qty!=='')?+e.qty:null; if(q==null||isNaN(q)||q<=0) return;
     const cD=day.c[nse], rD=day.r[nse]; if(cD==null||rD==null||isNaN(cD)||isNaN(rD)) return;
-    mvD+=q*cD; items.push({name:row[0], mvD:q*cD, r:rD});
+    const cPrev=prevDay?prevDay.c[nse]:(cD/(1+rD/100));
+    if(cPrev==null||isNaN(cPrev)||cPrev<=0) return;
+    mv0+=q*cPrev; mv1+=q*cD; any=true; rows.push({name:row[0], v0:q*cPrev, r:rD});
   });
-  if(!items.length||mvD<=0){ wlContrib[D]=[]; return null; }
-  let port=0; const contrib=items.map(function(x){ const w=x.mvD/mvD*100; port+=w*x.r/100; return {name:x.name, w:w, r:x.r, contrib:w*x.r/100}; });
+  if(!any||mv0<=0){ wlContrib[D]=[]; return null; }
+  const port=(mv1/mv0-1)*100;
+  const contrib=rows.map(function(x){ const w=x.v0/mv0*100; return {name:x.name, w:w, r:x.r, contrib:w*x.r/100}; });
   contrib.sort(function(a,b){ return (b.contrib||0)-(a.contrib||0); });
   wlContrib[D]=contrib;
   return {p:port};
