@@ -354,6 +354,15 @@
   #wlTradesCard th.wl-sort{cursor:pointer;user-select:none}
   #wlTradesCard th.wl-sort:hover{color:var(--saffron)}
   #wlTradesCard .wl-arr{font-size:9px;color:var(--saffron)}
+  #wlTxnBody td{padding:2px 4px}
+  #wlTxnBody input,#wlTxnBody select{padding:2px 6px}
+  #wlTxnBody .wl-ret{font-family:'Roboto Mono';font-size:12px;white-space:nowrap}
+  #viewWatchlist #wlTxnBody .wl-del{opacity:0;pointer-events:auto;position:static;color:var(--text-mute);transition:opacity .12s}
+  #viewWatchlist #wlTxnBody tr:hover .wl-del{opacity:1;pointer-events:auto}
+  #viewWatchlist #wlTxnBody .wl-del:hover{color:var(--down)}
+  #wlTxnCard th.wl-sort{cursor:pointer;user-select:none}
+  #wlTxnCard th.wl-sort:hover{color:var(--saffron)}
+  #wlTxnCard .wl-arr{font-size:9px;color:var(--saffron)}
   /* company name coloured by call */
   .wl-nm-buy{color:var(--up)} .wl-nm-sell{color:var(--down)}
   #wlCov .sym.wl-nm-buy{color:var(--up)} #wlCov .sym.wl-nm-sell{color:var(--down)}
@@ -1895,6 +1904,12 @@
           <div class="seg" id="wlDailySeg"><button data-p="1W">1W</button><button data-p="1M" class="on">1M</button><button data-p="3M">3M</button><button data-p="6M">6M</button><button data-p="YTD">YTD</button><button data-p="1Y">1Y</button></div></div>
         <div style="position:relative;height:250px"><canvas id="wlDailyCanvas"></canvas></div>
         <div id="wlDailyLegend" class="wl-daily-legend"></div>
+      </div>
+      <div class="card reveal" id="wlTxnCard">
+        <div class="card-h"><div><h3>Portfolio Transactions</h3><p>Log intraday buys / sells &middot; click a header to sort</p></div>
+          <button id="wlTxnAdd" class="wl-add-trade">+ Add transaction</button></div>
+        <table class="wl-holdings"><thead><tr><th class="wl-sort" data-sort="date">Date<span class="wl-arr"></span></th><th class="wl-sort" data-sort="name">Stock<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="side">Side<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="price">Price &#8377;<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="qty">Qty<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="val">Value &#8377;<span class="wl-arr"></span></th><th></th></tr></thead>
+          <tbody id="wlTxnBody"></tbody></table>
       </div>
       <div class="card reveal">
         <div class="card-h"><div><h3>Coverage</h3><p>Live prices · NSE</p></div>
@@ -4814,6 +4829,64 @@ function wlTradesInit(){
   }
   wlTradesRender();
 }
+// Portfolio Transactions - intraday buy/sell log (mirrors Historical Trades mechanics).
+const WL_TXN_LS='irp_portfolio_txns_v1';
+function wlTxnsLoad(){ try{ const a=JSON.parse(localStorage.getItem(WL_TXN_LS)); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
+let wlTxns=wlTxnsLoad();
+let wlTxnSort={key:'date',dir:-1};
+function wlTxnsSave(){ try{ localStorage.setItem(WL_TXN_LS,JSON.stringify(wlTxns)); }catch(e){} }
+function wlTxnVal(t){ const p=(t.price===''||t.price==null)?null:+t.price, q=(t.qty===''||t.qty==null)?null:+t.qty; return (p!=null&&q!=null&&!isNaN(p)&&!isNaN(q))?p*q:null; }
+function wlTxnsOrder(){
+  const rows=wlTxns.map(function(t,i){ return {t:t,i:i}; }); const k=wlTxnSort.key, d=wlTxnSort.dir;
+  const key=function(t){ if(k==='name') return (t.name||'').toLowerCase(); if(k==='side') return t.side||''; if(k==='price') return (t.price===''||t.price==null)?-Infinity:+t.price; if(k==='qty') return (t.qty===''||t.qty==null)?-Infinity:+t.qty; if(k==='val'){ const v=wlTxnVal(t); return v==null?-Infinity:v; } return t.date||''; };
+  rows.sort(function(a,b){ const va=key(a.t), vb=key(b.t); if(va<vb) return -d; if(va>vb) return d; return a.i-b.i; });
+  return rows;
+}
+function wlTxnsRender(){
+  const tb=document.getElementById('wlTxnBody'); if(!tb) return;
+  const esc=function(x){ return String(x==null?'':x).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); };
+  const ths=document.querySelectorAll('#wlTxnCard th.wl-sort');
+  for(let z=0;z<ths.length;z++){ const a=ths[z].querySelector('.wl-arr'); if(a) a.textContent=(wlTxnSort.key===ths[z].dataset.sort)?(wlTxnSort.dir>0?' ▲':' ▼'):''; }
+  const order=wlTxnsOrder();
+  if(!order.length){ tb.innerHTML='<tr><td class="pol-empty" colspan="7">No transactions yet — click “+ Add transaction”, then log the date, stock, side, price and quantity.</td></tr>'; return; }
+  tb.innerHTML=order.map(function(o){ const t=o.t, i=o.i; const price=(t.price!=null&&t.price!=='')?t.price:'', qty=(t.qty!=null&&t.qty!=='')?t.qty:''; const v=wlTxnVal(t);
+    const nmCls=(t.side==='Sell')?'wl-nm-sell':'wl-nm-buy';
+    return '<tr data-i="'+i+'">'+
+      '<td><input class="wl-tx-date wl-entry-dt" type="text" placeholder="DD/MM/YY" data-i="'+i+'" value="'+esc(wlFmtDMY(t.date||''))+'"></td>'+
+      '<td><input class="wl-tx-name '+nmCls+'" list="wlCompanyList" placeholder="Stock" data-i="'+i+'" value="'+esc(t.name)+'"></td>'+
+      '<td class="r"><select class="wl-tx-side" data-i="'+i+'"><option'+((t.side||'Buy')==='Buy'?' selected':'')+'>Buy</option><option'+((t.side||'Buy')==='Sell'?' selected':'')+'>Sell</option></select></td>'+
+      '<td class="r"><input class="wl-tx-price wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(price)+'"></td>'+
+      '<td class="r"><input class="wl-tx-qty" type="number" step="1" min="0" inputmode="numeric" placeholder="qty" data-i="'+i+'" value="'+esc(qty)+'"></td>'+
+      '<td class="r wl-ret">'+((v!=null)?('₹'+v.toLocaleString('en-IN',{maximumFractionDigits:0})):'<span style="color:var(--text-mute)">—</span>')+'</td>'+
+      '<td class="wl-actions"><button class="wl-del" title="Delete transaction" aria-label="Delete transaction">✕</button></td>'+
+    '</tr>';
+  }).join('');
+}
+function wlTxnsInit(){
+  const addBtn=document.getElementById('wlTxnAdd');
+  if(addBtn && !addBtn._wired){ addBtn._wired=true; addBtn.addEventListener('click',function(){
+    wlTxns.push({date:wlTodayIso(),name:'',sym:'',side:'Buy',price:'',qty:''}); wlTxnsSave(); wlTxnsRender();
+    const ni=wlTxns.length-1; const el=document.querySelector('#wlTxnBody .wl-tx-name[data-i="'+ni+'"]'); if(el) el.focus();
+  }); }
+  const thead=document.querySelector('#wlTxnCard thead');
+  if(thead && !thead._wired){ thead._wired=true; thead.addEventListener('click',function(e){ const th=e.target.closest('th.wl-sort'); if(!th) return;
+    const k=th.dataset.sort; if(wlTxnSort.key===k) wlTxnSort.dir=-wlTxnSort.dir; else { wlTxnSort.key=k; wlTxnSort.dir=(k==='date')?-1:1; } wlTxnsRender();
+  }); }
+  const tb=document.getElementById('wlTxnBody');
+  if(tb && !tb._wired){ tb._wired=true;
+    tb.addEventListener('change',function(e){
+      const sel=e.target.closest('.wl-tx-side');
+      if(sel){ const si=+sel.dataset.i; if(!isNaN(si)&&wlTxns[si]){ wlTxns[si].side=sel.value; wlTxnsSave(); wlTxnsRender(); } return; }
+      const inp=e.target.closest('input'); if(!inp) return; const i=+inp.dataset.i; if(isNaN(i)||!wlTxns[i]) return; const c=inp.className;
+      if(c.indexOf('wl-tx-name')>=0){ wlTxns[i].name=inp.value; const it=wlResolve(inp.value); wlTxns[i].sym=it?it[1].split('|')[0]:''; wlTxnsSave(); wlTxnsRender(); return; }
+      if(c.indexOf('wl-tx-price')>=0){ wlTxns[i].price=inp.value; wlTxnsSave(); wlTxnsRender(); return; }
+      if(c.indexOf('wl-tx-qty')>=0){ wlTxns[i].qty=inp.value; wlTxnsSave(); wlTxnsRender(); return; }
+      if(c.indexOf('wl-tx-date')>=0){ const iso=wlParseDMY(inp.value); if(iso===null){ inp.value=wlFmtDMY(wlTxns[i].date||''); return; } wlTxns[i].date=iso; inp.value=wlFmtDMY(iso); wlTxnsSave(); wlTxnsRender(); return; }
+    });
+    tb.addEventListener('click',function(e){ const b=e.target.closest('.wl-del'); if(!b) return; const tr=b.closest('tr'); const i=+tr.dataset.i; if(isNaN(i)) return; wlTxns.splice(i,1); wlTxnsSave(); wlTxnsRender(); });
+  }
+  wlTxnsRender();
+}
 const WL_TBODY={hold:'wlHold',cov:'wlCov',watch:'wlWatch'};
 const WL_LABEL={hold:'Holdings',cov:'Coverage',watch:'Watchlist'};
 function wlPct(v){
@@ -5075,6 +5148,7 @@ let wlInited=false;
 function wlInit(){
   if(wlInited) return; wlInited=true;
   wlTradesInit();
+  wlTxnsInit();
   const dl=document.getElementById('wlCompanyList');
   wlFillDatalist();
   (function(){ const dseg=document.getElementById('wlDailySeg'); if(dseg && !dseg._wired){ dseg._wired=true;
