@@ -17,6 +17,12 @@
 // Response: { IsSuccess, Data:{ Table:[{EVENTTYPE,EVENTDATE,CO_NAME,LNAME,
 //            CO_CODE,RESULT_NOTE}] } }   (EVENTDATE is "Jul 31, 2026")
 //
+// GOTCHA: a wide P_FROM_DATE..P_TO_DATE query is CAPPED server-side and
+// silently drops companies (a busy day comes back partial). So we set
+// P_FROM_DATE == P_TO_DATE and loop day-by-day — a single-day query returns
+// that day in full — then aggregate. Do NOT "optimise" this back into one
+// range call.
+//
 // Rewrites the whole file each run (the forward window moves daily), but only
 // when the fetch returned a usable set — a failed/empty fetch leaves the last
 // good file in place. Never throws non-zero: it must not abort the refresh.
@@ -112,15 +118,28 @@ async function fetchPage(from, to, pageNumber){
   try {
     const today = new Date(); today.setHours(0,0,0,0);
     const end = new Date(today); end.setDate(end.getDate() + DAYS_AHEAD);
-    const from = apiDate(today), to = apiDate(end);
 
-    let rows = [], pageNumber = 1;
-    while (pageNumber <= 20) {
-      const page = await fetchPage(from, to, pageNumber);
-      rows = rows.concat(page);
-      if (page.length < PAGE_SIZE) break;
-      pageNumber++;
+    // IMPORTANT: a wide P_FROM_DATE..P_TO_DATE query silently truncates — the
+    // API caps the total it returns and drops companies (e.g. Syrma SGS on a
+    // busy day). A single-day query returns that day in full, so we fetch
+    // day-by-day and aggregate. Sundays are skipped (no board meetings). A
+    // single day's failure is tolerated so one hiccup can't blank the file.
+    let rows = [], dayErrors = 0;
+    for (let i = 0; i <= DAYS_AHEAD; i++) {
+      const d = new Date(today); d.setDate(today.getDate() + i);
+      if (d.getDay() === 0) continue;             // skip Sundays
+      const ds = apiDate(d);
+      try {
+        let pageNumber = 1;
+        while (pageNumber <= 10) {
+          const page = await fetchPage(ds, ds, pageNumber);
+          rows = rows.concat(page);
+          if (page.length < PAGE_SIZE) break;     // full day captured
+          pageNumber++;
+        }
+      } catch (e) { dayErrors++; }
     }
+    if (dayErrors) console.log(`earnings-calendar: ${dayErrors} day(s) failed to fetch`);
 
     // NSE symbol lookup (best-effort; null if the master can't be fetched).
     const nseMap = await fetchNseSymbolMap();

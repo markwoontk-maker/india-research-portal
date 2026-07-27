@@ -5495,17 +5495,24 @@ function ecKey(s){
 }
 // Coverage = the Watchlist tab universe (Holdings + Coverage + Watchlist),
 // including the user's localStorage edits (live WL object). Map each
-// normalised company key -> {name, sym} so a covered result can show the
-// analyst's own label and pull a YTD return by symbol.
+// Two lookups into the watchlist: byName (normalised company key) and bySym
+// (bare NSE/BSE symbol, incl. each pipe-separated fallback). Matching by
+// symbol is what catches names ICICI writes in full ("Syrma SGS Technology
+// Ltd" vs the watchlist's "Syrma SGS") — the refresher tags each result with
+// its NSE symbol, so symbol equality is the reliable key.
 function ecWatch(){
-  const m={};
+  const byName={}, bySym={};
   ['hold','cov','watch'].forEach(g=>{
     ((typeof WL!=='undefined'&&WL&&WL[g])||[]).forEach(row=>{
       if(!row||!row[0]) return;
-      const k=ecKey(row[0]); if(k.length>2 && !m[k]) m[k]={name:row[0], sym:String(row[1]||'')};
+      const entry={name:row[0], sym:String(row[1]||'')};
+      const k=ecKey(row[0]); if(k.length>2 && !byName[k]) byName[k]=entry;
+      String(row[1]||'').split('|').forEach(s=>{
+        const ss=s.replace(/\.(NS|BO)$/i,'').toUpperCase(); if(ss && !bySym[ss]) bySym[ss]=entry;
+      });
     });
   });
-  return m;
+  return {byName, bySym};
 }
 const EC_CAP=12;                          // rows per day before the "+N" toggle
 const ecExpanded=new Set();               // date keys the user opened via "+N"
@@ -5517,8 +5524,12 @@ let ecSource='';
 // else — resolved server-side against the NSE equity master).
 let ecYtd={}, ecYtdInflight=false, ecYtdDone=false;
 function ecPrimSym(sym){ return String(sym||'').split('|')[0]; }
-// Match a calendar item to the watchlist by its full name or its short name.
-function ecMatch(wl, it){ return wl[ecKey(it.name)] || wl[ecKey(it.short||'')] || null; }
+// Match a calendar item to the watchlist: by symbol first (most reliable),
+// then by full/short name.
+function ecMatch(wl, it){
+  if(it.sym){ const ss=it.sym.replace(/\.(NS|BO)$/i,'').toUpperCase(); if(wl.bySym[ss]) return wl.bySym[ss]; }
+  return wl.byName[ecKey(it.name)] || wl.byName[ecKey(it.short||'')] || null;
+}
 // The symbol to price a row on: the watchlist's curated symbol if covered,
 // else the NSE symbol the refresher attached (null for BSE-only microcaps).
 function ecSym(wl, it){ const h=ecMatch(wl,it); return (h&&h.sym)?ecPrimSym(h.sym):(it.sym||null); }
