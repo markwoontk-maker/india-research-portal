@@ -358,6 +358,7 @@
   #wlTradesCard .wl-arr{font-size:9px;color:var(--saffron)}
   #wlTxnBody td{padding:2px 4px}
   #wlTxnBody input,#wlTxnBody select{padding:2px 6px}
+  #wlTxnBody .wl-tx-qty{width:52px}
   #wlTxnBody .wl-ret{font-family:'Roboto Mono';font-size:12px;white-space:nowrap}
   #wlTxnBody input.wl-xp-auto{color:var(--text-mute);font-style:italic}
   #viewWatchlist #wlTxnBody .wl-del{opacity:0;pointer-events:auto;position:static;color:var(--text-mute);transition:opacity .12s}
@@ -1914,7 +1915,7 @@
       <div class="card reveal" id="wlTxnCard">
         <div class="card-h"><div><h3>Portfolio Transactions</h3><p>Log intraday buys / sells &middot; click a header to sort</p></div>
           <button id="wlTxnAdd" class="wl-add-trade">+ Add transaction</button></div>
-        <table class="wl-holdings"><thead><tr><th class="wl-sort" data-sort="name">Stock<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="w">Weight<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="ep">Entry &#8377;<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="ed">Entry Date<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="xp">Exit &#8377;<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="xd">Exit Date<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="call">Call<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="ret">Total Return<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="n5">Nifty 500<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="rel">Rel Outperf<span class="wl-arr"></span></th><th></th></tr></thead>
+        <table class="wl-holdings"><thead><tr><th class="wl-sort" data-sort="name">Stock<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="qty">Qty<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="ep">Entry &#8377;<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="ed">Entry Date<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="xp">Exit &#8377;<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="xd">Exit Date<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="call">Call<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="ret">Total Return<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="n5">Nifty 500<span class="wl-arr"></span></th><th class="r wl-sort" data-sort="rel">Rel Outperf<span class="wl-arr"></span></th><th></th></tr></thead>
           <tbody id="wlTxnBody"></tbody></table>
       </div>
       <div class="card reveal">
@@ -4850,14 +4851,14 @@ function wlTradesInit(){
 // Portfolio Transactions - intraday buy/sell log. Mirrors Historical Trades (+ a Weight
 // column) and FEEDS the Portfolio Daily Return on each trade's entry/exit day
 // (see wlPortfolioReturnOn: buy = close/entry-1, sell = exit/prevclose-1).
-const WL_TXN_LS='irp_portfolio_txns_v2';
+const WL_TXN_LS='irp_portfolio_txns_v3';
 function wlTxnsLoad(){ try{ const a=JSON.parse(localStorage.getItem(WL_TXN_LS)); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
 let wlTxns=wlTxnsLoad();
 let wlTxnSort={key:'ed',dir:-1};
 function wlTxnsSave(){ try{ localStorage.setItem(WL_TXN_LS,JSON.stringify(wlTxns)); }catch(e){} }
 function wlTxnSortVal(t,key){
   if(key==='name') return (t.name||'').toLowerCase();
-  if(key==='w') return (t.w!=null&&t.w!=='')?+t.w:-Infinity;
+  if(key==='qty') return (t.qty!=null&&t.qty!=='')?+t.qty:-Infinity;
   if(key==='call') return t.call||'Buy';
   if(key==='ep') return (t.ep!=null&&t.ep!=='')?+t.ep:-Infinity;
   if(key==='xp') return (t.xp!=null&&t.xp!=='')?+t.xp:-Infinity;
@@ -4875,14 +4876,14 @@ function wlTxnsRender(){
   const order=wlTxnsOrder();
   if(!order.length){ tb.innerHTML='<tr><td class="pol-empty" colspan="11">No transactions yet — click “+ Add transaction”, then log the stock, weight, entry/exit price and dates.</td></tr>'; return; }
   tb.innerHTML=order.map(function(o){ const t=o.t, i=o.i;
-    const wv=(t.w!=null&&t.w!=='')?t.w:'', ep=(t.ep!=null&&t.ep!=='')?t.ep:'', ed=t.ed||'', xp=(t.xp!=null&&t.xp!=='')?t.xp:'', xd=t.xd||'';
+    const qv=(t.qty!=null&&t.qty!=='')?t.qty:'', ep=(t.ep!=null&&t.ep!=='')?t.ep:'', ed=t.ed||'', xp=(t.xp!=null&&t.xp!=='')?t.xp:'', xd=t.xd||'';
     const autoXp=(xp===''&&t.sym)?(t.xd?wlOpenAt(t.sym,t.xd):wlLatestOpen(t.sym)):null;
     const xpShown=(xp!=='')?xp:(autoXp!=null?autoXp.toFixed(2):''), xpCls=(xp===''&&autoXp!=null)?' wl-xp-auto':'';
     const cc=wlTradeCalc(t), ret=cc.ret, n5=cc.n5, rel=cc.rel;
     const nmCls=(t.call==='Sell')?'wl-nm-sell':((!t.call||t.call==='Buy')?'wl-nm-buy':'');
     return '<tr data-i="'+i+'">'+
       '<td><input class="wl-tx-name '+nmCls+'" list="wlCompanyList" placeholder="Stock" data-i="'+i+'" value="'+esc(t.name)+'"></td>'+
-      '<td class="r"><input class="wl-tx-w" type="number" step="0.01" min="0" inputmode="decimal" placeholder="wt" data-i="'+i+'" value="'+esc(wv)+'"></td>'+
+      '<td class="r"><input class="wl-tx-qty" type="number" step="1" min="0" inputmode="numeric" placeholder="qty" data-i="'+i+'" value="'+esc(qv)+'"></td>'+
       '<td class="r"><input class="wl-tx-ep wl-entry-px" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(ep)+'"></td>'+
       '<td class="r"><input class="wl-tx-ed wl-entry-dt" type="text" placeholder="DD/MM/YY" data-i="'+i+'" value="'+esc(wlFmtDMY(ed))+'"></td>'+
       '<td class="r"><input class="wl-tx-xp wl-entry-px'+xpCls+'" type="number" step="0.01" min="0" inputmode="decimal" placeholder="₹" data-i="'+i+'" value="'+esc(xpShown)+'"'+(xpCls?' title="Latest price - open (no exit yet)"':'')+'></td>'+
@@ -4900,7 +4901,7 @@ function wlTxnsRender(){
 function wlTxnsInit(){
   const addBtn=document.getElementById('wlTxnAdd');
   if(addBtn && !addBtn._wired){ addBtn._wired=true; addBtn.addEventListener('click',function(){
-    wlTxns.push({name:'',sym:'',w:'',ep:'',ed:'',xp:'',xd:'',call:'Buy'}); wlTxnsSave(); wlTxnsRender();
+    wlTxns.push({name:'',sym:'',qty:'',ep:'',ed:'',xp:'',xd:'',call:'Buy'}); wlTxnsSave(); wlTxnsRender();
     const ni=wlTxns.length-1; const el=document.querySelector('#wlTxnBody .wl-tx-name[data-i="'+ni+'"]'); if(el) el.focus();
   }); }
   const thead=document.querySelector('#wlTxnCard thead');
@@ -4915,7 +4916,7 @@ function wlTxnsInit(){
       if(sel){ const si=+sel.dataset.i; if(!isNaN(si)&&wlTxns[si]){ wlTxns[si].call=sel.value; wlTxnsSave(); wlTxnsRender(); recompute(); } return; }
       const inp=e.target.closest('input'); if(!inp) return; const i=+inp.dataset.i; if(isNaN(i)||!wlTxns[i]) return; const c=inp.className;
       if(c.indexOf('wl-tx-name')>=0){ wlTxns[i].name=inp.value; const it=wlResolve(inp.value); wlTxns[i].sym=it?it[1].split('|')[0]:''; wlTxnsSave(); wlTxnsRender(); recompute(); return; }
-      if(c.indexOf('wl-tx-w')>=0){ wlTxns[i].w=inp.value; wlTxnsSave(); recompute(); return; }
+      if(c.indexOf('wl-tx-qty')>=0){ wlTxns[i].qty=inp.value; wlTxnsSave(); recompute(); return; }
       if(c.indexOf('wl-tx-ep')>=0){ wlTxns[i].ep=inp.value; wlTxnsSave(); wlTxnsRender(); recompute(); return; }
       if(c.indexOf('wl-tx-xp')>=0){ wlTxns[i].xp=inp.value; wlTxnsSave(); wlTxnsRender(); recompute(); return; }
       if(c.indexOf('wl-tx-ed')>=0||c.indexOf('wl-tx-xd')>=0){ const fld=c.indexOf('wl-tx-ed')>=0?'ed':'xd'; const iso=wlParseDMY(inp.value); if(iso===null){ inp.value=wlFmtDMY(wlTxns[i][fld]||''); return; } wlTxns[i][fld]=iso; inp.value=wlFmtDMY(iso); wlTxnsSave(); wlTxnsRender(); recompute(); return; }
