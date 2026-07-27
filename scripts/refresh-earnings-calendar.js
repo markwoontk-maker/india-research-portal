@@ -29,7 +29,7 @@ const path = require("path");
 const FILE = path.join(__dirname, "..", "data", "earnings_calendar.json");
 const API = "https://www.icicidirect.com/marketapi/market";
 const PAGE = "https://www.icicidirect.com/share-market-today/company-results";
-const DAYS_AHEAD = 35;          // enough to cover a full results season view
+const DAYS_AHEAD = 42;          // covers the 30 business-day (Mon-Sat) grid + margin
 const PAGE_SIZE = 500;
 const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 

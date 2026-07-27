@@ -1882,7 +1882,7 @@
         </div>
       </div>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Earnings Calendar — Next 7 Business Days</h3>
+        <div class="card-h"><div><h3>Earnings Calendar — Next 30 Business Days</h3>
           <p id="calSub">Forthcoming results · ICICI Direct</p></div></div>
         <div id="earnCal" class="earn-cal"><div class="pol-empty">Loading earnings calendar…</div></div>
       </div>
@@ -5547,11 +5547,17 @@ async function ecFetchYtd(){
 function renderEarnCal(items,sourceLabel){
   if(items) ecItems=items;
   if(sourceLabel) ecSource=sourceLabel;
-  const days=bizDays(7);
   const wl=ecWatch();
   const todayKey=calKey(new Date());
   const map={};
   (ecItems||[]).forEach(it=>{ (map[it.date]=map[it.date]||[]).push(it); });
+  // Frame is the next 30 business days (Mon–Sat), but forward results are only
+  // announced ~3 weeks out, so trim the trailing empty days (they'd be a long
+  // dead tail). The tail extends automatically as new board meetings post.
+  let days=bizDays(30);
+  let lastWith=-1;
+  days.forEach((d,i)=>{ if((map[calKey(d)]||[]).length) lastWith=i; });
+  days=days.slice(0, Math.max(lastWith+1, 6));   // keep at least ~a week even if sparse
   document.getElementById('earnCal').innerHTML=days.map(d=>{
     const k=calKey(d), L=calLabel(d);
     const seen=new Set();
