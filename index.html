@@ -4617,31 +4617,46 @@ function wlIndexReturnOn(D){
   const day=wlRet&&wlRet.dates&&wlRet.dates[D];
   return (day&&day.index!=null&&!isNaN(day.index))?day.index:null;
 }
-// Portfolio return ON an exact date = daily change in TOTAL MARKET VALUE (fixed share
-// quantities): MVi = qtyi x close. Return = ((sum MV today / sum MV prev) - 1) =
-// sum(start-of-day weight x stock return), where weight = qtyi x close / total MV
-// (market-value weights that sum to 100%). Each holding's contribution (start weight x
-// return) is kept in wlContrib[D] for the hover tooltip. Needs qty in wlEntry[sym].qty
-// and NSE closes (day.c) from data/wl_returns.json.
+// Portfolio return ON an exact date = daily change in TOTAL MARKET VALUE = P&L / start-of-day MV.
+// Start-of-day qty is reconstructed as (current qty - buys on D + sells on D), so Portfolio
+// Transactions settling on D adjust ONLY that day: a BUY leg (entry date D, price ep) contributes
+// qty*(close_D - ep); a SELL leg (exit date D, price xp) contributes qty*(xp - close_prev) and the
+// sold shares stop earning close-to-close; everything else earns close-to-close. With no trades
+// this reduces to (sum MV_today / sum MV_prev - 1) = SUM(start-of-day weight x return), the exact
+// money-return. Contribution (start-value-weighted) is kept in wlContrib[D] for the hover tooltip.
 function wlPortfolioReturnOn(D){
   const day=wlRet&&wlRet.dates&&wlRet.dates[D]; if(!day||!day.c||!day.r) return null;
-  // Daily WR = daily change in TOTAL MARKET VALUE of fixed quantities = SUM(start-of-day
-  // weight x return). START-of-day weight uses the PREVIOUS close (qty x close_prev /
-  // total MV_prev) => port = (sum MV_today / sum MV_prev - 1), the exact money-return
-  // (unbiased; the professional standard). Prev close = previous file date's c, or for
-  // the floor date derived as c/(1+r/100).
   const days=Object.keys(wlRet.dates).sort(); const di=days.indexOf(D); const prevDay=(di>0)?wlRet.dates[days[di-1]]:null;
-  let mv0=0, mv1=0, any=false; const rows=[];
-  WL.hold.forEach(function(row){ const sy=row[1], nse=wlNseSym(sy);
-    const e=wlEntry[sy], q=(e&&e.qty!=null&&e.qty!=='')?+e.qty:null; if(q==null||isNaN(q)||q<=0) return;
-    const cD=day.c[nse], rD=day.r[nse]; if(cD==null||rD==null||isNaN(cD)||isNaN(rD)) return;
-    const cPrev=prevDay?prevDay.c[nse]:(cD/(1+rD/100));
-    if(cPrev==null||isNaN(cPrev)||cPrev<=0) return;
-    mv0+=q*cPrev; mv1+=q*cD; any=true; rows.push({name:row[0], v0:q*cPrev, r:rD});
+  const cPrevOf=function(nse,cD,rD){ return prevDay?prevDay.c[nse]:((cD!=null&&rD!=null)?cD/(1+rD/100):null); };
+  const buys={}, sells={};
+  wlTxns.forEach(function(t){ if(!t.sym) return; const nse=wlNseSym(t.sym); const q=(t.qty!=null&&t.qty!=='')?+t.qty:null; if(q==null||isNaN(q)||q<=0) return;
+    if(t.ed===D && t.ep!=null && t.ep!=='' && +t.ep>0){ (buys[nse]=buys[nse]||[]).push({q:q, px:+t.ep}); }
+    if(t.xd===D && t.xp!=null && t.xp!=='' && +t.xp>0){ (sells[nse]=sells[nse]||[]).push({q:q, px:+t.xp}); }
   });
-  if(!any||mv0<=0){ wlContrib[D]=[]; return null; }
-  const port=(mv1/mv0-1)*100;
-  const contrib=rows.map(function(x){ const w=x.v0/mv0*100; return {name:x.name, w:w, r:x.r, contrib:w*x.r/100}; });
+  const uni={};
+  WL.hold.forEach(function(row){ const nse=wlNseSym(row[1]); const e=wlEntry[row[1]]; const q=(e&&e.qty!=null&&e.qty!=='')?+e.qty:0; uni[nse]={name:row[0], q:q}; });
+  Object.keys(buys).forEach(function(nse){ if(!uni[nse]) uni[nse]={name:nse, q:0}; });
+  Object.keys(sells).forEach(function(nse){ if(!uni[nse]) uni[nse]={name:nse, q:0}; });
+  let mv0=0, tp=0; const items=[];
+  Object.keys(uni).forEach(function(nse){
+    const cur=uni[nse].q||0;
+    const bq=(buys[nse]||[]).reduce(function(a,x){return a+x.q;},0);
+    const sq=(sells[nse]||[]).reduce(function(a,x){return a+x.q;},0);
+    const startQ=cur - bq + sq;                     // start-of-day qty
+    if(startQ<=0) return;                            // not held at start (pure new adds = new capital, excluded)
+    const cD=day.c[nse], rD=day.r[nse]; if(cD==null||isNaN(cD)) return;
+    const cPrev=cPrevOf(nse,cD,rD); if(cPrev==null||isNaN(cPrev)||cPrev<=0) return;
+    const held=startQ - sq;
+    let pnl = Math.max(0,held)*(cD-cPrev);
+    (sells[nse]||[]).forEach(function(x){ pnl += x.q*(x.px-cPrev); });
+    (buys[nse]||[]).forEach(function(x){ pnl += x.q*(cD-x.px); });
+    const v0=startQ*cPrev;
+    mv0+=v0; tp+=pnl;
+    items.push({name:uni[nse].name+((bq>0||sq>0)?' *':''), v0:v0, pnl:pnl});
+  });
+  if(mv0<=0){ wlContrib[D]=[]; return null; }
+  const port=(tp/mv0)*100;
+  const contrib=items.map(function(x){ return {name:x.name, w:x.v0/mv0*100, r:(x.v0>0?x.pnl/x.v0*100:0), contrib:x.pnl/mv0*100}; });
   contrib.sort(function(a,b){ return (b.contrib||0)-(a.contrib||0); });
   wlContrib[D]=contrib;
   return {p:port};
@@ -4911,7 +4926,7 @@ function wlTxnsInit(){
   }); }
   const tb=document.getElementById('wlTxnBody');
   if(tb && !tb._wired){ tb._wired=true;
-    const recompute=function(){ if(typeof wlCaptureDaily==='function') wlCaptureDaily(); };
+    const recompute=function(){ var ds={}; wlTxns.forEach(function(t){ if(t.ed) ds[t.ed]=1; if(t.xd) ds[t.xd]=1; }); Object.keys(ds).forEach(function(dd){ delete wlDailyReturns[dd]; delete wlContrib[dd]; }); wlDailySave(); if(typeof wlCaptureDaily==='function') wlCaptureDaily(); };
     tb.addEventListener('change',function(e){
       const sel=e.target.closest('.wl-tx-call');
       if(sel){ const si=+sel.dataset.i; if(!isNaN(si)&&wlTxns[si]){ wlTxns[si].call=sel.value; wlTxnsSave(); wlTxnsRender(); recompute(); } return; }
@@ -5195,7 +5210,7 @@ function wlInit(){
       const bs=dseg.querySelectorAll('button'); for(let z=0;z<bs.length;z++) bs[z].classList.toggle('on',bs[z]===b);
       if(typeof wlRenderDaily==='function') wlRenderDaily(); }); } })();
   (function(){ const rb=document.getElementById('wlDailyReset'); if(rb && !rb._wired){ rb._wired=true;
-    rb.addEventListener('click',function(){ wlDailyReturns={}; wlContrib={}; wlDailySave(); if(typeof wlCaptureDaily==='function') wlCaptureDaily(); }); } })();
+    rb.addEventListener('click',function(){ if(!window.confirm('Recompute rebuilds EVERY past day at your CURRENT quantities. If you have changed quantities since a past day (e.g. sold/added a position), that history will be recomputed with today\u2019s quantities and may be wrong. Continue?')) return; wlDailyReturns={}; wlContrib={}; wlDailySave(); if(typeof wlCaptureDaily==='function') wlCaptureDaily(); }); } })();
   document.querySelectorAll('.wl-add').forEach(box=>{
     const inp=box.querySelector('input'), btn=box.querySelector('button'), sec=btn.dataset.sec;
     const go=()=>{ if(wlAdd(sec,inp.value)) inp.value=''; };
