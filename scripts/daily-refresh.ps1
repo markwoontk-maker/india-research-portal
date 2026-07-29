@@ -113,7 +113,15 @@ Step "build-notes-array" {
 Step "patch-notes-into-html" { & $node "scripts\patch-notes-into-html.js" }
 
 # 5. Refresh notesExt from Trendlyne (free, no auth -- first batch only).
-Step "refresh-trendlyne" { & $node "scripts\refresh-trendlyne.js" }
+#    Trendlyne fetches occasionally 5xx or time out; a network flake here
+#    must not abort the rest of the pipeline (build-theses, financials,
+#    Positioning, git push...). Force success so any transient failure
+#    is logged but the day still ships. Manual retry will pick it up
+#    tomorrow if the fetch didn't land.
+Step "refresh-trendlyne" {
+  & $node "scripts\refresh-trendlyne.js"
+  $global:LASTEXITCODE = 0
+}
 
 # 6. Rebuild bull/bear theses (depends on pdfdata.json + notes arrays).
 #    2-year freshness window enforced inside the script.
