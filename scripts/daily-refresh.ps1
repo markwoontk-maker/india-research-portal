@@ -66,19 +66,22 @@ function Step([string]$desc, [scriptblock]$block){
 Log ("Daily research refresh -- repo: " + $repo)
 Log ("Log: " + $log)
 
-# 0. Rename + sort the new broker PDFs into the library, and push them
-#    into NotebookLM. Delegates to the user's own pipeline so all the
-#    rename heuristics stay in one place. Never aborts the refresh -- a
-#    rename failure must not block the data steps below.
-$renameScript = "C:\Users\admin\.claude\sorting-folder-rename\run-rename.ps1"
-if (Test-Path -LiteralPath $renameScript) {
-  Step "sort-and-rename" {
-    & powershell -NoProfile -ExecutionPolicy Bypass -File $renameScript
-    # Force success: rename errors are logged in run-rename's own log.
+# 0. Rename + sort the new broker PDFs into the library. NotebookLM
+#    upload is INTENTIONALLY SKIPPED here (2026-07-29 user request):
+#    call rename-sort.ps1 directly rather than the run-rename.ps1
+#    wrapper (which also invokes nlm_sync.ps1). The user's own
+#    run-rename.ps1 stays intact for manual invocation if they ever
+#    want to re-enable NotebookLM uploads. Never aborts the refresh --
+#    a rename failure must not block the data steps below.
+$renameSort = "C:\Users\admin\.claude\sorting-folder-rename\rename-sort.ps1"
+if (Test-Path -LiteralPath $renameSort) {
+  Step "sort-and-rename (no NotebookLM upload)" {
+    & powershell -NoProfile -ExecutionPolicy Bypass -File $renameSort
+    # Force success: rename errors are logged in the script's own log.
     $global:LASTEXITCODE = 0
   }
 } else {
-  Log ("WARN: rename script not found at " + $renameScript + " -- skipping Step 0.")
+  Log ("WARN: rename script not found at " + $renameSort + " -- skipping Step 0.")
 }
 
 # 1. Rebuild data/pdfmap.json (filename -> absolute path map).
@@ -172,22 +175,18 @@ Step "build-positioning" {
   & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-positioning.ps1"
 }
 
-# 8c2. Sync NEW broker reports into their NotebookLM sector notebooks and mark
-#      those companies stale (blank asOf), so the answerer below regenerates them.
-#      Event-driven: only companies that got a new report today are touched.
-#      Baselines on first run (no bulk upload). Always exits 0.
-Step "build-company-qa-sync" {
-  & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-company-qa-sync.ps1"
-}
-
-# 8d. Generate the Company-tab Upside Opportunity / Downside Risk statements
-#     (data/company_qa.json) via the batched statement generator. Runs daily
-#     (event-driven); only companies with no current statements (new, or blanked
-#     by the sync step above) are (re)generated - a quiet day is a no-op. Shares a
-#     lock with the sync step; NotebookLM-grounded, else sourced to Claude. Exits 0.
-Step "build-company-qa" {
-  & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-company-qa.ps1"
-}
+# 8c2 + 8d. DISABLED (2026-07-29 user request): both build-company-qa-sync
+#           and build-company-qa upload/query NotebookLM. Skipping keeps the
+#           daily pipeline off NotebookLM entirely. Re-enable by uncommenting
+#           the two Step blocks below if you ever want to resume Company-tab
+#           Upside/Downside statement generation.
+#
+# Step "build-company-qa-sync" {
+#   & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-company-qa-sync.ps1"
+# }
+# Step "build-company-qa" {
+#   & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-company-qa.ps1"
+# }
 
 # 8e. Generate House-View notes (data/house_view_notes.json): cross-house summary
 #     + per-broker change-vs-prior + the assistant's own view, overlaid on the
