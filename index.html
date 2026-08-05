@@ -504,7 +504,7 @@
   .wl-leg-item input{cursor:pointer;margin:0;width:13px;height:13px;accent-color:var(--accent,#e9a23b)}
   .wl-leg-sw{width:12px;height:12px;border-radius:2px;display:inline-block;flex:0 0 auto}
   .wl-leg-txt{white-space:nowrap}
-  .wl-daily-ctl{display:flex;align-items:center;gap:8px}
+  .wl-daily-ctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .wl-daily-reset{background:var(--ink-2);border:1px solid var(--line);border-radius:8px;color:var(--text-dim);font-size:11px;padding:4px 9px;cursor:pointer;white-space:nowrap}
   .wl-daily-reset:hover{color:var(--saffron);border-color:var(--saffron)}
 
@@ -1909,7 +1909,7 @@
       </div>
       <div class="card reveal" id="wlDailyCard">
         <div class="card-h"><div><h3>Portfolio Daily Return</h3><p id="wlDailySub">Weighted daily return of Current Holdings vs Nifty 500</p></div>
-          <div class="wl-daily-ctl"><button id="wlDailyReset" class="wl-daily-reset" title="Recompute &amp; re-freeze every past day at the current weights + transactions">↻ Recompute</button><div class="seg" id="wlDailySeg"><button data-p="1W">1W</button><button data-p="1M" class="on">1M</button><button data-p="3M">3M</button><button data-p="6M">6M</button><button data-p="YTD">YTD</button><button data-p="1Y">1Y</button></div></div></div>
+          <div class="wl-daily-ctl"><button id="wlBackupExport" class="wl-daily-reset" title="Download a backup of your holdings, quantities &amp; transactions">&#8595; Export</button><button id="wlBackupImport" class="wl-daily-reset" title="Restore your portfolio from a backup file">&#8593; Import</button><input type="file" id="wlBackupFile" accept="application/json,.json" style="display:none"><button id="wlDailyReset" class="wl-daily-reset" title="Recompute &amp; re-freeze every past day at the current weights + transactions">↻ Recompute</button><div class="seg" id="wlDailySeg"><button data-p="1W">1W</button><button data-p="1M" class="on">1M</button><button data-p="3M">3M</button><button data-p="6M">6M</button><button data-p="YTD">YTD</button><button data-p="1Y">1Y</button></div></div></div>
         <div style="position:relative;height:250px"><canvas id="wlDailyCanvas"></canvas></div>
         <div id="wlDailyLegend" class="wl-daily-legend"></div>
       </div>
@@ -5200,11 +5200,50 @@ function wlMoveSel(sec){
     .map(s=>`<option value="${s}">→ ${WL_LABEL[s]}</option>`).join('');
   return `<select class="wl-move" title="Move to another list"><option value="">Move…</option>${opts}</select>`;
 }
+// Portfolio backup: export every irp_* localStorage key to a JSON file, and restore
+// from one. Because the daily series is fully derived from (quantities + transactions),
+// this is a complete, portable backup that survives a cache clear.
+function wlBackupExport(){
+  var data={};
+  for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(k&&k.indexOf('irp_')===0){ data[k]=localStorage.getItem(k); } }
+  var payload={app:'india-research-portal', version:1, exportedAt:new Date().toISOString(), data:data};
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download='mam-portfolio-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); },1500);
+}
+function wlBackupRestore(file){
+  var reader=new FileReader();
+  reader.onload=function(){
+    var data;
+    try{ var j=JSON.parse(reader.result); data=(j&&j.data&&typeof j.data==='object')?j.data:j; }
+    catch(e){ alert('Could not read that file: '+e.message); return; }
+    if(!data||typeof data!=='object'){ alert('That does not look like a portfolio backup file.'); return; }
+    var keys=Object.keys(data).filter(function(k){ return k.indexOf('irp_')===0 && typeof data[k]==='string'; });
+    if(!keys.length){ alert('No portfolio data found in that file.'); return; }
+    if(!window.confirm('Restore '+keys.length+' saved item(s) from this backup? This overwrites your current holdings, quantities and transactions.')) return;
+    keys.forEach(function(k){ try{ localStorage.setItem(k,data[k]); }catch(_){} });
+    location.reload();
+  };
+  reader.onerror=function(){ alert('Could not read that file.'); };
+  reader.readAsText(file);
+}
+function wlBackupInit(){
+  var ex=document.getElementById('wlBackupExport');
+  if(ex && !ex._wired){ ex._wired=true; ex.addEventListener('click',wlBackupExport); }
+  var im=document.getElementById('wlBackupImport'), fi=document.getElementById('wlBackupFile');
+  if(im && fi && !im._wired){ im._wired=true;
+    im.addEventListener('click',function(){ fi.value=''; fi.click(); });
+    fi.addEventListener('change',function(e){ var f=e.target.files&&e.target.files[0]; if(f) wlBackupRestore(f); });
+  }
+}
 let wlInited=false;
 function wlInit(){
   if(wlInited) return; wlInited=true;
   wlTradesInit();
   wlTxnsInit();
+  wlBackupInit();
   const dl=document.getElementById('wlCompanyList');
   wlFillDatalist();
   (function(){ const dseg=document.getElementById('wlDailySeg'); if(dseg && !dseg._wired){ dseg._wired=true;
