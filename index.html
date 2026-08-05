@@ -489,10 +489,11 @@
     font-weight:700;color:var(--text-mute);text-transform:uppercase;letter-spacing:.05em;
     text-align:left;position:sticky;left:0}
   .heat-tbl td.mc{color:#141414;font-weight:600}
-  .mc-r{background:#ef5b52}   /* worse MoM & worse YoY */
-  .mc-y{background:#f4d245}   /* worse MoM, better YoY */
-  .mc-o{background:#f39a3a}   /* better MoM, worse YoY */
-  .mc-g{background:#79c46d}   /* better MoM & better YoY */
+  /* CLSA's own legend colours, sampled from the report's cell fills */
+  .mc-r{background:#ff7c80}   /* worse than previous quarter and a year ago */
+  .mc-y{background:#ffc000}   /* worse than prev quarter but better than a year ago */
+  .mc-b{background:#00b0f0}   /* better than prev quarter but worse than a year ago */
+  .mc-g{background:#92d050}   /* better than previous quarter and a year ago */
   .macro-legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:12px;font-size:11px;color:var(--text-dim)}
   .macro-legend span{display:inline-flex;align-items:center;gap:6px}
   .macro-legend i{width:13px;height:13px;border-radius:3px;display:inline-block}
@@ -1874,13 +1875,13 @@
       </div>
       <div class="card reveal">
         <div class="card-h"><div><h3>India Macro Snapshot</h3>
-          <p id="macroSub">CLSA economic-activity indicators · % YoY · cells coloured by month-on-month and year-on-year momentum</p></div></div>
+          <p id="macroSub">CLSA EconTracker (Jun 2026) · % YoY · numbers &amp; cell colours as published by CLSA</p></div></div>
         <div id="macroTables"><div class="pol-empty">Loading macro tables…</div></div>
         <div class="macro-legend">
-          <span><i class="mc-r"></i>Worse MoM &amp; YoY</span>
-          <span><i class="mc-y"></i>Worse MoM, better YoY</span>
-          <span><i class="mc-o"></i>Better MoM, worse YoY</span>
-          <span><i class="mc-g"></i>Better MoM &amp; YoY</span>
+          <span><i class="mc-r"></i>Worse than previous quarter and a year ago</span>
+          <span><i class="mc-y"></i>Worse than previous quarter but better than a year ago</span>
+          <span><i class="mc-b"></i>Better than previous quarter but worse than a year ago</span>
+          <span><i class="mc-g"></i>Better than previous quarter and a year ago</span>
         </div>
       </div>
       <div class="card reveal">
@@ -4200,102 +4201,86 @@ async function applyMacroOverlay(){
 }
 /* ---------- India Macro Snapshot — CLSA activity heatmaps ----------
    Three momentum tables (EAI/real-GVA, consumption, investment), % YoY,
-   monthly. Numbers are transcribed verbatim from the CLSA exhibits and
-   never altered. Each cell's colour is DERIVED, not copied: the MoM
-   direction is computed from the series itself (this month's print vs
-   last month's — higher = better momentum), and the YoY direction is
-   read from the source cell's colour family. The `c` code per cell only
-   needs its YoY half right (g/y = better YoY, o/r = worse YoY); the MoM
-   half is recomputed at render, so the momentum is exact.
-     RED (mc-r)    = worse MoM & worse YoY
-     YELLOW (mc-y) = worse MoM, better YoY
-     ORANGE (mc-o) = better MoM, worse YoY   (the source's blue)
-     GREEN (mc-g)  = better MoM & better YoY
-   The first column has no prior month in view, so it uses `c` as-is. */
-const MACRO_MONTHS=['May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26','Apr-26','May-26'];
-function macroNum(s){
-  if(s==null) return NaN;
-  let t=String(s).replace(/[¹²³⁰-⁹,\s%]/g,'');
-  const neg=/^\(.*\)$/.test(t.trim()); t=t.replace(/[()]/g,'');
-  const n=parseFloat(t); return isNaN(n)?NaN:(neg?-n:n);
-}
+   monthly, from CLSA's EconTracker (June 2026 issue — Figs 11/13/14).
+   Both the numbers AND the cell colours are taken verbatim from the
+   report: each colour was extracted from the PDF's own cell fills, so
+   the heatmap matches CLSA's exactly. One code per cell in `c`:
+     r = pink   (worse than previous quarter and a year ago)
+     y = yellow (worse than previous quarter but better than a year ago)
+     b = blue   (better than previous quarter but worse than a year ago)
+     g = green  (better than previous quarter and a year ago)
+   Rendered directly, no computation. Refresh by re-extracting from each
+   new EconTracker PDF (scripts/scratch flow in the chat history). */
+const MACRO_MONTHS=["Jun-25","Jul-25","Aug-25","Sep-25","Oct-25","Nov-25","Dec-25","Jan-26","Feb-26","Mar-26","Apr-26","May-26","Jun-26"];
 const MACRO_TABLES=[
- {title:"Indicators used to create India's EAI for real GVA growth", sub:"% YoY · CLSA (Fig 11)", rows:[
-   {k:'sec',n:'Agriculture and allied activities'},
-   {n:'IIP: Fertiliser', v:['(5.9)','(1.2)','2.0','4.6','1.6','7.4','5.6','4.1','3.7','3.4','(24.6)','(8.6)','(0.9)'], c:'roggygoyyyrog'},
-   {n:'Domestic tractor sales', v:['8.4','10.2','7.1','24.6','42.9','14.4','30.3','34.9','40.1','30.7','24.0','27.1','19.1'], c:'ggyggogggyygy'},
-   {n:'Water reservoir', v:['32.7','82.7','38.2','5.5','4.3','5.7','7.6','3.5','9.1','14.9','9.8','16.1','0.8'], c:'ggyyyogyggygr'},
-   {n:'Real rural wages', v:['5.4','6.7','6.6','5.5','6.4','6.9','5.8','5.7','5.1','4.6','3.7','3.1','2.6'], c:'ggyyggyyrrrrr'},
-   {n:'Rainfall', v:['90.8','22.2','(3.4)','(8.7)','3.1','47.8','26.9','(82.2)','134.0','(73.6)','67.7','(9.6)','(56.1)'], c:'gyrrggyrgrgrr'},
-   {k:'tot',n:'Agriculture sector', v:['5.4','8.0','5.6','4.8','5.6','4.3','5.2','5.2','5.7','5.5','5.0','5.4','4.3'], c:'ggyygyyggyygr'},
-   {k:'sec',n:'Industrial sector'},
-   {n:'Coal production', v:['2.8','(6.8)','(12.3)','11.4','(1.2)','(8.5)','2.1','3.6','3.1','2.3','(4.0)','(8.8)','(9.3)'], c:'grrgrrggyyrrr'},
-   {n:'Crude oil production', v:['(1.8)','(1.2)','(1.3)','2.4','(1.3)','(1.2)','(3.2)','(5.6)','(5.8)','(5.2)','(5.7)','(3.9)','(4.6)'], c:'ryygryrrryryr'},
-   {n:'IIP: Mining', v:['5.8','4.1','10.7','15.8','15.7','2.8','3.3','0.8','(0.5)','(2.4)','(2.6)','(3.8)','(1.6)'], c:'gygggrgyrrrry'},
-   {n:'Natural gas production', v:['(3.6)','(2.8)','(3.2)','(2.2)','(3.8)','(5.0)','(2.5)','(4.4)','(5.0)','(5.0)','6.4','(4.2)','(4.9)'], c:'ryryrryrrrgrr'},
-   {k:'tot',n:'Mining', v:['4.8','4.5','7.7','13.4','10.3','3.8','2.4','(0.9)','(1.6)','(2.1)','(2.6)','(1.8)','(1.2)'], c:'gygggryrrrryy'},
-   {k:'tot',n:'Electricity production', v:['(4.7)','(1.2)','3.7','4.1','3.1','(6.9)','(1.5)','6.3','5.2','2.3','0.8','5.6','8.7'], c:'ryggyrygyyygg'},
-   {n:'IIP: Manufacturing', v:['4.2','2.4','5.1','3.6','5.5','(0.7)','8.8','7.7','4.6','5.7','4.0','6.1','5.5'], c:'gygygrgyygygy'},
-   {n:'Credit growth', v:['5.5','6.8','7.4','7.0','8.0','11.3','10.2','12.4','10.8','11.1','10.6','6.3','7.2'], c:'gggyggygygyrg'},
-   {n:'Fuel consumption', v:['(1.6)','(0.1)','(0.2)','0.3','5.6','(2.9)','3.1','3.7','1.4','5.4','7.0','(1.8)','(0.4)'], c:'ryyggrggyggry'},
-   {k:'tot',n:'Manufacturing', v:['10.9','10.6','10.5','9.7','11.0','11.9','15.8','16.2','10.8','11.3','10.4','7.5','7.6'], c:'gggyggggygyry'},
-   {n:'Cement production', v:['9.7','8.2','11.6','5.4','5.0','5.2','14.6','13.7','11.3','8.9','4.7','8.2','8.4'], c:'gygyyggyyyrgg'},
-   {n:'Steel production', v:['7.4','9.7','16.6','13.6','14.4','5.9','6.7','10.1','11.5','7.6','7.7','5.5','5.0'], c:'gggygrgggygyy'},
-   {n:'IIP: NMMP', v:['5.1','4.4','8.1','1.8','5.9','2.3','10.1','10.9','7.8','7.8','2.0','3.3','1.6'], c:'gygrgyggyyrgy'},
-   {n:'IIP: construction', v:['5.7','6.6','11.2','9.2','9.8','5.1','12.0','12.3','12.9','10.1','5.2','6.0','5.9'], c:'gggygrgggyrgy'},
-   {k:'tot',n:'Construction', v:['7.1','7.8','13.3','8.2','11.0','4.7','9.6','11.7','10.6','8.7','5.4','5.1','3.8'], c:'gggygrggyyryr'},
-   {k:'tot',n:'Industry sector', v:['7.9','8.2','10.7','9.0','10.3','8.7','12.7','13.7','9.7','9.3','7.6','7.0','6.6'], c:'gggygyggyyryy'},
-   {k:'sec',n:'Services sector'},
-   {n:'Auto sales', v:['1.5','(3.7)','7.5','4.5','6.4','4.9','20.9','35.3','23.5','29.7','18.4','27.7','17.4'], c:'yrgygyggygygy'},
-   {n:'Real trade credit', v:['10.6','11.1','13.7','12.3','11.9','15.1','14.8','17.1','14.8','11.9','11.8','4.7','6.9'], c:'gggyygygyyyrg'},
-   {n:'Freight traffic', v:['3.3','2.4','1.4','6.3','6.5','5.6','7.8','6.5','4.5','3.1','3.0','0.2','3.2'], c:'gyyggygyyyyrg'},
-   {n:'Real deposits', v:['10.1','10.5','11.1','9.3','9.6','12.2','10.8','12.3','9.3','8.9','11.7','4.6','2.3'], c:'gggyggygyygrr'},
-   {n:'Services PMI', v:['(2.3)','(0.2)','0.3','3.3','5.5','0.7','2.4','(2.2)','3.5','(1.5)','(1.7)','(1.2)','1.7'], c:'rygggygrgyyyg'},
-   {n:'Passengers traffic', v:['(0.6)','4.5','3.4','2.1','3.6','6.3','2.6','2.2','2.6','2.3','1.6','0.7','3.4'], c:'rgyyggyygyyyg'},
-   {n:'Real AUMs of MFs', v:['22.8','22.2','16.9','12.7','12.9','20.2','19.4','19.5','19.0','24.4','7.9','8.1','3.0'], c:'gyyyggygygrgr'},
-   {n:'Real Govt spending', v:['20.8','20.8','9.4','(12.5)','4.3','(25.2)','7.6','(17.1)','(19.9)','7.7','4.1','10.6','(9.6)'], c:'gyyrgrgrrgygr'},
-   {n:'Telecom subscribers', v:['(0.3)','(0.4)','0.5','1.1','2.2','2.6','8.2','8.5','9.5','9.6','10.0','10.4','10.8'], c:'ryggggggggggg'},
-   {n:'Foreign tourist arrivals', v:['(23.8)','(24.2)','(16.4)','(5.1)','(9.8)','(5.1)','(2.0)','2.0','5.2','6.1','(1.6)','(14.7)','5.4'], c:'rrygygggggyrg'},
-   {k:'tot',n:'Services sector', v:['6.6','6.4','6.6','8.5','9.4','7.8','9.8','9.3','8.9','8.3','8.0','7.8','7.6'], c:'gygggygyyyyyy'},
-   {k:'sec',n:'Aggregates'},
-   {k:'tot',n:'EAI-GVA', v:['7.0','7.3','7.9','8.5','9.4','8.5','10.3','10.3','9.0','8.5','7.8','7.0','7.3'], c:'gggggygyyyyyg'},
-   {k:'tot',n:'Non-farm EAI-GVA', v:['7.0','7.0','7.9','8.6','9.6','8.7','10.7','10.8','9.2','8.7','8.0','7.3','7.5'], c:'gygggyggyyyyg'}
+ {title:"Indicators used to create India's EAI for real GVA growth", sub:"% YoY · CLSA EconTracker, Jun 2026 (Fig 11)", rows:[
+   {k:'sec',n:"Agriculture and allied activities"},
+   {n:"IIP: Fertiliser", v:["(1.2)","1.9","4.5","1.7","7.4","5.5","4.1","3.7","3.5","(24.6)","(8.5)","(1.0)","(3.3)"], c:"bbgrgyyyrrbgr"},
+   {n:"Domestic tractor sales", v:["10.2","7.1","24.6","42.9","14.4","30.3","34.9","40.1","30.7","24.0","27.1","19.1","11.8"], c:"gyggrgggyygyy"},
+   {n:"Water reservoir", v:["82.7","38.2","5.5","4.3","5.7","7.6","3.5","9.1","14.9","9.8","16.1","0.8","(28.9)"], c:"gyrrbbrbbrgrr"},
+   {n:"Real rural wages", v:["6.7","6.6","5.5","6.4","6.9","5.8","5.7","5.1","4.6","3.7","3.1","2.6","2.3"], c:"gyyggyyyyrrrr"},
+   {n:"Rainfall", v:["22.2","(3.4)","(8.7)","3.1","47.8","26.9","(82.2)","134.0","(73.6)","67.7","(9.6)","(56.1)","(44.7)"], c:"yyrgbyrgrgrrb"},
+   {n:"Agriculture sector",k:'tot', v:["8.0","5.6","4.8","5.6","4.3","5.2","5.2","5.7","5.5","5.0","5.4","4.3","2.5"], c:"gyygrgbgyrgrr"},
+   {k:'sec',n:"Industrial sector"},
+   {n:"Coal production", v:["(6.8)","(12.3)","10.8","(1.1)","(8.4)","2.2","3.7","0.9","1.4","(4.0)","(9.0)","(9.5)","1.4"], c:"rrgrrbbrbrrrg"},
+   {n:"Crude oil production", v:["(0.5)","(0.8)","(0.7)","(0.7)","(0.8)","(2.6)","(5.1)","(5.4)","(4.8)","(5.3)","(3.2)","(4.2)","(4.2)"], c:"gygyyrrrgrbrr"},
+   {n:"IIP: Mining", v:["4.1","10.7","15.8","15.7","2.8","3.3","0.8","(0.5)","(2.4)","(2.6)","(3.8)","(1.4)","1.0"], c:"rggyybrrrrrbb"},
+   {n:"Natural gas production", v:["(3.0)","(3.3)","(2.2)","(3.7)","(5.2)","(2.5)","(4.4)","(4.9)","(5.0)","(3.7)","(4.2)","(5.0)","(7.4)"], c:"brgrrbrrygrrr"},
+   {n:"Mining", v:["5.0","8.1","10.8","10.7","4.1","2.9","(0.4)","(1.3)","(1.8)","(2.3)","(1.2)","(0.8)","0.4"], c:"gggyyrrrrrbbb"},
+   {n:"Electricity production", v:["(1.2)","3.7","4.2","3.1","(7.0)","(1.5)","6.2","5.1","2.3","0.8","5.5","11.2","9.8"], c:"bbgyrbgyrrggy"},
+   {n:"IIP: Manufacturing", v:["2.4","5.1","3.6","5.5","(0.7)","8.8","7.7","4.6","5.7","4.0","6.1","5.2","7.8"], c:"rbybrgyrgrgyg"},
+   {n:"Credit growth", v:["6.8","7.4","7.0","8.0","11.3","10.2","12.4","10.8","11.1","10.6","6.2","7.2","8.5"], c:"gbrbgygygyrgg"},
+   {n:"Fuel consumption", v:["(0.1)","(0.2)","0.3","5.6","(2.9)","3.1","3.7","1.4","5.4","7.0","(2.3)","2.6","0.2"], c:"brggrbgrggrgy"},
+   {n:"Manufacturing", v:["10.6","10.5","9.7","11.0","11.9","15.8","16.2","10.8","11.3","10.4","7.4","7.4","9.1"], c:"ryyggggygrrrb"},
+   {n:"Cement production", v:["7.9","11.1","5.4","5.1","5.2","15.1","14.0","11.3","9.1","4.7","8.3","8.4","9.8"], c:"ygyrggyrrrggg"},
+   {n:"Steel production", v:["10.2","15.7","15.3","14.3","9.5","11.6","11.1","13.8","9.9","9.6","4.7","5.1","4.6"], c:"ggyyygygyrrbr"},
+   {n:"IIP: NMMP", v:["4.4","8.1","1.8","5.9","2.3","10.1","10.9","7.8","7.8","2.0","3.3","5.8","12.9"], c:"ygygrggryrbgg"},
+   {n:"IIP: construction", v:["6.6","11.2","9.2","9.8","5.1","12.0","12.3","12.9","10.1","5.2","6.0","6.6","7.5"], c:"bgygrgggyrggg"},
+   {n:"Construction", v:["8.1","12.9","9.1","10.9","6.4","12.0","12.2","11.8","9.8","6.3","4.7","6.3","10.2"], c:"ggygyggyyrrbg"},
+   {n:"Industry sector",k:'tot', v:["8.3","10.6","9.2","10.3","9.2","13.5","13.9","10.1","9.6","7.9","6.9","7.6","9.7"], c:"bgygyggyyrrbg"},
+   {k:'sec',n:"Services sector"},
+   {n:"Auto sales", v:["(3.7)","7.5","4.5","6.4","4.9","20.9","35.3","23.5","29.7","18.4","27.7","17.4","20.2"], c:"rbrbrggygygyg"},
+   {n:"Real trade credit", v:["11.1","13.7","12.3","11.9","15.1","14.8","17.1","14.8","11.9","11.8","4.6","6.9","7.9"], c:"bgrrgygyrrrbb"},
+   {n:"Freight traffic", v:["2.5","1.4","6.3","6.5","5.6","7.8","6.5","4.5","3.9","2.3","0.2","3.2","5.8"], c:"rrggygyyyrrbg"},
+   {n:"Real deposits", v:["10.5","11.1","9.3","9.6","12.2","10.8","12.3","9.3","8.9","11.7","4.5","2.3","3.1"], c:"ggrggygrrgrrb"},
+   {n:"Services PMI", v:["(0.2)","0.3","3.3","5.5","0.7","2.4","(2.2)","3.5","(1.5)","(1.7)","(1.2)","1.7","(5.0)"], c:"bgggybrgyyggr"},
+   {n:"Passengers traffic", v:["4.5","(0.4)","2.1","3.6","6.3","2.6","2.2","2.6","2.3","1.6","0.7","3.4","2.3"], c:"brbbgrrbrrrgr"},
+   {n:"Real AUMs of MFs", v:["22.2","16.9","12.7","12.9","20.2","19.4","19.5","19.0","24.4","7.9","8.0","3.0","0.6"], c:"rrrbbrbrgrbrr"},
+   {n:"Real Government spending", v:["20.8","9.4","(12.5)","4.3","(25.2)","7.6","(17.1)","(19.9)","7.7","4.1","10.5","(9.6)","20.4"], c:"gyrgrgrrgrbrb"},
+   {n:"Telecom subscribers", v:["0.4","0.5","1.1","2.2","2.6","8.2","8.5","9.5","9.6","10.0","10.4","10.5","9.9"], c:"bbbgggggggggy"},
+   {n:"Foreign tourist arrivals", v:["(24.2)","(16.4)","(5.1)","(9.8)","(5.1)","(2.0)","2.0","5.2","6.1","(1.6)","(14.7)","(11.4)","(8.7)"], c:"rbbrbbgggyrgg"},
+   {n:"Services sector",k:'tot', v:["6.4","6.6","8.5","9.3","7.8","9.8","9.3","8.9","8.5","7.8","7.8","7.6","7.1"], c:"rgggygyyyyyyy"},
+   {k:'sec',n:"Aggregates"},
+   {n:"EAI-GVA",k:'tot', v:["7.3","7.8","8.5","9.4","8.1","10.5","10.4","9.1","8.8","7.8","6.9","7.5","7.6"], c:"bgggygyyyyygg"},
+   {n:"Non-farm EAI-GVA",k:'tot', v:["7.0","7.9","8.6","9.6","8.2","11.0","10.8","9.4","9.0","8.0","7.2","7.8","8.1"], c:"rgggygyyyyygg"}
  ]},
- {title:"Key leading indicators for consumption spending", sub:"% YoY · monthly · CLSA", rows:[
-   {n:'Currency with public', v:['4.4','4.9','5.9','6.5','7.5','8.5','8.5','9.0','8.4','8.4','8.4','8.8','6.0'], c:'ggggggggyyygr'},
-   {n:'2-wheeler sales', v:['2.2','(3.4)','8.7','7.1','6.7','2.1','21.2','39.4','26.2','35.2','19.3','28.4','14.9'], c:'orggyyggygygy'},
-   {n:'Auto sales', v:['(0.8)','(7.2)','0.1','(8.5)','4.5','17.2','18.8','26.7','12.8','11.0','15.8','25.3','27.0'], c:'yrgrggggyyggg'},
-   {n:'Real rural wages', v:['5.4','6.7','6.6','5.5','6.4','6.9','5.8','5.7','5.1','4.6','3.7','3.1','2.6'], c:'ggyyggyyrrrrr'},
-   {n:'Petrol sales', v:['9.2','6.8','5.9','5.5','8.0','7.4','2.6','7.1','6.1','6.1','7.6','6.8','3.4'], c:'gyyygyrgyygyr'},
-   {n:'Consumer imports', v:['9.3','2.0','12.0','6.2','19.9','12.1','11.6','12.2','1.8','18.8','9.0','21.1','13.4'], c:'grgygyygrgygy'},
-   {n:'Revenue spending', v:['13.9','14.0','19.2','(39.7)','(11.8)','(24.5)','14.7','(8.5)','(18.3)','(8.5)','40.3','18.2','(10.6)'], c:'gggryrgrrygyr'},
-   {n:'Personal credit', v:['8.1','9.4','10.2','9.8','10.4','13.9','12.3','13.5','12.2','12.0','12.8','12.5','11.4'], c:'yggyggygyygyr'},
-   {n:'Passenger traffic', v:['3.1','6.9','3.2','2.1','3.4','6.2','2.9','1.9','2.7','2.2','1.3','0.4','3.0'], c:'ogyyggyygyyrg'},
-   {n:'IIP: Cons durables', v:['1.9','1.4','3.9','0.9','4.6','(6.0)','13.0','7.4','(0.2)','4.2','2.4','5.6','7.2'], c:'gygygrgyrgygg'},
-   {n:'IIP: Cons non-durables', v:['3.3','(2.0)','5.8','0.1','(0.5)','(9.4)','3.9','5.9','(1.2)','1.6','(0.6)','0.2','3.6'], c:'grgyrrggrgygg'}
+ {title:"Key leading indicators for consumption", sub:"% YoY · monthly · CLSA (Fig 13)", rows:[
+   {n:"Currency with public", v:["4.9","5.9","6.5","7.5","8.5","8.5","9.0","8.4","8.4","8.7","8.8","8.2","8.0"], c:"gggggygyyggyy"},
+   {n:"2-wheeler sales", v:["(3.4)","8.7","7.1","6.7","2.1","21.2","39.4","26.2","35.2","19.3","28.4","14.9","18.7"], c:"rbrrrggygygyg"},
+   {n:"Auto sales", v:["(7.2)","0.1","(8.5)","4.5","17.2","18.8","26.7","12.8","11.0","15.8","25.3","27.0","24.2"], c:"rgrggggyygggy"},
+   {n:"Real rural wages", v:["6.7","6.6","5.5","6.4","6.9","5.8","5.7","5.1","4.6","3.7","3.1","2.6","2.3"], c:"gyyggyyyyrrrr"},
+   {n:"Petrol sales", v:["6.8","5.9","5.5","8.0","7.4","2.6","7.1","6.1","6.1","7.6","6.8","3.4","7.5"], c:"yrrgrrbrggyrg"},
+   {n:"Consumer imports", v:["2.0","12.0","6.2","19.9","12.1","11.6","12.2","1.8","18.8","9.0","21.1","22.7","39.1"], c:"rgygyygrgrggg"},
+   {n:"Revenue spending", v:["14.2","19.4","(39.1)","(11.4)","(24.4)","15.1","(7.9)","(17.8)","(8.4)","40.4","18.1","(10.6)","10.5"], c:"ygrbrgrrggyrb"},
+   {n:"Personal credit", v:["9.4","10.2","9.8","10.4","13.9","12.3","13.5","12.2","12.0","12.8","12.5","11.4","11.4"], c:"bbrggygyygyyy"},
+   {n:"Passenger traffic", v:["4.5","(0.4)","2.1","3.4","6.2","2.9","1.9","2.7","2.2","1.3","0.4","3.5","2.1"], c:"brbbgrrbrrrgr"},
+   {n:"IIP: Consumer durables", v:["1.4","3.9","0.9","4.6","(6.0)","13.0","7.4","(0.2)","4.2","2.4","5.6","8.0","7.7"], c:"rbrbrgrrgrggy"},
+   {n:"IIP: Consumer non-durables", v:["(2.0)","5.8","0.1","(0.5)","(9.4)","3.9","5.9","(1.2)","1.6","(0.6)","0.2","(0.4)","4.9"], c:"rgrrrbgrgrbrg"}
  ]},
- {title:"Key leading indicators for investment activity", sub:"% YoY · monthly · CLSA", rows:[
-   {n:'Construction', v:['7.6','6.5','10.0','3.8','5.4','3.9','12.7','12.5','9.8','8.4','3.5','6.0','5.5'], c:'gygygygyyyrgy'},
-   {n:'IIP: Capital goods', v:['9.5','3.4','5.9','6.0','13.2','5.4','16.6','12.9','12.4','16.5','8.5','12.0','12.9'], c:'grgggygyygygg'},
-   {n:'Diesel sales', v:['2.1','1.5','2.3','1.2','6.5','(0.3)','4.8','5.2','3.3','4.3','8.1','0.9','1.6'], c:'gygygrggyggry'},
-   {n:'Gold imports', v:['(24.8)','(29.8)','(9.6)','(63.4)','65.2','110.2','(59.2)','(21.2)','171.9','115.6','(34.9)','30.9','(3.7)'], c:'rryrggrygyrgy'},
-   {n:'Auto sales', v:['(0.0)','(0.2)','12.3','4.2','10.0','16.7','24.3','25.1','22.0','25.9','11.3','22.8','17.2'], c:'yrgyggggygrgy'},
-   {n:'Cargo traffic', v:['3.3','2.4','1.4','6.3','6.5','5.6','7.8','6.5','4.5','3.1','3.0','0.2','3.0'], c:'gyyggygyyyyrg'},
-   {n:'Steel production', v:['7.4','9.7','16.6','13.6','14.4','5.9','6.7','10.1','11.5','7.6','7.7','5.5','5.0'], c:'gggggryggygyy'},
-   {n:'Electricity generation', v:['(4.7)','(1.2)','3.7','4.1','3.1','(6.9)','(1.5)','6.3','5.2','2.3','0.8','5.6','8.7'], c:'ryggyrygyyygg'},
-   {n:'Industrial credit', v:['3.1','4.4','4.5','4.4','5.5','8.3','8.1','10.7','9.5','10.4','11.2','10.4','10.1'], c:'gggyggygyggyy'},
-   {n:'Capital spending', v:['72.1','43.5','(30.2)','58.5','42.0','(12.5)','30.0','(22.3)','(5.9)','22.0','(39.3)','16.7','(25.3)'], c:'ggrgyrgrygrgr'},
-   {n:'Capital good imports', v:['5.1','(2.5)','12.9','(11.4)','6.5','8.7','10.4','5.6','4.0','(0.3)','4.2','4.1','(1.4)'], c:'grgrgggyyrgyr'}
+ {title:"Key leading indicators for investment", sub:"% YoY · monthly · CLSA (Fig 14)", rows:[
+   {n:"Construction", v:["6.4","9.8","3.8","5.4","3.9","13.0","12.7","9.8","8.6","3.6","6.1","7.3","11.1"], c:"ygygygyryrggg"},
+   {n:"IIP: Capital goods", v:["3.4","5.9","6.0","13.2","5.4","16.6","12.9","12.4","16.5","8.5","12.0","15.5","14.2"], c:"rbggygrygrbgy"},
+   {n:"Diesel sales", v:["1.5","2.3","1.2","6.5","(0.3)","4.8","5.2","3.3","4.3","8.1","0.8","1.6","6.2"], c:"ybygrbbrggrbg"},
+   {n:"Gold imports", v:["(29.8)","(9.6)","(63.4)","65.2","110.2","(59.2)","(21.2)","171.9","115.6","(34.9)","30.9","(3.7)","(20.1)"], c:"ygrggrbgyrgyy"},
+   {n:"Auto sales", v:["(0.1)","12.2","4.1","9.9","16.8","24.4","25.2","22.0","25.9","11.3","22.7","17.1","29.4"], c:"ygyggggygygyg"},
+   {n:"Cargo traffic", v:["2.5","1.4","6.3","6.5","5.6","7.8","6.5","4.5","3.9","2.3","0.2","3.2","5.8"], c:"rrggygyyyrrbg"},
+   {n:"Steel production", v:["10.2","15.7","15.3","14.3","9.5","11.6","11.1","13.8","9.9","9.6","4.7","5.1","4.6"], c:"ggyyygygyrrbr"},
+   {n:"Electricity generation", v:["(1.2)","3.7","4.2","3.1","(7.0)","(1.5)","6.2","5.1","2.3","0.8","5.5","11.2","9.8"], c:"bbgyrbgyrrggy"},
+   {n:"Industrial credit", v:["5.1","5.2","5.0","6.0","8.6","8.2","10.5","9.3","9.9","10.2","8.4","10.1","11.8"], c:"bbrbgygyggygg"},
+   {n:"Capital spending", v:["43.7","(30.0)","59.0","42.4","(12.4)","30.5","(21.6)","(5.4)","22.1","(39.1)","16.7","(25.3)","26.3"], c:"yrgyygrbgrbrb"},
+   {n:"Capital good imports", v:["(1.4)","12.3","(12.1)","6.3","8.9","10.7","5.8","4.2","(0.2)","3.9","2.6","(0.9)","15.8"], c:"rgrbggrrygrrg"}
  ]}
 ];
-function macroCellClass(c, v, prevV, i){
-  const yoyUp=(c==='g'||c==='y');            // green/yellow = better YoY
-  let momUp;
-  const n=macroNum(v), p=macroNum(prevV);
-  if(i===0 || isNaN(n) || isNaN(p)) momUp=(c==='g'||c==='o'); // no prior month → source
-  else momUp = n>=p;                          // higher print = better momentum
-  return momUp ? (yoyUp?'mc-g':'mc-o') : (yoyUp?'mc-y':'mc-r');
-}
 function renderMacroTables(){
   const host=document.getElementById('macroTables'); if(!host) return;
   const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
@@ -4308,7 +4293,7 @@ function renderMacroTables(){
       let cells='';
       for(let i=0;i<cols;i++){
         const v=r.v[i], c=(r.c&&r.c[i])||'r';
-        cells+='<td class="mc '+macroCellClass(c,v,i>0?r.v[i-1]:null,i)+'">'+esc(v)+'</td>';
+        cells+='<td class="mc mc-'+c+'">'+esc(v)+'</td>';
       }
       return '<tr class="'+(r.k==='tot'?'h-tot':'')+'"><td class="h-ind">'+esc(r.n)+'</td>'+cells+'</tr>';
     }).join('');
