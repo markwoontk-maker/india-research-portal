@@ -4628,31 +4628,33 @@ function wlPortfolioReturnOn(D){
   const day=wlRet&&wlRet.dates&&wlRet.dates[D]; if(!day||!day.c||!day.r) return null;
   const days=Object.keys(wlRet.dates).sort(); const di=days.indexOf(D); const prevDay=(di>0)?wlRet.dates[days[di-1]]:null;
   const cPrevOf=function(nse,cD,rD){ return prevDay?prevDay.c[nse]:((cD!=null&&rD!=null)?cD/(1+rD/100):null); };
-  const buys={}, sells={};
+  // Reconstruct qty held at the START of day D from the CURRENT qty by undoing every trade
+  // dated on/after D: startQ = current - buys(ed>=D) + sells(xd>=D). Trades ON D then adjust
+  // that day's P&L. So the whole history is a pure function of (current quantities + the full
+  // transaction ledger) and rebuilds correctly after a cache clear (no reliance on frozen data).
+  const buysOn={}, sellsOn={}, buyGE={}, sellGE={}, txnSyms={};
   wlTxns.forEach(function(t){ if(!t.sym) return; const nse=wlNseSym(t.sym); const q=(t.qty!=null&&t.qty!=='')?+t.qty:null; if(q==null||isNaN(q)||q<=0) return;
-    if(t.ed===D && t.ep!=null && t.ep!=='' && +t.ep>0){ (buys[nse]=buys[nse]||[]).push({q:q, px:+t.ep}); }
-    if(t.xd===D && t.xp!=null && t.xp!=='' && +t.xp>0){ (sells[nse]=sells[nse]||[]).push({q:q, px:+t.xp}); }
+    if(t.ed && t.ep!=null && t.ep!=='' && +t.ep>0){ txnSyms[nse]=1; if(t.ed>=D) buyGE[nse]=(buyGE[nse]||0)+q; if(t.ed===D){ (buysOn[nse]=buysOn[nse]||[]).push({q:q, px:+t.ep}); } }
+    if(t.xd && t.xp!=null && t.xp!=='' && +t.xp>0){ txnSyms[nse]=1; if(t.xd>=D) sellGE[nse]=(sellGE[nse]||0)+q; if(t.xd===D){ (sellsOn[nse]=sellsOn[nse]||[]).push({q:q, px:+t.xp}); } }
   });
   const uni={};
   WL.hold.forEach(function(row){ const nse=wlNseSym(row[1]); const e=wlEntry[row[1]]; const q=(e&&e.qty!=null&&e.qty!=='')?+e.qty:0; uni[nse]={name:row[0], q:q}; });
-  Object.keys(buys).forEach(function(nse){ if(!uni[nse]) uni[nse]={name:nse, q:0}; });
-  Object.keys(sells).forEach(function(nse){ if(!uni[nse]) uni[nse]={name:nse, q:0}; });
+  Object.keys(txnSyms).forEach(function(nse){ if(!uni[nse]) uni[nse]={name:nse, q:0}; });
   let mv0=0, tp=0; const items=[];
   Object.keys(uni).forEach(function(nse){
     const cur=uni[nse].q||0;
-    const bq=(buys[nse]||[]).reduce(function(a,x){return a+x.q;},0);
-    const sq=(sells[nse]||[]).reduce(function(a,x){return a+x.q;},0);
-    const startQ=cur - bq + sq;                     // start-of-day qty
-    if(startQ<=0) return;                            // not held at start (pure new adds = new capital, excluded)
+    const startQ = cur - (buyGE[nse]||0) + (sellGE[nse]||0);   // qty held at START of day D
+    if(startQ<=0) return;
     const cD=day.c[nse], rD=day.r[nse]; if(cD==null||isNaN(cD)) return;
     const cPrev=cPrevOf(nse,cD,rD); if(cPrev==null||isNaN(cPrev)||cPrev<=0) return;
-    const held=startQ - sq;
+    const sqOn=(sellsOn[nse]||[]).reduce(function(a,x){return a+x.q;},0);
+    const held=startQ - sqOn;
     let pnl = Math.max(0,held)*(cD-cPrev);
-    (sells[nse]||[]).forEach(function(x){ pnl += x.q*(x.px-cPrev); });
-    (buys[nse]||[]).forEach(function(x){ pnl += x.q*(cD-x.px); });
+    (sellsOn[nse]||[]).forEach(function(x){ pnl += x.q*(x.px-cPrev); });
+    (buysOn[nse]||[]).forEach(function(x){ pnl += x.q*(cD-x.px); });
     const v0=startQ*cPrev;
     mv0+=v0; tp+=pnl;
-    items.push({name:uni[nse].name+((bq>0||sq>0)?' *':''), v0:v0, pnl:pnl});
+    items.push({name:uni[nse].name+((buysOn[nse]||sellsOn[nse])?' *':''), v0:v0, pnl:pnl});
   });
   if(mv0<=0){ wlContrib[D]=[]; return null; }
   const port=(tp/mv0)*100;
