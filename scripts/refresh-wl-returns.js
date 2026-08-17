@@ -46,6 +46,41 @@ function ddmmyyyy(d) {
 }
 function round(x) { return Math.round(x * 1e4) / 1e4; }
 
+// Yahoo fallback: when NSE blocks this IP (403 Access Denied), fetch the holdings
+// universe + Nifty 500 index from Yahoo so the daily chart keeps updating. Entries
+// are tagged src:'yahoo-fallback' and re-fetched from NSE later (see the skip below).
+function loadUniverse() {
+  try {
+    const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+    const syms = new Set();
+    ['WL_HOLD', 'WL_COV', 'WL_WATCH'].forEach((name) => {
+      const m = html.match(new RegExp('const ' + name + '=\\[([\\s\\S]*?)\\];'));
+      if (!m) return;
+      const re = /,\s*"([^"]+)"\s*\]/g; let mm;
+      while ((mm = re.exec(m[1]))) { const tk = mm[1].split('|')[0].trim(); if (tk && /\.(NS|BO)$/i.test(tk)) syms.add(tk); }
+    });
+    return Array.from(syms);
+  } catch (e) { return []; }
+}
+function yahooDaily(sym) {
+  return new Promise((resolve) => {
+    const url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(sym) + '?range=1mo&interval=1d';
+    https.get(url, { headers: { 'User-Agent': UA } }, (r) => {
+      const ch = []; r.on('data', (c) => ch.push(c));
+      r.on('end', () => {
+        try {
+          const j = JSON.parse(Buffer.concat(ch).toString('utf8'));
+          const res = j && j.chart && j.chart.result && j.chart.result[0];
+          if (!res || !res.timestamp) return resolve({});
+          const ts = res.timestamp, cl = res.indicators.quote[0].close, out = {};
+          for (let i = 0; i < ts.length; i++) { if (cl[i] != null) { const dt = new Date((ts[i] + 19800) * 1000); out[dt.toISOString().slice(0, 10)] = cl[i]; } }
+          resolve(out);
+        } catch (e) { resolve({}); }
+      });
+    }).on('error', () => resolve({}));
+  });
+}
+
 function parseEquities(csv) {
   const r = {}, c = {};
   csv.split(/\r?\n/).forEach((line) => {
@@ -82,6 +117,7 @@ async function main() {
 
   const today = new Date();
   let added = 0;
+  const needYahoo = [];
   for (let i = 1; i <= LOOKBACK_DAYS; i++) {
     const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - i));
     const dow = d.getUTCDay();
@@ -94,7 +130,8 @@ async function main() {
     if (data.dates[key] && data.dates[key].src !== 'yahoo-fallback') continue;
 
     const eq = await get('https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_' + ddmmyyyy(d) + '.csv');
-    if (eq.status !== 200) { console.log(key + ': no bhavcopy (status ' + eq.status + ') — holiday/weekend, skip'); continue; }
+    if (eq.status === 404) { console.log(key + ': no bhavcopy (404) — holiday/weekend, skip'); continue; }
+    if (eq.status !== 200) { console.log(key + ': NSE unreachable (status ' + eq.status + ') — queueing Yahoo fallback'); needYahoo.push(key); continue; }
     const eqp = parseEquities(eq.body);
     if (!Object.keys(eqp.r).length) { console.log(key + ': empty bhavcopy, skip'); continue; }
 
@@ -104,6 +141,33 @@ async function main() {
     data.dates[key] = { index: index, r: eqp.r, c: eqp.c };
     added++;
     console.log(key + ': added ' + Object.keys(eqp.r).length + ' stocks, Nifty 500 = ' + (index == null ? 'n/a' : index + '%'));
+  }
+
+  if (needYahoo.length) {
+    const uni = loadUniverse();
+    console.log('NSE blocked for ' + needYahoo.length + ' date(s); Yahoo fallback over ' + uni.length + ' symbols: ' + needYahoo.join(', '));
+    const series = {};
+    for (const sym of uni) { series[sym] = await yahooDaily(sym); }
+    const idxSeries = await yahooDaily('^CRSLDX');
+    const idxDates = Object.keys(idxSeries).sort();
+    const nseSym = (x) => x.split('|')[0].replace(/\.(NS|BO)$/i, '');
+    for (const key of needYahoo) {
+      if (idxSeries[key] == null) { console.log('  ' + key + ': not a Yahoo trading day — skip (likely holiday)'); continue; }
+      const iPrev = idxDates.filter((x) => x < key).pop();
+      const index = (iPrev && idxSeries[iPrev]) ? round((idxSeries[key] / idxSeries[iPrev] - 1) * 100) : null;
+      const r = {}, c = {};
+      uni.forEach((sym) => {
+        const ser = series[sym]; if (!ser || ser[key] == null) return;
+        const dts = Object.keys(ser).sort(); const prev = dts.filter((x) => x < key).pop();
+        const nse = nseSym(sym);
+        c[nse] = round(ser[key]);
+        if (prev && ser[prev]) r[nse] = round((ser[key] / ser[prev] - 1) * 100);
+      });
+      if (!Object.keys(c).length) { console.log('  ' + key + ': no Yahoo closes — skip'); continue; }
+      data.dates[key] = { index: index, r: r, c: c, src: 'yahoo-fallback' };
+      added++;
+      console.log('  ' + key + ': Yahoo fallback — ' + Object.keys(c).length + ' holdings, Nifty 500 = ' + (index == null ? 'n/a' : index + '%'));
+    }
   }
 
   if (added) {
