@@ -88,7 +88,10 @@ async function main() {
     if (dow === 0 || dow === 6) continue;      // weekend
     const key = iso(d);
     if (key < START_FLOOR) continue;           // do not backdate before the floor
-    if (data.dates[key]) continue;             // already have it
+    // Already have it — but re-fetch dates that were filled from the Yahoo fallback
+    // (partial: holdings only) so the full official NSE bhavcopy replaces them once
+    // NSE is reachable again.
+    if (data.dates[key] && data.dates[key].src !== 'yahoo-fallback') continue;
 
     const eq = await get('https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_' + ddmmyyyy(d) + '.csv');
     if (eq.status !== 200) { console.log(key + ': no bhavcopy (status ' + eq.status + ') — holiday/weekend, skip'); continue; }
