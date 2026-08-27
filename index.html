@@ -4512,10 +4512,13 @@ function wlRenderDaily(){
   const labels=dates.map(function(d){ const p=d.split('-'); return p[2]+'/'+p[1]; });
   const pVals=dates.map(function(d){ return wlDayP(wlDailyReturns[d]); });   // WR portfolio daily return
   const iVals=dates.map(function(d){ return wlDayI(wlDailyReturns[d]); });
+  // ex-Reliance: recompute each day's WR return with RELIANCE dropped (rest renormalised to
+  // 100%), straight from the ledger so it stays consistent with the frozen full-portfolio series.
+  const pexVals=dates.map(function(d){ const r=wlPortfolioReturnOn(d,{exclude:{RELIANCE:1},noContrib:true}); return r?r.p:null; });
   // Cumulative portfolio = compound daily WR; cumulative relative = cumulative portfolio
   // MINUS cumulative index (difference of the two compounded curves), matching sheet col BI.
-  let cumP=1, cumI=1; const cumVals=[], cumRelVals=[];
-  for(let k=0;k<pVals.length;k++){ if(pVals[k]!=null) cumP*=(1+pVals[k]/100); if(iVals[k]!=null) cumI*=(1+iVals[k]/100); const cp=(cumP-1)*100; cumVals.push(cp); cumRelVals.push(cp-(cumI-1)*100); }
+  let cumP=1, cumI=1, cumX=1; const cumVals=[], cumRelVals=[], cumExVals=[];
+  for(let k=0;k<pVals.length;k++){ if(pVals[k]!=null) cumP*=(1+pVals[k]/100); if(iVals[k]!=null) cumI*=(1+iVals[k]/100); if(pexVals[k]!=null) cumX*=(1+pexVals[k]/100); const cp=(cumP-1)*100; cumVals.push(cp); cumRelVals.push(cp-(cumI-1)*100); cumExVals.push((cumX-1)*100); }
   // Align the 0 line across both y-axes: same fraction of each axis sits below zero.
   const zAxisAlign=function(leftArr,rightArr,D){
     const ext=function(a){ a=a.filter(function(v){ return v!=null&&!isNaN(v); }); return {mn:Math.min.apply(null,[0].concat(a)), mx:Math.max.apply(null,[0].concat(a))}; };
@@ -4527,7 +4530,7 @@ function wlRenderDaily(){
     const ax=function(e){ const bel=Math.max(0,-e.mn)*1.08, abv=Math.max(0,e.mx)*1.08; const step=Math.max(bel/below,abv/above)||1; return {min:-below*step, max:above*step, step:step}; };
     return {y:ax(e1), y1:ax(e2)};
   };
-  const zal=zAxisAlign(pVals.concat(iVals), cumVals.concat(cumRelVals), 8);
+  const zal=zAxisAlign(pVals.concat(iVals), cumVals.concat(cumRelVals,cumExVals), 8);
   const f=function(x){ return x==null?'—':((x>=0?'+':'')+x.toFixed(2)+'%'); };
   if(sub){ sub.textContent = dates.length
     ? ('Current Holdings vs Nifty 500 · '+wlDailyPeriod+' · '+dates.length+' day'+(dates.length>1?'s':'')+' · cum WR '+f(cumVals[cumVals.length-1])+' · cum rel '+f(cumRelVals[cumRelVals.length-1]))
@@ -4540,7 +4543,8 @@ function wlRenderDaily(){
       {label:'WR return (daily)',data:pVals,backgroundColor:'#3fc78a',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
       {label:'Nifty 500 (daily)',data:iVals,backgroundColor:'#6db4b4',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
       {label:'Cumulative (WR relative, compounded)',type:'line',data:cumRelVals,borderColor:'#b18cff',backgroundColor:'#b18cff',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:false,order:2,yAxisID:'y1',spanGaps:true},
-      {label:'Cumulative (WR portfolio, compounded)',type:'line',data:cumVals,borderColor:'#5aa9e6',backgroundColor:'rgba(90,169,230,.08)',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:true,order:1,yAxisID:'y1'}
+      {label:'Cumulative (WR portfolio, compounded)',type:'line',data:cumVals,borderColor:'#5aa9e6',backgroundColor:'rgba(90,169,230,.08)',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:true,order:1,yAxisID:'y1'},
+      {label:'Cumulative (WR portfolio ex-Reliance)',type:'line',data:cumExVals,borderColor:'#e9a23b',backgroundColor:'#e9a23b',borderWidth:1.6,borderDash:[5,3],pointRadius:0,pointHoverRadius:4,tension:.18,fill:false,order:1,yAxisID:'y1',spanGaps:true}
     ]},
     options:{responsive:true,maintainAspectRatio:false,devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
       plugins:{legend:{display:false},
@@ -4619,7 +4623,8 @@ function wlIndexReturnOn(D){
 // sold shares stop earning close-to-close; everything else earns close-to-close. With no trades
 // this reduces to (sum MV_today / sum MV_prev - 1) = SUM(start-of-day weight x return), the exact
 // money-return. Contribution (start-value-weighted) is kept in wlContrib[D] for the hover tooltip.
-function wlPortfolioReturnOn(D){
+function wlPortfolioReturnOn(D, opts){
+  opts=opts||{}; const excl=opts.exclude||null;
   const day=wlRet&&wlRet.dates&&wlRet.dates[D]; if(!day||!day.c||!day.r) return null;
   const days=Object.keys(wlRet.dates).sort(); const di=days.indexOf(D); const prevDay=(di>0)?wlRet.dates[days[di-1]]:null;
   const cPrevOf=function(nse,cD,rD){ return prevDay?prevDay.c[nse]:((cD!=null&&rD!=null)?cD/(1+rD/100):null); };
@@ -4637,6 +4642,7 @@ function wlPortfolioReturnOn(D){
   Object.keys(txnSyms).forEach(function(nse){ if(!uni[nse]) uni[nse]={name:nse, q:0}; });
   let mv0=0, tp=0; const items=[];
   Object.keys(uni).forEach(function(nse){
+    if(excl && excl[nse]) return;
     const cur=uni[nse].q||0;
     const startQ = cur - (buyGE[nse]||0) + (sellGE[nse]||0);   // qty held at START of day D
     if(startQ<=0) return;
@@ -4651,11 +4657,13 @@ function wlPortfolioReturnOn(D){
     mv0+=v0; tp+=pnl;
     items.push({name:uni[nse].name+((buysOn[nse]||sellsOn[nse])?' *':''), v0:v0, pnl:pnl});
   });
-  if(mv0<=0){ wlContrib[D]=[]; return null; }
+  if(mv0<=0){ if(!opts.noContrib) wlContrib[D]=[]; return null; }
   const port=(tp/mv0)*100;
-  const contrib=items.map(function(x){ return {name:x.name, w:x.v0/mv0*100, r:(x.v0>0?x.pnl/x.v0*100:0), contrib:x.pnl/mv0*100}; });
-  contrib.sort(function(a,b){ return (b.contrib||0)-(a.contrib||0); });
-  wlContrib[D]=contrib;
+  if(!opts.noContrib){
+    const contrib=items.map(function(x){ return {name:x.name, w:x.v0/mv0*100, r:(x.v0>0?x.pnl/x.v0*100:0), contrib:x.pnl/mv0*100}; });
+    contrib.sort(function(a,b){ return (b.contrib||0)-(a.contrib||0); });
+    wlContrib[D]=contrib;
+  }
   return {p:port};
 }
 function wlCaptureDaily(){
