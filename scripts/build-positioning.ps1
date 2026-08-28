@@ -66,6 +66,29 @@ Out-Log "window $window not yet done - running miner..."
 
 Set-Location $repo
 
+# --- preflight: is the Claude CLI authenticated? -----------------------------
+# The headless miner dies with "401 OAuth access token has expired" when the CLI
+# login lapses -- which it did 17-28 Aug 2026, silently freezing every positioning
+# file for ~10 days. Probe once up front so an auth lapse (a) is flagged durably
+# in scripts\.claude-auth-status.txt instead of only buried in a log, and (b) does
+# NOT consume the fortnightly window (skip + retry next run). A transient network
+# error likewise skips without flagging auth. Fix a lapse with: claude setup-token
+$authStatus = Join-Path $repo "scripts\.claude-auth-status.txt"
+$probe = ("Reply with OK." | & $claude -p --model $model 2>&1 | Out-String).Trim()
+if ($probe -match 'OAuth access token has expired|Failed to authenticate|Invalid API key|\b401\b|run .*(/login|setup-token)') {
+  $line = "EXPIRED " + (Get-Date -f "yyyy-MM-dd HH:mm") + "  Claude CLI auth lapsed -- run 'claude setup-token' in a terminal. Miner skipped; window kept open."
+  Set-Content -LiteralPath $authStatus -Value $line -Encoding utf8
+  Out-Log $line
+  Out-Log ("build-positioning: claude probe -> " + (($probe -split "`n")[0]))
+  exit 0
+}
+if ($probe -match 'Unable to connect|Connection ?Refused|ECONNREFUSED|ETIMEDOUT|getaddrinfo|Connection error') {
+  Out-Log ("build-positioning: Claude API unreachable (transient) - skipping this run, window kept open. " + (($probe -split "`n")[0]))
+  exit 0
+}
+Set-Content -LiteralPath $authStatus -Value ("OK " + (Get-Date -f "yyyy-MM-dd HH:mm")) -Encoding utf8
+Out-Log "build-positioning: Claude auth OK - proceeding."
+
 # --- snapshot for per-file revert --------------------------------------------
 $pre = @{}
 foreach ($f in $files) {
