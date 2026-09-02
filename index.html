@@ -3442,7 +3442,7 @@ function moversSummary(o){
 
 function renderMovers(o){
   const fmt=arr=>arr.map(m=>
-    moverRow(NAMES[m.s]||m.s, m.s, ' ₹'+inr(m.p),(m.ch>=0?'+':'')+(+m.ch).toFixed(2),m.ch>=0,m.why)).join('');
+    moverRow(m.n||NAMES[m.s]||m.s, m.s, ' ₹'+inr(m.p),(m.ch>=0?'+':'')+(+m.ch).toFixed(2),m.ch>=0,m.why)).join('');
   document.getElementById('moversTop').innerHTML=fmt(o.top);
   document.getElementById('moversBot').innerHTML=fmt(o.bottom);
   document.getElementById('mvSummary').innerHTML=moversSummary(o);
@@ -3595,14 +3595,54 @@ async function enrichWhy(o){
     try{ const w=await whyForClient(NAMES[m.s]||m.s); m.why=w; setRowWhy(m.s,w); }catch(e){}
   }),5);
 }
+// Freshness note for the committed 1D snapshot: "live · updated 14:32 IST" while
+// NSE is open, else "at close (2 Sep)". Appended to the sub-caption.
+function moversFreshness(j){
+  try{
+    if(j.intraday){
+      const t=new Date(j.updated);
+      const ist=new Date(t.getTime()+ (t.getTimezoneOffset()+330)*60000);
+      const hh=String(ist.getHours()).padStart(2,'0'), mm=String(ist.getMinutes()).padStart(2,'0');
+      return ` · live · updated ${hh}:${mm} IST`;
+    }
+    const d=new Date((j.asOf||'')+'T00:00:00');
+    const lbl=isNaN(d)?j.asOf:d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+    return ` · at close (${lbl})`;
+  }catch(e){ return ''; }
+}
 async function loadMovers(){
-  // Primary: serverless aggregator (one cached request — server fetches
-  // the whole Nifty 500 + per-stock news reason). Free-tier friendly.
+  // Primary for 1D: the committed server-side snapshot (full current Nifty 500,
+  // computed from chartink — matches the exchange's advance/decline count).
+  // Refreshed intraday every ~30 min during NSE hours by the Movers Intraday
+  // task, and once post-close by the daily pipeline. See scripts/refresh-movers.js.
+  // The browser can't compute this itself anymore: Yahoo is CORS-blocked from the
+  // Pages origin and the free CORS proxies are dead, so the old client path saw
+  // only a tiny broken sample (~13 of a handful that loaded, not 500).
+  if(moversTF==='1D'){
+    try{
+      const r=await fetch('data/movers.json',{cache:'no-store'});
+      if(r.ok){
+        const j=await r.json();
+        if(j&&j.count>=50&&Array.isArray(j.top)&&Array.isArray(j.bottom)){
+          const o={tf:'1D',count:j.count,adv:j.adv,dec:j.dec,top:j.top,bottom:j.bottom};
+          renderMovers(o);
+          const sub=document.getElementById('mvSub');
+          if(sub) sub.textContent=`Nifty 500 constituents · today's % move${moversFreshness(j)}`;
+          enrichWhy(o);
+          return true;
+        }
+      }
+    }catch(e){}
+  }
+  // Secondary: serverless aggregator (only live if the Netlify backend happens
+  // to be up; normally 404 on static Pages).
   try{
     const r=await fetch('/api/movers?tf='+encodeURIComponent(moversTF),{cache:'no-store'});
     if(r.ok){ const j=await r.json(); if(j&&j.count>=10){ renderMovers(j); enrichWhy(j); return true; } }
   }catch(e){}
-  // Fallback (no backend): capped client subset; "why" filled client-side.
+  // Fallback (other timeframes / file missing): capped client subset via Yahoo.
+  // Flaky by design — Yahoo/proxies are unreliable from the browser — but it's
+  // the only client path for 1W/1M/6M/YTD/1Y, which have no committed snapshot.
   try{
     const [rng,iv]=TF[moversTF]||['1d','5m'];
     const chunks=chunk(N500_SYMS.slice(0,200),20);
@@ -3616,8 +3656,9 @@ async function loadMovers(){
     });
     if(all.length>=10){ const o=statsOf(all); renderMovers(o); enrichWhy(o); return true; }
   }catch(e){}
-  document.getElementById('mvSummary').textContent=
-    'Nifty 500 movers unavailable — retrying next cycle.';
+  document.getElementById('mvSummary').textContent = moversTF==='1D'
+    ? 'Nifty 500 movers unavailable — retrying next cycle.'
+    : `${moversTF} movers unavailable from the live feed — 1D is the reliable view.`;
   return false;
 }
 
