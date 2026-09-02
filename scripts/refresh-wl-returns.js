@@ -19,6 +19,15 @@
  *
  * Idempotent + append-only: only fetches dates missing from the JSON. A 404 =
  * weekend/holiday (no bhavcopy) and is skipped. Never throws; exits 0.
+ *
+ * SIZE: the raw bhavcopy has ~2,900 stocks/day; storing all of them made
+ * wl_returns.json ~3.3 MB (growing ~90 KB/trading day), so the static page
+ * downloaded a huge file to chart ~40 names. We therefore keep only the stocks
+ * the page can actually reference: the watchlist universe (WL_HOLD/WL_COV/
+ * WL_WATCH) UNION the Nifty 500 constituent list — both parsed from index.html.
+ * That is a superset of anything addable from the UI (the user's remit is the
+ * Nifty 500) and cuts the file ~5-6x. Run with `--retrim` to shrink the
+ * existing file in place with the same KEEP set.
  */
 const https = require('https');
 const fs = require('fs');
@@ -61,6 +70,34 @@ function loadUniverse() {
     });
     return Array.from(syms);
   } catch (e) { return []; }
+}
+function bareSym(x) { return String(x).split('|')[0].replace(/\.(NS|BO)$/i, ''); }
+// Parse the static Nifty 500 constituent list out of index.html (the same
+// `const NIFTY500=(...)` used by the movers/highs cards).
+function loadNifty500() {
+  try {
+    const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+    const m = html.match(/const NIFTY500=\(([\s\S]*?)\)\.split/);
+    if (!m) return [];
+    const parts = []; const re = /"([^"]*)"/g; let mm;
+    while ((mm = re.exec(m[1]))) parts.push(mm[1]);
+    return parts.join('').split(',').map((s) => s.trim()).filter(Boolean);
+  } catch (e) { return []; }
+}
+// KEEP = the only NSE symbols worth committing: watchlist universe UNION Nifty 500.
+function buildKeep() {
+  const s = new Set();
+  loadUniverse().forEach((x) => s.add(bareSym(x)));
+  loadNifty500().forEach((x) => s.add(bareSym(x)));
+  return s;
+}
+// Trim a {r,c} pair to the KEEP set. Safety: if KEEP failed to parse (tiny),
+// return the maps untouched rather than nuking the data.
+function filterMaps(maps, keep) {
+  if (!keep || keep.size < 50) return maps;
+  const r = {}, c = {};
+  for (const k in maps.c) { if (keep.has(k)) { c[k] = maps.c[k]; if (maps.r[k] != null) r[k] = maps.r[k]; } }
+  return { r: r, c: c };
 }
 function yahooDaily(sym) {
   return new Promise((resolve) => {
@@ -108,7 +145,33 @@ function parseIndex(csv) {
   return out;
 }
 
+// One-time (and re-runnable) pass: shrink the EXISTING file to the KEEP set.
+function retrim() {
+  const keep = buildKeep();
+  if (keep.size < 50) { console.log('retrim: KEEP set too small (' + keep.size + ') — aborting to avoid data loss.'); return; }
+  let data;
+  try { data = JSON.parse(fs.readFileSync(OUT, 'utf8')); } catch (e) { console.log('retrim: cannot read ' + OUT); return; }
+  const before = fs.statSync(OUT).size;
+  let totBefore = 0, totAfter = 0;
+  Object.keys(data.dates).forEach((k) => {
+    const day = data.dates[k];
+    totBefore += Object.keys(day.c || {}).length;
+    const kept = filterMaps({ r: day.r || {}, c: day.c || {} }, keep);
+    day.r = kept.r; day.c = kept.c;
+    totAfter += Object.keys(day.c).length;
+  });
+  fs.writeFileSync(OUT, JSON.stringify(data));
+  const after = fs.statSync(OUT).size;
+  console.log('retrim: KEEP=' + keep.size + ' symbols | per-day stocks ' + Math.round(totBefore / Object.keys(data.dates).length) + ' -> ' + Math.round(totAfter / Object.keys(data.dates).length) +
+    ' | file ' + (before / 1e6).toFixed(2) + ' MB -> ' + (after / 1e6).toFixed(2) + ' MB');
+}
+
 async function main() {
+  if (process.argv.includes('--retrim')) { retrim(); return; }
+
+  const KEEP = buildKeep();
+  console.log('KEEP set: ' + KEEP.size + ' symbols (watchlist universe + Nifty 500)');
+
   let data = { updated: '', dates: {} };
   try {
     const j = JSON.parse(fs.readFileSync(OUT, 'utf8'));
@@ -138,9 +201,10 @@ async function main() {
     const idxRes = await get('https://nsearchives.nseindia.com/content/indices/ind_close_all_' + ddmmyyyy(d) + '.csv');
     const index = idxRes.status === 200 ? parseIndex(idxRes.body) : null;
 
-    data.dates[key] = { index: index, r: eqp.r, c: eqp.c };
+    const kept = filterMaps(eqp, KEEP);
+    data.dates[key] = { index: index, r: kept.r, c: kept.c };
     added++;
-    console.log(key + ': added ' + Object.keys(eqp.r).length + ' stocks, Nifty 500 = ' + (index == null ? 'n/a' : index + '%'));
+    console.log(key + ': added ' + Object.keys(kept.r).length + ' of ' + Object.keys(eqp.r).length + ' stocks (KEEP-filtered), Nifty 500 = ' + (index == null ? 'n/a' : index + '%'));
   }
 
   if (needYahoo.length) {
