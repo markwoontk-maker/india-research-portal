@@ -1,28 +1,30 @@
 {
-  "asOf": "2026-08",
+  "asOf": "2026-09",
   "houses": [
     {
       "broker": "Axis Securities",
-      "asOf": "2026-08",
+      "asOf": "2026-09",
       "benchmark": "Nifty 50",
-      "url": "https://rakesh-jhunjhunwala.in/15-top-picks-for-the-month-of-august-2026-by-axis-securities/",
-      "source": "Axis Securities 'Top Picks' August 2026 (06 Aug 2026); all 15 names retained unchanged from July (no adds, no exits); APL Apollo Tubes & HCG held after being added in July",
+      "url": "https://www.businesstoday.in/markets/stocks/story/bajaj-finance-airtel-icici-bank-varun-beverages-among-axis-securities-top-15-stock-picks-up-to-40-upside-seen-552716-2026-09-02",
+      "source": "Axis Securities 'Top 15 Picks' September 2026 (02 Sep 2026): CCL Products & City Union Bank added; Avenue Supermarts (DMart) and Ujjivan Small Finance Bank dropped; 13 names retained from August. Targets carry a >1-year horizon.",
       "overweight": [
-        { "stock": "ICICI Bank", "ticker": "ICICIBANK.NS", "wt": "", "change": "held", "note": "OW; steady credit growth & healthy profitability" },
-        { "stock": "Bajaj Finance", "ticker": "BAJFINANCE.NS", "wt": "", "change": "held", "note": "OW; asset-quality entering favourable phase, RoA improvement underway" },
-        { "stock": "Kotak Mahindra Bank", "ticker": "KOTAKBANK.NS", "wt": "", "change": "held", "note": "OW; entering stable, high-quality growth phase; easing stress in unsecured portfolio" },
-        { "stock": "Bharti Airtel", "ticker": "BHARTIARTL.NS", "wt": "", "change": "held", "note": "OW; highest ARPU in industry, data centre expansion supports long-term growth" },
-        { "stock": "Varun Beverages", "ticker": "VBL.NS", "wt": "", "change": "held", "note": "OW; geared for growth across beverage segments" },
-        { "stock": "APL Apollo Tubes", "ticker": "APLAPOLLO.NS", "wt": "", "change": "held", "note": "Held; structural steel tubes leader, benefits from infra / housing demand (added July 2026)" },
-        { "stock": "Healthcare Global Enterprises", "ticker": "HCG.NS", "wt": "", "change": "held", "note": "Held (HCG Ltd); largest cancer-care network in India (added July 2026)" },
-        { "stock": "LG Electronics India", "ticker": "LGEINDIA.NS", "wt": "", "change": "held", "note": "OW; consumer-durables leader, localisation / export-led margin story" },
-        { "stock": "Avenue Supermarts (DMart)", "ticker": "DMART.NS", "wt": "", "change": "held", "note": "OW; EDLC / EDLP model with consistent same-store growth" },
-        { "stock": "Nestle India", "ticker": "NESTLEIND.NS", "wt": "", "change": "held", "note": "OW; premium packaged food portfolio, rural penetration upside" },
-        { "stock": "Eternal", "ticker": "ETERNAL.NS", "wt": "", "change": "held", "note": "OW; quick-commerce + food delivery growth, adj-EBITDA positive trajectory" },
-        { "stock": "Ujjivan Small Finance Bank", "ticker": "UJJIVANSFB.NS", "wt": "", "change": "held", "note": "OW; micro-credit recovery, strong deposit franchise" },
-        { "stock": "Chalet Hotels", "ticker": "CHALET.NS", "wt": "", "change": "held", "note": "OW; India hospitality recovery, premium segment RevPAR growth" },
-        { "stock": "Minda Corporation", "ticker": "MINDACORP.NS", "wt": "", "change": "held", "note": "OW; premium electronics + EV platforms, record order book" },
-        { "stock": "Dalmia Bharat", "ticker": "DALBHARAT.NS", "wt": "", "change": "held", "note": "OW; highest upside in mid-cap cement; East India capacity ramp" }
+        { "stock": "Bharti Airtel", "ticker": "BHARTIARTL.NS", "wt": "", "change": "held", "note": "OW; highest upside in the basket, TP Rs 2,530 (~40%); highest ARPU, data-centre expansion" },
+        { "stock": "Varun Beverages", "ticker": "VBL.NS", "wt": "", "change": "held", "note": "OW; TP Rs 530 (~32%); geared for growth across beverage segments" },
+        { "stock": "CCL Products (India)", "ticker": "CCL.NS", "wt": "", "change": "new", "note": "New Sep 2026; TP Rs 1,425 (~32%); instant-coffee capacity ramp, branded-retail scale-up" },
+        { "stock": "Bajaj Finance", "ticker": "BAJFINANCE.NS", "wt": "", "change": "held", "note": "OW; TP Rs 1,305 (~23%); asset quality entering favourable phase, RoA improvement underway" },
+        { "stock": "ICICI Bank", "ticker": "ICICIBANK.NS", "wt": "", "change": "held", "note": "OW; TP Rs 1,800 (~24%); steady credit growth & healthy profitability" },
+        { "stock": "Kotak Mahindra Bank", "ticker": "KOTAKBANK.NS", "wt": "", "change": "held", "note": "OW; TP Rs 500 (~19%); stable high-quality growth phase, easing unsecured stress" },
+        { "stock": "City Union Bank", "ticker": "CUB.NS", "wt": "", "change": "new", "note": "New Sep 2026; TP Rs 280 (~22%); SME-focused South India bank, improving growth & asset quality" },
+        { "stock": "Nestle India", "ticker": "NESTLEIND.NS", "wt": "", "change": "held", "note": "OW; TP Rs 1,765 (~18%); premium packaged-food portfolio, rural penetration upside" },
+        { "stock": "Eternal", "ticker": "ETERNAL.NS", "wt": "", "change": "held", "note": "OW; TP Rs 390 (~19%); quick-commerce + food-delivery growth, adj-EBITDA positive trajectory" },
+        { "stock": "Dalmia Bharat", "ticker": "DALBHARAT.NS", "wt": "", "change": "held", "note": "OW; TP Rs 2,260 (~22%); highest upside in mid-cap cement, East India capacity ramp" },
+        { "stock": "LG Electronics India", "ticker": "LGEINDIA.NS", "wt": "", "change": "held", "note": "OW; TP Rs 1,965 (~16%); consumer-durables leader, localisation / export-led margin story" },
+        { "stock": "APL Apollo Tubes", "ticker": "APLAPOLLO.NS", "wt": "", "change": "held", "note": "Held; TP Rs 2,500 (~12%); structural steel-tubes leader, infra / housing demand" },
+        { "stock": "Chalet Hotels", "ticker": "CHALET.NS", "wt": "", "change": "held", "note": "OW; TP Rs 1,000 (~11%); India hospitality recovery, premium RevPAR growth" },
+        { "stock": "Minda Corporation", "ticker": "MINDACORP.NS", "wt": "", "change": "held", "note": "OW; TP Rs 815 (~14%); premium electronics + EV platforms, record order book" },
+        { "stock": "Healthcare Global Enterprises", "ticker": "HCG.NS", "wt": "", "change": "held", "note": "Held (HCG Ltd); TP Rs 820 (~12%); largest cancer-care network in India" },
+        { "stock": "Avenue Supermarts (DMart)", "ticker": "DMART.NS", "wt": "", "change": "removed", "note": "Dropped Sep 2026 (was OW in Aug on EDLC/EDLP model)" },
+        { "stock": "Ujjivan Small Finance Bank", "ticker": "UJJIVANSFB.NS", "wt": "", "change": "removed", "note": "Dropped Sep 2026 (was OW in Aug on micro-credit recovery)" }
       ],
       "underweight": []
     },
@@ -31,14 +33,14 @@
       "asOf": "2026-08",
       "benchmark": "Nifty 500",
       "url": "https://www.business-standard.com/markets/news/adani-ports-radico-kfin-among-6-top-stock-ideas-for-aug-by-motilal-oswal-126080300065_1.html",
-      "source": "Motilal Oswal Securities 'Top Stock Ideas' August 2026 (03 Aug 2026): 6 high-conviction buys across large/mid/small-cap with 14-28% upside; all new vs prior Wealth Management note",
+      "source": "Motilal Oswal Securities 'Top Stock Ideas' August 2026 (03 Aug 2026): 6 high-conviction buys across large/mid/small-cap with 14-28% upside; no fresh September basket publicly disclosed as of 03 Sep 2026, so the August list is carried.",
       "overweight": [
-        { "stock": "Adani Ports", "ticker": "ADANIPORTS.NS", "wt": "", "change": "new", "note": "New Aug 2026; largest port operator; TP ₹2,130 (+27% from ₹1,684); logistics park + port volume recovery" },
-        { "stock": "Bajaj Finance", "ticker": "BAJFINANCE.NS", "wt": "", "change": "new", "note": "New Aug 2026; Buy upgrade; improving asset quality, AUM growth acceleration; TP implies ~23% upside" },
-        { "stock": "KFin Technologies", "ticker": "KFINTECH.NS", "wt": "", "change": "new", "note": "New Aug 2026; MF registrar + wealth-tech platform; rising AUM industry drives recurring fee income" },
-        { "stock": "Radico Khaitan", "ticker": "RADICO.NS", "wt": "", "change": "new", "note": "New Aug 2026; premiumisation in spirits; IMFL/P&A brand mix shift driving margin expansion" },
-        { "stock": "Syrma SGS Technology", "ticker": "SYRMA.NS", "wt": "", "change": "new", "note": "New Aug 2026; EMS; order book ₹67bn (+23% YoY); 38/41/46% Rev/EBITDA/PAT CAGR FY26-28E; exports + defense" },
-        { "stock": "Emcure Pharmaceuticals", "ticker": "EMCURE.NS", "wt": "", "change": "new", "note": "New Aug 2026; domestic pharma, chronic-therapy franchise; TP ₹2,260 (+14% from ₹1,982)" }
+        { "stock": "Adani Ports", "ticker": "ADANIPORTS.NS", "wt": "", "change": "held", "note": "Aug 2026 pick; largest port operator; TP Rs 2,130 (+27% from Rs 1,684); logistics park + port volume recovery" },
+        { "stock": "Bajaj Finance", "ticker": "BAJFINANCE.NS", "wt": "", "change": "held", "note": "Aug 2026 Buy upgrade; improving asset quality, AUM growth acceleration; TP implies ~23% upside" },
+        { "stock": "KFin Technologies", "ticker": "KFINTECH.NS", "wt": "", "change": "held", "note": "Aug 2026 pick; MF registrar + wealth-tech platform; rising industry AUM drives recurring fee income" },
+        { "stock": "Radico Khaitan", "ticker": "RADICO.NS", "wt": "", "change": "held", "note": "Aug 2026 pick; premiumisation in spirits; IMFL/P&A brand-mix shift driving margin expansion" },
+        { "stock": "Syrma SGS Technology", "ticker": "SYRMA.NS", "wt": "", "change": "held", "note": "Aug 2026 pick; EMS; order book Rs 67bn (+23% YoY); 38/41/46% Rev/EBITDA/PAT CAGR FY26-28E; exports + defense" },
+        { "stock": "Emcure Pharmaceuticals", "ticker": "EMCURE.NS", "wt": "", "change": "held", "note": "Aug 2026 pick; domestic pharma, chronic-therapy franchise; TP Rs 2,260 (+14% from Rs 1,982)" }
       ],
       "underweight": []
     }
