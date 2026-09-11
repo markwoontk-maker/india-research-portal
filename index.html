@@ -4730,17 +4730,23 @@ function wlCaptureDaily(){
   const ensureTxnPx=function(){ const need=[]; wlTxns.forEach(function(t){ if(t.sym && wlPxHist[t.sym]===undefined && need.indexOf(t.sym)<0) need.push(t.sym); }); return need.length?Promise.all(need.map(function(sx){ return wlLoadPxHist(sx).catch(function(){}); })):Promise.resolve(); };
   if(wlRet) ensureTxnPx().then(build); else wlLoadReturns().then(ensureTxnPx).then(build).catch(build);
 }
-function wlHoldMVTotal(){ let t=0; WL.hold.forEach(function(row){ const sy=row[1], sym=String(sy).split('|')[0]; const e=wlEntry[sy], q=(e&&e.qty!=null&&e.qty!=='')?+e.qty:null; const p=(wlMap[sym]&&wlMap[sym].p!=null)?wlMap[sym].p:null; if(q>0&&p) t+=q*p; }); return t; }
-function wlHoldWt(sy){ const sym=String(sy).split('|')[0]; const e=wlEntry[sy], q=(e&&e.qty!=null&&e.qty!=='')?+e.qty:null; const p=(wlMap[sym]&&wlMap[sym].p!=null)?wlMap[sym].p:null; const tot=wlHoldMVTotal(); return (q>0&&p&&tot>0)?(q*p/tot*100):null; }
+// Holding price = live Yahoo LTP when available, else the latest committed NSE
+// close (wl_returns.json). Live quotes are CORS-blocked on the static Pages site,
+// so without this fallback the weights/returns render blank. The committed close
+// is the previous settled session's — reliable, just not intraday-live.
+function wlHoldPx(sy){ const s=String(sy).split('|')[0]; const lp=(wlMap[s]&&wlMap[s].p!=null)?wlMap[s].p:null; return (lp!=null)?lp:wlRetLatestClose(s); }
+function wlHoldMVTotal(){ let t=0; WL.hold.forEach(function(row){ const sy=row[1]; const e=wlEntry[sy], q=(e&&e.qty!=null&&e.qty!=='')?+e.qty:null; const p=wlHoldPx(sy); if(q>0&&p) t+=q*p; }); return t; }
+function wlHoldWt(sy){ const e=wlEntry[sy], q=(e&&e.qty!=null&&e.qty!=='')?+e.qty:null; const p=wlHoldPx(sy); const tot=wlHoldMVTotal(); return (q>0&&p&&tot>0)?(q*p/tot*100):null; }
 function wlHoldCells(sy,d){
   const e=wlEntry[sy]||{};
   const ep=(e.price!=null&&e.price!=='')?e.price:'';
   const ed=e.date||'';
-  const ltp=(d&&d.p!=null)?d.p:null;
+  const ltp=(d&&d.p!=null)?d.p:wlHoldPx(sy);   // live LTP, else latest committed NSE close
   const ret=(ep!==''&&ltp!=null&&(+ep)!==0)?(ltp/(+ep)-1)*100:null;
   const idxNow=(wlMap['^CRSLDX']&&wlMap['^CRSLDX'].p)||null;
   const idxEntry=ed?wlIdxAt(ed):null;
-  const idxRet=(idxNow!=null&&idxEntry!=null)?(idxNow/idxEntry-1)*100:null;
+  let idxRet=(idxNow!=null&&idxEntry!=null)?(idxNow/idxEntry-1)*100:null;
+  if(idxRet==null && ed){ idxRet = wlRetIdxReturn(ed, null); }   // committed-index fallback
   const rel=(ret!=null&&idxRet!=null)?(ret-idxRet):null;
   const sa=String(sy).replace(/"/g,'&quot;');
   const qv=(e.qty!=null&&e.qty!=='')?e.qty:'';
@@ -5189,6 +5195,9 @@ function wlRender(){
   if(!wlIdxHist && !wlIdxLoading && WL.hold.some(function(r){ var e=wlEntry[r[1]]; return e&&e.date; })){
     wlIdxLoading=true; wlLoadIdxHist().then(function(){ wlIdxLoading=false; wlRender(); }).catch(function(){ wlIdxLoading=false; });
   }
+  // Weights/returns fall back to committed NSE closes when live quotes are blocked;
+  // load that file if we don't have it yet, then re-render so the numbers fill in.
+  if(!wlRet && !wlRetLoading){ wlLoadReturns().then(function(){ wlRender(); }).catch(function(){}); }
   if(typeof wlRenderResearch==='function') wlRenderResearch();
 }
 // Resolve a typed query (company name or ticker) to a [name, "TICKER.NS"] pair.
