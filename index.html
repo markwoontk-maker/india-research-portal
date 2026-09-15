@@ -1922,7 +1922,7 @@
           <tbody id="wlHold"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
       <div class="card reveal" id="wlDailyCard">
-        <div class="card-h"><div><h3>Portfolio Daily Return</h3><p id="wlDailySub">Weighted daily return of Current Holdings vs Nifty 500</p></div>
+        <div class="card-h"><div><h3>Portfolio Daily Return</h3><p id="wlDailySub">Weighted daily return of Current Holdings vs Nifty 500 <span id="wlDailyFresh" style="color:var(--text-mute)"></span></p></div>
           <div class="wl-daily-ctl"><button id="wlBackupExport" class="wl-daily-reset" title="Download a backup of your holdings, quantities &amp; transactions">&#8595; Export</button><button id="wlBackupImport" class="wl-daily-reset" title="Restore your portfolio from a backup file">&#8593; Import</button><input type="file" id="wlBackupFile" accept="application/json,.json" style="display:none"><button id="wlDailyReset" class="wl-daily-reset" title="Recompute &amp; re-freeze every past day at the current weights + transactions">↻ Recompute</button><div class="seg" id="wlDailySeg"><button data-p="1W">1W</button><button data-p="1M" class="on">1M</button><button data-p="3M">3M</button><button data-p="6M">6M</button><button data-p="YTD">YTD</button><button data-p="1Y">1Y</button></div></div></div>
         <div style="position:relative;height:250px"><canvas id="wlDailyCanvas"></canvas></div>
         <div id="wlDailyLegend" class="wl-daily-legend"></div>
@@ -4609,6 +4609,7 @@ function wlRenderDaily(){
   wlDailyChart.data.datasets.forEach(function(ds,i){ wlDailyChart.setDatasetVisibility(i, wlDailyVis[ds.label]!==false); });
   wlDailyChart.update();
   wlBuildDailyLegend(wlDailyChart);
+  wlUpdateFreshness();
 }
 function wlCloseAt(sym,ymd){ const h=wlPxHist[sym]; if(!h||!h.dates||!h.dates.length||!ymd) return null; const ds=h.dates; let lo=0,hi=ds.length-1,res=-1; while(lo<=hi){ const m=(lo+hi)>>1; if(ds[m]<=ymd){res=m;lo=m+1;} else hi=m-1; } return res>=0?h.close[res]:null; }
 function wlCloseBefore(sym,ymd){ const h=wlPxHist[sym]; if(!h||!h.dates||!h.dates.length||!ymd) return null; let res=null; for(let k=0;k<h.dates.length;k++){ if(h.dates[k]<ymd) res=h.close[k]; else break; } return res; }
@@ -4735,6 +4736,37 @@ function wlCaptureDaily(){
   };
   const ensureTxnPx=function(){ const need=[]; wlTxns.forEach(function(t){ if(t.sym && wlPxHist[t.sym]===undefined && need.indexOf(t.sym)<0) need.push(t.sym); }); return need.length?Promise.all(need.map(function(sx){ return wlLoadPxHist(sx).catch(function(){}); })):Promise.resolve(); };
   if(wlRet) ensureTxnPx().then(build); else wlLoadReturns().then(ensureTxnPx).then(build).catch(build);
+}
+// "Data through DD Mon" freshness label on the daily card.
+function wlFmtDayMon(iso){ if(!iso) return ''; const p=String(iso).split('-'); const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return (+p[2])+' '+m[(+p[1])-1]; }
+function wlUpdateFreshness(){ const el=document.getElementById('wlDailyFresh'); if(!el) return; const last=(wlRet&&wlRet.dates)?Object.keys(wlRet.dates).sort().pop():null; el.textContent = last ? ('· data through '+wlFmtDayMon(last)) : ''; }
+// Re-fetch the committed returns file (bypassing the once-per-session in-memory
+// cache) and, if a new settled day appeared, capture + re-render it. This is what
+// lets an open tab pick up new trading days without a manual reload.
+let wlLastRefresh=0;
+function wlRefreshReturns(){
+  wlLastRefresh=Date.now();
+  return fetch('data/wl_returns.json',{cache:'no-store'})
+    .then(function(r){ return r.ok?r.json():null; })
+    .then(function(j){
+      if(!j||!j.dates) return;
+      const oldLast=(wlRet&&wlRet.dates)?Object.keys(wlRet.dates).sort().pop():'';
+      const newLast=Object.keys(j.dates).sort().pop();
+      wlRet=j; wlUpdateFreshness();
+      if(newLast && newLast!==oldLast){ if(typeof wlCaptureDaily==='function') wlCaptureDaily(); }
+      if(typeof wlRender==='function') wlRender();
+    })
+    .catch(function(){});
+}
+// Auto-refresh: when the tab regains focus (and on a 5-min heartbeat while visible),
+// re-fetch the data if it's been >60s, so new trading days show without a reload.
+function wlAutoRefreshInit(){
+  if(wlAutoRefreshInit._done) return; wlAutoRefreshInit._done=true;
+  const THROTTLE=60000;
+  const maybe=function(){ if(document.visibilityState==='visible' && Date.now()-wlLastRefresh>THROTTLE) wlRefreshReturns(); };
+  document.addEventListener('visibilitychange', maybe);
+  window.addEventListener('focus', maybe);
+  setInterval(maybe, 300000);
 }
 // Holding price = live Yahoo LTP when available, else the latest committed NSE
 // close (wl_returns.json). Live quotes are CORS-blocked on the static Pages site,
@@ -5324,6 +5356,7 @@ function wlInit(){
       if(typeof wlRenderDaily==='function') wlRenderDaily(); }); } })();
   (function(){ const rb=document.getElementById('wlDailyReset'); if(rb && !rb._wired){ rb._wired=true;
     rb.addEventListener('click',function(){ if(!window.confirm('Recompute rebuilds EVERY past day at your CURRENT quantities. If you have changed quantities since a past day (e.g. sold/added a position), that history will be recomputed with today\u2019s quantities and may be wrong. Continue?')) return; wlDailyReturns={}; wlContrib={}; wlDailySave(); if(typeof wlCaptureDaily==='function') wlCaptureDaily(); }); } })();
+  if(typeof wlAutoRefreshInit==='function') wlAutoRefreshInit();
   document.querySelectorAll('.wl-add').forEach(box=>{
     const inp=box.querySelector('input'), btn=box.querySelector('button'), sec=btn.dataset.sec;
     const go=()=>{ if(wlAdd(sec,inp.value)) inp.value=''; };
