@@ -1,7 +1,7 @@
 {
   "_note": "AMFI monthly NET INFLOWS (Rs cr) for the 6 equity cap categories, plus latest-month AUM. asOf = latest COMPLETED/published AMFI month = July 2026 (released ~10 Jul 2026; cross-checked across Outlook Money + upstox, which also restate the May figures identically -- a clean basis check). months now run 2024-01..2026-06 (30); each hist is aligned to months. June 2026 net flows (Rs cr): Mid 6090.17, Small 5601.96, Flexi 5231.31, Large&Mid 4321.32, Multi 3070.26, Large 2067.48 (6-cap sum 26382.50 vs Rs 28,973.41 cr total equity). May 2026 (Rs cr): Flexi 5175.54, Small 4945.57, Mid 4385.06, Large&Mid 3278.22, Multi 2291.00, Large 1592.93. Per-category aum/aumShare are still the April 2026 snapshot -- AMFI's per-category AUM for May was not cleanly published in the news sources (only total equity AUM Rs 35,74,352 cr), so AUM was NOT updated rather than estimated. TOP-LEVEL equityTotal[] (aligned to months) = the official AMFI monthly NET INFLOW into ALL open-ended equity schemes (Rs cr) -- the clean headline used to drive the true YoY-growth line on the Total Monthly Equity MF Flows chart. Seeded with the months verifiable from AMFI-consistent sources (2025-03 25082, 2025-05 19013, 2025-07 42702, 2026-01..05 24028.59/25977.91/40450.26/38440.20/22907.77); null elsewhere (AMFI's monthly PDFs aren't machine-reachable to backfill 2024/early-2025). The chart uses equityTotal YoY where both endpoints are present, else falls back to a like-for-like cap-category YoY. The 17th refresher appends equityTotal each month so the true YoY densifies going forward. NEVER fabricate an equityTotal cell. The earlier 16 months (2024-01..2025-04) were backfilled from AMFI monthly data as reported by Angel One, Upstox, Outlook Money, finnovate.in and Business Standard (per-category cap tables; cross-checked where two sources overlapped). Many 2024 articles disclose only a subset of the six cap categories in text (the rest sit in non-parseable images) and AMFI's own site/PDFs were unreachable from the build environment, so cells that could not be reliably sourced are null (NOT estimated). 2024-01/02/03 had no fetchable per-category table and are fully null. Mar-2026 column matches the supplied cross-check anchor exactly. Net flow can be negative (small/mid saw redemptions in the Feb-Mar 2025 correction) though no such cell was sourced here.",
-  "asOf": "2026-07",
-  "prevAsOf": "2026-06",
+  "asOf": "2026-08",
+  "prevAsOf": "2026-07",
   "months": [
     "2024-01",
     "2024-02",
@@ -33,7 +33,8 @@
     "2026-04",
     "2026-05",
     "2026-06",
-    "2026-07"
+    "2026-07",
+    "2026-08"
   ],
   "equityTotal": [
     null,
@@ -66,13 +67,14 @@
     38440.2,
     22907.77,
     28973.41,
-    24697.39
+    24697.39,
+    29328.62
   ],
   "categories": [
     {
       "name": "Flexi Cap",
-      "flow": 4709.08,
-      "flowPrev": 5231.31,
+      "flow": 5059.42,
+      "flowPrev": 4709.08,
       "aum": 559366,
       "aumShare": 23.4,
       "hist": [
@@ -106,13 +108,14 @@
         10147.85,
         5175.54,
         5231.31,
-        4709.08
+        4709.08,
+        5059.42
       ]
     },
     {
       "name": "Large Cap",
-      "flow": -1321.69,
-      "flowPrev": 2067.48,
+      "flow": -1147.36,
+      "flowPrev": -1321.69,
       "aum": 398835,
       "aumShare": 16.7,
       "hist": [
@@ -146,13 +149,14 @@
         2525,
         1592.93,
         2067.48,
-        -1321.69
+        -1321.69,
+        -1147.36
       ]
     },
     {
       "name": "Large & Mid Cap",
-      "flow": 3425.34,
-      "flowPrev": 4321.32,
+      "flow": 3872.79,
+      "flowPrev": 3425.34,
       "aum": 335218,
       "aumShare": 14,
       "hist": [
@@ -186,13 +190,14 @@
         4490,
         3278.22,
         4321.32,
-        3425.34
+        3425.34,
+        3872.79
       ]
     },
     {
       "name": "Mid Cap",
-      "flow": 6192.31,
-      "flowPrev": 6090.17,
+      "flow": 6989.4,
+      "flowPrev": 6192.31,
       "aum": 475012,
       "aumShare": 19.9,
       "hist": [
@@ -226,13 +231,14 @@
         6551.4,
         4385.06,
         6090.17,
-        6192.31
+        6192.31,
+        6989.4
       ]
     },
     {
       "name": "Small Cap",
-      "flow": 7767.5,
-      "flowPrev": 5601.96,
+      "flow": 7973.33,
+      "flowPrev": 7767.5,
       "aum": 392772,
       "aumShare": 16.4,
       "hist": [
@@ -266,13 +272,14 @@
         6885.9,
         4945.57,
         5601.96,
-        7767.5
+        7767.5,
+        7973.33
       ]
     },
     {
       "name": "Multi Cap",
-      "flow": 3227.29,
-      "flowPrev": 3070.26,
+      "flow": 3732.77,
+      "flowPrev": 3227.29,
       "aum": 228691,
       "aumShare": 9.6,
       "hist": [
@@ -306,7 +313,8 @@
         3806.01,
         2291,
         3070.26,
-        3227.29
+        3227.29,
+        3732.77
       ]
     }
   ]
