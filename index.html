@@ -1924,7 +1924,7 @@
           <tbody id="wlN500Body"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Current Holdings</h3><p>Live prices · NSE</p></div>
+        <div class="card-h"><div><h3>Current Holdings</h3><p class="wl-px-sub">Prices · NSE</p></div>
           <div class="wl-add"><input list="wlCompanyList" id="wlAddHold" placeholder="Add ticker or name…" autocomplete="off" title="Type a Nifty 500 name, or ANY ticker — TATAINVEST.NS (NSE), 543320.BO (BSE); a bare symbol defaults to .NS. For an off-list name use  Name | TICKER  e.g.  Tata Investment | TATAINVEST.NS"><button data-sec="hold">Add</button></div></div>
         <table class="wl-holdings"><thead><tr><th>Stock</th><th class="r">Qty</th><th class="r">Weight</th><th class="r">Entry ₹</th><th class="r">Entry Date</th><th class="r">Return</th><th class="r">vs N500</th><th class="r">Mkt Cap</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
           <tbody id="wlHold"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
@@ -1942,13 +1942,13 @@
           <tbody id="wlTxnBody"></tbody></table>
       </div>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Coverage</h3><p>Live prices · NSE</p></div>
+        <div class="card-h"><div><h3>Coverage</h3><p class="wl-px-sub">Prices · NSE</p></div>
           <div class="wl-add"><input list="wlCompanyList" id="wlAddCov" placeholder="Add ticker or name…" autocomplete="off" title="Type a Nifty 500 name, or ANY ticker — TATAINVEST.NS (NSE), 543320.BO (BSE); a bare symbol defaults to .NS. For an off-list name use  Name | TICKER  e.g.  Tata Investment | TATAINVEST.NS"><button data-sec="cov">Add</button></div></div>
         <table class="wl-holdings"><thead><tr><th>Stock</th><th class="r">Call</th><th class="r">Mkt Cap</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
           <tbody id="wlCov"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
       </div>
       <div class="card reveal">
-        <div class="card-h"><div><h3>Watchlist</h3><p>Live prices · NSE</p></div>
+        <div class="card-h"><div><h3>Watchlist</h3><p class="wl-px-sub">Prices · NSE</p></div>
           <div class="wl-add"><input list="wlCompanyList" id="wlAddWatch" placeholder="Add ticker or name…" autocomplete="off" title="Type a Nifty 500 name, or ANY ticker — TATAINVEST.NS (NSE), 543320.BO (BSE); a bare symbol defaults to .NS. For an off-list name use  Name | TICKER  e.g.  Tata Investment | TATAINVEST.NS"><button data-sec="watch">Add</button></div></div>
         <table><thead><tr><th>Stock</th><th class="r">Mkt Cap</th><th class="r">LTP</th><th class="r">1D</th><th class="r">1W</th><th class="r">1M</th><th class="r">YTD</th><th></th></tr></thead>
           <tbody id="wlWatch"><tr><td class="pol-empty">Loading…</td></tr></tbody></table>
@@ -4516,6 +4516,30 @@ function wlLoadReturns(){
     .catch(function(){ wlRet={dates:{}}; return wlRet; });
   return wlRetLoading;
 }
+// Committed quote snapshot (data/wl_quotes.json, refreshed server-side by
+// scripts/refresh-wl-quotes.js — daily + every 30 min in NSE hours). Fills LTP / 1D / 1W /
+// 1M / YTD wherever the live Yahoo pull is blocked (live values win when present), and
+// supplies ~2y of Nifty 500 closes so "vs N500" works for any entry date.
+let wlQuotes=null, wlQuotesLoading=null;
+function wlLoadQuotes(force){
+  if(wlQuotes && !force) return Promise.resolve(wlQuotes);
+  if(wlQuotesLoading && !force) return wlQuotesLoading;
+  wlQuotesLoading=fetch('data/wl_quotes.json',{cache:'no-store'}).then(function(r){ return r.ok?r.json():null; })
+    .then(function(j){ if(j&&j.q) wlQuotes=j; return wlQuotes; }).catch(function(){ return wlQuotes; });
+  return wlQuotesLoading;
+}
+function wlApplyQuotes(){
+  if(!wlQuotes||!wlQuotes.q) return;
+  Object.keys(wlQuotes.q).forEach(function(sym){ const q=wlQuotes.q[sym], o=wlMap[sym]||(wlMap[sym]={}), qf=o._qf||(o._qf={});
+    ['p','d1','w1','m1','ytd'].forEach(function(f){ if((o[f]==null||qf[f]) && q[f]!=null){ o[f]=q[f]; qf[f]=1; } }); });
+  if(wlQuotes.idx && (!wlIdxHist || !wlIdxHist.dates || !wlIdxHist.dates.length || wlIdxHist._q)){
+    const ds=Object.keys(wlQuotes.idx).sort(), cl=ds.map(function(d){ return wlQuotes.idx[d]; });
+    wlIdxHist={dates:ds, close:cl, open:cl, _q:1};
+  }
+  const t=wlQuotes.updated?new Date(wlQuotes.updated):null;
+  const lbl='Prices · NSE'+(t?(' · as of '+t.toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Kolkata'})+' IST'):'');
+  document.querySelectorAll('.wl-px-sub').forEach(function(el){ el.textContent=lbl; });
+}
 function wlHoldD1(sy){ const cands=String(sy).split('|'); const hit=cands.find(function(c){return wlMap[c]&&wlMap[c].p!=null;})||cands.find(function(c){return wlMap[c];}); return (hit&&wlMap[hit]&&wlMap[hit].d1!=null)?wlMap[hit].d1:null; }
 function wlPortfolioDailyReturn(){
   let sw=0, acc=0;
@@ -4768,6 +4792,8 @@ function wlRefreshReturns(){
       if(newLast && newLast!==oldLast){ if(typeof wlCaptureDaily==='function') wlCaptureDaily(); }
       if(typeof wlRender==='function') wlRender();
     })
+    .then(function(){ return wlLoadQuotes(true); })
+    .then(function(){ wlApplyQuotes(); if(typeof wlRender==='function') wlRender(); if(typeof wlTxnsRender==='function') wlTxnsRender(); })
     .catch(function(){});
 }
 // Auto-refresh: when the tab regains focus (and on a 5-min heartbeat while visible),
@@ -5437,6 +5463,7 @@ async function loadWatchlist(){
   // transaction P&L, and don't depend on live quotes — load them FIRST so those render
   // immediately instead of waiting behind the CORS-blocked Yahoo pulls below.
   wlLoadReturns().then(function(){ wlRender(); if(typeof wlTxnsRender==='function') wlTxnsRender(); if(typeof wlCaptureDaily==='function') wlCaptureDaily(); }).catch(function(){});
+  wlLoadQuotes().then(function(){ wlApplyQuotes(); wlRender(); if(typeof wlTxnsRender==='function') wlTxnsRender(); }).catch(function(){});
   const all=[...WL.hold,...WL.cov,...WL.watch];
   const syms=[...new Set([...all.flatMap(x=>x[1].split('|')),'^CRSLDX','INR=X'])];
   const map={};
@@ -5457,7 +5484,7 @@ async function loadWatchlist(){
     await pull('1D','d1',true);
     await Promise.all([pull('1W','w1'),pull('1M','m1'),pull('YTD','ytd')]);
   }catch(e){}
-  wlMap=map;
+  wlMap=map; wlApplyQuotes();   // committed quotes fill whatever the blocked live pull left empty
   wlUsdInr=(map['INR=X']&&map['INR=X'].p)||wlUsdInr;
   wlRender();
   wlRenderN500();

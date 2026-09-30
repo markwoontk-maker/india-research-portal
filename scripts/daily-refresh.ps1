@@ -154,6 +154,13 @@ Step "refresh-fii-dii" { & $node "scripts\refresh-fii-dii.js" }
 #      never throws.
 Step "refresh-wl-returns" { & $node "scripts\refresh-wl-returns.js" }
 
+# 8b2b. Watchlist quote snapshot (data/wl_quotes.json): LTP / 1D / 1W / 1M / YTD for the
+#       watchlist universe + Nifty 500, and ~2y of Nifty 500 closes for "vs N500". The
+#       browser can't reach Yahoo (CORS), so it's fetched here and committed. Also run every
+#       30 min in market hours by refresh-movers-intraday.ps1. Keeps the last good file on
+#       failure; never throws.
+Step "refresh-wl-quotes" { & $node "scripts\refresh-wl-quotes.js" }
+
 # 8b3. Rebuild the forward results calendar (data/earnings_calendar.json) from
 #      ICICI Direct's results-calendar API. Must run here rather than in the
 #      page: the endpoint is a POST whose CORS is pinned to icicidirect.com, so
@@ -217,7 +224,7 @@ Step "build-house-view-notes" {
 
 # 9. Commit + push if there are any changes. No-op on a quiet day.
 Step "git stage" {
-  & git add data/pdfdata.json data/pdfmap.json data/research.json data/sector-tps.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/highs.json data/movers.json data/wl_returns.json data/earnings_calendar.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json data/house_view_notes.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
+  & git add data/pdfdata.json data/pdfmap.json data/research.json data/sector-tps.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/highs.json data/movers.json data/wl_returns.json data/wl_quotes.json data/earnings_calendar.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json data/house_view_notes.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
 }
 Step "git commit + push" {
   $cached = & git diff --cached --stat
