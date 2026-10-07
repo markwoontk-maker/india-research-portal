@@ -467,6 +467,17 @@
   .ecal-more:hover{color:var(--text);border-color:var(--saffron)}
   .ec-none{font-size:11px;color:var(--text-mute);font-style:italic;text-align:center;padding:10px 0}
 
+  /* News You Need to Know: same list layout as the Indonesia portal */
+  #newsSeg{flex-wrap:wrap}
+  .news-list{list-style:none}
+  .news-list li{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line-soft)}
+  .news-list li:last-child{border:none}
+  .news-tag{flex:none;width:78px;font-family:'Roboto Mono';font-size:10px;letter-spacing:.06em;color:var(--saffron);padding-top:3px;text-transform:uppercase}
+  .news-body{flex:1;min-width:0}
+  .news-body a{color:var(--text);font-size:14px;font-weight:600;line-height:1.45;text-decoration:none}
+  .news-body a:hover{color:var(--saffron);text-decoration:underline}
+  .news-meta{font-size:11px;color:var(--text-mute);margin-top:3px}
+
   /* macro momentum heatmaps (CLSA activity indicators) */
   .macro-wrap{overflow:auto;max-height:74vh;border:1px solid var(--line-soft);
     border-radius:10px;margin-bottom:16px}
@@ -1885,14 +1896,9 @@
     <div id="viewMarkets" hidden>
       <div class="card reveal">
         <div class="card-h"><div><h3>News You Need to Know</h3>
-          <p id="newsSub">Last 24h · fact-based · politics → economy → company news · India</p></div>
-          <select id="newsSeg" class="dd" aria-label="Filter news segment" onchange="loadNews(this.value)">
-            <option value="ALL">All</option>
-            <option value="POL">Politics</option>
-            <option value="EARN">Earnings</option>
-            <option value="CORP">Corporate</option>
-          </select></div>
-        <ol id="newsList" class="pol-list"><li class="pol-empty">Loading news…</li></ol>
+          <p id="newsSub">Google News · India · last 2 days</p></div>
+          <div class="seg" id="newsSeg"></div></div>
+        <ul class="news-list" id="newsList"><li class="pol-empty">Loading news…</li></ul>
       </div>
       <div class="card reveal">
         <div class="card-h"><div><h3>India Macro Snapshot</h3>
@@ -3817,26 +3823,6 @@ async function newsViaProxy(q){
   if(items && items.length) _newsCache.set(q,{items,time:Date.now()});
   return items;
 }
-// Fast lane for the user-initiated News tab: shares the cache, in-flight
-// dedupe and 429 backoff, but does NOT sit behind the global mover queue or
-// the 800ms inter-request gap. Only the 5 News-tab buckets use it, so it
-// stays well under rss2json's rate limit while firing them in parallel.
-async function newsViaProxyFast(q){
-  const cached=_newsCache.get(q);
-  if(cached && Date.now()-cached.time < NEWS_TTL) return cached.items;
-  if(_newsInflight.has(q)) return _newsInflight.get(q);
-  const task=(async()=>{
-    const wait=_backoffUntil-Date.now();          // respect an active cool-off only
-    if(wait>0) await new Promise(r=>setTimeout(r,wait));
-    return _rawNewsViaProxy(q);
-  })();
-  _newsInflight.set(q, task);
-  let items=null;
-  try{ items=await task; }catch(e){ items=null; }
-  _newsInflight.delete(q);
-  if(items && items.length) _newsCache.set(q,{items,time:Date.now()});
-  return items;
-}
 function onMoverActivate(e){
   const el=e.target.closest('.mv-name'); if(!el) return;
   if(e.type==='keydown' && e.key!=='Enter' && e.key!==' ') return;
@@ -3881,234 +3867,53 @@ function fmtPolItems(items){
       </div>${sum}</div></li>`;
   }).join('');
 }
-const MKT_RE=/(econom|market|sensex|nifty|stock|share|equit|rbi|sebi|budget|gst|tariff|\btax\b|fiscal|\bfii\b|\bfpi\b|\bfdi\b|rupee|inflation|repo|bond|monetary|disinvest|divest|\bpsu\b|\bipo\b|reform|trade (deal|pact|deficit)|export|import|\bgdp\b|industrial|earnings|capex|subsid|\bpli\b|infrastructure|deficit|borrow|bank|rate (cut|hike)|sector|investor|tariff|crude|sensex)/i;
 const SOC_RE=/(cricket|\bipl\b|sport|football|hockey|kabaddi|bollywood|\bfilm\b|movie|actor|actress|celebrit|singer|\bott\b|web series|murder|rape|assault|\bcrime\b|accident|road mishap|weather|rainfall|\bflood\b|cyclone|heatwave|festival|temple|mosque|church|religio|wedding|marriage|divorce|viral video|gossip|astrolog|horoscope|entertainment|fashion|recipe|lifestyle|obituary|tribute|birthday|box office)/i;
-function marketRelevant(items){
-  return (items||[]).filter(it=>{
-    const t=String(it.title||'');
-    if(SOC_RE.test(t)) return false;
-    return MKT_RE.test(t);
-  });
+/* ---------- News You Need to Know ----------
+   Reads data/news.json, rebuilt every 30 min by GitHub Actions
+   (.github/workflows/news.yml -> scripts/refresh_news.py), the same way the
+   Indonesia portal does it. Layout matches Indonesia too: one filter pill per
+   bucket, a tag column, the headline, then "source · age". The old version
+   fetched Google News in the browser through free CORS proxies; those died and
+   the card was left showing a cached render from June. */
+let newsBucket='ALL', NEWS=null, newsTimer=null;
+function newsAgo(iso){
+  const s=(Date.now()-Date.parse(iso))/1000; if(!isFinite(s)) return '';
+  if(s<3600) return Math.max(1,Math.round(s/60))+'m ago';
+  if(s<86400) return Math.round(s/3600)+'h ago';
+  return Math.round(s/86400)+'d ago';
 }
-// "News You Need to Know" merges politics + earnings + M&A/corp into one
-// unified feed. Fires 3 parallel queries, filters each with its own regex,
-// dedupes by normalised title, sorts by pubDate desc, caps at 20.
-async function loadNews(segment){
-  const el=document.getElementById('newsList');
-  // Segment filter (header dropdown): every view (ALL + POL/EARN/CORP)
-  // is held to a 2-day window — both the RSS query and the post-fetch
-  // clamp use the same 2-day bound.
-  const SEG=(segment||'ALL').toUpperCase();
-  const win='2d';
-  const clampMs=2*864e5;
-  const SUB={ALL:'Last 2 days · fact-based · politics → economy → company news · India',
-    POL:'Last 2 days · politics & policy · India',
-    EARN:'Last 2 days · earnings & results · India',
-    CORP:'Last 2 days · corporate & M&A · India'};
-  const subEl=document.getElementById('newsSub'); if(subEl) subEl.textContent=SUB[SEG]||SUB.ALL;
-  el.innerHTML='<li class="pol-empty">Loading news…</li>';
-  const allQueries=[
-    {cat:'POL',  q:`India (cabinet OR "Modi cabinet" OR PMO OR ministry OR "fuel price" OR "petrol price" OR "diesel price" OR "LPG price" OR "gas price" OR "excise duty" OR "windfall tax" OR budget OR GST OR tariff OR reform OR disinvestment OR "trade deal" OR policy OR election OR parliament) when:${win}`},
-    {cat:'ECON', q:`India (inflation OR CPI OR WPI OR repo OR "interest rate" OR "rate cut" OR "rate hike" OR RBI OR "monetary policy" OR GDP OR IIP OR "industrial production" OR "fiscal deficit" OR "current account" OR FII OR FDI OR rupee OR "USD-INR" OR "bond yield" OR "10-year") when:${win}`},
-    {cat:'EARN', q:`India (Q4 results OR Q1 results OR quarterly results OR earnings OR "net profit" OR "profit after tax" OR PAT OR revenue OR EBITDA) when:${win}`},
-    {cat:'CORP', q:`India (merger OR acquisition OR "stake sale" OR demerger OR "open offer" OR buyback OR "board approves" OR resigns OR "steps down" OR "appointed as" OR "new CEO" OR "new MD" OR restructuring OR "joint venture" OR QIP OR "fund raise" OR "order win") when:${win}`},
-    // Wire-service bucket: pulls India macro/markets coverage straight from
-    // the global wires (Reuters, Bloomberg, AP) via Google News' site:
-    // operator. There's no direct Reuters/TradingView feed reachable from a
-    // static page (no open CORS API, paywall + anti-scrape ToS), so this is
-    // how Reuters-origin stories get guaranteed representation; their
-    // publisher shows as the source label. Filtered like ECON below.
-    {cat:'WIRE', q:`(site:reuters.com OR site:bloomberg.com OR site:apnews.com) India (economy OR markets OR stocks OR shares OR rupee OR RBI OR Sensex OR Nifty OR inflation OR GDP OR earnings OR results OR trade OR tariff) when:${win}`},
-  ];
-  // ALL → every bucket; a chosen segment → just that bucket.
-  const queries=SEG==='ALL'?allQueries:allQueries.filter(x=>x.cat===SEG);
-  // Reject anything that isn't a clear, present-tense FACT.
-  // Filters in three layers (any one rejects):
-  //   - NEWS_EXCL: structural noise (listicle / preview / live-blog /
-  //                speculation / forecast / explainer / report)
-  //   - OPINION_NAMED_RE: "<Proper Name> says|flags|warns|..." pundit
-  //                      commentary (case-sensitive on the name)
-  //   - QUESTION_RE: any question-form headline
-  // Trailing clickbait ("; should you buy?") is still NOT rejected —
-  // summariseNews strips it and we keep the factual lead.
-  const NEWS_EXCL=/\b(?:live updates?|results live|what to (?:expect|know)|stocks? to watch|buzzing stocks|in focus|ahead of (?:q[1-4]|results|earnings|the budget|monetary policy|rbi)|\d+ (?:things|reasons|stocks?|key|smart|top|best) (?:to|you|that|things)|key (?:takeaways|highlights|things to know)|all you need to know|here'?s (?:why|how|what|where)\b|will (?:rbi|the|govt|fed|markets?|inflation)\b|stocks to buy|set to (?:rise|fall|hike|cut)|why (?:is|are|did)\b|(?:might|may|could) (?:rise|fall|cut|hike|gain|drop)|\bpreview\b|\bexplained\b|\bexplainer\b|\bbreakdown\b|what changed|why it matters|\bdeep dive\b|\bby 20\d\d\b|needs? to\s|likely to\s|expected to\s|forecast(?:s|ing|ed)?\b|\bprojected\b|\bprojection\b|aims? to\s|targets? to\s|\bestimates? to\b|to (?:reach|boost|raise|grow|hit|cross|touch|achieve|become|spend|invest)\s|should (?:hit|reach|raise|boost|grow|cross|achieve)\s|\b(?:report|study|survey|paper)\s*:|\boutlook\b|seen at\b)/i;
-  // Case-sensitive named-pundit detection. Two patterns:
-  //   1. Two+ capitalised words + opinion verb  → "Gita Gopinath says"
-  //   2. Single capitalised word + opinion verb → "Krugman expects"
-  //      with a stop-list for institutions ("RBI", "Govt", "Cabinet"…)
-  //      so "RBI says repo rate unchanged" still passes.
-  const OPINION_VERB = '(?:says?|said|flags?|flagged|warns?|warned|argues?|argued|notes?|noted|believes?|opines?|cautions?|cautioned|told|tells|sees?|saw|reckons?|reckoned|comments?|commented|highlights?|highlighted|fears?|feared|expects?|predicts?|predicted)';
-  const OPINION_NAMED_RE = new RegExp('\\b[A-Z][a-z]+\\s+[A-Z][a-z]+(?:\\s+[A-Z][a-z]+)?\\s+'+OPINION_VERB+'\\b');
-  const INSTITUTION = 'RBI|SEBI|Govt|Government|PMO|Cabinet|Ministry|Court|Supreme|High|FED|US|EU|UK|UN|IMF|OECD|World|Bank|Inc|Ltd|India|Indian|National|Modi|Centre|State|Parliament|Lok|Rajya|White|House|Trump|President|Prime|Minister|Mr|Mrs|Ms|Dr|CM';
-  const OPINION_SINGLE_RE = new RegExp('\\b(?!(?:'+INSTITUTION+')\\b)[A-Z][a-z]+\\s+'+OPINION_VERB+'\\b');
-  // Only reject titles that START with a question word (a trailing "?"
-  // on otherwise-factual leads is left to summariseNews to strip).
-  const QUESTION_RE=/^\s*(?:will|why|how|what|does|should|can|could|would|are|is|do|did)\s+/i;
-  // Per-bucket category filter, then the universal fact-only filter.
-  function filterBucket(cat, items){
-    if(cat==='POL' || cat==='ECON' || cat==='WIRE') items=marketRelevant(items);
-    else if(cat==='EARN') items=(items||[]).filter(it=>{const t=String(it.title||'');return EARN_RE.test(t)&&!EARN_EXCL.test(t)&&!SOC_RE.test(t);});
-    else items=(items||[]).filter(it=>{const t=String(it.title||'');return CORP_RE.test(t)&&!GOVT_RE.test(t)&&!SOC_RE.test(t);});
-    items=(items||[]).filter(it=>{
-      const t=String(it.title||'');
-      if(NEWS_EXCL.test(t)) return false;
-      if(QUESTION_RE.test(t)) return false;
-      if(OPINION_NAMED_RE.test(t) || OPINION_SINGLE_RE.test(t)) return false;
-      return true;
-    });
-    return items.map(it=>({...it,cat}));
-  }
-  // Dedupe key: ticker → lead-company name → title.
-  function newsKey(it){
-    const t=String(it.title||'');
-    const tk=pickTicker(t);
-    if(tk) return 'tk:'+tk;
-    const lead=leadCompany(t);
-    if(lead){
-      const k=lead.toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,24);
-      if(k.length>=3) return 'co:'+k;
-    }
-    return 'ti:'+t.toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,60);
-  }
-  // Build the ordered/deduped/window-clamped/capped list from a pool of items.
-  // Tiered order: POL → ECON/WIRE → company-specific (EARN+CORP); newest first
-  // within a tier. Clamp measured from the newest item (clock-skew safe).
-  function buildMerged(pool){
-    const all=pool.slice();
-    all.sort((a,b)=>(Date.parse(b.pubDate||0)||0)-(Date.parse(a.pubDate||0)||0));
-    let newest=0;
-    for(const it of all){ const ms=Date.parse(it.pubDate||0); if(!isNaN(ms)&&ms>newest) newest=ms; }
-    const seen=new Set(); const merged=[];
-    for(const it of all){
-      const ms=Date.parse(it.pubDate||0);
-      if(newest && !isNaN(ms) && (newest-ms) > clampMs) continue;
-      const k=newsKey(it);
-      if(!k||seen.has(k)) continue;
-      seen.add(k); merged.push(it);
-      if(merged.length>=20) break;
-    }
-    const PRI={POL:0, ECON:1, WIRE:1, EARN:2, CORP:2};
-    merged.sort((a,b)=>{
-      const pa=PRI[a.cat]??3, pb=PRI[b.cat]??3;
-      if(pa!==pb) return pa-pb;
-      return (Date.parse(b.pubDate||0)||0)-(Date.parse(a.pubDate||0)||0);
-    });
-    return merged;
-  }
-  // Token guards overlapping loads (rapid segment-dropdown switches): only the
-  // newest loadNews() call is allowed to paint into the list.
-  const myToken=(loadNews._t=(loadNews._t||0)+1);
-  function paint(items){
-    if(loadNews._t!==myToken) return;
-    if(items&&items.length) el.innerHTML=fmtNewsItems(items);
-  }
-  let painted=false;
-  // 1) Instant paint from the last render saved to localStorage (<24h old).
-  const LS_KEY='newsRender:'+SEG;
-  try{
-    const c=JSON.parse(localStorage.getItem(LS_KEY)||'null');
-    if(c&&Array.isArray(c.items)&&c.items.length&&(Date.now()-(c.time||0))<864e5){ paint(c.items); painted=true; }
-  }catch(e){}
-  // 2) Instant paint from pre-baked data/news.json (built daily by the routine).
-  try{
-    const r=await fetch('data/news.json',{cache:'no-store'});
-    if(r.ok){ const j=await r.json(); const arr=j&&j.segments&&j.segments[SEG];
-      if(Array.isArray(arr)&&arr.length){ paint(arr); painted=true; } }
-  }catch(e){}
-  // 3) Live refresh — fast parallel lane (skips the global mover queue and its
-  //    800ms gap) with progressive repaint, so the first results show in ~1s
-  //    instead of after all five buckets serialise. The dead /api/news probe
-  //    is tried once then latched off via _fnDead.
-  async function pullFast(q){
-    if(!_fnDead){
-      try{
-        const r=await fetch('/api/news?q='+encodeURIComponent(q)+'&n=20',{cache:'no-store'});
-        if(r.status===404){ _fnDead=true; }
-        else if(r.ok){ const j=await r.json(); if(j&&Array.isArray(j.items)&&j.items.length) return j.items; }
-      }catch(e){ _fnDead=true; }
-    }
-    try{ return (await newsViaProxyFast(q))||[]; }catch(e){ return []; }
-  }
-  const collected=[];
-  await Promise.all(queries.map(async ({cat,q})=>{
-    const items=filterBucket(cat, await pullFast(q));
-    collected.push(...items);
-    const m=buildMerged(collected);
-    if(m.length) paint(m);                       // progressive
-  }));
-  if(loadNews._t!==myToken) return;              // superseded by a newer load
-  const merged=buildMerged(collected);
-  if(!merged.length){
-    if(!painted) el.innerHTML='<li class="pol-empty">No news right now (free feed). The CORS proxy may be rate-limited — try again in a minute.</li>';
-    return;
-  }
-  paint(merged);
-  try{ localStorage.setItem(LS_KEY, JSON.stringify({time:Date.now(), items:merged})); }catch(e){}
+function renderNews(){
+  const list=document.getElementById('newsList'), segEl=document.getElementById('newsSeg'), sub=document.getElementById('newsSub');
+  if(!list) return;
+  const n=NEWS;
+  if(!n||!n.b){ list.innerHTML='<li class="pol-empty">News feed unavailable.</li>'; return; }
+  const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const keys=Object.keys(n.b);
+  if(newsBucket!=='ALL' && !keys.includes(newsBucket)) newsBucket='ALL';
+  segEl.innerHTML=[{k:'ALL',l:'All'},...keys.map(k=>({k,l:(n.labels&&n.labels[k])||k}))]
+    .map(o=>`<button type="button" data-k="${o.k}" class="${o.k===newsBucket?'on':''}">${esc(o.l)}</button>`).join('');
+  // Hold to the 2-day window at render time too, so a stalled feed shows
+  // "nothing recent" instead of quietly serving old headlines.
+  const win=(n.window_h||48)*3600e3, now=Date.now();
+  let items=newsBucket==='ALL' ? keys.flatMap(k=>n.b[k].slice(0,12)) : (n.b[newsBucket]||[]);
+  items=items.filter(x=>now-Date.parse(x.d)<=win).sort((a,b)=>(a.d<b.d?1:-1));
+  const stale=(now-Date.parse(n.updated))>3*3600e3;
+  sub.textContent=`Google News · India · last 2 days · refreshed ${newsAgo(n.updated)} · ${items.length} headlines`+(stale?' · feed behind schedule':'');
+  list.innerHTML=items.map(x=>`<li><span class="news-tag">${esc((n.labels&&n.labels[x.c])||x.c)}</span>`+
+    `<div class="news-body"><a href="${esc(x.l)}" target="_blank" rel="noopener">${esc(x.t)}</a>`+
+    `<div class="news-meta">${esc(x.s)} · ${newsAgo(x.d)}</div></div></li>`).join('')
+    || '<li class="pol-empty">No headlines in the last 2 days for this bucket.</li>';
 }
-// Rule-based 1-sentence summary of a news headline. No LLM — strips
-// publisher / clickbait clauses, takes the first sentence, normalises
-// punctuation. Keeps the factual core; drops "should you buy", "live
-// updates", "what to expect", "5 things to know" type trailing fluff.
-function summariseNews(rawTitle){
-  let t=String(rawTitle||'')
-    .replace(/\s+-\s+[^-]+$/,'')                       // strip publisher suffix
-    .replace(/&amp;/g,'&').replace(/&#39;|&apos;/g,"'").replace(/&quot;/g,'"')
-    .replace(/\s+/g,' ').trim();
-  // Strip trailing clickbait/preview clauses after a separator
-  t=t.replace(/\s*[;,:\-—–|]\s*(?:should you|here'?s|what to|why .{3,40}\?|how to|key (?:takeaways|highlights|things)|all you need to know|explained|live updates?|in focus|stocks? to (?:buy|watch)|\d+ (?:things|reasons|stocks?|key) (?:to|you|that|things))\b[^.]*$/i,'')
-    .replace(/\s*[;:—–|-]\s*$/,'').trim();
-  // Cut at first sentence end if there's a follow-on clause beginning
-  // with a capital letter (keeps the lead).
-  const m=t.match(/^([^.!?]{20,200}?[.!?])\s+[A-Z]/);
-  if(m) t=m[1].trim();
-  // Ensure terminator + sentence-case.
-  if(t && !/[.!?]$/.test(t)) t+='.';
-  if(t) t=t.charAt(0).toUpperCase()+t.slice(1);
-  return t;
+async function loadNews(){
+  try{ const r=await fetch('data/news.json',{cache:'no-store'}); if(r.ok) NEWS=await r.json(); }catch(e){}
+  renderNews();
+  // Pick up each 30-min rebuild while the page stays open.
+  if(!newsTimer) newsTimer=setInterval(loadNews,10*60*1000);
 }
-function fmtNewsItems(items){
-  const LBL={POL:'POLITICS',ECON:'ECONOMY',EARN:'EARNINGS',CORP:'CORP'};
-  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  return items.map(it=>{
-    const titleRaw=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').trim();
-    // Pull the company: prefer NAMES-mapped ticker (full company
-    // name), else the lead-company heuristic. For macro / political /
-    // economic headlines without a single company anchor → no chip.
-    // ECON rows skip the company extraction entirely — economic data
-    // isn't a company event even when an OMC name happens to appear.
-    let co='';
-    if(it.cat!=='ECON'){
-      const tk=pickTicker(titleRaw);
-      if(tk) co=NAMES[tk]||tk;
-      else { const lead=leadCompany(titleRaw); if(lead && lead.length>=3 && lead.split(' ').length<=5) co=lead; }
-    }
-    // Sentiment from the headline — drives the chip colour.
-    const sent=co?sentiment(titleRaw):'flat';
-    const sentCls=sent==='up'?'up':sent==='down'?'down':'flat';
-    // Strip the company name off the front before summarising so we
-    // don't end up with "<company> <company> ..." after the chip.
-    let body=titleRaw;
-    if(co){
-      const re=new RegExp('^'+co.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[\\s:,;\\-—–]+','i');
-      const stripped=body.replace(re,'').trim();
-      if(stripped.length>10) body=stripped;
-    }
-    // 1-sentence summary instead of the raw title.
-    const summary=summariseNews(body) || body;
-    const title=esc(summary);
-    const tm=it.pubDate?relTime(Date.parse(it.pubDate)/1000):'';
-    const src=[it.source,tm].filter(Boolean).join(' · ');
-    const cat=(it.cat||'POL').toLowerCase();
-    const coChip=co?`<span class="news-co ${sentCls}" title="${esc(co)}">${esc(co)}</span>`:'';
-    return `<li><div class="pol-item">
-      <div class="pol-top">
-        <span class="news-cat ${cat}">${LBL[it.cat]||'NEWS'}</span>
-        ${coChip}
-        <a class="pol-h" href="${it.link||'#'}" target="_blank" rel="noopener" title="${esc(titleRaw)}">${title}</a>
-        <span class="src">${src}</span>
-      </div></div></li>`;
-  }).join('');
-}
+(function(){
+  const seg=document.getElementById('newsSeg'); if(!seg) return;
+  seg.addEventListener('click',e=>{ const b=e.target.closest('button[data-k]'); if(!b) return; newsBucket=b.dataset.k; renderNews(); });
+})();
 
 function fmtPeriod(p){
   // "2026-03" -> "Mar ’26"

@@ -235,6 +235,9 @@ Step "git commit + push" {
   Write-Output $cached
   $msg = "Daily research refresh -- " + (Get-Date -f "yyyy-MM-dd HH:mm")
   & git commit -m $msg
+  # The GitHub Actions news job (.github/workflows/news.yml) also commits to
+  # main, so rebase onto it before pushing or the push is rejected.
+  & git pull --rebase --autostash origin main
   & git push origin main
 }
 

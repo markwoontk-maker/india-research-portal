@@ -32,6 +32,8 @@ $post = if (Test-Path data\fii_dii.json) { (Get-FileHash data\fii_dii.json -Algo
 if ($post -ne $pre -and $post -ne "") {
   & git add data/fii_dii.json
   & git commit -m ("chore: FII/DII daily flows -- " + (Get-Date -f "yyyy-MM-dd HH:mm")) | ForEach-Object { Log $_ }
+  # The GitHub Actions news job also commits to main; rebase onto it first.
+  & git pull --rebase --autostash origin main 2>&1 | ForEach-Object { Log ("pull> " + ($_ | Out-String).TrimEnd()) }
   & git push origin main 2>&1 | ForEach-Object { Log ("push> " + ($_ | Out-String).TrimEnd()) }
   Log "committed + pushed"
 } else {

@@ -41,7 +41,7 @@ if ([string]::IsNullOrWhiteSpace($changed)) {
   Run "git" { git add index.html data/model_portfolios_house.json }
   $msg = "Weekly strategy refresh -- " + (Get-Date -f "yyyy-MM-dd HH:mm")
   Run "git" { git commit -m $msg }
-  Run "git" { git pull --rebase }   # tree is clean after commit; safe to rebase
+  Run "git" { git pull --rebase --autostash origin main }   # autostash: other tracked files may be dirty
   Run "git" { git push origin main }
   Log "Published strategy update."
 }
