@@ -470,13 +470,24 @@
   /* News You Need to Know: same list layout as the Indonesia portal */
   #newsSeg{flex-wrap:wrap}
   .news-list{list-style:none}
-  .news-list li{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line-soft)}
+  /* one headline per row: Type | Title | Source | Time */
+  .news-list li{display:grid;grid-template-columns:96px minmax(0,1fr) 150px 62px;gap:14px;
+    align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line-soft)}
   .news-list li:last-child{border:none}
-  .news-tag{flex:none;width:78px;font-family:'Roboto Mono';font-size:10px;letter-spacing:.06em;color:var(--saffron);padding-top:3px;text-transform:uppercase}
-  .news-body{flex:1;min-width:0}
-  .news-body a{color:var(--text);font-size:14px;font-weight:600;line-height:1.45;text-decoration:none}
-  .news-body a:hover{color:var(--saffron);text-decoration:underline}
-  .news-meta{font-size:11px;color:var(--text-mute);margin-top:3px}
+  .news-list li.pol-empty{display:block}
+  .news-list li.news-hd{padding:0 0 6px;border-bottom:1px solid var(--line);font-family:'Roboto Mono';
+    font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-mute)}
+  .news-tag{font-family:'Roboto Mono';font-size:10px;letter-spacing:.06em;color:var(--saffron);text-transform:uppercase;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .news-title{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    color:var(--text);font-size:13.5px;font-weight:600;text-decoration:none}
+  .news-title:hover{color:var(--saffron);text-decoration:underline}
+  .news-src{font-size:11.5px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .news-time{font-family:'Roboto Mono';font-size:11px;color:var(--text-mute);text-align:right;white-space:nowrap}
+  @media (max-width:640px){
+    .news-list li{grid-template-columns:72px minmax(0,1fr) 52px;gap:10px}
+    .news-src{display:none}
+  }
 
   /* macro momentum heatmaps (CLSA activity indicators) */
   .macro-wrap{overflow:auto;max-height:74vh;border:1px solid var(--line-soft);
@@ -3899,10 +3910,15 @@ function renderNews(){
   items=items.filter(x=>now-Date.parse(x.d)<=win).sort((a,b)=>(a.d<b.d?1:-1));
   const stale=(now-Date.parse(n.updated))>3*3600e3;
   sub.textContent=`Google News · India · last 2 days · refreshed ${newsAgo(n.updated)} · ${items.length} headlines`+(stale?' · feed behind schedule':'');
-  list.innerHTML=items.map(x=>`<li><span class="news-tag">${esc((n.labels&&n.labels[x.c])||x.c)}</span>`+
-    `<div class="news-body"><a href="${esc(x.l)}" target="_blank" rel="noopener">${esc(x.t)}</a>`+
-    `<div class="news-meta">${esc(x.s)} · ${newsAgo(x.d)}</div></div></li>`).join('')
-    || '<li class="pol-empty">No headlines in the last 2 days for this bucket.</li>';
+  // One headline per row: Type | Title | Source | Time. The title is cut to one
+  // line with an ellipsis; the full headline is in its tooltip.
+  list.innerHTML=items.length
+    ? '<li class="news-hd"><span>Type</span><span>Title</span><span class="news-src">Source</span><span style="text-align:right">Time</span></li>'+
+      items.map(x=>`<li><span class="news-tag">${esc((n.labels&&n.labels[x.c])||x.c)}</span>`+
+        `<a class="news-title" href="${esc(x.l)}" target="_blank" rel="noopener" title="${esc(x.t)}">${esc(x.t)}</a>`+
+        `<span class="news-src" title="${esc(x.s)}">${esc(x.s)}</span>`+
+        `<span class="news-time">${newsAgo(x.d)}</span></li>`).join('')
+    : '<li class="pol-empty">No headlines in the last 2 days for this bucket.</li>';
 }
 async function loadNews(){
   try{ const r=await fetch('data/news.json',{cache:'no-store'}); if(r.ok) NEWS=await r.json(); }catch(e){}
