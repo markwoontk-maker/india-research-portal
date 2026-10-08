@@ -33,21 +33,26 @@ if (-not (Test-Path -LiteralPath $node)) {
 }
 
 $qfile = Join-Path $repo "data\wl_quotes.json"
+$sfile = Join-Path $repo "data\sectors.json"
 function FileHash([string]$p){ if (Test-Path -LiteralPath $p) { (Get-FileHash -LiteralPath $p -Algorithm MD5).Hash } else { "" } }
 $preHash = FileHash $file
 $preQ = FileHash $qfile
+$preS = FileHash $sfile
 
 # Keep local main current so the push fast-forwards; --autostash tolerates dirt.
 & git pull --rebase --autostash origin main 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
 
 # Run the scrapers: movers (breadth/top-bottom) + Watchlist quotes (LTP/1D/1W/1M/YTD +
-# Nifty 500 history — the browser can't fetch Yahoo, so the page reads this file).
+# Nifty 500 history) + sectors (Sector Performance bars/detail + Desk Snapshot).
+# The browser can't fetch Yahoo (CORS), so the page reads these committed files.
 & $node "scripts\refresh-movers.js" 2>&1 | ForEach-Object { Out-Log ("node> " + ($_ | Out-String).TrimEnd()) }
 & $node "scripts\refresh-wl-quotes.js" 2>&1 | ForEach-Object { Out-Log ("node> " + ($_ | Out-String).TrimEnd()) }
+& $node "scripts\refresh-sectors.js" 2>&1 | ForEach-Object { Out-Log ("node> " + ($_ | Out-String).TrimEnd()) }
 
 $moversChanged = (FileHash $file) -ne $preHash
 $quotesChanged = (FileHash $qfile) -ne $preQ
-if (-not $moversChanged -and -not $quotesChanged) { Out-Log "no change - not committing."; exit 0 }
+$sectorsChanged = (FileHash $sfile) -ne $preS
+if (-not $moversChanged -and -not $quotesChanged -and -not $sectorsChanged) { Out-Log "no change - not committing."; exit 0 }
 
 # Validate before publishing: movers = valid JSON with a plausible breadth count.
 $j = $null
@@ -68,14 +73,27 @@ if ($quotesChanged) {
     if ($nq -lt 50) { Out-Log ("quotes validation failed (" + $nq + " symbols) - reverting."); & git checkout -- data/wl_quotes.json 2>&1 | Out-Null; $quotesChanged = $false }
   } catch { Out-Log ("quotes JSON parse failed - reverting: " + $_.Exception.Message); & git checkout -- data/wl_quotes.json 2>&1 | Out-Null; $quotesChanged = $false }
 }
-if (-not $moversChanged -and -not $quotesChanged) { Out-Log "nothing valid to publish - exiting."; exit 0 }
+# sectors = valid JSON with 14 sectors + >=80 member quotes.
+if ($sectorsChanged) {
+  try {
+    $js = Get-Content -LiteralPath $sfile -Raw | ConvertFrom-Json
+    $ns = ($js.sectors | Measure-Object).Count
+    $nm = ($js.q.PSObject.Properties | Measure-Object).Count
+    if ($ns -lt 10 -or $nm -lt 80) { Out-Log ("sectors validation failed (" + $ns + " sectors / " + $nm + " members) - reverting."); & git checkout -- data/sectors.json 2>&1 | Out-Null; $sectorsChanged = $false }
+  } catch { Out-Log ("sectors JSON parse failed - reverting: " + $_.Exception.Message); & git checkout -- data/sectors.json 2>&1 | Out-Null; $sectorsChanged = $false }
+}
+if (-not $moversChanged -and -not $quotesChanged -and -not $sectorsChanged) { Out-Log "nothing valid to publish - exiting."; exit 0 }
 
 if ($moversChanged) { & git add data/movers.json 2>&1 | Out-Null }
 if ($quotesChanged) { & git add data/wl_quotes.json 2>&1 | Out-Null }
+if ($sectorsChanged) { & git add data/sectors.json 2>&1 | Out-Null }
 $cached = & git diff --cached --stat
 if ([string]::IsNullOrWhiteSpace($cached)) { Out-Log "nothing staged - exiting."; exit 0 }
 
-$msg = if ($moversChanged) { "chore: intraday movers (" + $j.session + ", adv " + $j.adv + "/dec " + $j.dec + ")" + $(if ($quotesChanged) { " + watchlist quotes" } else { "" }) } else { "chore: intraday watchlist quotes" }
+$extra = (@(if ($quotesChanged) { "watchlist quotes" }; if ($sectorsChanged) { "sectors" }) | Where-Object { $_ }) -join " + "
+$msg = if ($moversChanged) { "chore: intraday movers (" + $j.session + ", adv " + $j.adv + "/dec " + $j.dec + ")" + $(if ($extra) { " + " + $extra } else { "" }) } `
+       elseif ($extra) { "chore: intraday " + $extra } `
+       else { "chore: intraday refresh" }
 & git commit -m $msg 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
 & git pull --rebase --autostash origin main 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
 & git push origin main 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }

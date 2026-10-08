@@ -556,11 +556,17 @@
   .mv-cols .sd-h{margin-bottom:2px}
   @media(max-width:680px){.mv-cols{grid-template-columns:1fr;gap:6px}}
   .sd-h{font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;font-weight:600;margin-bottom:6px}
-  .sd-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line-soft);font-size:12.5px}
+  .sd-row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line-soft);font-size:12.5px}
   .sd-row:last-child{border:none}
-  .sd-row span{color:var(--text-dim)}
-  .sd-row b{font-family:'Roboto Mono';font-weight:500}
+  .sd-row span{color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sd-row b{font-family:'Roboto Mono';font-weight:500;flex:none}
+  .sd-row b.sd-na{color:var(--text-mute);font-weight:400}
   .sd-empty{font-size:12px;color:var(--text-mute);padding:10px 0}
+  /* All-constituents list: two responsive columns so 10-20 names stay compact. */
+  .sd-allh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:2px}
+  .sd-note{font-size:10.5px;color:var(--text-mute);letter-spacing:.02em}
+  .sd-all{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+  @media(max-width:620px){.sd-all{grid-template-columns:1fr}}
 
   /* tables */
   table{width:100%;border-collapse:collapse}
@@ -1169,8 +1175,8 @@
           <input type="checkbox" class="stat-cb" data-sym="NIFTY_MIDCAP_100.NS">
           <span class="stat-sw" style="--sw:#5b9eff"></span>
           <span class="stat-nm">Nifty Midcap 100</span><b class="up" id="sMid">—</b></label>
-        <label class="stat-row clickable" data-sym="SMALLCAP.NS" data-label="Nifty Small Cap">
-          <input type="checkbox" class="stat-cb" data-sym="SMALLCAP.NS">
+        <label class="stat-row clickable" data-sym="^CNXSC" data-label="Nifty Small Cap">
+          <input type="checkbox" class="stat-cb" data-sym="^CNXSC">
           <span class="stat-sw" style="--sw:#c478e6"></span>
           <span class="stat-nm">Nifty Small Cap</span><b class="up" id="sSml">—</b></label>
         <label class="stat-row clickable" data-sym="INR=X" data-label="USD / INR">
@@ -1183,7 +1189,7 @@
       <!-- 3 · Sector Performance -->
       <div class="card reveal" style="animation-delay:.22s">
         <div class="card-h">
-          <div><h3>Sector Performance</h3><p id="secCaption">NSE sectoral indices · 1D return</p></div>
+          <div><h3>Sector Performance</h3><p id="secCaption">Avg constituent return · 1D</p></div>
           <div class="sec-ctrls">
             <select id="tfSel" class="dd" aria-label="Timeframe">
               <option>1D</option><option>1W</option><option>1M</option>
@@ -1195,10 +1201,8 @@
         <div id="secDetail">
           <button id="secBack" class="back" type="button">‹ All sectors</button>
           <div class="sd-chart"><canvas id="secChart"></canvas></div>
-          <div class="sd-lists">
-            <div><div class="sd-h up">Top 5</div><div id="secTop"></div></div>
-            <div><div class="sd-h down">Bottom 5</div><div id="secBot"></div></div>
-          </div>
+          <div class="sd-allh"><span class="sd-h" id="secAllH">All constituents</span><span class="sd-note" id="secAllNote"></span></div>
+          <div id="secAll" class="sd-all"></div>
         </div>
       </div>
 
@@ -2280,9 +2284,15 @@ tt.innerHTML = tkHtml + tkHtml;
 
 /* ---------- Sectors ---------- */
 function renderSectors(){
+  const host=document.getElementById('sectors');
+  // The inline #secDetail panel may have been moved inside #sectors by
+  // placeSectorDetail(); park it back on the card before the innerHTML wipe so
+  // it survives the re-render (placeSectorDetail re-inserts it afterwards).
+  const det=document.getElementById('secDetail');
+  if(det && det.parentElement===host) host.parentElement.appendChild(det);
   const list=[...sectors].sort((a,b)=>b[2]-a[2]);
   const max=Math.max(1,...list.map(s=>Math.abs(s[2])));
-  document.getElementById('sectors').innerHTML=list.map(([n,,p])=>{
+  host.innerHTML=list.map(([n,,p])=>{
     const up=p>=0, w=Math.min(Math.abs(p)/max*50,50);
     return `<div class="sector" data-sec="${n}" title="View ${n} chart & movers">
       <div class="nm">${n}</div>
@@ -3032,7 +3042,7 @@ const MAIN_TF_DEF={
 };
 const STAT_COLORS={
   '^CRSLDX':'#e9a23b','^NSEI':'#3fc78a',
-  'NIFTY_MIDCAP_100.NS':'#5b9eff','SMALLCAP.NS':'#c478e6',
+  'NIFTY_MIDCAP_100.NS':'#5b9eff','^CNXSC':'#c478e6',
   'INR=X':'#6db4b4'
 };
 const labelFor=sym=>{
@@ -3174,32 +3184,64 @@ function pctOver(d,tf){
   if(base==null||base===0) return null;
   return (lp-base)/base*100;
 }
-// Representative NSE constituents per sector (base tickers, .NS added in code)
-const CONSTITUENTS={
-  "Nifty Auto":["MARUTI","M&M","TATAMOTORS","BAJAJ-AUTO","EICHERMOT","HEROMOTOCO","TVSMOTOR","ASHOKLEY","BHARATFORG","MOTHERSON"],
-  "Nifty Bank":["HDFCBANK","ICICIBANK","SBIN","KOTAKBANK","AXISBANK","INDUSINDBK","BANKBARODA","PNB","AUBANK","IDFCFIRSTB"],
-  "Nifty Financial Services":["HDFCBANK","ICICIBANK","BAJFINANCE","BAJAJFINSV","SBIN","KOTAKBANK","AXISBANK","HDFCLIFE","SBILIFE","SHRIRAMFIN"],
-  "Nifty FMCG":["ITC","HINDUNILVR","NESTLEIND","VBL","BRITANNIA","TATACONSUM","GODREJCP","DABUR","COLPAL","MARICO"],
-  "Nifty Healthcare":["SUNPHARMA","CIPLA","DRREDDY","DIVISLAB","APOLLOHOSP","MAXHEALTH","LUPIN","AUROPHARMA","ALKEM","TORNTPHARM"],
-  "Nifty IT":["TCS","INFY","HCLTECH","WIPRO","TECHM","LTIM","PERSISTENT","COFORGE","MPHASIS","LTTS"],
-  "Nifty Media":["ZEEL","SUNTV","PVRINOX","NETWORK18","TV18BRDCST","DISHTV","NAZARA","SAREGAMA","HATHWAY","TIPSINDLTD"],
-  "Nifty Metal":["TATASTEEL","JSWSTEEL","HINDALCO","VEDL","ADANIENT","JINDALSTEL","SAIL","NMDC","NATIONALUM","HINDZINC"],
-  "Nifty Pharma":["SUNPHARMA","CIPLA","DRREDDY","DIVISLAB","LUPIN","AUROPHARMA","ALKEM","TORNTPHARM","ZYDUSLIFE","BIOCON"],
-  "Nifty Private Bank":["HDFCBANK","ICICIBANK","KOTAKBANK","AXISBANK","INDUSINDBK","IDFCFIRSTB","FEDERALBNK","BANDHANBNK","RBLBANK","CITYUNIONBANK"],
-  "Nifty PSU Bank":["SBIN","BANKBARODA","PNB","CANBK","UNIONBANK","INDIANB","BANKINDIA","IOB","CENTRALBK","MAHABANK"],
-  "Nifty Realty":["DLF","LODHA","GODREJPROP","OBEROIRLTY","PHOENIXLTD","PRESTIGE","BRIGADE","SOBHA","MAHLIFE","IBREALEST"],
-  "Nifty Consumer Durables":["TITAN","HAVELLS","VOLTAS","CROMPTON","DIXON","BLUESTARCO","KAJARIACER","WHIRLPOOL","AMBER","VGUARD"],
-  "Nifty Oil & Gas":["RELIANCE","ONGC","IOC","BPCL","GAIL","HINDPETRO","PETRONET","OIL","IGL","MGL"]
-};
+// (The old representative-constituents map was removed: the per-sector detail
+// now lists the FULL official membership from data/sectors.json, fetched
+// server-side from the NSE sector-constituent CSVs.)
 
 let curTF='1D', curSec='';
 
-async function loadSectorBars(tf){
+// ---- Committed sector/desk snapshot (data/sectors.json) --------------------
+// Full official sector membership + EQUAL-WEIGHT constituent-average returns
+// (all timeframes) + Desk-Snapshot index quotes, refreshed server-side
+// (auth-free, chartink/Yahoo via Node) and read here so these cards render
+// instantly. The browser can't fetch Yahoo itself (CORS-blocked) and the free
+// proxies are dead, which is why the old direct path was slow/empty. Sector
+// returns are the mean of member returns (Yahoo lacks history for most NSE
+// sector indices), so the card is labelled "avg constituent return".
+let SECTORS_DATA=null;
+const SEC_TF={'1D':'d1','1W':'w1','1M':'m1','6M':'m6','YTD':'ytd','1Y':'y1'};
+async function loadSectorsData(){
+  if(SECTORS_DATA) return SECTORS_DATA;
   try{
-    const [r,i]=TF[tf];
-    const j=await sparkR(sectors.map(s=>s[1]),r,i);
-    sectors.forEach(s=>{ const v=pctOver(pick(j,s[1]),tf); if(v!=null) s[2]=v; });
+    const r=await fetch('data/sectors.json',{cache:'no-store'});
+    if(r.ok){ const j=await r.json(); if(j&&Array.isArray(j.sectors)){ SECTORS_DATA=j; fillDeskSnapshot(); } }
   }catch(e){}
+  return SECTORS_DATA;
+}
+// Fill the Desk Snapshot index rows instantly from the committed file.
+function fillDeskSnapshot(){
+  const d=SECTORS_DATA&&SECTORS_DATA.desk; if(!d) return;
+  [['sN500','^CRSLDX','₹'],['sN50','^NSEI','₹'],['sMid','NIFTY_MIDCAP_100.NS','₹'],
+   ['sSml','^CNXSC','₹'],['sFx','INR=X','']].forEach(([id,sym,cur])=>{
+    const q=d[sym], e=document.getElementById(id);
+    if(!q||q.p==null||!e) return;
+    const ch=q.d1==null?0:q.d1;
+    e.textContent=`${cur}${inr(q.p)}  ${ch>=0?'+':''}${ch.toFixed(2)}%`;
+    e.className=ch>=0?'up':'down';
+  });
+}
+// Slice a sector's daily series to the timeframe window (for the detail sparkline).
+function secSeriesWindow(series,dates,tf){
+  if(!Array.isArray(series)) return [];
+  dates=dates||[];
+  if(tf==='YTD'){ const y=(dates[dates.length-1]||'').slice(0,4);
+    const i=dates.findIndex(d=>d>=y+'-01-01'); return i>=0?series.slice(i):series; }
+  const N=({'1D':5,'1W':7,'1M':22,'6M':126,'1Y':dates.length})[tf]||dates.length;
+  return series.slice(-N);
+}
+
+async function loadSectorBars(tf){
+  await loadSectorsData();
+  const key=SEC_TF[tf]||'d1';
+  if(SECTORS_DATA&&Array.isArray(SECTORS_DATA.sectors)){
+    const byName={}; SECTORS_DATA.sectors.forEach(s=>byName[s.name]=s);
+    sectors.forEach(s=>{ const sd=byName[s[0]]; const v=sd&&sd.ret&&sd.ret[key];
+      if(v!=null) s[2]=v; });
+  }else{
+    // Last-ditch fallback (file missing): the old direct-Yahoo path.
+    try{ const [r,i]=TF[tf]; const j=await sparkR(sectors.map(s=>s[1]),r,i);
+      sectors.forEach(s=>{ const v=pctOver(pick(j,s[1]),tf); if(v!=null) s[2]=v; }); }catch(e){}
+  }
   renderSectors();
 }
 
@@ -3225,30 +3267,31 @@ function drawSecChart(data){
 }
 
 async function loadSectorDetail(name,tf){
-  const sec=sectors.find(s=>s[0]===name); if(!sec) return;
-  const [r,i]=TF[tf];
-  try{
-    const j=await getJSON(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sec[1])}?range=${r}&interval=${i}`);
-    const res=j.chart&&j.chart.result&&j.chart.result[0];
-    const cl=res&&res.indicators&&res.indicators.quote[0].close;
-    drawSecChart((cl||[]).filter(x=>x!=null));
-  }catch(e){ drawSecChart([]); }
+  await loadSectorsData();
+  const key=SEC_TF[tf]||'d1';
+  const sd=SECTORS_DATA&&SECTORS_DATA.sectors&&SECTORS_DATA.sectors.find(s=>s.name===name);
 
-  const syms=(CONSTITUENTS[name]||[]).map(x=>x+'.NS');
-  let rows=[];
-  if(syms.length){
-    try{
-      const js=await sparkR(syms,r,i);
-      rows=syms.map(sy=>{ const v=pctOver(pick(js,sy),tf);
-        return v==null?null:{s:sy.replace('.NS',''),v}; }).filter(Boolean);
-    }catch(e){}
-  }
-  rows.sort((a,b)=>b.v-a.v);
-  const fmt=arr=>arr.length?arr.map(x=>
-    `<div class="sd-row"><span>${x.s}</span><b class="${x.v>=0?'up':'down'}">${x.v>=0?'+':''}${x.v.toFixed(2)}%</b></div>`
-  ).join(''):'<div class="sd-empty">No live data for this timeframe</div>';
-  document.getElementById('secTop').innerHTML=fmt(rows.slice(0,5));
-  document.getElementById('secBot').innerHTML=fmt(rows.slice(-5).reverse());
+  // Chart: the sector's equal-weight synthetic series, windowed to the timeframe.
+  if(sd&&Array.isArray(sd.series)){
+    drawSecChart(secSeriesWindow(sd.series,SECTORS_DATA.dates,tf).filter(x=>x!=null));
+  }else drawSecChart([]);
+
+  // List: ALL constituents with their return for this timeframe, ranked desc.
+  const q=(SECTORS_DATA&&SECTORS_DATA.q)||{};
+  const members=(sd&&sd.members)||[];
+  let rows=members.map(sym=>{
+    const r=q[sym]; const v=r&&r[key]!=null?r[key]:null;
+    return {n:(r&&r.n)||NAMES[sym]||sym, v};
+  });
+  // data first (desc by return), names without a quote last
+  rows.sort((a,b)=>{ if(a.v==null&&b.v==null) return 0; if(a.v==null) return 1; if(b.v==null) return -1; return b.v-a.v; });
+  const fmt=x=>`<div class="sd-row"><span>${x.n}</span>`+
+    (x.v==null?'<b class="sd-na">—</b>':`<b class="${x.v>=0?'up':'down'}">${x.v>=0?'+':''}${x.v.toFixed(2)}%</b>`)+
+    '</div>';
+  const el=document.getElementById('secAll');
+  if(el) el.innerHTML = rows.length ? rows.map(fmt).join('') : '<div class="sd-empty">No constituent data</div>';
+  const h=document.getElementById('secAllH'); if(h) h.textContent=`All ${rows.length} constituents · ${tf}`;
+  const note=document.getElementById('secAllNote'); if(note) note.textContent='ranked by return';
 }
 
 // Move #secDetail inline under the active sector row (or detach it). Called
@@ -3271,9 +3314,20 @@ function placeSectorDetail(){
   det.style.display='block';
 }
 
+function secFreshness(){
+  const j=SECTORS_DATA; if(!j) return '';
+  try{
+    if(j.intraday){ const t=new Date(j.updated);
+      const ist=new Date(t.getTime()+(t.getTimezoneOffset()+330)*60000);
+      return ` · live · ${String(ist.getHours()).padStart(2,'0')}:${String(ist.getMinutes()).padStart(2,'0')} IST`; }
+    const d=new Date((j.asOf||'')+'T00:00:00');
+    return ` · at close (${isNaN(d)?j.asOf:d.toLocaleDateString('en-IN',{day:'numeric',month:'short'})})`;
+  }catch(e){ return ''; }
+}
 function refreshSector(){
-  document.getElementById('secCaption').textContent=`NSE sectoral indices · ${curTF} return`;
+  document.getElementById('secCaption').textContent=`Avg constituent return · ${curTF}`;
   loadSectorBars(curTF).then(()=>{
+    document.getElementById('secCaption').textContent=`Avg constituent return · ${curTF}${secFreshness()}`;
     placeSectorDetail();
     if(curSec) loadSectorDetail(curSec,curTF);
   });
@@ -8567,14 +8621,23 @@ async function loadFiiKpi(){
 }
 
 (async function init(){
-  try{ const ok=await loadQuotes(); if(ok){ try{ await liveChart('1D'); }catch(e){} } else setStatus(false); }
-  catch(e){ setStatus(false); }
+  // Committed-data cards first — Sector Performance, Desk Snapshot, movers and
+  // FII all read static JSON, so render them immediately rather than behind the
+  // live Yahoo quote fetch (which is CORS-blocked from Pages and can hang for
+  // seconds before failing — that was the lag on these cards).
   refreshSector();
   loadMovers().catch(()=>{ document.getElementById('mvSummary').textContent='Nifty 500 movers unavailable — free feed unreachable.'; });
   loadFiiKpi();
+  // Live quote fetch (ticker + Nifty 500/VIX KPIs + overlay chart) — best-effort.
+  try{ const ok=await loadQuotes(); if(ok){ try{ await liveChart('1D'); }catch(e){} } else setStatus(false); }
+  catch(e){ setStatus(false); }
 })();
 setInterval(()=>{ loadQuotes().catch(()=>{}); refreshSector(); }, 60000);
 setInterval(()=>{ loadMovers().catch(()=>{}); }, 300000);
+// Re-pull the committed sector/desk snapshot every 5 min (it's refreshed
+// server-side ~every 30 min during market hours); the next refreshSector picks
+// it up. Nulling the cache keeps intraday TF switches instant in between.
+setInterval(()=>{ SECTORS_DATA=null; refreshSector(); }, 300000);
 </script>
 </body>
 </html>

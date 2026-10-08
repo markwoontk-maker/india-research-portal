@@ -188,6 +188,13 @@ Step "refresh-highs" { & $node "scripts\refresh-highs.js" }
 #      Yahoo path, which was CORS-blocked and only ever saw a tiny broken sample.
 Step "refresh-movers" { & $node "scripts\refresh-movers.js" }
 
+# 8b6. Refresh Sector Performance + Desk Snapshot (data/sectors.json). AUTH-FREE:
+#      full official sector membership from niftyindices.com CSVs + equal-weight
+#      constituent-average returns (all timeframes) + Desk-Snapshot index quotes,
+#      fetched from Yahoo server-side (the browser is CORS-blocked). Settled EOD
+#      snapshot here; the intraday task refreshes it ~every 30 min in-session.
+Step "refresh-sectors" { & $node "scripts\refresh-sectors.js" }
+
 # 8c. Refresh the monthly Positioning data files (fpi_sectors, mf_categories,
 #     sip_flows, model_portfolios) via the Claude headless miner. Gated to ~twice
 #     a month (2nd & 17th windows); replaces the cloud routine that can't push.
@@ -224,7 +231,7 @@ Step "build-house-view-notes" {
 
 # 9. Commit + push if there are any changes. No-op on a quiet day.
 Step "git stage" {
-  & git add data/pdfdata.json data/pdfmap.json data/research.json data/sector-tps.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/highs.json data/movers.json data/wl_returns.json data/wl_quotes.json data/earnings_calendar.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json data/house_view_notes.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
+  & git add data/pdfdata.json data/pdfmap.json data/research.json data/sector-tps.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/highs.json data/movers.json data/sectors.json data/wl_returns.json data/wl_quotes.json data/earnings_calendar.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json data/house_view_notes.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
 }
 Step "git commit + push" {
   $cached = & git diff --cached --stat
