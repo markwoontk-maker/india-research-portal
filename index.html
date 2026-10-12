@@ -249,6 +249,11 @@
   .bar{flex:1;height:9px;background:var(--ink-2);border-radius:6px;overflow:hidden;position:relative}
   .bar i{position:absolute;top:0;bottom:0;left:50%;border-radius:6px;transition:width 1s cubic-bezier(.2,.7,.2,1)}
   .sector .pct{width:72px;text-align:right;font-family:'Roboto Mono';font-size:12.5px;font-weight:500;flex:none}
+  /* # of Nifty 500 stocks in the industry bucket */
+  .sector .cnt{width:26px;flex:none;text-align:right;font-family:'Roboto Mono';font-size:10.5px;color:var(--text-mute)}
+  /* Phones: narrower name/% columns so the bar keeps a readable width
+     (full industry name stays in the row tooltip). */
+  @media(max-width:520px){.sector{gap:10px}.sector .nm{width:108px}.sector .pct{width:62px}}
 
   /* sector controls + detail */
   .sec-ctrls{display:flex;gap:8px;flex:none}
@@ -565,7 +570,8 @@
   /* All-constituents list: two responsive columns so 10-20 names stay compact. */
   .sd-allh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:2px}
   .sd-note{font-size:10.5px;color:var(--text-mute);letter-spacing:.02em}
-  .sd-all{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+  .sd-all{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;
+    max-height:440px;overflow-y:auto;padding-right:4px}
   @media(max-width:620px){.sd-all{grid-template-columns:1fr}}
 
   /* tables */
@@ -1189,7 +1195,7 @@
       <!-- 3 · Sector Performance -->
       <div class="card reveal" style="animation-delay:.22s">
         <div class="card-h">
-          <div><h3>Sector Performance</h3><p id="secCaption">Avg constituent return · 1D</p></div>
+          <div><h3>Sector Performance</h3><p id="secCaption">Nifty 500 by NSE industry · avg constituent return · 1D</p></div>
           <div class="sec-ctrls">
             <select id="tfSel" class="dd" aria-label="Timeframe">
               <option>1D</option><option>1W</option><option>1M</option>
@@ -2204,24 +2210,11 @@ const indices = [
   ["INDIA VIX","13.24","−4.89%",-1],
 ];
 
-// NSE sectoral indices (official list). [name, Yahoo symbol, sample %].
-// Live % overwrites the sample where Yahoo has the symbol.
-let sectors = [
-  ["Nifty Auto","^CNXAUTO",1.46],
-  ["Nifty Bank","^NSEBANK",0.96],
-  ["Nifty Financial Services","^CNXFIN",0.78],
-  ["Nifty FMCG","^CNXFMCG",-0.31],
-  ["Nifty Healthcare","^CNXHEALTH",0.34],
-  ["Nifty IT","^CNXIT",-0.54],
-  ["Nifty Media","^CNXMEDIA",-0.88],
-  ["Nifty Metal","^CNXMETAL",1.38],
-  ["Nifty Pharma","^CNXPHARMA",0.22],
-  ["Nifty Private Bank","^NIFTYPVTBANK",0.69],
-  ["Nifty PSU Bank","^CNXPSUBANK",1.21],
-  ["Nifty Realty","^CNXREALTY",1.74],
-  ["Nifty Consumer Durables","^CNXCONSUMER",0.51],
-  ["Nifty Oil & Gas","^CNXENERGY",0.62]
-];
+// Sector bars: [display name, # Nifty 500 stocks, % return for the TF, NSE
+// industry name]. Built from data/sectors.json by loadSectorBars() — NSE's own
+// industry classification of the full Nifty 500 (~20 groups, every stock in
+// exactly one), not the 14 curated Nifty sector indices (which only cover ~166).
+let sectors = [];
 
 const movers = [
   ["TATAMOTORS","Tata Motors","1,042.30","+5.84",1],
@@ -2290,14 +2283,19 @@ function renderSectors(){
   // it survives the re-render (placeSectorDetail re-inserts it afterwards).
   const det=document.getElementById('secDetail');
   if(det && det.parentElement===host) host.parentElement.appendChild(det);
-  const list=[...sectors].sort((a,b)=>b[2]-a[2]);
-  const max=Math.max(1,...list.map(s=>Math.abs(s[2])));
-  host.innerHTML=list.map(([n,,p])=>{
-    const up=p>=0, w=Math.min(Math.abs(p)/max*50,50);
-    return `<div class="sector" data-sec="${n}" title="View ${n} chart & movers">
-      <div class="nm">${n}</div>
+  if(!sectors.length){ host.innerHTML='<div class="sd-empty">Loading sectors…</div>'; return; }
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const val=s=>typeof s[2]==='number'?s[2]:null;
+  const list=[...sectors].sort((a,b)=>(val(b)??-Infinity)-(val(a)??-Infinity));
+  const max=Math.max(1,...list.map(s=>Math.abs(val(s)||0)));
+  host.innerHTML=list.map(([n,cnt,p,ind])=>{
+    const has=typeof p==='number', up=has&&p>=0, w=has?Math.min(Math.abs(p)/max*50,50):0;
+    const tip=`${ind||n} · ${cnt} Nifty 500 stocks — click for the full list`;
+    return `<div class="sector" data-sec="${esc(n)}" title="${esc(tip)}">
+      <div class="nm">${esc(n)}</div>
+      <div class="cnt">${cnt}</div>
       <div class="bar"><i style="${up?'left:50%':'right:50%'};width:0;background:${up?'var(--up)':'var(--down)'}" data-w="${w.toFixed(1)}"></i></div>
-      <div class="pct ${up?'up':'down'}">${up?'+':''}${p.toFixed(2)}%</div>
+      <div class="pct ${has?(up?'up':'down'):''}">${has?(up?'+':'')+p.toFixed(2)+'%':'—'}</div>
     </div>`;
   }).join('');
   setTimeout(()=>document.querySelectorAll('#sectors .bar i').forEach(b=>b.style.width=b.dataset.w+'%'),120);
@@ -3185,19 +3183,18 @@ function pctOver(d,tf){
   return (lp-base)/base*100;
 }
 // (The old representative-constituents map was removed: the per-sector detail
-// now lists the FULL official membership from data/sectors.json, fetched
-// server-side from the NSE sector-constituent CSVs.)
+// now lists every Nifty 500 stock in the industry, from data/sectors.json.)
 
 let curTF='1D', curSec='';
 
 // ---- Committed sector/desk snapshot (data/sectors.json) --------------------
-// Full official sector membership + EQUAL-WEIGHT constituent-average returns
-// (all timeframes) + Desk-Snapshot index quotes, refreshed server-side
-// (auth-free, chartink/Yahoo via Node) and read here so these cards render
-// instantly. The browser can't fetch Yahoo itself (CORS-blocked) and the free
-// proxies are dead, which is why the old direct path was slow/empty. Sector
-// returns are the mean of member returns (Yahoo lacks history for most NSE
-// sector indices), so the card is labelled "avg constituent return".
+// The full Nifty 500 grouped by NSE's own industry classification (~20 groups,
+// every stock exactly once) + EQUAL-WEIGHT constituent-average returns (all
+// timeframes) + Desk-Snapshot index quotes, refreshed server-side (auth-free,
+// Yahoo via Node) and read here so these cards render instantly. The browser
+// can't fetch Yahoo itself (CORS-blocked) and the free proxies are dead, which
+// is why the old direct path was slow/empty. Industry buckets have no
+// cap-weighted index, so the card is labelled "avg constituent return".
 let SECTORS_DATA=null;
 const SEC_TF={'1D':'d1','1W':'w1','1M':'m1','6M':'m6','YTD':'ytd','1Y':'y1'};
 async function loadSectorsData(){
@@ -3234,15 +3231,13 @@ async function loadSectorBars(tf){
   await loadSectorsData();
   const key=SEC_TF[tf]||'d1';
   if(SECTORS_DATA&&Array.isArray(SECTORS_DATA.sectors)){
-    const byName={}; SECTORS_DATA.sectors.forEach(s=>byName[s.name]=s);
-    sectors.forEach(s=>{ const sd=byName[s[0]]; const v=sd&&sd.ret&&sd.ret[key];
-      if(v!=null) s[2]=v; });
-  }else{
-    // Last-ditch fallback (file missing): the old direct-Yahoo path.
-    try{ const [r,i]=TF[tf]; const j=await sparkR(sectors.map(s=>s[1]),r,i);
-      sectors.forEach(s=>{ const v=pctOver(pick(j,s[1]),tf); if(v!=null) s[2]=v; }); }catch(e){}
-  }
-  renderSectors();
+    sectors=SECTORS_DATA.sectors.map(s=>[s.name,(s.members||[]).length,
+      (s.ret&&s.ret[key]!=null)?s.ret[key]:null, s.industry||s.name]);
+    renderSectors();
+  }else if(!sectors.length){
+    // No committed file and no earlier render: say so rather than spin forever.
+    document.getElementById('sectors').innerHTML='<div class="sd-empty">Sector data unavailable — retrying shortly.</div>';
+  }else renderSectors();
 }
 
 let secChartObj=null;
@@ -3325,9 +3320,10 @@ function secFreshness(){
   }catch(e){ return ''; }
 }
 function refreshSector(){
-  document.getElementById('secCaption').textContent=`Avg constituent return · ${curTF}`;
+  const cap=`Nifty 500 by NSE industry · avg constituent return · ${curTF}`;
+  document.getElementById('secCaption').textContent=cap;
   loadSectorBars(curTF).then(()=>{
-    document.getElementById('secCaption').textContent=`Avg constituent return · ${curTF}${secFreshness()}`;
+    document.getElementById('secCaption').textContent=cap+secFreshness();
     placeSectorDetail();
     if(curSec) loadSectorDetail(curSec,curTF);
   });
@@ -3509,7 +3505,8 @@ const TF_LABEL={'1D':"today's % move",'1W':'1-week return','1M':'1-month return'
   '6M':'6-month return','YTD':'YTD return','1Y':'1-year return'};
 
 function moversSummary(o){
-  const ss=[...sectors].filter(s=>typeof s[2]==='number').sort((a,b)=>b[2]-a[2]);
+  // ≥5 stocks so a 1-stock bucket (e.g. Diversified) can't headline breadth.
+  const ss=[...sectors].filter(s=>typeof s[2]==='number'&&(s[1]||0)>=5).sort((a,b)=>b[2]-a[2]);
   const cut=n=>n.replace(/^Nifty\s+/,'');
   let secTxt='';
   if((o.tf||'1D')==='1D' && ss.length>=2){

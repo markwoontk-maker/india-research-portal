@@ -189,7 +189,8 @@ Step "refresh-highs" { & $node "scripts\refresh-highs.js" }
 Step "refresh-movers" { & $node "scripts\refresh-movers.js" }
 
 # 8b6. Refresh Sector Performance + Desk Snapshot (data/sectors.json). AUTH-FREE:
-#      full official sector membership from niftyindices.com CSVs + equal-weight
+#      the full Nifty 500 grouped by NSE's own industry classification (~20
+#      groups, from the niftyindices.com Nifty 500 CSV) + equal-weight
 #      constituent-average returns (all timeframes) + Desk-Snapshot index quotes,
 #      fetched from Yahoo server-side (the browser is CORS-blocked). Settled EOD
 #      snapshot here; the intraday task refreshes it ~every 30 min in-session.

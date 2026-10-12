@@ -4,25 +4,31 @@
  *
  * The static Pages site can't call Yahoo from the browser (CORS-blocked; public
  * proxies are dead), so the Sector Performance bars, the per-sector detail
- * (chart + stock list) and the Desk Snapshot rows were slow/empty — the page
- * fell through to dead proxies before giving up. This fetches everything those
- * cards need server-side and commits data/sectors.json for an instant render.
+ * (chart + stock list) and the Desk Snapshot rows were slow/empty. This fetches
+ * everything those cards need server-side and commits data/sectors.json for an
+ * instant render.
  *
- * SECTOR RETURNS ARE EQUAL-WEIGHTED CONSTITUENT AVERAGES, not the cap-weighted
- * NSE index. Why: Yahoo has no usable history for most NSE sector-index symbols
- * (only NIFTY BANK / IT / PHARMA return a daily series; the rest give a single
- * current point or 404), so a per-index pull is unreliable. The constituents,
- * by contrast, all resolve. So each sector's return for a timeframe is the mean
- * of its members' returns, and the detail sparkline is a synthetic equal-weight
- * index (every member rebased to 100 at the window start, averaged per day). The
- * card is labelled "avg constituent return" so this is explicit.
+ * SECTORS = NSE's OWN INDUSTRY CLASSIFICATION OF THE FULL NIFTY 500. Every
+ * constituent in niftyindices.com's ind_nifty500list.csv carries an "Industry"
+ * (~20 macro-industries: Financial Services, Capital Goods, Healthcare, ...), so
+ * grouping by it buckets all ~500 stocks, each exactly once. (The previous
+ * version grouped by the 14 named Nifty sector indices, whose combined
+ * membership is only ~166 names — whole industries like Capital Goods,
+ * Chemicals, Power, Telecom and Cement had no index at all.)
+ *
+ * SECTOR RETURNS ARE EQUAL-WEIGHTED CONSTITUENT AVERAGES. There is no
+ * cap-weighted index for an NSE industry bucket (and Yahoo has no usable history
+ * for most NSE sector indices anyway), so each sector's return for a timeframe
+ * is the mean of its members' returns, and the detail sparkline is a synthetic
+ * equal-weight index (every member rebased to 100 at the window start, averaged
+ * per day). The card is labelled "avg constituent return" so this is explicit.
  *
  * Contents of data/sectors.json:
  *   - desk:    {p,d1} for the 5 Desk-Snapshot indices (chart endpoint: last vs
  *              chartPreviousClose — reliable even without history).
  *   - dates:   shared trading-day axis (from ^NSEI) the series align to.
- *   - sectors: [{name, ret{d1,w1,m1,m6,ytd,y1}, series[], members[]}] — full
- *              official constituent lists from niftyindices.com sector CSVs.
+ *   - sectors: [{name, industry, ret{d1,w1,m1,m6,ytd,y1}, series[], members[]}]
+ *              name = short display label, industry = NSE's full name.
  *   - q:       {n,p,d1,w1,m1,m6,ytd,y1} per member base-symbol (detail list).
  *
  * AUTH-FREE, no LLM. Keeps the last good file on failure; never throws.
@@ -34,24 +40,19 @@ const path = require('path');
 
 const OUT = path.join(__dirname, '..', 'data', 'sectors.json');
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
-
-const SECTORS = [
-  ["Nifty Auto", "ind_niftyautolist.csv"],
-  ["Nifty Bank", "ind_niftybanklist.csv"],
-  ["Nifty Financial Services", "ind_niftyfinancelist.csv"],
-  ["Nifty FMCG", "ind_niftyfmcglist.csv"],
-  ["Nifty Healthcare", "ind_niftyhealthcarelist.csv"],
-  ["Nifty IT", "ind_niftyitlist.csv"],
-  ["Nifty Media", "ind_niftymedialist.csv"],
-  ["Nifty Metal", "ind_niftymetallist.csv"],
-  ["Nifty Pharma", "ind_niftypharmalist.csv"],
-  ["Nifty Private Bank", "ind_nifty_privatebanklist.csv"],
-  ["Nifty PSU Bank", "ind_niftypsubanklist.csv"],
-  ["Nifty Realty", "ind_niftyrealtylist.csv"],
-  ["Nifty Consumer Durables", "ind_niftyconsumerdurableslist.csv"],
-  ["Nifty Oil & Gas", "ind_niftyoilgaslist.csv"],
-];
+const CSV_URL = 'https://niftyindices.com/IndexConstituent/ind_nifty500list.csv';
 const DESK = ["^CRSLDX", "^NSEI", "NIFTY_MIDCAP_100.NS", "^CNXSC", "INR=X"];
+const MIN_MEMBERS = 300;  // a real Nifty 500 run resolves ~490; never publish far below that
+
+// Shorter bar labels for NSE's longest industry names (others are used as-is).
+const SHORT = {
+  "Automobile and Auto Components": "Auto & Auto Components",
+  "Fast Moving Consumer Goods": "FMCG",
+  "Information Technology": "IT",
+  "Oil Gas & Consumable Fuels": "Oil, Gas & Fuels",
+  "Media Entertainment & Publication": "Media & Entertainment",
+  "Telecommunication": "Telecom",
+};
 
 function get(url) {
   return new Promise((resolve) => {
@@ -68,19 +69,22 @@ const round = (x) => (x == null ? null : Math.round(x * 1e4) / 1e4);
 const istDate = (ts) => new Date((ts + 19800) * 1000).toISOString().slice(0, 10);
 const mean = (xs) => { const v = xs.filter((x) => x != null && Number.isFinite(x)); return v.length ? round(v.reduce((a, b) => a + b, 0) / v.length) : null; };
 
+// Nifty 500 CSV -> [{sym, name, industry}] (quoted-field aware).
 function parseCsv(csv) {
   const out = [];
   const lines = csv.split(/\r?\n/).filter(Boolean);
   if (!lines.length) return out;
   const rowOf = (line) => { const a = []; let c = '', q = false; for (const ch of line) { if (ch === '"') q = !q; else if (ch === ',' && !q) { a.push(c); c = ''; } else c += ch; } a.push(c); return a; };
   const hdr = rowOf(lines[0]).map((h) => h.trim().toLowerCase());
-  const iN = hdr.indexOf('company name'), iS = hdr.indexOf('symbol');
-  if (iN < 0 || iS < 0) return out;
+  const iN = hdr.indexOf('company name'), iS = hdr.indexOf('symbol'), iI = hdr.indexOf('industry');
+  if (iN < 0 || iS < 0 || iI < 0) return out;
   for (let i = 1; i < lines.length; i++) {
     const r = rowOf(lines[i]);
     const sym = (r[iS] || '').trim().toUpperCase();
     const name = (r[iN] || '').trim().replace(/\s+(Ltd\.?|Limited)$/i, '');
-    if (sym) out.push({ sym, name: name || sym });
+    const industry = (r[iI] || '').trim() || 'Other';
+    // NSE keeps placeholder rows (e.g. DUMMYHEG after a demerger) — not real stocks.
+    if (sym && !/^DUMMY/.test(sym)) out.push({ sym, name: name || sym, industry });
   }
   return out;
 }
@@ -140,21 +144,20 @@ function session() {
 }
 
 async function main() {
-  // 1. Full official membership from the 14 sector CSVs.
-  const members = {};
-  for (const [name, csv] of SECTORS) {
-    const r = await get('https://niftyindices.com/IndexConstituent/' + csv);
-    members[name] = r.status === 200 ? parseCsv(r.body) : [];
-    await sleep(150);
+  // 1. Full Nifty 500 with NSE industry classification.
+  const csv = await get(CSV_URL);
+  const rows = csv.status === 200 ? parseCsv(csv.body) : [];
+  if (rows.length < 400) { console.log('refresh-sectors: Nifty 500 CSV returned ' + rows.length + ' rows — keeping the last good file.'); return; }
+  const byIndustry = new Map();             // industry -> [{sym,name}]
+  for (const r of rows) {
+    if (!byIndustry.has(r.industry)) byIndustry.set(r.industry, []);
+    byIndustry.get(r.industry).push(r);
   }
-  const memSyms = new Set();
-  for (const name in members) for (const m of members[name]) memSyms.add(m.sym.toUpperCase() + '.NS');
 
-  // 2. Spark 1y daily for every member -> series + metrics.
-  const memSeries = {};   // base sym -> [{d,c}]
-  const memMetric = {};   // base sym -> metrics
+  // 2. Spark 1y daily for every constituent -> series + metrics.
+  const memSeries = {}, memMetric = {};
   let asOf = '';
-  const uni = Array.from(memSyms);
+  const uni = rows.map((r) => r.sym + '.NS');
   for (let i = 0; i < uni.length; i += 20) {
     const chunk = uni.slice(i, i + 20);
     const j = await spark(chunk, '1y');
@@ -167,8 +170,9 @@ async function main() {
     }
     await sleep(250);
   }
-  if (Object.keys(memMetric).length < 80 || !asOf) {
-    console.log('refresh-sectors: only ' + Object.keys(memMetric).length + ' members resolved — keeping the last good file.');
+  const resolved = Object.keys(memMetric).length;
+  if (resolved < MIN_MEMBERS || !asOf) {
+    console.log('refresh-sectors: only ' + resolved + ' of ' + rows.length + ' constituents resolved — keeping the last good file.');
     return;
   }
 
@@ -176,25 +180,20 @@ async function main() {
   const nsei = seriesOf((await spark(['^NSEI'], '1y'))['^NSEI']);
   const dates = (nsei.length >= 50 ? nsei : Object.values(memSeries).sort((a, b) => b.length - a.length)[0] || []).map((x) => x.d);
 
-  // 4. Per-sector equal-weight return (mean of member metrics) + synthetic series.
+  // 4. Per-industry equal-weight return + synthetic series. Largest industries first.
   const TFS = ['d1', 'w1', 'm1', 'm6', 'ytd', 'y1'];
-  const sectorsOut = SECTORS.map(([name]) => {
-    const syms = members[name].map((m) => m.sym.toUpperCase());
+  const sectorsOut = [...byIndustry.entries()].sort((a, b) => b[1].length - a[1].length).map(([industry, mems]) => {
+    const syms = mems.map((m) => m.sym);
     const ret = {};
     for (const tf of TFS) ret[tf] = mean(syms.map((s) => memMetric[s] && memMetric[s][tf]));
-    // synthetic equal-weight index on the shared axis: each member rebased to 100
-    // at the window start, averaged per day (members without a base close skipped).
     const base = dates[0];
     const normed = syms.map((s) => {
       const ser = memSeries[s]; if (!ser) return null;
       const b = closeOnOrBefore(ser, base); if (!b) return null;
       return { ser, b };
     }).filter(Boolean);
-    const series = dates.map((d) => {
-      const vals = normed.map((x) => { const c = closeOnOrBefore(x.ser, d); return c == null ? null : (c / x.b) * 100; });
-      return mean(vals);
-    });
-    return { name, ret, series, members: syms };
+    const series = dates.map((d) => mean(normed.map((x) => { const c = closeOnOrBefore(x.ser, d); return c == null ? null : (c / x.b) * 100; })));
+    return { name: SHORT[industry] || industry, industry, ret, series, members: syms };
   });
 
   // 5. Desk Snapshot indices.
@@ -203,16 +202,17 @@ async function main() {
 
   // 6. Per-member quote rows for the detail list.
   const q = {};
-  for (const name in members) for (const m of members[name]) {
-    const base = m.sym.toUpperCase();
-    if (q[base]) continue;
-    const mm = memMetric[base];
-    q[base] = mm ? { n: m.name, p: mm.p, d1: mm.d1, w1: mm.w1, m1: mm.m1, m6: mm.m6, ytd: mm.ytd, y1: mm.y1 } : { n: m.name };
+  for (const r of rows) {
+    const mm = memMetric[r.sym];
+    q[r.sym] = mm ? { n: r.name, p: mm.p, d1: mm.d1, w1: mm.w1, m1: mm.m1, m6: mm.m6, ytd: mm.ytd, y1: mm.y1 } : { n: r.name };
   }
 
   const sess = session();
-  const out = { asOf, updated: new Date().toISOString(), intraday: sess.intraday, session: sess.session, method: 'equal-weight constituent avg', dates, desk, sectors: sectorsOut, q };
+  const out = { asOf, updated: new Date().toISOString(), intraday: sess.intraday, session: sess.session,
+    method: 'NSE industry classification of the Nifty 500; equal-weight constituent avg', dates, desk, sectors: sectorsOut, q };
   fs.writeFileSync(OUT, JSON.stringify(out) + '\n');
-  console.log('refresh-sectors: wrote data/sectors.json (' + sess.session + ', ' + sectorsOut.length + ' sectors, ' + Object.keys(q).length + ' members, ' + Object.keys(desk).length + '/5 desk, asOf ' + asOf + ', ' + (fs.statSync(OUT).size / 1024).toFixed(0) + ' KB).');
+  console.log('refresh-sectors: wrote data/sectors.json (' + sess.session + ', ' + sectorsOut.length + ' industries, ' +
+    resolved + '/' + rows.length + ' constituents priced, ' + Object.keys(desk).length + '/5 desk, asOf ' + asOf + ', ' +
+    (fs.statSync(OUT).size / 1024).toFixed(0) + ' KB).');
 }
 main().catch((e) => { console.log('refresh-sectors: unexpected error — ' + e.message); process.exit(1); });
