@@ -16,20 +16,29 @@
  * membership is only ~166 names — whole industries like Capital Goods,
  * Chemicals, Power, Telecom and Cement had no index at all.)
  *
- * SECTOR RETURNS ARE EQUAL-WEIGHTED CONSTITUENT AVERAGES. There is no
- * cap-weighted index for an NSE industry bucket (and Yahoo has no usable history
- * for most NSE sector indices anyway), so each sector's return for a timeframe
- * is the mean of its members' returns, and the detail sparkline is a synthetic
- * equal-weight index (every member rebased to 100 at the window start, averaged
- * per day). The card is labelled "avg constituent return" so this is explicit.
+ * TWO SECTOR RETURNS PER TIMEFRAME (the card has a Cap-wt / Equal-wt switch):
+ *   - retCap: FULL-MARKET-CAP weighted. A stock's weight is its market cap at
+ *     the START of the window (current cap / (1 + its return)), so the figure
+ *     equals the return of a buy-and-hold basket bought at the window start —
+ *     the way an index behaves, without over-counting recent winners. Full (not
+ *     free-float) cap, so promoter/government-heavy names (LIC, Coal India, PSU
+ *     banks) weigh more than in NSE's free-float indices.
+ *   - ret: equal-weighted mean of member returns.
+ * Market caps come from Yahoo's v7 quote endpoint — keyless (session cookie +
+ * crumb, no API key), 50 symbols/request. If that fails, the previous run's caps
+ * are reused, rescaled by each stock's price change (share counts barely move).
+ * Detail sparklines: `seriesCap` (cap-weighted basket from the axis start) and
+ * `series` (equal-weight), both rebased to 100.
  *
  * Contents of data/sectors.json:
  *   - desk:    {p,d1} for the 5 Desk-Snapshot indices (chart endpoint: last vs
  *              chartPreviousClose — reliable even without history).
  *   - dates:   shared trading-day axis (from ^NSEI) the series align to.
- *   - sectors: [{name, industry, ret{d1,w1,m1,m6,ytd,y1}, series[], members[]}]
- *              name = short display label, industry = NSE's full name.
- *   - q:       {n,p,d1,w1,m1,m6,ytd,y1} per member base-symbol (detail list).
+ *   - mcap:    {source: live|cached|mixed|none, coverage: #members with a cap}.
+ *   - sectors: [{name, industry, ret{d1,w1,m1,m6,ytd,y1}, retCap{...}, series[],
+ *              seriesCap[], members[]}] — name = short label, industry = NSE name.
+ *   - q:       {n,p,mc,d1,w1,m1,m6,ytd,y1} per member base-symbol (mc = full
+ *              market cap, ₹ Cr) — powers the detail list + weights.
  *
  * AUTH-FREE, no LLM. Keeps the last good file on failure; never throws.
  * Run:  node scripts/refresh-sectors.js
@@ -64,8 +73,61 @@ function get(url) {
     req.on('error', () => resolve({ status: 0, body: '' }));
   });
 }
+// One request, no redirect-following, response headers kept (for Set-Cookie).
+function getRaw(url, headers = {}) {
+  return new Promise((resolve) => {
+    const req = https.get(url, { headers: { 'User-Agent': UA, ...headers } }, (r) => {
+      const ch = []; r.on('data', (c) => ch.push(c));
+      r.on('end', () => resolve({ status: r.statusCode, headers: r.headers, body: Buffer.concat(ch).toString('utf8') }));
+    });
+    req.on('error', () => resolve({ status: 0, headers: {}, body: '' }));
+  });
+}
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const round = (x) => (x == null ? null : Math.round(x * 1e4) / 1e4);
+const round2 = (x) => (x == null ? null : Math.round(x * 100) / 100);
+
+// Full market caps (₹ Cr) for base symbols via Yahoo's v7 quote endpoint.
+// Keyless: a session cookie from fc.yahoo.com + a crumb. Returns {} on failure.
+async function marketCaps(baseSyms) {
+  const out = {};
+  const c = await getRaw('https://fc.yahoo.com/');
+  const cookie = ((c.headers && c.headers['set-cookie']) || []).map((s) => s.split(';')[0]).join('; ');
+  if (!cookie) return out;
+  const cr = await getRaw('https://query1.finance.yahoo.com/v1/test/getcrumb', { Cookie: cookie });
+  const crumb = (cr.body || '').trim();
+  if (cr.status !== 200 || !crumb || crumb.length > 40 || /[<\s]/.test(crumb)) return out;
+  for (let i = 0; i < baseSyms.length; i += 50) {
+    const chunk = baseSyms.slice(i, i + 50).map((s) => s + '.NS');
+    const url = 'https://query1.finance.yahoo.com/v7/finance/quote?symbols=' + encodeURIComponent(chunk.join(',')) +
+      '&fields=marketCap&crumb=' + encodeURIComponent(crumb);
+    for (let a = 0; a < 2; a++) {
+      const r = await getRaw(url, { Cookie: cookie });
+      let rows = null;
+      if (r.status === 200) { try { rows = JSON.parse(r.body).quoteResponse.result; } catch (e) {} }
+      if (rows) {
+        for (const x of rows) if (x && x.symbol && x.marketCap > 0) out[x.symbol.replace(/\.NS$/, '')] = Math.round(x.marketCap / 1e7);
+        break;
+      }
+      await sleep(1500);
+    }
+    await sleep(300);
+  }
+  return out;
+}
+
+// Cap-weighted return: weight = market cap at the window START (current cap /
+// (1 + r)), i.e. the return of a basket bought at the window start.
+function capWeighted(syms, tf, memMetric, mcap) {
+  let num = 0, den = 0;
+  for (const s of syms) {
+    const r = memMetric[s] && memMetric[s][tf], M = mcap[s];
+    if (r == null || !M || 1 + r / 100 <= 0.01) continue;
+    const w = M / (1 + r / 100);
+    num += w * r; den += w;
+  }
+  return den > 0 ? round(num / den) : null;
+}
 const istDate = (ts) => new Date((ts + 19800) * 1000).toISOString().slice(0, 10);
 const mean = (xs) => { const v = xs.filter((x) => x != null && Number.isFinite(x)); return v.length ? round(v.reduce((a, b) => a + b, 0) / v.length) : null; };
 
@@ -154,13 +216,16 @@ async function main() {
     byIndustry.get(r.industry).push(r);
   }
 
-  // 2. Spark 1y daily for every constituent -> series + metrics.
+  // 2. Spark daily for every constituent -> series + metrics. 2y, not 1y: a 1y
+  //    range starts AT the anniversary, so the close on/before it (needed for
+  //    the 1Y return) is often missing — e.g. when it falls on a weekend every
+  //    stock's 1Y came back null. Series are trimmed to the chart axis below.
   const memSeries = {}, memMetric = {};
   let asOf = '';
   const uni = rows.map((r) => r.sym + '.NS');
   for (let i = 0; i < uni.length; i += 20) {
     const chunk = uni.slice(i, i + 20);
-    const j = await spark(chunk, '1y');
+    const j = await spark(chunk, '2y');
     for (const ysym of chunk) {
       const base = ysym.replace(/\.NS$/, '');
       const s = seriesOf(j[ysym]);
@@ -178,22 +243,63 @@ async function main() {
 
   // 3. Shared trading-day axis from ^NSEI (reliable), last ~252 sessions.
   const nsei = seriesOf((await spark(['^NSEI'], '1y'))['^NSEI']);
-  const dates = (nsei.length >= 50 ? nsei : Object.values(memSeries).sort((a, b) => b.length - a.length)[0] || []).map((x) => x.d);
+  const dates = (nsei.length >= 50 ? nsei : (Object.values(memSeries).sort((a, b) => b.length - a.length)[0] || []).slice(-250)).map((x) => x.d);
+  // Metrics are done; keep only what the 1y chart axis needs (+ a few days
+  // before its start so closeOnOrBefore finds a base close).
+  const keepFrom = shiftDays(dates[0], -10);
+  for (const k in memSeries) memSeries[k] = memSeries[k].filter((x) => x.d >= keepFrom);
 
-  // 4. Per-industry equal-weight return + synthetic series. Largest industries first.
+  // 3b. Full market caps (₹ Cr). Live from Yahoo; any gaps are filled from the
+  //     previous file's cap rescaled by the price change since (share counts
+  //     barely move day to day), so a failed fetch doesn't drop the weighting.
+  const priced = Object.keys(memMetric);
+  const live = await marketCaps(priced);
+  let prevQ = {};
+  try { prevQ = JSON.parse(fs.readFileSync(OUT, 'utf8')).q || {}; } catch (e) {}
+  const mcap = {};
+  let nLive = 0, nCached = 0;
+  for (const s of priced) {
+    if (live[s]) { mcap[s] = live[s]; nLive++; continue; }
+    const pq = prevQ[s], pNow = memMetric[s].p;
+    if (pq && pq.mc > 0 && pq.p > 0 && pNow > 0) { mcap[s] = Math.round(pq.mc * pNow / pq.p); nCached++; }
+  }
+  const mcapSource = nLive && nCached ? 'mixed' : nLive ? 'live' : nCached ? 'cached' : 'none';
+
+  // 4. Per-industry returns (equal + cap-weighted) + synthetic series. Largest first.
   const TFS = ['d1', 'w1', 'm1', 'm6', 'ytd', 'y1'];
+  const base = dates[0];
   const sectorsOut = [...byIndustry.entries()].sort((a, b) => b[1].length - a[1].length).map(([industry, mems]) => {
     const syms = mems.map((m) => m.sym);
-    const ret = {};
-    for (const tf of TFS) ret[tf] = mean(syms.map((s) => memMetric[s] && memMetric[s][tf]));
-    const base = dates[0];
+    const ret = {}, retCap = {};
+    for (const tf of TFS) {
+      ret[tf] = mean(syms.map((s) => memMetric[s] && memMetric[s][tf]));
+      retCap[tf] = capWeighted(syms, tf, memMetric, mcap);
+    }
+    // Members present at the axis start (closeOnOrBefore carries the last close
+    // forward, so each one has a value on every later date -> stable basket).
     const normed = syms.map((s) => {
       const ser = memSeries[s]; if (!ser) return null;
       const b = closeOnOrBefore(ser, base); if (!b) return null;
-      return { ser, b };
+      const cNow = ser[ser.length - 1].c;
+      // cap at the axis start = current cap scaled back by the price move
+      const wb = mcap[s] && cNow > 0 ? mcap[s] * b / cNow : 0;
+      return { ser, b, wb };
     }).filter(Boolean);
-    const series = dates.map((d) => mean(normed.map((x) => { const c = closeOnOrBefore(x.ser, d); return c == null ? null : (c / x.b) * 100; })));
-    return { name: SHORT[industry] || industry, industry, ret, series, members: syms };
+    const series = [], seriesCap = [];
+    const capBasket = normed.filter((x) => x.wb > 0);
+    const W = capBasket.reduce((a, x) => a + x.wb, 0);
+    for (const d of dates) {
+      const vals = normed.map((x) => { const c = closeOnOrBefore(x.ser, d); return c == null ? null : (c / x.b) * 100; });
+      const m = mean(vals); series.push(m == null ? null : round2(m));
+      if (W > 0) {
+        let v = 0;
+        for (const x of capBasket) v += x.wb * (closeOnOrBefore(x.ser, d) / x.b);
+        seriesCap.push(round2(100 * v / W));
+      }
+    }
+    const out = { name: SHORT[industry] || industry, industry, ret, series, members: syms };
+    if (mcapSource !== 'none') { out.retCap = retCap; if (seriesCap.length) out.seriesCap = seriesCap; }
+    return out;
   });
 
   // 5. Desk Snapshot indices.
@@ -204,15 +310,18 @@ async function main() {
   const q = {};
   for (const r of rows) {
     const mm = memMetric[r.sym];
-    q[r.sym] = mm ? { n: r.name, p: mm.p, d1: mm.d1, w1: mm.w1, m1: mm.m1, m6: mm.m6, ytd: mm.ytd, y1: mm.y1 } : { n: r.name };
+    q[r.sym] = mm ? { n: r.name, p: mm.p, mc: mcap[r.sym] || null, d1: mm.d1, w1: mm.w1, m1: mm.m1, m6: mm.m6, ytd: mm.ytd, y1: mm.y1 } : { n: r.name };
   }
 
   const sess = session();
   const out = { asOf, updated: new Date().toISOString(), intraday: sess.intraday, session: sess.session,
-    method: 'NSE industry classification of the Nifty 500; equal-weight constituent avg', dates, desk, sectors: sectorsOut, q };
+    method: 'NSE industry classification of the Nifty 500; full-market-cap weighted (retCap) + equal-weight (ret)',
+    mcap: { source: mcapSource, coverage: Object.keys(mcap).length, live: nLive, cached: nCached },
+    dates, desk, sectors: sectorsOut, q };
   fs.writeFileSync(OUT, JSON.stringify(out) + '\n');
   console.log('refresh-sectors: wrote data/sectors.json (' + sess.session + ', ' + sectorsOut.length + ' industries, ' +
-    resolved + '/' + rows.length + ' constituents priced, ' + Object.keys(desk).length + '/5 desk, asOf ' + asOf + ', ' +
+    resolved + '/' + rows.length + ' constituents priced, market caps ' + Object.keys(mcap).length + ' (' + mcapSource +
+    ': ' + nLive + ' live, ' + nCached + ' cached), ' + Object.keys(desk).length + '/5 desk, asOf ' + asOf + ', ' +
     (fs.statSync(OUT).size / 1024).toFixed(0) + ' KB).');
 }
 main().catch((e) => { console.log('refresh-sectors: unexpected error — ' + e.message); process.exit(1); });

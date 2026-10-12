@@ -158,6 +158,11 @@
     .card-h.ch-range{flex-wrap:wrap;gap:12px}
     .card-h.ch-range .seg{width:100%}
     .card-h.ch-range .seg button{flex:1;padding:6px 0;text-align:center}
+    /* Sector card: weighting switch + timeframe dropdown on their own row */
+    .card-h.ch-sec{flex-wrap:wrap;gap:12px}
+    .card-h.ch-sec .sec-ctrls{width:100%}
+    .card-h.ch-sec .seg{flex:1}
+    .card-h.ch-sec .seg button{flex:1;padding:6px 0;text-align:center}
   }
   .chart-box{height:248px;position:relative}
   /* Positioning view: flex column for card spacing, but the [hidden]
@@ -571,16 +576,21 @@
   .sd-h{font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;font-weight:600;margin-bottom:6px}
   .sd-row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line-soft);font-size:12.5px}
   .sd-row:last-child{border:none}
-  .sd-row span{color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sd-row span{flex:1;min-width:0;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* stock's share of its industry's market cap (cap-weighted view only) */
+  .sd-row .sd-wt{flex:none;font-style:normal;font-family:'Roboto Mono';font-size:10.5px;color:var(--text-mute);align-self:center}
   .sd-row b{font-family:'Roboto Mono';font-weight:500;flex:none}
   .sd-row b.sd-na{color:var(--text-mute);font-weight:400}
   .sd-empty{font-size:12px;color:var(--text-mute);padding:10px 0}
   /* All-constituents list: two responsive columns so 10-20 names stay compact. */
   .sd-allh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:2px}
   .sd-note{font-size:10.5px;color:var(--text-mute);letter-spacing:.02em}
-  .sd-all{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;
+  /* minmax(0,1fr), not 1fr: a plain 1fr column won't shrink below the longest
+     unbroken name, which pushed the % column off-screen behind a sideways
+     scroll. With 0 the names ellipsise instead. */
+  .sd-all{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 24px;
     max-height:440px;overflow-y:auto;padding-right:4px}
-  @media(max-width:620px){.sd-all{grid-template-columns:1fr}}
+  @media(max-width:620px){.sd-all{grid-template-columns:minmax(0,1fr)}}
 
   /* tables */
   table{width:100%;border-collapse:collapse}
@@ -1202,9 +1212,13 @@
 
       <!-- 3 · Sector Performance -->
       <div class="card reveal" style="animation-delay:.22s">
-        <div class="card-h">
-          <div><h3>Sector Performance</h3><p id="secCaption">Nifty 500 by NSE industry · avg constituent return · 1D</p></div>
+        <div class="card-h ch-sec">
+          <div><h3>Sector Performance</h3><p id="secCaption">Nifty 500 by NSE industry · market-cap weighted · 1D</p></div>
           <div class="sec-ctrls">
+            <div class="seg" id="secWtSeg" role="group" aria-label="Sector weighting">
+              <button type="button" data-w="cap" class="on" title="Weighted by each stock's full market cap at the start of the period">Cap-wt</button>
+              <button type="button" data-w="eq" title="Simple average of the stocks in the industry">Equal-wt</button>
+            </div>
             <select id="tfSel" class="dd" aria-label="Timeframe">
               <option>1D</option><option>1W</option><option>1M</option>
               <option>6M</option><option>YTD</option><option>1Y</option>
@@ -3000,7 +3014,8 @@ function setStatus(live){
 function fmtChg(pct){ return `${pct>=0?'▲':'▼'} ${pct>=0?'+':''}${pct.toFixed(2)}%`; }
 
 async function loadQuotes(){
-  const j=await sparkApi([...IDX.map(x=>x[0]),'NIFTY_MIDCAP_100.NS','SMALLCAP.NS','INR=X']);
+  // ^CNXSC = Nifty Smallcap 100 (SMALLCAP.NS is an unrelated ₹47 stock).
+  const j=await sparkApi([...IDX.map(x=>x[0]),'NIFTY_MIDCAP_100.NS','^CNXSC','INR=X']);
   let any=false;
 
   // Ticker
@@ -3033,7 +3048,7 @@ async function loadQuotes(){
     e.className=ch>=0?'up':'down';
   };
   snap('sN500','^CRSLDX'); snap('sN50','^NSEI');
-  snap('sMid','NIFTY_MIDCAP_100.NS'); snap('sSml','SMALLCAP.NS');
+  snap('sMid','NIFTY_MIDCAP_100.NS'); snap('sSml','^CNXSC');
   snap('sFx','INR=X','','');
 
 
@@ -3207,14 +3222,23 @@ let curTF='1D', curSec='';
 
 // ---- Committed sector/desk snapshot (data/sectors.json) --------------------
 // The full Nifty 500 grouped by NSE's own industry classification (~20 groups,
-// every stock exactly once) + EQUAL-WEIGHT constituent-average returns (all
-// timeframes) + Desk-Snapshot index quotes, refreshed server-side (auth-free,
-// Yahoo via Node) and read here so these cards render instantly. The browser
-// can't fetch Yahoo itself (CORS-blocked) and the free proxies are dead, which
-// is why the old direct path was slow/empty. Industry buckets have no
-// cap-weighted index, so the card is labelled "avg constituent return".
+// every stock exactly once), with two returns per industry and timeframe —
+// full-market-cap weighted (retCap, default) and equal-weighted (ret), toggled
+// by the Cap-wt / Equal-wt switch — plus Desk-Snapshot index quotes. Refreshed
+// server-side (auth-free, Yahoo via Node) and read here so these cards render
+// instantly. The browser can't fetch Yahoo itself (CORS-blocked) and the free
+// proxies are dead, which is why the old direct path was slow/empty.
 let SECTORS_DATA=null;
 const SEC_TF={'1D':'d1','1W':'w1','1M':'m1','6M':'m6','YTD':'ytd','1Y':'y1'};
+// Sector weighting: 'cap' (full market cap — retCap/seriesCap, the default) or
+// 'eq' (simple average — ret/series). Remembered per viewer.
+let secWt='cap';
+try{ const w=localStorage.getItem('secWt'); if(w==='cap'||w==='eq') secWt=w; }catch(e){}
+// What's actually shown: equal-weight if the file carries no cap-weighted
+// figures (an older file, or the market-cap fetch failed with no cache).
+function secWtEff(){
+  return secWt==='cap' && SECTORS_DATA && SECTORS_DATA.sectors.some(s=>s.retCap) ? 'cap' : 'eq';
+}
 async function loadSectorsData(){
   if(SECTORS_DATA) return SECTORS_DATA;
   try{
@@ -3249,8 +3273,9 @@ async function loadSectorBars(tf){
   await loadSectorsData();
   const key=SEC_TF[tf]||'d1';
   if(SECTORS_DATA&&Array.isArray(SECTORS_DATA.sectors)){
-    sectors=SECTORS_DATA.sectors.map(s=>[s.name,(s.members||[]).length,
-      (s.ret&&s.ret[key]!=null)?s.ret[key]:null, s.industry||s.name]);
+    const cap=secWtEff()==='cap';
+    sectors=SECTORS_DATA.sectors.map(s=>{ const src=cap&&s.retCap?s.retCap:s.ret;
+      return [s.name,(s.members||[]).length,(src&&src[key]!=null)?src[key]:null, s.industry||s.name]; });
     renderSectors();
   }else if(!sectors.length){
     // No committed file and no earlier render: say so rather than spin forever.
@@ -3284,27 +3309,38 @@ async function loadSectorDetail(name,tf){
   const key=SEC_TF[tf]||'d1';
   const sd=SECTORS_DATA&&SECTORS_DATA.sectors&&SECTORS_DATA.sectors.find(s=>s.name===name);
 
-  // Chart: the sector's equal-weight synthetic series, windowed to the timeframe.
-  if(sd&&Array.isArray(sd.series)){
-    drawSecChart(secSeriesWindow(sd.series,SECTORS_DATA.dates,tf).filter(x=>x!=null));
+  const cap=secWtEff()==='cap';
+
+  // Chart: the sector's synthetic series (cap-weighted basket or equal-weight),
+  // windowed to the timeframe.
+  const ser=sd&&(cap&&Array.isArray(sd.seriesCap)?sd.seriesCap:sd.series);
+  if(Array.isArray(ser)){
+    drawSecChart(secSeriesWindow(ser,SECTORS_DATA.dates,tf).filter(x=>x!=null));
   }else drawSecChart([]);
 
   // List: ALL constituents with their return for this timeframe, ranked desc.
+  // In the cap-weighted view each row also shows the stock's share of the
+  // industry's full market cap, so it's clear which names drive the figure.
   const q=(SECTORS_DATA&&SECTORS_DATA.q)||{};
   const members=(sd&&sd.members)||[];
+  const totalMc=members.reduce((a,s)=>a+((q[s]&&q[s].mc)||0),0);
   let rows=members.map(sym=>{
     const r=q[sym]; const v=r&&r[key]!=null?r[key]:null;
-    return {n:(r&&r.n)||NAMES[sym]||sym, v};
+    const wt=cap&&totalMc&&r&&r.mc?r.mc/totalMc*100:null;
+    return {n:(r&&r.n)||NAMES[sym]||sym, v, wt};
   });
   // data first (desc by return), names without a quote last
   rows.sort((a,b)=>{ if(a.v==null&&b.v==null) return 0; if(a.v==null) return 1; if(b.v==null) return -1; return b.v-a.v; });
-  const fmt=x=>`<div class="sd-row"><span>${x.n}</span>`+
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const fmt=x=>`<div class="sd-row"><span>${esc(x.n)}</span>`+
+    (x.wt==null?'':`<em class="sd-wt" title="Share of the industry's market cap">${x.wt.toFixed(1)}%</em>`)+
     (x.v==null?'<b class="sd-na">—</b>':`<b class="${x.v>=0?'up':'down'}">${x.v>=0?'+':''}${x.v.toFixed(2)}%</b>`)+
     '</div>';
   const el=document.getElementById('secAll');
   if(el) el.innerHTML = rows.length ? rows.map(fmt).join('') : '<div class="sd-empty">No constituent data</div>';
   const h=document.getElementById('secAllH'); if(h) h.textContent=`All ${rows.length} constituents · ${tf}`;
-  const note=document.getElementById('secAllNote'); if(note) note.textContent='ranked by return';
+  const note=document.getElementById('secAllNote');
+  if(note) note.textContent=cap?'ranked by return · grey % = weight in industry':'ranked by return';
 }
 
 // Move #secDetail inline under the active sector row (or detach it). Called
@@ -3337,11 +3373,21 @@ function secFreshness(){
     return ` · at close (${isNaN(d)?j.asOf:d.toLocaleDateString('en-IN',{day:'numeric',month:'short'})})`;
   }catch(e){ return ''; }
 }
+const SEC_WT_LABEL={cap:'market-cap weighted', eq:'equal-weighted'};
+// Highlight the weighting button actually in effect.
+function syncSecWtButtons(w){
+  document.querySelectorAll('#secWtSeg button').forEach(b=>{
+    const on=b.dataset.w===w; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on);
+  });
+}
 function refreshSector(){
-  const cap=`Nifty 500 by NSE industry · avg constituent return · ${curTF}`;
-  document.getElementById('secCaption').textContent=cap;
+  const caption=w=>`Nifty 500 by NSE industry · ${SEC_WT_LABEL[w]} · ${curTF}`;
+  document.getElementById('secCaption').textContent=caption(secWt);
+  syncSecWtButtons(secWt);
   loadSectorBars(curTF).then(()=>{
-    document.getElementById('secCaption').textContent=cap+secFreshness();
+    const eff=secWtEff();
+    document.getElementById('secCaption').textContent=caption(eff)+secFreshness();
+    syncSecWtButtons(eff);
     placeSectorDetail();
     if(curSec) loadSectorDetail(curSec,curTF);
   });
@@ -3349,6 +3395,14 @@ function refreshSector(){
 
 (function(){
   document.getElementById('tfSel').onchange=e=>{ curTF=e.target.value; refreshSector(); };
+  // Cap-wt / Equal-wt switch: both figures are already in sectors.json, so this
+  // just re-renders from the cached file — no fetch.
+  document.getElementById('secWtSeg').addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b||b.dataset.w===secWt) return;
+    secWt=b.dataset.w;
+    try{ localStorage.setItem('secWt',secWt); }catch(err){}
+    refreshSector();
+  });
   document.getElementById('sectors').addEventListener('click',e=>{
     const row=e.target.closest('.sector'); if(!row) return;
     const clicked=row.dataset.sec;
