@@ -7,6 +7,7 @@
 - **Netlify path is deprecated/blocked** (free build-minute cap kept failing deploys). The `netlify/functions/*` + `netlify.toml` are kept only as optional server proxies; do not rely on them.
 - Single self-contained `index.html` (inline CSS/JS); Chart.js + Google Fonts via CDN. No build step.
 - **Always commit + push on any dashboard change** (the user expects the live site updated every time).
+- **Automated committers must commit with a pathspec** (`git commit -m … -- <their files>`), never a bare `git commit`. The intraday movers task fires every 30 min in market hours; a bare commit sweeps in anything a human has staged at that moment (it happened 2026-10-12: a sector-card change got pushed under "chore: intraday movers…"). `daily-refresh.ps1` and `refresh-movers-intraday.ps1` both do this now. When committing by hand during market hours, also commit with a pathspec.
 - **Pages sometimes skips a build.** When commits land close together (or right after an `errored` build), GitHub Pages occasionally never queues a build for the newest commit, so a successful `git push` doesn't go live — `gh api repos/markwoontk-maker/india-research-portal/pages/builds/latest` shows the last built commit lagging `origin/main`. Force a rebuild with `gh api -X POST repos/markwoontk-maker/india-research-portal/pages/builds`, then poll `.../pages/builds/latest` until `status:built`. If a change "isn't reflected on the site" despite a good push, check this first (build `build_type` is `legacy`, source branch `main`).
 
 ## Data sources (all free, no API keys, ever)

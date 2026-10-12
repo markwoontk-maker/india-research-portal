@@ -84,17 +84,22 @@ if ($sectorsChanged) {
 }
 if (-not $moversChanged -and -not $quotesChanged -and -not $sectorsChanged) { Out-Log "nothing valid to publish - exiting."; exit 0 }
 
-if ($moversChanged) { & git add data/movers.json 2>&1 | Out-Null }
-if ($quotesChanged) { & git add data/wl_quotes.json 2>&1 | Out-Null }
-if ($sectorsChanged) { & git add data/sectors.json 2>&1 | Out-Null }
-$cached = & git diff --cached --stat
+$paths = @()
+if ($moversChanged) { $paths += 'data/movers.json' }
+if ($quotesChanged) { $paths += 'data/wl_quotes.json' }
+if ($sectorsChanged) { $paths += 'data/sectors.json' }
+& git add -- $paths 2>&1 | Out-Null
+$cached = & git diff --cached --stat -- $paths
 if ([string]::IsNullOrWhiteSpace($cached)) { Out-Log "nothing staged - exiting."; exit 0 }
 
 $extra = (@(if ($quotesChanged) { "watchlist quotes" }; if ($sectorsChanged) { "sectors" }) | Where-Object { $_ }) -join " + "
 $msg = if ($moversChanged) { "chore: intraday movers (" + $j.session + ", adv " + $j.adv + "/dec " + $j.dec + ")" + $(if ($extra) { " + " + $extra } else { "" }) } `
        elseif ($extra) { "chore: intraday " + $extra } `
        else { "chore: intraday refresh" }
-& git commit -m $msg 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
+# Commit ONLY our data files (pathspec). A bare `git commit` would also sweep up
+# anything else that happened to be staged in this working copy -- e.g. someone
+# mid-way through a manual commit when this 30-min task fires.
+& git commit -m $msg -- $paths 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
 & git pull --rebase --autostash origin main 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
 & git push origin main 2>&1 | ForEach-Object { Out-Log ("git> " + ($_ | Out-String).TrimEnd()) }
 Out-Log ("published: " + $msg)

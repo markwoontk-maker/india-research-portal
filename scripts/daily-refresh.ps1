@@ -231,18 +231,28 @@ Step "build-house-view-notes" {
 #     See scripts/charts/build-charts.ps1 + scripts/charts/install-charts-task.ps1.
 
 # 9. Commit + push if there are any changes. No-op on a quiet day.
+#    Only the pipeline's own outputs are committed (pathspec), so anything else
+#    someone has staged in this working copy is left alone, not swept in.
+$stageList = @('data/pdfdata.json','data/pdfmap.json','data/research.json','data/sector-tps.json',
+  'data/theses.json','data/theses-manual.json','data/financials.json','data/financials-manual.json',
+  'data/model_portfolios_house.json','data/mf_sectors.json','data/fii_dii.json','data/highs.json',
+  'data/movers.json','data/sectors.json','data/wl_returns.json','data/wl_quotes.json',
+  'data/earnings_calendar.json','data/fpi_sectors.json','data/mf_categories.json','data/sip_flows.json',
+  'data/model_portfolios.json','data/company_qa.json','data/company_questions.json',
+  'data/sector_notebooks.json','data/house_view_notes.json','index.html',
+  'scripts/notes-recent.txt','scripts/notes-prior.txt')
 Step "git stage" {
-  & git add data/pdfdata.json data/pdfmap.json data/research.json data/sector-tps.json data/theses.json data/theses-manual.json data/financials.json data/financials-manual.json data/model_portfolios_house.json data/mf_sectors.json data/fii_dii.json data/highs.json data/movers.json data/sectors.json data/wl_returns.json data/wl_quotes.json data/earnings_calendar.json data/fpi_sectors.json data/mf_categories.json data/sip_flows.json data/model_portfolios.json data/company_qa.json data/company_questions.json data/sector_notebooks.json data/house_view_notes.json index.html scripts/notes-recent.txt scripts/notes-prior.txt
+  & git add -- $stageList
 }
 Step "git commit + push" {
-  $cached = & git diff --cached --stat
-  if ([string]::IsNullOrWhiteSpace($cached)) {
+  $files = @(& git diff --cached --name-only -- $stageList)
+  if (-not $files.Count) {
     Write-Output "No changes to commit."
     return
   }
-  Write-Output $cached
+  Write-Output (& git diff --cached --stat -- $stageList)
   $msg = "Daily research refresh -- " + (Get-Date -f "yyyy-MM-dd HH:mm")
-  & git commit -m $msg
+  & git commit -m $msg -- $files
   # The GitHub Actions news job (.github/workflows/news.yml) also commits to
   # main, so rebase onto it before pushing or the push is rejected.
   & git pull --rebase --autostash origin main
