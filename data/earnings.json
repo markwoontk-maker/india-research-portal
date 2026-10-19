@@ -605,11 +605,10 @@
      "revYoY": 0.1558,
      "ebitdaYoY": 0.5197,
      "revVs": null,
-     "ebitdaVs": "beat",
+     "ebitdaVs": null,
      "overall": "beat",
-     "revNote": "Adj. net revenue flat QoQ (-1.6%) at Rs12.8bn as order count fell 10% QoQ on the CAS impact and lower volatility; interest income rose 34% YoY on a 40% larger average MTF book (JP).",
-     "ebitdaNote": "EBITDA margin up 920bp YoY to 38.4% with no IPL spend this quarter and staff costs down 7% YoY; PAT 8.9% above consensus and 7.5% above JPMe (JP).",
-     "vsBasis": "consensus (PAT 8.9% above)",
+     "revNote": "Net adj. revenue rose 15.6% YoY but fell 1.6% QoQ to Rs 12.84bn. Gross broking revenue fell 9.4% QoQ to Rs 7.8bn on lower order numbers (CAS impact, lower volatility), partly offset by interest income up 34.4% YoY on a 40.5% larger MTF book. (JP)",
+     "ebitdaNote": "EBITDA grew 52.0% YoY to Rs 4.93bn, with margin up 920bp YoY and 1,084bp QoQ to 38.4%. The QoQ gain reflects no IPL promotion spend (1Q had Rs 1.37bn) and tight cost control, and staff costs fell 6.9% YoY. PAT was 8.9% above consensus and 7.5% above JPMe. (JP)",
      "src": {
       "kind": "pdf",
       "broker": "JPMorgan",
@@ -622,6 +621,10 @@
       "runs": 1,
       "mined": "2026-10-19"
      }
+    },
+    "2Q26": {
+     "rev": 11110,
+     "ebitda": 3246
     }
    },
    "sym": "ANGELONE"
@@ -7202,6 +7205,10 @@
     "ebitda": "EBITDA"
    },
    "q": {
+    "1Q26": {
+     "rev": 71670,
+     "ebitda": 1150
+    },
     "1Q27": {
      "rev": 202110,
      "ebitda": 5940,
@@ -7209,10 +7216,9 @@
      "ebitdaYoY": 4.1652,
      "revVs": "inline",
      "ebitdaVs": "beat",
-     "overall": "beat",
-     "revNote": "Reported revenue +182% YoY (inflated by Blinkit's shift to an inventory-led model), 1% above VA consensus; Blinkit NOV +86% YoY / +19% QoQ and food-delivery NOV +20%, the fastest in six quarters (CLSA).",
-     "ebitdaNote": "EBITDA 21% above VA consensus: food-delivery adj. EBITDA +34% YoY on a higher take rate and overhead leverage, Blinkit turned to +0.6% of NOV; long-term Blinkit adj. EBITDA margin guidance raised to 6% (CLSA).",
-     "vsBasis": "consensus (Visible Alpha)",
+     "overall": "inline",
+     "revNote": "Revenue of Rs202.1bn (+182% YoY) was 1% above VA consensus and 4% above CLSA's estimate. Quick commerce NOV grew 86% YoY and 19% QoQ, and food delivery NOV grew 20%. The YoY jump is flattered by Blinkit's shift to an inventory-led model. (CLSA)",
+     "ebitdaNote": "EBITDA of Rs5.94bn was 21% above VA consensus but 11% below CLSA's estimate. Food delivery adj. EBITDA beat at Rs6.06bn (+34% YoY), and Blinkit adj. EBITDA margin rose to 0.6% of NOV. Losses in other segments (Bistro, Nugget) held the group back, and PAT missed on higher tax. Blinkit raised its steady-state adj. EBITDA margin guidance to 6%. (CLSA, GS, MS)",
      "revCons": 199734,
      "ebitdaCons": 4903,
      "src": {
@@ -7230,10 +7236,6 @@
       "runs": 1,
       "mined": "2026-10-19"
      }
-    },
-    "1Q26": {
-     "rev": 71670,
-     "ebitda": 1150
     }
    },
    "sym": "ETERNAL"
