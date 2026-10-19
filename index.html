@@ -910,7 +910,7 @@
   .er-head{position:sticky;top:0;z-index:6;display:flex;background:var(--panel);
     border-bottom:1px solid var(--line)}
   .er-body{display:flex}
-  .er-fix{flex:0 0 312px;border-right:1px solid var(--line);background:var(--panel);min-width:0;
+  .er-fix{flex:0 0 400px;border-right:1px solid var(--line);background:var(--panel);min-width:0;
     position:sticky;left:0;z-index:4}
   .er-pane{flex:1 1 var(--nat);min-width:var(--min);border-right:1px solid var(--line-soft)}
   .er-pane[data-pri="1"]{flex:0 0 var(--nat)}
@@ -963,8 +963,41 @@
   .er-sc{flex:0 0 74px;justify-content:center;flex-direction:column;align-items:flex-start;
     font-family:'Manrope';font-size:11px;color:var(--text-dim);line-height:1.15;overflow:hidden}
   .er-sc .mt{font-family:'Roboto Mono';font-size:9px;color:var(--text-mute);white-space:nowrap}
-  .er-mc{flex:0 0 78px;justify-content:flex-end;color:var(--text)}
+  .er-mc{flex:0 0 70px;justify-content:flex-end;color:var(--text)}
   .er-empty{padding:30px;text-align:center;color:var(--text-mute);font-size:12.5px}
+  #viewEarnings:not([hidden]){display:flex;flex-direction:column;gap:16px}
+  .er-ol{flex:0 0 88px;font-family:'Manrope';font-size:10.5px;font-weight:800;letter-spacing:.05em}
+  .ol-positive{color:var(--up)} .ol-negative{color:var(--down)} .ol-neutral{color:var(--text-dim)}
+  .er-c.chk{text-decoration:underline dotted var(--saffron);text-underline-offset:3px}
+  .es-chart-wrap{overflow-x:auto;margin:-4px 0 14px}
+  .es-chart-box{height:330px;position:relative}
+  .es-tbl-wrap{overflow:auto;max-height:70vh;border:1px solid var(--line-soft);border-radius:10px}
+  .es-tbl{border-collapse:collapse;width:100%;font-family:'Roboto Mono';font-size:11.5px;font-variant-numeric:tabular-nums}
+  .es-tbl th,.es-tbl td{padding:6px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line-soft)}
+  .es-tbl thead th{position:sticky;top:0;background:var(--panel);z-index:2;color:var(--text-mute);font-size:9.5px;
+    text-transform:uppercase;letter-spacing:.03em;font-weight:600}
+  .es-tbl thead tr:nth-child(2) th{top:29px}
+  .es-tbl thead th.es-q{text-align:center;color:var(--text);font-size:10.5px}
+  .es-tbl th button{background:none;border:none;color:inherit;font:inherit;text-transform:inherit;letter-spacing:inherit;cursor:pointer;padding:0}
+  .es-tbl th button:hover{color:var(--text)}
+  .es-tbl .es-name{text-align:left;position:sticky;left:0;background:var(--panel);z-index:1;min-width:190px}
+  .es-tbl thead .es-name{z-index:3}
+  .es-tbl td.es-name button{background:none;border:none;color:var(--text);font-family:'Manrope';font-size:12px;cursor:pointer;padding:0;text-align:left}
+  .es-tbl td.es-name button:hover{color:var(--saffron)}
+  .es-tbl .car{display:inline-block;width:14px;color:var(--text-mute)}
+  .es-tbl tr.es-sec:hover td{background:var(--panel-2)}
+  .es-tbl tr.es-sec.open td{background:var(--panel-2)}
+  .es-tbl tr.es-co td{color:var(--text-dim);font-size:11px;background:rgba(17,21,28,.55)}
+  .es-tbl tr.es-co td.es-name{padding-left:28px;background:#141922}
+  .es-tbl tr.es-co td.es-name button{font-size:11.5px;color:var(--text-dim)}
+  .es-tbl tr.es-co .mc{margin-left:8px;color:var(--text-mute);font-size:10px}
+  .es-tbl tr.es-tot td{font-weight:700;color:var(--text);border-top:1px solid var(--line)}
+  .es-tbl td.up{color:var(--up)} .es-tbl td.down{color:var(--down)} .es-tbl td.na{color:var(--line)}
+  .es-tbl td.es-v{font-family:'Manrope';font-weight:800;font-size:10.5px;letter-spacing:.04em}
+  .es-tbl td.es-v.beat,.es-tbl td.es-call.beat{color:var(--up)} .es-tbl td.es-v.miss,.es-tbl td.es-call.miss{color:var(--down)}
+  .es-tbl td.es-v.inline,.es-tbl td.es-call.inline{color:var(--saffron)}
+  .es-tbl td.es-yoy{cursor:help} .es-tbl td.es-yoy.beat{background:rgba(63,199,138,.16);color:#86e6b7}
+  .es-tbl td.es-yoy.miss{background:rgba(240,106,106,.16);color:#ffa3a3}
   .er-legend{font-size:11.5px;color:var(--text-mute);line-height:1.7;margin-top:12px}
   .er-legend .sw{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:3px}
   #erPop{position:fixed;z-index:60;max-width:340px;background:#11151c;border:1px solid var(--line);
@@ -979,7 +1012,7 @@
     .er-nm{flex:1 1 auto;flex-direction:column;align-items:flex-start;justify-content:center;line-height:1.2}
     .er-nm .sub{display:block;font-family:'Roboto Mono';font-size:9px;color:var(--text-mute);white-space:nowrap;
       overflow:hidden;text-overflow:ellipsis;max-width:100%}
-    .er-sc,.er-mc,.er-fix .er-sh .d{display:none}
+    .er-sc,.er-mc,.er-ol,.er-fix .er-sh .d{display:none}
     .er-tools input{width:100%}
     .er-tools{width:100%}
   }
@@ -2218,7 +2251,20 @@
         <p class="er-legend"><span class="sw" style="background:rgba(63,199,138,.45)"></span>beat consensus · <span class="sw" style="background:rgba(240,106,106,.45)"></span>missed consensus · uncoloured = in line (or no consensus in the notes) · <span style="color:var(--saffron)">◥</span> corner = explanation, hover or tap any cell to read it.
         Click a group title (e.g. <b>Revenue YoY</b>) to flip its quarters new ⇄ old; click a quarter, Name, Sector or Mkt cap header to sort (click again to reverse, a third time to reset).
         Lenders show Total operating income / PPOP, life insurers APE / VNB, general insurers GWP (or NEP) / PBT; IT revenue is in US$ mn with EBITDA/EBIT in ₹. Absolute figures are in each company's reporting unit (hover for it).
-        Figures come only from the analyst workbook and the broker results notes in the PDF library — for any quarter, revenue, EBITDA and their year-ago values come from one report. Market cap = full market cap (Nifty 500 snapshot, refreshed daily). Refreshed weekdays 09:30 MYT after the daily-return run.</p>
+        Figures come only from the analyst workbook and the broker results notes in the PDF library — for any quarter, revenue, EBITDA and their year-ago values come from one report. Market cap = full market cap in US$ bn (Nifty 500 snapshot converted at its ₹/US$ rate, refreshed daily; hover for ₹ Cr). <b>Outlook</b> = the latest results notes' read on guidance, demand and estimate changes (not the stock rating) — hover for the detail. Every pop-up names the broker note it came from; a dotted underline marks a figure whose YoY disagreed with the growth the note itself prints (re-checked, still flagged). Refreshed weekdays 09:30 MYT after the daily-return run.</p>
+      </div>
+      <div class="card" id="esCard">
+        <div class="card-h er-top">
+          <div><h3>Earnings Summary</h3>
+          <p id="esSub">Sector scorecard by season</p></div>
+          <div class="er-tools">
+            <div class="seg" id="esQ" role="group" aria-label="Earnings season"></div>
+            <select id="esM" aria-label="Chart metric"></select>
+          </div>
+        </div>
+        <div class="es-chart-wrap"><div id="esChartBox" class="es-chart-box"><canvas id="esChart" role="img" aria-label="Per-sector earnings bars by season"></canvas></div></div>
+        <div class="es-tbl-wrap"><table class="es-tbl" id="esTbl"></table></div>
+        <p class="er-legend">Click a sector to list its companies (click a company to open it on the Company tab); click a column header to sort. <b>% beat</b> = companies whose line beat consensus ÷ companies with a beat / in-line / miss call on that line (hover a cell for the count). <b>Wtd growth</b> = market-cap-weighted (US$) average of company YoY growth, so mixed reporting units never get added together; NM and missing YoY are left out. <b>Bottom line</b> = each company's EBITDA-line metric (PPOP for lenders, VNB / PBT for insurers, EBIT where that is all the notes give).</p>
       </div>
     </div>
 
@@ -7553,11 +7599,12 @@ function loadScreener(){
 }
 
 /* ---------- Earnings tab ----------
-   data/earnings.json (seeded from the analyst workbook, extended daily by
-   scripts/earnings/build-earnings.js from broker results notes) + market caps
-   from data/sectors.json (Nifty 500, full cap, INR cr) or the row's own `mcap`.
-   One row per company; five sub-category panes scroll sideways independently. */
-let ER=null;
+   data/earnings.json (seeded from the analyst workbook, re-derived and extended from
+   broker results notes by scripts/earnings/build-earnings.js) + market caps from
+   data/sectors.json (Nifty 500, full cap, INR cr; USD via the snapshot's INR=X) or the
+   row's own `mcap`. One row per company; five sub-category panes scroll sideways
+   independently. Below it, the Earnings Summary: per-sector bars + sector table. */
+let ER=null, ER_FX=null;
 const ER_LS='irp_earn_view_v1';
 const ER_GROUPS=[
   {id:'ov', title:'Overall Earnings', kind:'ov',  w:96},
@@ -7572,7 +7619,12 @@ function erSave(){ try{ localStorage.setItem(ER_LS,JSON.stringify({sort:erState.
 const erEsc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const erQIdx=q=>+q.slice(2)*4 + +q[0];
 const ER_VERDICT={beat:'BEAT',inline:'IN-LINE',miss:'MISSED'};
-const ER_HOUSE={MorganStanley:'MS',GoldmanSachs:'GS',JPMorgan:'JP',Jefferies:'Jeff',Bernstein:'Bern',Kotak:'Kotak',Nomura:'Nomura',CLSA:'CLSA'};
+const ER_OUTLOOK={positive:'POSITIVE',neutral:'NEUTRAL',negative:'NEGATIVE'};
+const ER_HOUSE={MorganStanley:'Morgan Stanley',GoldmanSachs:'Goldman Sachs','Goldman Sachs':'Goldman Sachs',JPMorgan:'JPMorgan',Jefferies:'Jefferies',
+  Bernstein:'Bernstein',Kotak:'Kotak',Nomura:'Nomura',CLSA:'CLSA',JMFinancial:'JM Financial',MotilalOswal:'Motilal Oswal',ICICIDirect:'ICICI Direct',DevenChoksey:'Deven Choksey'};
+const ER_MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const erDate=d=>d&&d.length===6?`${+d.slice(4,6)} ${ER_MON[+d.slice(2,4)-1]||''} 20${d.slice(0,2)}`:'';
+const erHouse=b=>ER_HOUSE[b]||b||'';
 
 async function loadEarnings(){
   const sub=document.getElementById('erSub');
@@ -7581,7 +7633,8 @@ async function loadEarnings(){
   const s=await loadSectorsData();
   if(!e||!Array.isArray(e.companies)){ if(sub) sub.textContent='Earnings data unavailable — data/earnings.json could not be loaded.'; return; }
   const q=(s&&s.q)||{};
-  e.companies.forEach(c=>{ const x=c.sym&&q[c.sym]; c._mc=(x&&x.mc)||c.mcap||null; });
+  const fx=s&&s.desk&&s.desk['INR=X']&&s.desk['INR=X'].p; ER_FX=fx>0?fx:null;
+  e.companies.forEach(c=>{ const x=c.sym&&q[c.sym]; c._mc=(x&&x.mc)||c.mcap||null; c._usd=c._mc&&ER_FX?c._mc*1e7/ER_FX/1e9:null; });
   ER=e;
   const sel=document.getElementById('erSector');
   if(sel){
@@ -7589,6 +7642,7 @@ async function loadEarnings(){
     sel.innerHTML='<option value="">All sectors</option>'+secs.map(x=>`<option>${erEsc(x)}</option>`).join('');
   }
   erRender();
+  esInit();
 }
 
 // Quarters a group shows: every quarter at least one row has data for.
@@ -7605,7 +7659,8 @@ function erQuarters(g){
 function erVal(c,key){
   if(key==='name') return c.name.toLowerCase();
   if(key==='sector') return (c.sector||'').toLowerCase();
-  if(key==='mcap') return c._mc;
+  if(key==='mcap') return c._usd;
+  if(key==='outlook') return c.outlook?{positive:2,neutral:1,negative:0}[c.outlook.call]:null;
   const [gid,qt]=key.split(':'); const g=ER_GROUPS.find(x=>x.id===gid); const d=(c.q||{})[qt]||{};
   if(!g) return null;
   if(g.kind==='ov') return d.overall?{beat:2,inline:1,miss:0}[d.overall]:null;
@@ -7630,45 +7685,61 @@ function erRows(){
 }
 function erPct(v){ if(v==null||!isFinite(v)) return '—'; if(v<-1) return 'NM'; const p=v*100; if(Math.abs(p)>=1000) return (p>0?'>+':'<-')+'999%'; return (p>0?'+':'')+p.toFixed(1)+'%'; }
 function erNum(v){ if(v==null) return '—'; return Math.abs(v)>=1000?Math.round(v).toLocaleString('en-IN'):(+v.toFixed(1)).toLocaleString('en-IN'); }
-function erMcap(mc){ if(!mc) return '—'; return mc>=1e5?'₹'+(mc/1e5).toFixed(2)+'L Cr':'₹'+Math.round(mc).toLocaleString('en-IN')+' Cr'; }
+function erUsd(b){ if(b==null) return '—'; return '$'+(b>=100?b.toFixed(0):b>=10?b.toFixed(1):b.toFixed(2))+'bn'; }
+// Source line for a quarter: the specific broker report it was taken from.
 function erSrc(d){
   const s=d&&d.src; if(!s) return '';
-  if(s.kind==='sheet') return 'Source: analyst workbook';
-  const dt=s.date?`${s.date.slice(4,6)}/${s.date.slice(2,4)}/20${s.date.slice(0,2)}`:'';
-  return `Source: ${ER_HOUSE[s.broker]||s.broker} results note${dt?' · '+dt:''}`;
+  if(s.kind==='pdf') return `Source: ${erHouse(s.broker)} results note${s.date?' · '+erDate(s.date):''}`;
+  if(s.attrib&&s.attrib.broker) return `Source: ${erHouse(s.attrib.broker)} results note${s.attrib.date?' · '+erDate(s.attrib.date):''} (via analyst workbook)`;
+  return 'Source: analyst workbook (no matching broker note in the library)';
+}
+function erAbsSrc(d,k){
+  const a=d&&d.abs&&d.abs[k];
+  if(a&&a.broker){ const col=a.role==='yearAgo'?' — year-ago column':a.role==='prevQ'?' — prior-quarter column':'';
+    return `Source: ${erHouse(a.broker)} results note${a.date?' · '+erDate(a.date):''}${col}`; }
+  return erSrc(d);
 }
 
 let erTips=[];
 function erCell(c,g,qt){
   const d=(c.q||{})[qt]||{}; const w=g.w;
   const lab=(c.metrics||{})[g.m]||(g.m==='rev'?'Revenue':'EBITDA');
+  const chk=d.check?`<br><span style="color:var(--saffron)">⚠ Auto-check: ${erEsc(d.checkNote||'')}</span>`:'';
   if(g.kind==='ov'){
     const v=d.overall; if(!v) return `<div class="er-c na" style="width:${w}px">·</div>`;
-    const i=erTips.push({cls:v,h:`${c.name} · ${qt} · ${ER_VERDICT[v]}`,
-      t:[d.revNote?`<b>${erEsc((c.metrics||{}).rev||'Revenue')}:</b> ${erEsc(d.revNote)}`:'', d.ebitdaNote?`<b>${erEsc((c.metrics||{}).ebitda||'EBITDA')}:</b> ${erEsc(d.ebitdaNote)}`:''].filter(Boolean).join('<br>'),
+    const i=erTips.push({cls:v,h:`${erEsc(c.name)} · ${qt} · ${ER_VERDICT[v]}`,
+      t:[d.revNote?`<b>${erEsc((c.metrics||{}).rev||'Revenue')}:</b> ${erEsc(d.revNote)}`:'', d.ebitdaNote?`<b>${erEsc((c.metrics||{}).ebitda||'EBITDA')}:</b> ${erEsc(d.ebitdaNote)}`:''].filter(Boolean).join('<br>')+chk,
       s:erSrc(d)})-1;
     return `<div class="er-c ov ${v}" style="width:${w}px" data-tip="${i}">${ER_VERDICT[v]}</div>`;
   }
   if(g.kind==='yoy'){
-    const v=d[g.m+'YoY'], vs=d[g.m+'Vs'], note=d[g.m+'Note'];
+    const v=d[g.m+'YoY'], vs=d[g.m+'Vs'], note=d[g.m+'Note'], nm=g.m==='ebitda'&&v==null&&d.ebitdaYoYNote;
     if(v==null&&!note) return `<div class="er-c na" style="width:${w}px">·</div>`;
     const cls=vs==='beat'?'beat':vs==='miss'?'miss':'';
     const call=vs==='beat'?'Beat consensus':vs==='miss'?'Missed consensus':vs==='inline'?'In line with consensus':'No consensus comparison';
     const basis=d.vsBasis&&d.vsBasis!=='consensus'?` (${erEsc(d.vsBasis)})`:'';
-    const i=erTips.push({cls,h:`${c.name} · ${qt} ${erEsc(lab)} YoY ${erPct(v)}`,t:`<b>${call}${basis}.</b>${note?' '+erEsc(note):''}`,s:erSrc(d)})-1;
-    return `<div class="er-c ${cls}${note?' note':''}" style="width:${w}px" data-tip="${i}">${erPct(v)}</div>`;
+    const i=erTips.push({cls,h:`${erEsc(c.name)} · ${qt} ${erEsc(lab)} YoY ${nm?'NM':erPct(v)}`,
+      t:`<b>${call}${basis}.</b>${note?' '+erEsc(note):''}${nm?'<br>'+erEsc(d.ebitdaYoYNote):''}${chk}`,s:erSrc(d)})-1;
+    return `<div class="er-c ${cls}${note?' note':''}${d.check?' chk':''}" style="width:${w}px" data-tip="${i}">${nm?'NM':erPct(v)}</div>`;
   }
   const v=d[g.m]; if(v==null) return `<div class="er-c na" style="width:${w}px">·</div>`;
-  const unit=g.m==='rev'&&c.revUnit?c.revUnit:(d.src&&d.src.unit)||c.unit||'as in source';
-  const i=erTips.push({cls:'',h:`${c.name} · ${qt} ${erEsc(lab)}`,t:`${erNum(v)} <span style="color:var(--text-mute)">(${erEsc(unit)})</span>`,s:erSrc(d)})-1;
+  const unit=g.m==='rev'&&c.revUnit?c.revUnit:c.unit||(d.src&&d.src.unit)||'unit as in source';
+  const i=erTips.push({cls:'',h:`${erEsc(c.name)} · ${qt} ${erEsc(lab)}`,t:`${erNum(v)} <span style="color:var(--text-mute)">(${erEsc(unit)})</span>`,s:erAbsSrc(d,g.m)})-1;
   return `<div class="er-c abs" style="width:${w}px" data-tip="${i}">${g.m==='rev'&&c.revUnit==='US$ mn'?'$':''}${erNum(v)}</div>`;
+}
+function erOutlookCell(c){
+  const o=c.outlook;
+  if(!o) return `<div class="er-c er-ol na">·</div>`;
+  const i=erTips.push({cls:o.call==='positive'?'beat':o.call==='negative'?'miss':'',h:`${erEsc(c.name)} · Outlook ${ER_OUTLOOK[o.call]}`,
+    t:erEsc(o.note||''),s:`Source: ${erHouse(o.broker)} results note${o.date?' · '+erDate(o.date):''} (${o.quarter} season)`})-1;
+  return `<div class="er-c er-ol ol-${o.call}" data-tip="${i}">${ER_OUTLOOK[o.call]}</div>`;
 }
 function erArrow(key){ return erState.sort===key?(erState.dir<0?'▼':'▲'):''; }
 function erRender(){
   const grid=document.getElementById('erGrid'); if(!grid||!ER) return;
   const rows=erRows(); erTips=[];
   const groups=ER_GROUPS.map(g=>({g,qs:erQuarters(g)})).filter(x=>x.qs.length);
-  // Season tally for the latest quarter with an overall verdict.
+  // Season tally for the latest two quarters with an overall verdict.
   const ovq=[...new Set(ER.companies.flatMap(c=>Object.keys(c.q||{}).filter(k=>c.q[k].overall)))].sort((a,b)=>erQIdx(b)-erQIdx(a));
   const tally=document.getElementById('erTally');
   if(tally){
@@ -7683,7 +7754,8 @@ function erRender(){
   const fixHead=`<div class="er-fix"><div class="er-gt">Company</div><div class="er-sh">
       <button type="button" data-sort="name" style="width:160px">Name ${erArrow('name')}</button>
       <button type="button" class="d" data-sort="sector" style="width:74px">Sector ${erArrow('sector')}</button>
-      <button type="button" class="d" data-sort="mcap" style="width:78px;justify-content:flex-end">Mkt cap ${erArrow('mcap')}</button></div></div>`;
+      <button type="button" class="d" data-sort="mcap" style="width:70px;justify-content:flex-end" title="Full market cap, US$ bn">Mkt cap ${erArrow('mcap')}</button>
+      <button type="button" class="d" data-sort="outlook" style="width:88px;justify-content:center" title="Latest outlook from the newest results notes">Outlook ${erArrow('outlook')}</button></div></div>`;
   const paneW=x=>x.qs.length*x.g.w;
   // Overall + YoY panes keep whole columns (up to 3 visible, the rest scroll); the long
   // absolute-figure panes absorb the squeeze. Narrow screens: every pane may shrink to one column.
@@ -7700,10 +7772,12 @@ function erRender(){
     const fixBody=`<div class="er-fix">${rows.map((c,i)=>{
       const m=c.metrics||{}; const mt=(m.rev&&m.rev!=='Revenue')||(m.ebitda&&m.ebitda!=='EBITDA')||c.revUnit
         ? `${c.revUnit==='US$ mn'?'US$ ':''}${m.rev||'Revenue'} / ${m.ebitda||'EBITDA'}`:'';
+      const ol=c.outlook?` · <span class="ol-${c.outlook.call}">${ER_OUTLOOK[c.outlook.call]}</span>`:'';
       return `<div class="er-r" data-i="${i}">
-        <div class="er-c er-nm"><button type="button" data-co="${erEsc(c.name)}" title="${erEsc(c.name)}${c.note?' — '+erEsc(c.note):''}">${erEsc(c.name)}</button><span class="sub">${erEsc(c.sector||'')} · ${erMcap(c._mc)}</span></div>
+        <div class="er-c er-nm"><button type="button" data-co="${erEsc(c.name)}" title="${erEsc(c.name)}${c.note?' — '+erEsc(c.note):''}">${erEsc(c.name)}</button><span class="sub">${erEsc(c.sector||'')} · ${erUsd(c._usd)}${ol}</span></div>
         <div class="er-c er-sc"><span>${erEsc(c.sector||'')}</span>${mt?`<span class="mt" title="Metrics used for this company">${erEsc(mt)}</span>`:''}</div>
-        <div class="er-c er-mc" title="${c.sym?erEsc(c.sym)+' · full market cap':''}">${erMcap(c._mc)}</div></div>`;
+        <div class="er-c er-mc" title="${c._mc?'₹'+Math.round(c._mc).toLocaleString('en-IN')+' Cr'+(ER_FX?' at ₹'+ER_FX.toFixed(2)+'/US$':''):''}${c.sym?' · '+erEsc(c.sym):''}">${erUsd(c._usd)}</div>
+        ${erOutlookCell(c)}</div>`;
     }).join('')}</div>`;
     const bodies=groups.map(x=>`<div class="er-pane" ${paneAttrs(x)}><div class="er-scroll er-bs" data-g="${x.g.id}"><div style="width:${paneW(x)}px">${
       rows.map((c,i)=>`<div class="er-r" data-i="${i}">${x.qs.map(qt=>erCell(c,x.g,qt)).join('')}</div>`).join('')
@@ -7725,13 +7799,19 @@ function erPopShow(el){
   const pop=document.getElementById('erPop'); const t=erTips[+el.dataset.tip]; if(!pop||!t) return;
   pop.className='show '+(t.cls||'');
   pop.innerHTML=`<div class="h">${t.h}</div><div>${t.t||''}</div>${t.s?`<div class="s">${erEsc(t.s)}</div>`:''}`;
-  const r=el.getBoundingClientRect(), pw=Math.min(340,window.innerWidth-16);
+  const r=el.getBoundingClientRect(), pw=Math.min(360,window.innerWidth-16);
   let x=r.left+r.width/2-pw/2; x=Math.max(8,Math.min(x,window.innerWidth-pw-8));
   pop.style.width=pw+'px'; pop.style.left=x+'px';
   const ph=pop.offsetHeight; let y=r.bottom+6; if(y+ph>window.innerHeight-8) y=r.top-ph-6;
   pop.style.top=Math.max(8,y)+'px';
 }
 function erPopHide(){ const p=document.getElementById('erPop'); if(p) p.className=''; }
+function erOpenCompany(name){
+  const coSel=document.getElementById('nbSelectCo');
+  if(coSel) for(const opt of coSel.options){ if(opt.textContent===name){ coSel.value=opt.value; break; } }
+  if(typeof loadCompanyChart==='function') loadCompanyChart(name);
+  const nav=document.querySelector('.nav-item[data-view="screener"]'); if(nav) nav.click();
+}
 (function erWire(){
   const grid=document.getElementById('erGrid'); if(!grid) return;
   if(!document.getElementById('erPop')){ const p=document.createElement('div'); p.id='erPop'; document.body.appendChild(p); }
@@ -7754,17 +7834,144 @@ function erPopHide(){ const p=document.getElementById('erPop'); if(p) p.classNam
       else if(erState.dir===((k==='name'||k==='sector')?1:-1)) erState.dir*=-1;
       else erState.sort=null;
       erSave(); erRender(); return; }
-    const co=e.target.closest('[data-co]');
-    if(co){ const name=co.dataset.co; const coSel=document.getElementById('nbSelectCo');
-      if(coSel) for(const opt of coSel.options){ if(opt.textContent===name){ coSel.value=opt.value; break; } }
-      if(typeof loadCompanyChart==='function') loadCompanyChart(name);
-      const nav=document.querySelector('.nav-item[data-view="screener"]'); if(nav) nav.click(); }
+    const co=e.target.closest('[data-co]'); if(co) erOpenCompany(co.dataset.co);
   });
   document.addEventListener('scroll',erPopHide,{passive:true});
-  let rt=null; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ const v=document.getElementById('viewEarnings'); if(ER&&v&&!v.hidden) erRender(); },200); });
+  let rt=null; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ const v=document.getElementById('viewEarnings'); if(ER&&v&&!v.hidden){ erRender(); esRender(); } },200); });
   const s=document.getElementById('erSearch'); if(s) s.addEventListener('input',()=>{ erState.q=s.value; erRender(); });
   const sel=document.getElementById('erSector'); if(sel) sel.addEventListener('change',()=>{ erState.sec=sel.value; erRender(); });
 })();
+
+/* ----- Earnings Summary: per-sector bars + sector table -----
+   Seasons from ES_FROM onward (FY27). Beat % = companies with that call / companies
+   with any call for the line. Weighted growth = market-cap-weighted (US$) average of
+   company YoY, skipping NM / missing YoY and companies without a market cap, so
+   reporting units never mix. Bottom line = each company's EBITDA-line equivalent. */
+const ES_FROM='1Q27';
+const ES_COLORS=['#5b8def','#b9761c','#9a7be0','#2fa59a'];   // fixed per season (validated, dark surface)
+const ES_METRICS=[
+  {id:'ov', label:'% beat (overall)', pct:true},
+  {id:'br', label:'% beat revenue', pct:true},
+  {id:'bb', label:'% beat bottom line', pct:true},
+  {id:'gr', label:'Wtd revenue growth', pct:true, growth:true},
+  {id:'gb', label:'Wtd bottom-line growth', pct:true, growth:true},
+];
+let esState={q:'all', m:'ov', sort:'name', dir:1, open:{}};
+let esChart=null;
+function esSeasons(){
+  const s=new Set(); ER.companies.forEach(c=>Object.entries(c.q||{}).forEach(([qt,d])=>{ if(erQIdx(qt)>=erQIdx(ES_FROM)&&(d.overall||d.revYoY!=null||d.ebitdaYoY!=null)) s.add(qt); }));
+  return [...s].sort((a,b)=>erQIdx(a)-erQIdx(b)).slice(-ES_COLORS.length);
+}
+function esColor(qt){ const all=esSeasons(); return ES_COLORS[Math.max(0,erQIdx(qt)-erQIdx(ES_FROM))%ES_COLORS.length]||ES_COLORS[all.indexOf(qt)]; }
+function esStats(cos,qt){
+  const st={n:0,ov:[0,0],br:[0,0],bb:[0,0],gr:[0,0,0],gb:[0,0,0]};
+  cos.forEach(c=>{
+    const d=(c.q||{})[qt]; if(!d||!(d.overall||d.revYoY!=null||d.ebitdaYoY!=null)) return;
+    st.n++;
+    if(d.overall){ st.ov[1]++; if(d.overall==='beat') st.ov[0]++; }
+    if(d.revVs){ st.br[1]++; if(d.revVs==='beat') st.br[0]++; }
+    if(d.ebitdaVs){ st.bb[1]++; if(d.ebitdaVs==='beat') st.bb[0]++; }
+    const w=c._usd;
+    if(w>0&&d.revYoY!=null&&isFinite(d.revYoY)&&d.revYoY>=-1){ st.gr[0]+=w*d.revYoY; st.gr[1]+=w; st.gr[2]++; }
+    if(w>0&&d.ebitdaYoY!=null&&isFinite(d.ebitdaYoY)&&d.ebitdaYoY>=-1){ st.gb[0]+=w*d.ebitdaYoY; st.gb[1]+=w; st.gb[2]++; }
+  });
+  const r=(a)=>a[1]?a[0]/a[1]:null;
+  return {n:st.n, ov:r(st.ov), br:r(st.br), bb:r(st.bb), gr:r(st.gr), gb:r(st.gb),
+    k:{ov:st.ov, br:st.br, bb:st.bb, gr:st.gr[2], gb:st.gb[2]}};
+}
+function esBySector(){
+  const m={}; ER.companies.forEach(c=>{ const s=c.sector||'Other'; (m[s]=m[s]||[]).push(c); });
+  return m;
+}
+function esInit(){
+  const card=document.getElementById('esCard'); if(!card||!ER) return;
+  const seasons=esSeasons();
+  if(esState.q!=='all'&&!seasons.includes(esState.q)) esState.q='all';
+  const qSeg=document.getElementById('esQ'), mSel=document.getElementById('esM');
+  qSeg.innerHTML=[...seasons,'all'].map(q=>`<button type="button" data-q="${q}" class="${esState.q===q?'on':''}">${q==='all'?'All':q}</button>`).join('');
+  mSel.innerHTML=ES_METRICS.map(m=>`<option value="${m.id}"${esState.m===m.id?' selected':''}>${m.label}</option>`).join('');
+  if(!card.dataset.wired){
+    card.dataset.wired='1';
+    qSeg.addEventListener('click',e=>{ const b=e.target.closest('[data-q]'); if(!b) return; esState.q=b.dataset.q;
+      qSeg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); esRender(); });
+    mSel.addEventListener('change',()=>{ esState.m=mSel.value; esRender(); });
+    document.getElementById('esTbl').addEventListener('click',e=>{
+      const so=e.target.closest('[data-es-sort]');
+      if(so){ const k=so.dataset.esSort; if(esState.sort===k) esState.dir*=-1; else { esState.sort=k; esState.dir=k==='name'?1:-1; } esRender(); return; }
+      const sec=e.target.closest('[data-es-sec]');
+      if(sec){ const s=sec.dataset.esSec; esState.open[s]=!esState.open[s]; esRender(); return; }
+      const co=e.target.closest('[data-co]'); if(co) erOpenCompany(co.dataset.co);
+    });
+    document.getElementById('esTbl').addEventListener('mouseover',e=>{ const c=e.target.closest('[data-tip]'); if(c) erPopShow(c); });
+    document.getElementById('esTbl').addEventListener('mouseout',e=>{ if(e.target.closest('[data-tip]')) erPopHide(); });
+  }
+  esRender();
+}
+function esFmt(v,growth){ if(v==null) return '—'; const p=v*100; return growth?(p>0?'+':'')+p.toFixed(1)+'%':Math.round(p)+'%'; }
+function esRender(){
+  if(!ER) return;
+  const seasons=esSeasons(); const shown=esState.q==='all'?seasons:[esState.q];
+  const bySec=esBySector();
+  const secs=Object.keys(bySec).filter(s=>shown.some(q=>esStats(bySec[s],q).n>0)).sort((a,b)=>a.localeCompare(b));
+  const metric=ES_METRICS.find(m=>m.id===esState.m)||ES_METRICS[0];
+  const stats={}; secs.forEach(s=>{ stats[s]={}; shown.forEach(q=>stats[s][q]=esStats(bySec[s],q)); });
+  // ---- chart ----
+  const box=document.getElementById('esChartBox'), cv=document.getElementById('esChart');
+  box.style.minWidth=Math.max(0,secs.length*(shown.length*12+14)+60)+'px';
+  const data={labels:secs, datasets:shown.map(q=>({label:q, data:secs.map(s=>{ const v=stats[s][q][metric.id]; return v==null?null:+(v*100).toFixed(1); }),
+    backgroundColor:esColor(q), borderRadius:{topLeft:4,topRight:4,bottomLeft:0,bottomRight:0}, borderSkipped:'bottom',
+    maxBarThickness:14, categoryPercentage:0.78, barPercentage:0.92}))};
+  const opts={responsive:true, maintainAspectRatio:false, animation:false,
+    plugins:{legend:{display:true, position:'top', align:'end', labels:{color:'#9aa2b1', boxWidth:10, boxHeight:10, font:{family:'Roboto Mono',size:11}}},
+      tooltip:{backgroundColor:'#11151c', borderColor:'#252c39', borderWidth:1, titleColor:'#e9e6dd', bodyColor:'#9aa2b1', padding:9,
+        titleFont:{family:'Manrope',weight:'700'}, bodyFont:{family:'Roboto Mono',size:11},
+        callbacks:{label:ctx=>{ const st=stats[secs[ctx.dataIndex]][ctx.dataset.label]; const k=st.k[metric.id];
+          const base=Array.isArray(k)?`${k[0]} of ${k[1]} cos`:`${k} cos weighted`;
+          return `${ctx.dataset.label}: ${ctx.raw==null?'—':(metric.growth&&ctx.raw>0?'+':'')+ctx.raw+'%'}  (${base})`; }}}},
+    scales:{x:{ticks:{color:'#9aa2b1', autoSkip:false, maxRotation:90, minRotation:90, font:{family:'Manrope',size:10.5}}, grid:{display:false}, border:{color:'#252c39'}},
+      y:{beginAtZero:true, max:metric.growth?undefined:100, ticks:{color:'#646c7c', font:{family:'Roboto Mono',size:10}, callback:v=>v+'%'},
+        grid:{color:'rgba(37,44,57,.55)'}, border:{display:false}}}};
+  if(esChart){ esChart.data=data; esChart.options=opts; esChart.update(); }
+  else if(typeof Chart!=='undefined') esChart=new Chart(cv,{type:'bar', data, options:opts});
+  document.getElementById('esSub').textContent=`${metric.label} by sector · ${shown.join(' vs ')} · ${secs.length} sectors`;
+  // ---- table ----
+  const cols=[['n','Cos'],['br','% beat revenue'],['bb','% beat bottom line'],['gr','Wtd revenue growth'],['gb','Wtd bottom-line growth']];
+  const sk=esState.sort; const sq=shown[shown.length-1];
+  const sorted=secs.slice().sort((a,b)=>{
+    if(sk==='name') return a.localeCompare(b)*esState.dir;
+    const [q,k]=sk.split(':'); const va=(stats[a][q]||{})[k], vb=(stats[b][q]||{})[k];
+    if(va==null&&vb==null) return a.localeCompare(b); if(va==null) return 1; if(vb==null) return -1;
+    return (va-vb)*esState.dir;
+  });
+  const arrow=k=>esState.sort===k?(esState.dir<0?' ▼':' ▲'):'';
+  let h='<thead>';
+  if(shown.length>1) h+=`<tr><th></th>${shown.map(q=>`<th colspan="${cols.length}" class="es-q" style="box-shadow:inset 0 -2px 0 ${esColor(q)}">${q}</th>`).join('')}</tr>`;
+  h+=`<tr><th class="es-name"><button type="button" data-es-sort="name">Sector${arrow('name')}</button></th>${shown.map(q=>cols.map(([k,l])=>
+    `<th><button type="button" data-es-sort="${q}:${k}" title="Sort by ${l} (${q})">${l}${arrow(q+':'+k)}</button></th>`).join('')).join('')}</tr></thead><tbody>`;
+  const all={}; shown.forEach(q=>all[q]=esStats(ER.companies,q));
+  const cell=(st,k)=>{ if(k==='n') return `<td>${st.n||'—'}</td>`;
+    const v=st[k], g=k==='gr'||k==='gb'; const kk=st.k[k]; const sub=Array.isArray(kk)?`${kk[0]}/${kk[1]}`:kk?`n=${kk}`:'';
+    const cls=g&&v!=null?(v>0?'up':v<0?'down':''):'';
+    return `<td class="${cls}" title="${sub}">${esFmt(v,g)}</td>`; };
+  const tipCell=(c,q,k)=>{ const d=(c.q||{})[q]||{};
+    if(k==='n'){ const v=d.overall; return `<td class="es-v ${v||''}">${v?ER_VERDICT[v]:'·'}</td>`; }
+    if(k==='br'||k==='bb'){ const m=k==='br'?'rev':'ebitda', vs=d[m+'Vs']; return `<td class="es-call ${vs||''}">${vs?{beat:'Beat',inline:'In line',miss:'Miss'}[vs]:'·'}</td>`; }
+    const m=k==='gr'?'rev':'ebitda', v=d[m+'YoY'], vs=d[m+'Vs'], note=d[m+'Note'];
+    if(v==null) return '<td class="na">·</td>';
+    const i=erTips.push({cls:vs==='beat'?'beat':vs==='miss'?'miss':'',h:`${erEsc(c.name)} · ${q} ${erEsc((c.metrics||{})[m]||(m==='rev'?'Revenue':'EBITDA'))} YoY ${erPct(v)}`,t:note?erEsc(note):'',s:erSrc(d)})-1;
+    return `<td class="es-yoy ${vs==='beat'?'beat':vs==='miss'?'miss':''}" data-tip="${i}">${erPct(v)}</td>`; };
+  sorted.forEach(s=>{
+    const open=!!esState.open[s];
+    h+=`<tr class="es-sec${open?' open':''}"><td class="es-name"><button type="button" data-es-sec="${erEsc(s)}"><span class="car">${open?'▾':'▸'}</span>${erEsc(s)}</button></td>${shown.map(q=>cols.map(([k])=>cell(stats[s][q],k)).join('')).join('')}</tr>`;
+    if(open){
+      bySec[s].slice().sort((a,b)=>(b._usd||0)-(a._usd||0)).forEach(c=>{
+        h+=`<tr class="es-co"><td class="es-name"><button type="button" data-co="${erEsc(c.name)}">${erEsc(c.name)}</button><span class="mc">${erUsd(c._usd)}</span></td>${shown.map(q=>cols.map(([k])=>tipCell(c,q,k)).join('')).join('')}</tr>`;
+      });
+    }
+  });
+  h+=`<tr class="es-tot"><td class="es-name">All sectors</td>${shown.map(q=>cols.map(([k])=>cell(all[q],k)).join('')).join('')}</tr></tbody>`;
+  document.getElementById('esTbl').innerHTML=h;
+}
 
 /* ---------- Positioning tab · FII/DII daily flows ---------- */
 let fiiFlowChart=null, diiFlowChart=null;

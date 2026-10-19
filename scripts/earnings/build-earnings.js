@@ -313,6 +313,65 @@ function mergeOne(E, it, r, flags = {}) {
   return 'ok';
 }
 
+// ---------- post-pass ----------
+// (1) Units. Workbook absolutes were typed in whatever unit the analyst used (ICICI Bank
+// in ₹ lakh, IT revenue sometimes in ₹ rather than US$). Each workbook cell left in a row
+// that also holds PDF-sourced values of the same metric is compared with the nearest
+// PDF quarter: within 0.5x-2x it is kept; a clean power-of-ten gap is rescaled; anything
+// else (e.g. ₹ vs US$) is set aside in abs.wb_<k> and blanked, so a row never mixes units.
+function normaliseUnits(E) {
+  let rescaled = 0, dropped = 0;
+  for (const c of E.companies) {
+    for (const k of ['rev', 'ebitda']) {
+      const pdfQs = Object.entries(c.q || {}).filter(([, d]) => d[k] != null && d.abs && d.abs[k] && d.abs[k].key);
+      if (!pdfQs.length) continue;
+      for (const [qt, d] of Object.entries(c.q)) {
+        if (d[k] == null || (d.abs && d.abs[k])) continue;           // empty, or already PDF/normalised
+        const near = pdfQs.slice().sort((a, b) => Math.abs(qOrder(a[0]) - qOrder(qt)) - Math.abs(qOrder(b[0]) - qOrder(qt)))[0][1][k];
+        if (!near || !d[k] || Math.sign(near) !== Math.sign(d[k])) continue;
+        const r = d[k] / near, l = Math.log10(Math.abs(r)), p = Math.round(l);
+        d.abs = d.abs || {};
+        if (Math.abs(r) >= 0.5 && Math.abs(r) <= 2) { d.abs[k] = { role: 'workbook' }; continue; }
+        d.abs['wb_' + k] = d[k];
+        if (p !== 0 && Math.abs(l - p) < 0.12) { d[k] = +(d[k] / Math.pow(10, p)).toPrecision(8); d.abs[k] = { role: 'workbook-rescaled', factor: Math.pow(10, p) }; rescaled++; }
+        else { d[k] = null; d.abs[k] = { role: 'workbook-dropped' }; dropped++;
+          audit({ type: 'unit-drop', name: c.name, quarter: qt, metric: k, workbook: d.abs['wb_' + k], nearestPdf: near }); }
+      }
+    }
+  }
+  return { rescaled, dropped };
+}
+// (2) Attribution. A quarter still sourced from the workbook gets the broker whose note
+// contains its comment text (the analyst pasted those comments from the notes).
+const flat = s => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+function attributeWorkbookNotes(E) {
+  const PDFMAP = readJSON(path.join(ROOT, 'data', 'pdfmap.json'), {});
+  const byFolder = {};
+  for (const [key, p] of Object.entries(PDFMAP)) { const [h, d, f] = key.split('|'); if (h && d && f) (byFolder[f] = byFolder[f] || []).push({ key, p, broker: h, date: d }); }
+  const textCache = {};
+  const textOf = n => { if (!(n.key in textCache)) { try { textCache[n.key] = flat(execFileSync('pdftotext', ['-l', '4', n.p, '-'], { maxBuffer: 16 << 20, timeout: 30000, stdio: ['ignore', 'pipe', 'ignore'] }).toString()); } catch (e) { textCache[n.key] = ''; } } return textCache[n.key]; };
+  let n = 0;
+  for (const c of E.companies) {
+    const keys = new Set([norm(c.name), norm(c.sheetName)]);
+    const folders = Object.keys(byFolder).filter(f => keys.has(norm(f)) || FOLDER_ALIAS[f] === c.name);
+    if (!folders.length) continue;
+    const notes = folders.flatMap(f => byFolder[f]);
+    for (const [qt, d] of Object.entries(c.q || {})) {
+      if (!d.src || d.src.kind !== 'sheet' || d.src.attrib) continue;
+      const probes = [d.revNote, d.ebitdaNote].filter(Boolean).map(flat).filter(t => t.length >= 30).map(t => t.slice(0, 60));
+      if (!probes.length) continue;
+      const inSeason = notes.filter(x => quarterForReport(x.date) === qt);
+      const hit = (inSeason.length ? inSeason : notes).find(x => probes.some(pr => textOf(x).includes(pr)));
+      if (hit) { d.src.attrib = { broker: hit.broker, date: hit.date, key: hit.key }; n++; }
+    }
+  }
+  return n;
+}
+function postPass(E) {
+  const u = normaliseUnits(E), a = attributeWorkbookNotes(E);
+  log(`post-pass: ${u.rescaled} workbook figure(s) rescaled, ${u.dropped} set aside (unit mismatch), ${a} workbook comment(s) attributed to a broker note.`);
+}
+
 function finalize(E) {
   const qs = new Set();
   for (const c of E.companies) for (const q of Object.keys(c.q || {})) qs.add(q);
@@ -348,10 +407,13 @@ function mergeDir(E) {
     if (!E || !Array.isArray(E.companies)) { log('data/earnings.json missing or invalid - skipping.'); return; }
     fs.mkdirSync(WORK, { recursive: true });
 
-    if (mode === '--merge') { const n = mergeDir(E); finalize(E); log(`merged ${n} result(s).`); return; }
+    if (mode === '--merge') { const n = mergeDir(E); postPass(E); finalize(E); log(`merged ${n} result(s).`); return; }
+    if (mode === '--postpass') { postPass(E); finalize(E); return; }
 
     // Drop items whose exact note set was already judged "not a results note".
-    let items = buildWorkList(E, { allSeasons: backfill || mode === '--list-all' }).filter(it => {
+    // Every season with notes: once the backfill is complete this only picks up new notes,
+    // and until then each daily run chips away at whatever a stopped backfill left.
+    let items = buildWorkList(E, { allSeasons: true }).filter(it => {
       const s = (E.skipped || {})[it.name + '|' + it.quarter];
       return !(s && s.considered.join() === it.keys.join());
     });
@@ -373,7 +435,7 @@ function mergeDir(E) {
 
     const budgetS = backfill ? Infinity : +(process.env.EARN_BUDGET || 1500);
     const deadline = Date.now() + budgetS * 1000;
-    const workers = +(process.env.EARN_WORKERS || (backfill ? 4 : 1));
+    const workers = +(process.env.EARN_WORKERS || (backfill ? 4 : 3));
     let done = 0, failsInRow = 0, stop = false, cursor = 0;
 
     async function one(it) {
@@ -404,6 +466,7 @@ function mergeDir(E) {
     }
     await Promise.all(Array.from({ length: workers }, worker));
     if (Date.now() >= deadline && cursor < items.length) log('budget reached - the rest resumes next run.');
+    postPass(E);
     finalize(E);
     log(`mined ${done} item(s); ${items.length - cursor} left in queue.`);
   } catch (e) {
