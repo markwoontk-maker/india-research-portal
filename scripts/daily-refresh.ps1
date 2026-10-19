@@ -226,6 +226,18 @@ Step "build-house-view-notes" {
   & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-house-view-notes.ps1"
 }
 
+# 8e2. Earnings tab (data/earnings.json): mine the newest broker post-results notes
+#      in the PDF library for company-quarters not yet in the tab -> revenue/EBITDA (or
+#      TOI/PPOP, APE/VNB, ...) actual + year-ago from ONE report, beat/in-line/miss vs
+#      consensus, explanation; then refresh market caps. Runs here, i.e. AFTER the
+#      daily-return step (8b2 refresh-wl-returns) and serially, never concurrently.
+#      Headless claude reads pymupdf-rendered page images; budget $env:EARN_BUDGET
+#      (default 1500 s). Rows from the analyst workbook are never overwritten. Always exits 0.
+Step "build-earnings" {
+  & $node "scriptsearningsuild-earnings.js"
+  $global:LASTEXITCODE = 0
+}
+
 # 8f. Charts auto-ingest runs as its OWN scheduled weekday task (chained after this
 #     refresh) so the slow headless-Claude vision pass doesn't hold up the refresh.
 #     See scripts/charts/build-charts.ps1 + scripts/charts/install-charts-task.ps1.
@@ -239,7 +251,7 @@ $stageList = @('data/pdfdata.json','data/pdfmap.json','data/research.json','data
   'data/movers.json','data/sectors.json','data/wl_returns.json','data/wl_quotes.json',
   'data/earnings_calendar.json','data/fpi_sectors.json','data/mf_categories.json','data/sip_flows.json',
   'data/model_portfolios.json','data/company_qa.json','data/company_questions.json',
-  'data/sector_notebooks.json','data/house_view_notes.json','index.html',
+  'data/sector_notebooks.json','data/house_view_notes.json','data/earnings.json','index.html',
   'scripts/notes-recent.txt','scripts/notes-prior.txt')
 Step "git stage" {
   & git add -- $stageList

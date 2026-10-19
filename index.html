@@ -888,34 +888,101 @@
   .fin-seg-metric:first-child{margin-top:4px}
   .fin-seg-metric-h{font-size:11px;text-transform:uppercase;letter-spacing:.08em;
     color:var(--text-mute);margin-bottom:4px}
-  /* Sector tab: per-broker view blocks + earnings-season list */
-  .sec-view-block{padding:12px 0;border-top:1px solid var(--line-soft)}
-  .sec-view-block:first-child{border-top:none;padding-top:4px}
-  .sec-view-house{font-family:'Fraunces',serif;font-size:13.5px;font-weight:600;color:var(--text);
-    display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
-  .sec-view-date{font-family:'Roboto Mono',monospace;font-size:10.5px;color:var(--text-mute);font-weight:400}
-  .sec-view-body{margin:0;font-size:13px;line-height:1.7}
-  .sec-earn-block{padding:10px 0;border-top:1px solid var(--line-soft);font-size:13px;line-height:1.65}
-  .sec-earn-block:first-child{border-top:none;padding-top:2px}
-  .sec-pick{font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;color:var(--text);
-    text-decoration:none;border-bottom:1px dotted var(--text-mute);cursor:pointer;margin-right:2px}
-  .sec-pick:hover{color:var(--saffron);border-bottom-color:var(--saffron)}
-  .sec-pick-count{font-family:'Roboto Mono',monospace;font-size:10.5px;color:var(--text-mute)}
-  .sec-pick-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;
-    padding:5px 0;border-bottom:1px solid var(--line-soft)}
-  .sec-pick-row:last-child{border-bottom:none}
-  /* Sector selector: clickable sentiment-coloured boxes (replaces the dropdown) */
-  .sec-chip-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
-  .sec-chip{font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;line-height:1.2;
-    color:var(--text-dim);background:var(--ink-2);border:1px solid var(--line-soft);
-    border-radius:8px;padding:8px 13px;cursor:pointer;transition:border-color .15s ease,background .15s ease,color .15s ease}
-  .sec-chip:hover{border-color:var(--text-mute);color:var(--text)}
-  .sec-chip.pos{color:var(--up);border-color:rgba(63,199,138,.35);background:rgba(63,199,138,.08)}
-  .sec-chip.neg{color:var(--down);border-color:rgba(240,106,106,.35);background:rgba(240,106,106,.08)}
-  .sec-chip.active{border-color:var(--saffron);box-shadow:0 0 0 1px var(--saffron) inset}
-  .sec-chip-legend{font-size:11px;color:var(--text-mute);margin-top:12px;line-height:1.7}
-  .sec-leg{font-weight:600}
-  .sec-leg.pos{color:var(--up)} .sec-leg.neg{color:var(--down)}
+  /* Earnings tab: one row per company; each sub-category (Overall / Rev YoY /
+     EBITDA YoY / Revenue / EBITDA) is its own horizontally-scrolling pane whose
+     header strip and body scroll together; the whole grid scrolls vertically
+     under a sticky header. */
+  #viewEarnings[hidden]{display:none}
+  .er-top{gap:14px;flex-wrap:wrap}
+  .er-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .er-tools input,.er-tools select{background:var(--ink-2);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:7px 10px;font-family:'Manrope';font-size:12px;outline:none}
+  .er-tools input{width:200px}
+  .er-tools input:focus,.er-tools select:focus{border-color:var(--saffron)}
+  .er-tally{display:flex;flex-wrap:wrap;gap:8px;margin:-6px 0 14px;font-size:12px;color:var(--text-dim)}
+  .er-tally .t{border:1px solid var(--line);border-radius:8px;padding:5px 10px;background:var(--ink-2)}
+  .er-tally b{font-family:'Roboto Mono';font-weight:700}
+  .er-grid{max-height:76vh;overflow:auto;border:1px solid var(--line-soft);
+    border-radius:10px;position:relative}
+  /* .er-head/.er-body get a JS-set min-width (company column + each pane's minimum): when the
+     panes can't all fit (phones), the grid itself scrolls sideways with the company column
+     pinned, instead of clipping the last groups. */
+  .er-head{position:sticky;top:0;z-index:6;display:flex;background:var(--panel);
+    border-bottom:1px solid var(--line)}
+  .er-body{display:flex}
+  .er-fix{flex:0 0 312px;border-right:1px solid var(--line);background:var(--panel);min-width:0;
+    position:sticky;left:0;z-index:4}
+  .er-pane{flex:1 1 var(--nat);min-width:var(--min);border-right:1px solid var(--line-soft)}
+  .er-pane[data-pri="1"]{flex:0 0 var(--nat)}
+  @media (max-width:1200px){ .er-pane,.er-pane[data-pri="1"]{flex:1 1 var(--nat);min-width:var(--one)} }
+  .er-pane:last-child{border-right:none}
+  .er-scroll{overflow-x:auto;overflow-y:hidden}
+  .er-bs{scrollbar-width:none}
+  .er-bs::-webkit-scrollbar{display:none}
+  .er-hs{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+  .er-hs::-webkit-scrollbar{height:6px}
+  .er-hs::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+  .er-gt{height:30px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 8px;
+    font-family:'Manrope';font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--text);white-space:nowrap;overflow:hidden;border-bottom:1px solid var(--line-soft)}
+  button.er-gt{width:100%;background:none;border:none;border-bottom:1px solid var(--line-soft);cursor:pointer}
+  button.er-gt:hover{color:var(--saffron)}
+  .er-gt .tt{overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .er-gt .ar{font-family:'Roboto Mono';font-size:11px;color:var(--text-mute);font-weight:500;letter-spacing:0;flex:none}
+  .er-strip{display:flex}
+  .er-sh{display:flex;height:28px}
+  .er-sh button{background:none;border:none;cursor:pointer;font-family:'Roboto Mono';font-size:10px;
+    color:var(--text-mute);font-weight:600;letter-spacing:.03em;text-transform:uppercase;padding:0 6px;
+    display:flex;align-items:center;justify-content:center;gap:3px;white-space:nowrap}
+  .er-sh button:hover{color:var(--text)}
+  .er-sh button.on{color:var(--saffron)}
+  .er-fix .er-sh button{justify-content:flex-start;padding:0 10px}
+  .er-r{display:flex;height:38px;border-bottom:1px solid var(--line-soft)}
+  .er-r.hl{background:var(--panel-2)}
+  .er-c{position:relative;display:flex;align-items:center;justify-content:center;flex:none;
+    font-family:'Roboto Mono';font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--text-dim);
+    padding:0 6px;white-space:nowrap}
+  .er-c.na{color:var(--line)}
+  .er-c[data-tip]{cursor:help}
+  .er-c.note::after{content:'';position:absolute;top:0;right:0;border-top:7px solid var(--saffron);
+    border-left:7px solid transparent}
+  .er-c.beat{background:rgba(63,199,138,.20);color:#86e6b7}
+  .er-c.miss{background:rgba(240,106,106,.20);color:#ffa3a3}
+  .er-c.ov{font-family:'Manrope';font-size:13px;font-weight:800;letter-spacing:.06em}
+  .er-c.ov.beat{background:none;color:var(--up)}
+  .er-c.ov.miss{background:none;color:var(--down)}
+  .er-c.ov.inline{color:var(--saffron)}
+  .er-c.ov.beat,.er-c.ov.miss,.er-c.ov.inline{text-shadow:0 0 18px currentColor}
+  .er-c.abs{color:var(--text-dim)}
+  .er-nm{flex:0 0 160px;justify-content:flex-start;font-family:'Manrope';font-size:12px;color:var(--text);
+    overflow:hidden;min-width:0}
+  .er-nm button{background:none;border:none;color:inherit;font:inherit;cursor:pointer;text-align:left;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0;max-width:100%}
+  .er-nm button:hover{color:var(--saffron)}
+  .er-nm .sub{display:none}
+  .er-sc{flex:0 0 74px;justify-content:center;flex-direction:column;align-items:flex-start;
+    font-family:'Manrope';font-size:11px;color:var(--text-dim);line-height:1.15;overflow:hidden}
+  .er-sc .mt{font-family:'Roboto Mono';font-size:9px;color:var(--text-mute);white-space:nowrap}
+  .er-mc{flex:0 0 78px;justify-content:flex-end;color:var(--text)}
+  .er-empty{padding:30px;text-align:center;color:var(--text-mute);font-size:12.5px}
+  .er-legend{font-size:11.5px;color:var(--text-mute);line-height:1.7;margin-top:12px}
+  .er-legend .sw{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:3px}
+  #erPop{position:fixed;z-index:60;max-width:340px;background:#11151c;border:1px solid var(--line);
+    border-left:3px solid var(--saffron);border-radius:8px;padding:9px 11px;font-size:12px;line-height:1.55;
+    color:var(--text-dim);box-shadow:0 14px 34px rgba(0,0,0,.55);display:none;pointer-events:none}
+  #erPop.show{display:block}
+  #erPop.beat{border-left-color:var(--up)} #erPop.miss{border-left-color:var(--down)}
+  #erPop .h{font-family:'Manrope';font-weight:700;color:var(--text);font-size:12px;margin-bottom:3px}
+  #erPop .s{font-family:'Roboto Mono';font-size:10px;color:var(--text-mute);margin-top:6px}
+  @media (max-width:700px){
+    .er-fix{flex-basis:136px}
+    .er-nm{flex:1 1 auto;flex-direction:column;align-items:flex-start;justify-content:center;line-height:1.2}
+    .er-nm .sub{display:block;font-family:'Roboto Mono';font-size:9px;color:var(--text-mute);white-space:nowrap;
+      overflow:hidden;text-overflow:ellipsis;max-width:100%}
+    .er-sc,.er-mc,.er-fix .er-sh .d{display:none}
+    .er-tools input{width:100%}
+    .er-tools{width:100%}
+  }
   /* Company chart: period return display + abnormal-move markers */
   .cm-return-row{display:flex;align-items:baseline;gap:12px;margin:4px 0 14px}
   .cm-return{font-family:'Roboto Mono';font-size:24px;font-weight:600;color:var(--text-mute)}
@@ -1085,9 +1152,9 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         Company
       </div>
-      <div class="nav-item" data-view="sector" data-title="Sector">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Sector
+      <div class="nav-item" data-view="earnings" data-title="Earnings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
+        Earnings
       </div>
       <div class="nav-item" data-view="charts" data-title="Charts">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5M4 19h16M8 16l3-4 3 2 4-6"/></svg>
@@ -2134,42 +2201,24 @@
       </div>
     </div>
 
-    <!-- Sector tab: pick a sector, then read a paragraph-per-broker view,
-         the latest earnings-season takeaways and the broker-consensus
-         most-liked / most-disliked stocks within the sector. -->
-    <div id="viewSector" hidden>
-      <div class="card reveal">
-        <div class="card-h"><div><h3>Sector Selector</h3><p id="secSub">Pick a sector to drive the broker views, earnings season summary and likes/dislikes</p></div></div>
-        <div id="secChips" class="sec-chip-grid"></div>
-        <p class="sec-chip-legend"><span class="sec-leg pos">Green</span> = net Buy-tilted broker coverage · <span class="sec-leg neg">Red</span> = net Sell-tilted · grey = balanced or no clear tilt.</p>
-        <p id="secStatus" style="color:var(--text-mute);font-size:12px;line-height:1.7;margin-top:10px"></p>
-      </div>
-      <div class="card reveal" id="secViewsCard" hidden>
-        <div class="card-h">
-          <div><h3 id="secViewsTitle">Sector Views</h3>
-          <p id="secViewsSub">Each broker's latest take on the sector — short paragraph apiece</p></div>
+    <!-- Earnings tab: latest quarterly results per company (revenue & EBITDA or sector
+         equivalents), YoY coloured by beat/miss vs consensus, explanations as pop-ups. -->
+    <div id="viewEarnings" hidden>
+      <div class="card">
+        <div class="card-h er-top">
+          <div><h3>Earnings Tracker</h3>
+          <p id="erSub">Loading latest results…</p></div>
+          <div class="er-tools">
+            <input id="erSearch" type="search" placeholder="Filter company or sector…" aria-label="Filter companies" />
+            <select id="erSector" aria-label="Filter by sector"><option value="">All sectors</option></select>
+          </div>
         </div>
-        <div id="secViewsBody"></div>
-        <p class="co-desc-src">2-4 sentences per broker, taken from the PDF body summary of each broker's most recent sector report. Citations link to the source PDF.</p>
-      </div>
-      <div class="card reveal" id="secEarningsCard" hidden>
-        <div class="card-h">
-          <div><h3>Latest Earnings Season</h3>
-          <p id="secEarningsSub">Aggregated takeaways from broker post-results notes on the sector</p></div>
-        </div>
-        <div id="secEarningsBody"></div>
-        <p class="co-desc-src">Filters the sector report pool for results-tagged notes (4Q / Q4 / results / earnings / EBITDA) and shows the most recent two with broker citations.</p>
-      </div>
-      <div class="card reveal" id="secPicksCard" hidden>
-        <div class="card-h">
-          <div><h3>Stocks Brokers Like &amp; Dislike</h3>
-          <p id="secPicksSub">Consensus from broker ratings across the sector's coverage universe</p></div>
-        </div>
-        <div class="thesis-grid">
-          <div class="thesis-col bull"><h4>Most liked</h4><div id="secLikes" class="co-desc"></div></div>
-          <div class="thesis-col bear"><h4>Most disliked</h4><div id="secDislikes" class="co-desc"></div></div>
-        </div>
-        <p class="co-desc-src">Aggregates the latest call per broker per stock across the sector's universe (local PDF library + Trendlyne per-stock coverage). Liked = stock with the most Buy/Add/OW ratings; disliked = stock with the most Sell/Reduce/UW ratings. Stock names link to the Company tab.</p>
+        <div id="erTally" class="er-tally"></div>
+        <div id="erGrid" class="er-grid"></div>
+        <p class="er-legend"><span class="sw" style="background:rgba(63,199,138,.45)"></span>beat consensus · <span class="sw" style="background:rgba(240,106,106,.45)"></span>missed consensus · uncoloured = in line (or no consensus in the notes) · <span style="color:var(--saffron)">◥</span> corner = explanation, hover or tap any cell to read it.
+        Click a group title (e.g. <b>Revenue YoY</b>) to flip its quarters new ⇄ old; click a quarter, Name, Sector or Mkt cap header to sort (click again to reverse, a third time to reset).
+        Lenders show Total operating income / PPOP, life insurers APE / VNB, general insurers GWP (or NEP) / PBT; IT revenue is in US$ mn with EBITDA/EBIT in ₹. Absolute figures are in each company's reporting unit (hover for it).
+        Figures come only from the analyst workbook and the broker results notes in the PDF library — for any quarter, revenue, EBITDA and their year-ago values come from one report. Market cap = full market cap (Nifty 500 snapshot, refreshed daily). Refreshed weekdays 09:30 MYT after the daily-return run.</p>
       </div>
     </div>
 
@@ -6135,7 +6184,6 @@ fetch('data/research.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(
   renderResearchNotes();
   if(typeof renderCompanyResearch==='function') renderCompanyResearch();
   if(typeof wlRenderResearch==='function') wlRenderResearch();
-  if(typeof renderSectorSummary==='function') renderSectorSummary();
 }).catch(()=>{});
 // Extracted broker-stated TP / Call from the PDF body (via pdftotext +
 // regex in scripts/extract-pdfdata.js). Schema:
@@ -6149,7 +6197,6 @@ fetch('data/pdfdata.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j
   renderResearchNotes();
   if(typeof renderCompanyResearch==='function') renderCompanyResearch();
   if(typeof wlRenderResearch==='function') wlRenderResearch();
-  if(typeof renderSectorSummary==='function') renderSectorSummary();
 }).catch(()=>{});
 // pdfmap.json: same key scheme, value is the absolute path to the local
 // PDF. Used by urlFor() to point each headline straight at its file://
@@ -6161,7 +6208,6 @@ fetch('data/pdfmap.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=
   renderResearchNotes();
   if(typeof renderCompanyResearch==='function') renderCompanyResearch();
   if(typeof wlRenderResearch==='function') wlRenderResearch();
-  if(typeof renderSectorSummary==='function') renderSectorSummary();
   linkStrategyHouseHeads();
 }).catch(()=>{});
 // Per-company TP/call rows extracted from multi-company JPM sector
@@ -6260,7 +6306,6 @@ fetch('data/trendlyne-coverage.json',{cache:'no-store'}).then(r=>r.ok?r.json():n
   window.TRENDLYNE_COVERAGE=j;
   if(typeof renderCompanyResearch==='function') renderCompanyResearch();
   if(typeof wlRenderResearch==='function') wlRenderResearch();
-  if(typeof renderSectorSummary==='function') renderSectorSummary();
 }).catch(()=>{});
 // Per-company bull/bear/key-debate Q&A, built by scripts/build-company-qa.ps1
 // (questioner + answerer agents). Top-level file is {asOf, companies:{}};
@@ -6671,322 +6716,6 @@ async function renderCompanyNews(name){
   }
 }
 
-/* ----- Sector tab renderers --------------------------------------------
-   Three cards: per-broker view paragraphs, latest earnings season
-   takeaways, and most-liked / most-disliked stocks in the sector.
-   All driven off currentSector + the same broker-report pool the
-   Research Notes tab uses. */
-
-// Shared helpers (defined once at module scope).
-const SEC_ESC = s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-const SEC_MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-function secFmtD(d){ const mm=+d.slice(2,4), dd=+d.slice(4,6); return `${dd} ${SEC_MON[mm-1]||''} '${d.slice(0,2)}`; }
-function secPdKey(h,d,co,ti){ return `${h}|${d}|${co}|${String(ti).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'')}`; }
-
-// Map a sector folder name → the regex that picks matching company
-// entries from companies.json (its `sector` field). Used by the
-// Likes/Dislikes card.
-const SECTOR_FILTER = {
-  'Indian Asset Managers':    /asset management|amc|mutual fund/i,
-  'Indian Autos':             /auto|tyres|auto components?/i,
-  'Indian Aviation':          /airlines|aviation/i,
-  'Indian Banks':             /\bbanks\b/i,
-  'Indian Cement':            /cement/i,
-  'Indian Chemicals':         /chemicals/i,
-  'Indian Consumer':          /fmcg/i,
-  'Indian Consumer Durables': /consumer durables/i,
-  'Indian Datacenters':       /data ?center/i,
-  'Indian Financials':        /financials|nbfc|banks|insurance/i,
-  'Indian Healthcare':        /hospital|healthcare|hospitals/i,
-  'Indian Infra':             /infrastructure|epc|airports|ports|roads/i,
-  'Indian Insurance':         /insurance/i,
-  'Indian IT':                /it services|er&d/i,
-  'Indian Jewellery':         /jewellery|gem/i,
-  'Indian Metals':            /metals|aluminium|iron ore|copper/i,
-  'Indian Mortgages':         /housing finance|mortgages/i,
-  'Indian NBFCs':             /nbfc/i,
-  'Indian Oil & Gas':         /oil & gas|cgd|omc/i,
-  'Indian Paints':            /paints/i,
-  'Indian Pharmaceuticals':   /pharma|crdmo/i,
-  'Indian Pipes':             /pipes/i,
-  'Indian Power':             /power|utilities/i,
-  'Indian Power Equipment':   /power · t&d|power equipment|t&d/i,
-  'Indian Real Estate':       /real estate|realty/i,
-  'Indian Steel':             /steel/i,
-  'Indian Telecom':           /telecom/i,
-  'India Strategy':           /.*/i,             // every name is a strategy pick
-  'India Macro':              /.*/i,
-  'Capital Markets':          /asset management|broking|capital markets|exchanges|amc/i,
-};
-
-// Pool of broker reports tagged to the selected sector (NOTES + notesExt
-// + notesPrior; Trendlyne per-stock data is per-company, not per-sector).
-function secPool(sector){
-  const cur=[...(typeof notes==='undefined'?[]:notes),
-             ...(typeof notesExt==='undefined'?[]:notesExt)]
-    .filter(n=>n && n.length>=4).map(n=>[n[0],n[1],n[2],n[3],n[4]||null]);
-  const pri=(typeof notesPrior==='undefined'?[]:notesPrior)
-    .map(n=>[n[0],n[1],n[2],n[3],null]);
-  const target=sector.toLowerCase();
-  return [...cur,...pri].filter(r=>String(r[2]).toLowerCase()===target)
-    .sort((a,b)=>b[1].localeCompare(a[1]));
-}
-
-// Resolve a click-target URL for a broker report. PDFMAP wins, NotebookLM
-// fallback, explicit notesExt URL when present, Google as last resort.
-function secUrlFor(folder,h,ti,d,explicit){
-  if(explicit) return explicit;
-  const PM=(typeof PDFMAP==='undefined'||!PDFMAP)?null:PDFMAP;
-  if(PM){
-    const tk=String(ti).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
-    const p=PM[`${h}|${d}|${folder}|${tk}`];
-    if(p) return 'file:///'+p.replace(/\\/g,'/').split('/').map(encodeURIComponent).join('/');
-  }
-  return 'https://www.google.com/search?q='+encodeURIComponent(`${h} ${folder} ${ti}`);
-}
-
-// Trim a PDF summary into K usable sentences (after dropping clipped or
-// boilerplate-y fragments).
-const SEC_BAD_OPEN = /^(?:refer to|please refer|downloaded by|page \d|source:|see disclosure|disclosure|exhibit \d|figure \d|table \d|fig\. \d|tab\. \d|chart \d|appendix|copyright|all rights reserved|©|target price|price target|fair value|cmp[\s:(]|reco[\s:(]|rating[\s:(]|bloomberg|reuters|nse|bse|isin|shares outstanding|market cap[\s:]|prior \()/i;
-function secBadSentence(t){
-  if(!t||t.length<25) return true;
-  if(!/^[A-Z“"'(\[]/.test(t)) return true;
-  if(SEC_BAD_OPEN.test(t)) return true;
-  const garbled=(t.match(/[�■□]/g)||[]).length; if(garbled>1) return true;
-  const digits=(t.match(/\d/g)||[]).length;
-  const letters=(t.match(/[A-Za-z]/g)||[]).length;
-  if(letters>0 && digits/(digits+letters)>0.30) return true;
-  return false;
-}
-function secDistil(summary, maxSents){
-  if(!summary) return [];
-  const t=String(summary).replace(/[��]/g,'').replace(/\s+/g,' ').trim();
-  if(!t) return [];
-  const parts=t.split(/(?<=[.!?])\s+(?=[A-Z0-9“"'])/).map(s=>s.trim()).filter(Boolean);
-  const good=[];
-  for(const s of parts){
-    if(secBadSentence(s)) continue;
-    good.push(s.length>260 ? s.slice(0,260).replace(/[\s,;:]+\S*$/,'')+'…' : s);
-    if(good.length>=maxSents) break;
-  }
-  return good;
-}
-
-// Card 1: Sector Views — one short paragraph per broker covering the sector.
-function renderSectorViews(){
-  const card=document.getElementById('secViewsCard');
-  const body=document.getElementById('secViewsBody');
-  const sub=document.getElementById('secViewsSub');
-  if(!card||!body) return;
-  if(!currentSector){ card.hidden=true; return; }
-  const pool=secPool(currentSector);
-  if(!pool.length){ card.hidden=true; return; }
-  card.hidden=false;
-  // Latest report per broker.
-  const byHouse={};
-  pool.forEach(r=>{ if(!byHouse[r[0]]) byHouse[r[0]]=r; });
-  const houses=Object.keys(byHouse).sort((a,b)=>byHouse[b][1].localeCompare(byHouse[a][1]));
-  const PD=(typeof PDFDATA==='undefined'||!PDFDATA)?null:PDFDATA;
-  const blocks=houses.map(h=>{
-    const r=byHouse[h];
-    const d=r[1], co=r[2], ti=r[3], u=r[4];
-    const pd=PD?PD[secPdKey(h,d,co,ti)]:null;
-    let sents=secDistil(pd&&pd.summary, 3);
-    if(!sents.length){
-      // Fall back to the headline (minus rating prefix).
-      let h2=String(ti).replace(/^.* — /,'').trim();
-      if(h2 && !/[.!?]$/.test(h2)) h2+='.';
-      sents=[h2];
-    }
-    const url=secUrlFor(co,h,ti,d,u);
-    const cite=`<a class="thesis-cite" href="${SEC_ESC(url)}" target="_blank" rel="noopener">(${SEC_ESC(h)}, ${SEC_ESC(secFmtD(d))})</a>`;
-    return `<div class="sec-view-block">
-      <div class="sec-view-house">${SEC_ESC(h)} <span class="sec-view-date">${SEC_ESC(secFmtD(d))}</span></div>
-      <p class="co-desc sec-view-body">${SEC_ESC(sents.join(' '))} ${cite}</p>
-    </div>`;
-  });
-  if(sub) sub.textContent=`${houses.length} broker${houses.length>1?'s':''} covering ${currentSector} · ${pool.length} report${pool.length>1?'s':''} in the pool`;
-  body.innerHTML=blocks.join('');
-}
-
-// Card 2: Latest Earnings Season — the most recent results-tagged reports.
-const RESULTS_RE = /\b(?:[1-4]q?fy\d{2,4}|q[1-4]\b|results?\b|earnings\b|ebitda\b|\bpat\b|profit\b|revenue beat|results live|results day|quarter|review:?\s*[1-4]q|consensus est|in[- ]line|beat|miss)\b/i;
-function renderSectorEarnings(){
-  const card=document.getElementById('secEarningsCard');
-  const body=document.getElementById('secEarningsBody');
-  const sub=document.getElementById('secEarningsSub');
-  if(!card||!body) return;
-  if(!currentSector){ card.hidden=true; return; }
-  const pool=secPool(currentSector);
-  const PD=(typeof PDFDATA==='undefined'||!PDFDATA)?null:PDFDATA;
-  // Tag reports as "results" if PDF body or headline mentions results
-  // keywords (quarter, FY, results, beat/miss, EBITDA, PAT etc.).
-  const tagged=pool.filter(r=>{
-    const ti=r[3]||'';
-    const pd=PD?PD[secPdKey(r[0],r[1],r[2],ti)]:null;
-    const blob=ti+' '+(pd&&pd.summary?pd.summary:'');
-    return RESULTS_RE.test(blob);
-  });
-  if(!tagged.length){
-    card.hidden=true; return;
-  }
-  card.hidden=false;
-  // Pick the 3 most recent.
-  const picks=tagged.slice(0,3);
-  const blocks=picks.map(r=>{
-    const [h,d,co,ti,u]=r;
-    const pd=PD?PD[secPdKey(h,d,co,ti)]:null;
-    const sents=secDistil(pd&&pd.summary, 3);
-    let body='';
-    if(sents.length) body=sents.join(' ');
-    else body=String(ti).replace(/^.* — /,'').trim()+(/[.!?]$/.test(ti)?'':'.');
-    const url=secUrlFor(co,h,ti,d,u);
-    const cite=`<a class="thesis-cite" href="${SEC_ESC(url)}" target="_blank" rel="noopener">(${SEC_ESC(h)}, ${SEC_ESC(secFmtD(d))})</a>`;
-    return `<p class="co-desc sec-earn-block">${SEC_ESC(body)} ${cite}</p>`;
-  });
-  if(sub) sub.textContent=`${tagged.length} results-tagged report${tagged.length>1?'s':''} in the pool · showing the ${picks.length} most recent`;
-  body.innerHTML=blocks.join('');
-}
-
-// Card 3: Stocks brokers like / dislike — aggregate broker ratings across
-// the sector's coverage universe (companies.json sector field matches).
-// Aggregate the latest broker rating per (company, broker) across the
-// local + external + Trendlyne pool, for the given list of company keys.
-// Returns a map: companyKey → {buy, sell, brokers:Set, latest}. Shared by
-// the Likes/Dislikes card and the sector-chip sentiment colouring.
-function secComputeStats(cos){
-  const PD=(typeof PDFDATA==='undefined'||!PDFDATA)?null:PDFDATA;
-  const BUY={BUY:1,OP:1,OW:1,ADD:1,ACCUMULATE:1,OUTPERFORM:1,OVERWEIGHT:1};
-  const SELL={SELL:1,UP:1,UW:1,REDUCE:1,UNDERPERFORM:1,UNDERWEIGHT:1};
-  function callOf(headline){
-    const m = String(headline||'').match(/\b(OW|UW|EW|BUY|SELL|HOLD|NEUTRAL|OUTPERFORM|UNDERPERFORM|ADD|REDUCE|ACCUMULATE|OVERWEIGHT|UNDERWEIGHT)\b/i);
-    return m ? m[1].toUpperCase() : '';
-  }
-  const stats={};
-  function tally(co, h, d, headline){
-    if(!stats[co]) stats[co]={buy:0,sell:0,brokers:new Set(),latest:''};
-    // Latest rating per broker (newest wins).
-    if(!stats[co]._seen) stats[co]._seen={};
-    if(stats[co]._seen[h] && stats[co]._seen[h] >= d) return;
-    stats[co]._seen[h]=d;
-    // PDFDATA call first.
-    const pd=PD?PD[secPdKey(h,d,co,headline)]:null;
-    const call = (pd && pd.currCall) || callOf(headline);
-    if(!call) return;
-    const c=call.toUpperCase();
-    if(BUY[c]) stats[co].buy++;
-    else if(SELL[c]) stats[co].sell++;
-    stats[co].brokers.add(h);
-    if(!stats[co].latest || stats[co].latest<d) stats[co].latest=d;
-  }
-  const allRows=[...(typeof notes==='undefined'?[]:notes),
-                 ...(typeof notesExt==='undefined'?[]:notesExt),
-                 ...(typeof notesPrior==='undefined'?[]:notesPrior)]
-    .filter(r=>r && r.length>=4);
-  cos.forEach(co=>{
-    const tgt=co.toLowerCase();
-    allRows.filter(r=>String(r[2]).toLowerCase()===tgt)
-      .forEach(r=>tally(co, r[0], r[1], r[3]));
-    const tl=((window.TRENDLYNE_COVERAGE||{})[co])||[];
-    tl.forEach(r=>{
-      const headline = (r.rating?r.rating.charAt(0).toUpperCase()+r.rating.slice(1).toLowerCase():'')
-        + (r.tp?' · TP ₹'+r.tp:'') + (r.headline?' — '+r.headline:'');
-      tally(co, r.broker, r.date, headline);
-    });
-  });
-  return stats;
-}
-
-// Company keys whose companies.json `sector` field matches a sector's filter.
-function secCompaniesIn(sector){
-  const re = SECTOR_FILTER[sector];
-  if(!re || !window.COMPANIES) return [];
-  return Object.keys(window.COMPANIES).filter(k=>{
-    const e=window.COMPANIES[k]; return e && e.sector && re.test(e.sector);
-  });
-}
-
-function renderSectorPicks(){
-  const card=document.getElementById('secPicksCard');
-  const likesEl=document.getElementById('secLikes');
-  const dislikesEl=document.getElementById('secDislikes');
-  const sub=document.getElementById('secPicksSub');
-  if(!card||!likesEl||!dislikesEl) return;
-  if(!currentSector || !window.COMPANIES){ card.hidden=true; return; }
-  const re = SECTOR_FILTER[currentSector];
-  if(!re){ card.hidden=true; return; }
-  const cos = secCompaniesIn(currentSector);
-  if(!cos.length){ card.hidden=true; return; }
-  const stats = secComputeStats(cos);
-  function fmtList(items){
-    if(!items.length) return '<span class="empty">No clear consensus from the pool.</span>';
-    return items.map(it=>{
-      const url=`#open-${encodeURIComponent(it.name)}`;
-      return `<div class="sec-pick-row"><a class="thesis-cite sec-pick" data-co="${SEC_ESC(it.name)}" href="${url}">${SEC_ESC(it.name)}</a> <span class="sec-pick-count">${it.buy}B / ${it.sell}S</span></div>`;
-    }).join('');
-  }
-  const sorted=cos.map(co=>{
-    const s=stats[co]||{buy:0,sell:0,brokers:new Set(),latest:''};
-    return {name:co, buy:s.buy, sell:s.sell, brokers:s.brokers?s.brokers.size:0};
-  }).filter(s=>s.buy||s.sell);
-  if(!sorted.length){ card.hidden=true; return; }
-  card.hidden=false;
-  const liked=sorted.slice().sort((a,b)=>(b.buy-a.buy)||(a.sell-b.sell)).filter(s=>s.buy>0).slice(0,5);
-  const dislikes=sorted.slice().sort((a,b)=>(b.sell-a.sell)||(a.buy-b.buy)).filter(s=>s.sell>0).slice(0,5);
-  likesEl.innerHTML   = fmtList(liked);
-  dislikesEl.innerHTML= fmtList(dislikes);
-  if(sub) sub.textContent=`${sorted.length} stocks in the ${currentSector} universe with broker ratings · B = Buy/Add/OW counts, S = Sell/Reduce/UW counts`;
-  // Stock-name clicks jump to the Company tab with that stock selected.
-  card.querySelectorAll('a.sec-pick').forEach(a=>{
-    a.addEventListener('click', e=>{
-      e.preventDefault();
-      const name=a.getAttribute('data-co');
-      const coSel=document.getElementById('nbSelectCo');
-      if(coSel){
-        // Try to match by visible option text.
-        for(const opt of coSel.options){ if(opt.textContent===name){ coSel.value=opt.value; break; } }
-      }
-      loadCompanyChart(name);
-      // Switch to Company tab.
-      const navBtn=document.querySelector('.nav-item[data-view="screener"]');
-      if(navBtn) navBtn.click();
-    });
-  });
-}
-
-// Master refresh for the Sector tab (called on selector change + when
-// data sources finish loading).
-function renderSectorTab(){
-  colorSectorChips();
-  renderSectorViews();
-  renderSectorEarnings();
-  renderSectorPicks();
-}
-
-// Colour each sector chip by its net broker rating tilt across the sector's
-// coverage universe: more Buy-type ratings → green (.pos), more Sell-type →
-// red (.neg), tied/none or catch-all sectors (India Macro/Strategy) → grey.
-function colorSectorChips(){
-  const wrap=document.getElementById('secChips');
-  if(!wrap || !window.COMPANIES) return;
-  const stats=secComputeStats(Object.keys(window.COMPANIES));
-  wrap.querySelectorAll('.sec-chip').forEach(btn=>{
-    const sector=btn.getAttribute('data-sector');
-    btn.classList.remove('pos','neg');
-    const re=SECTOR_FILTER[sector];
-    if(!re || re.source==='.*') return;          // catch-all → neutral
-    let buy=0, sell=0;
-    secCompaniesIn(sector).forEach(co=>{
-      const s=stats[co]; if(s){ buy+=s.buy; sell+=s.sell; }
-    });
-    if(buy>sell) btn.classList.add('pos');
-    else if(sell>buy) btn.classList.add('neg');
-    if(buy||sell) btn.title=`${buy} Buy-type vs ${sell} Sell-type broker ratings across the sector`;
-  });
-}
-
-// Back-compat shim — older data-load callbacks call renderSectorSummary().
-function renderSectorSummary(){ renderSectorTab(); }
 
 // Bull/Bear thesis paragraphs for the selected company. Sentences come
 // from data/theses.json (built by scripts/build-theses.js) and each
@@ -7823,33 +7552,220 @@ function loadScreener(){
   status.textContent=`${companies.length} companies in coverage`;
 }
 
-// Sector tab: sectors-only dropdown plus the three sector cards
-// (Sector Views paragraphs, Earnings Season takeaways, Most-Liked /
-// Most-Disliked stocks). Initialised once on first tab open.
-let currentSector=null;
-function loadSectorPicker(){
-  const status=document.getElementById('secStatus');
-  const wrap=document.getElementById('secChips');
-  if(!wrap) return;
-  const sectors=[];
-  NOTEBOOKS.forEach(n=>{ if(SECTOR_NAMES.has(n.name)) sectors.push(n); });
-  sectors.sort((a,b)=>a.name.localeCompare(b.name));
-  wrap.innerHTML=sectors.map(n=>
-    `<button type="button" class="sec-chip" data-sector="${SEC_ESC(n.name)}">${SEC_ESC(n.name)}</button>`
-  ).join('');
-  wrap.querySelectorAll('.sec-chip').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const sec=btn.getAttribute('data-sector');
-      const wasActive=btn.classList.contains('active');
-      wrap.querySelectorAll('.sec-chip').forEach(b=>b.classList.remove('active'));
-      if(wasActive){ currentSector=null; }       // click again to clear
-      else { btn.classList.add('active'); currentSector=sec; }
-      renderSectorTab();
-    });
-  });
-  status.textContent=`${sectors.length} sectors with broker coverage`;
-  colorSectorChips();
+/* ---------- Earnings tab ----------
+   data/earnings.json (seeded from the analyst workbook, extended daily by
+   scripts/earnings/build-earnings.js from broker results notes) + market caps
+   from data/sectors.json (Nifty 500, full cap, INR cr) or the row's own `mcap`.
+   One row per company; five sub-category panes scroll sideways independently. */
+let ER=null;
+const ER_LS='irp_earn_view_v1';
+const ER_GROUPS=[
+  {id:'ov', title:'Overall Earnings', kind:'ov',  w:96},
+  {id:'ry', title:'Revenue YoY',      kind:'yoy', m:'rev',    w:74},
+  {id:'ey', title:'EBITDA YoY',       kind:'yoy', m:'ebitda', w:74},
+  {id:'ra', title:'Revenue',          kind:'abs', m:'rev',    w:84},
+  {id:'ea', title:'EBITDA',           kind:'abs', m:'ebitda', w:84},
+];
+let erState={sort:null, dir:-1, flip:{}, q:'', sec:''};
+try{ const v=JSON.parse(localStorage.getItem(ER_LS)||'null'); if(v&&typeof v==='object') erState=Object.assign(erState,{sort:v.sort||null,dir:v.dir||-1,flip:v.flip||{}}); }catch(e){}
+function erSave(){ try{ localStorage.setItem(ER_LS,JSON.stringify({sort:erState.sort,dir:erState.dir,flip:erState.flip})); }catch(e){} }
+const erEsc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const erQIdx=q=>+q.slice(2)*4 + +q[0];
+const ER_VERDICT={beat:'BEAT',inline:'IN-LINE',miss:'MISSED'};
+const ER_HOUSE={MorganStanley:'MS',GoldmanSachs:'GS',JPMorgan:'JP',Jefferies:'Jeff',Bernstein:'Bern',Kotak:'Kotak',Nomura:'Nomura',CLSA:'CLSA'};
+
+async function loadEarnings(){
+  const sub=document.getElementById('erSub');
+  let e=null;
+  try{ const r=await fetch('data/earnings.json',{cache:'no-store'}); if(r.ok) e=await r.json(); }catch(err){}
+  const s=await loadSectorsData();
+  if(!e||!Array.isArray(e.companies)){ if(sub) sub.textContent='Earnings data unavailable — data/earnings.json could not be loaded.'; return; }
+  const q=(s&&s.q)||{};
+  e.companies.forEach(c=>{ const x=c.sym&&q[c.sym]; c._mc=(x&&x.mc)||c.mcap||null; });
+  ER=e;
+  const sel=document.getElementById('erSector');
+  if(sel){
+    const secs=[...new Set(e.companies.map(c=>c.sector).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+    sel.innerHTML='<option value="">All sectors</option>'+secs.map(x=>`<option>${erEsc(x)}</option>`).join('');
+  }
+  erRender();
 }
+
+// Quarters a group shows: every quarter at least one row has data for.
+function erQuarters(g){
+  const set=new Set();
+  ER.companies.forEach(c=>Object.entries(c.q||{}).forEach(([qt,d])=>{
+    if(g.kind==='ov' && d.overall) set.add(qt);
+    if(g.kind==='yoy' && d[g.m+'YoY']!=null) set.add(qt);
+    if(g.kind==='abs' && d[g.m]!=null) set.add(qt);
+  }));
+  const qs=[...set].sort((a,b)=>erQIdx(b)-erQIdx(a));        // newest first by default
+  return erState.flip[g.id] ? qs.reverse() : qs;
+}
+function erVal(c,key){
+  if(key==='name') return c.name.toLowerCase();
+  if(key==='sector') return (c.sector||'').toLowerCase();
+  if(key==='mcap') return c._mc;
+  const [gid,qt]=key.split(':'); const g=ER_GROUPS.find(x=>x.id===gid); const d=(c.q||{})[qt]||{};
+  if(!g) return null;
+  if(g.kind==='ov') return d.overall?{beat:2,inline:1,miss:0}[d.overall]:null;
+  if(g.kind==='yoy') return d[g.m+'YoY'];
+  return d[g.m];
+}
+function erRows(){
+  const q=erState.q.trim().toLowerCase(), sec=erState.sec;
+  let rows=ER.companies.filter(c=>(!sec||c.sector===sec) &&
+    (!q||c.name.toLowerCase().includes(q)||(c.sector||'').toLowerCase().includes(q)));
+  const k=erState.sort;
+  if(k){
+    rows=rows.slice().sort((a,b)=>{
+      const va=erVal(a,k), vb=erVal(b,k);
+      if(va==null&&vb==null) return a.name.localeCompare(b.name);
+      if(va==null) return 1; if(vb==null) return -1;
+      const r=typeof va==='string'?va.localeCompare(vb):va-vb;
+      return (r||a.name.localeCompare(b.name)*-erState.dir)*erState.dir;
+    });
+  }
+  return rows;
+}
+function erPct(v){ if(v==null||!isFinite(v)) return '—'; if(v<-1) return 'NM'; const p=v*100; if(Math.abs(p)>=1000) return (p>0?'>+':'<-')+'999%'; return (p>0?'+':'')+p.toFixed(1)+'%'; }
+function erNum(v){ if(v==null) return '—'; return Math.abs(v)>=1000?Math.round(v).toLocaleString('en-IN'):(+v.toFixed(1)).toLocaleString('en-IN'); }
+function erMcap(mc){ if(!mc) return '—'; return mc>=1e5?'₹'+(mc/1e5).toFixed(2)+'L Cr':'₹'+Math.round(mc).toLocaleString('en-IN')+' Cr'; }
+function erSrc(d){
+  const s=d&&d.src; if(!s) return '';
+  if(s.kind==='sheet') return 'Source: analyst workbook';
+  const dt=s.date?`${s.date.slice(4,6)}/${s.date.slice(2,4)}/20${s.date.slice(0,2)}`:'';
+  return `Source: ${ER_HOUSE[s.broker]||s.broker} results note${dt?' · '+dt:''}`;
+}
+
+let erTips=[];
+function erCell(c,g,qt){
+  const d=(c.q||{})[qt]||{}; const w=g.w;
+  const lab=(c.metrics||{})[g.m]||(g.m==='rev'?'Revenue':'EBITDA');
+  if(g.kind==='ov'){
+    const v=d.overall; if(!v) return `<div class="er-c na" style="width:${w}px">·</div>`;
+    const i=erTips.push({cls:v,h:`${c.name} · ${qt} · ${ER_VERDICT[v]}`,
+      t:[d.revNote?`<b>${erEsc((c.metrics||{}).rev||'Revenue')}:</b> ${erEsc(d.revNote)}`:'', d.ebitdaNote?`<b>${erEsc((c.metrics||{}).ebitda||'EBITDA')}:</b> ${erEsc(d.ebitdaNote)}`:''].filter(Boolean).join('<br>'),
+      s:erSrc(d)})-1;
+    return `<div class="er-c ov ${v}" style="width:${w}px" data-tip="${i}">${ER_VERDICT[v]}</div>`;
+  }
+  if(g.kind==='yoy'){
+    const v=d[g.m+'YoY'], vs=d[g.m+'Vs'], note=d[g.m+'Note'];
+    if(v==null&&!note) return `<div class="er-c na" style="width:${w}px">·</div>`;
+    const cls=vs==='beat'?'beat':vs==='miss'?'miss':'';
+    const call=vs==='beat'?'Beat consensus':vs==='miss'?'Missed consensus':vs==='inline'?'In line with consensus':'No consensus comparison';
+    const basis=d.vsBasis&&d.vsBasis!=='consensus'?` (${erEsc(d.vsBasis)})`:'';
+    const i=erTips.push({cls,h:`${c.name} · ${qt} ${erEsc(lab)} YoY ${erPct(v)}`,t:`<b>${call}${basis}.</b>${note?' '+erEsc(note):''}`,s:erSrc(d)})-1;
+    return `<div class="er-c ${cls}${note?' note':''}" style="width:${w}px" data-tip="${i}">${erPct(v)}</div>`;
+  }
+  const v=d[g.m]; if(v==null) return `<div class="er-c na" style="width:${w}px">·</div>`;
+  const unit=g.m==='rev'&&c.revUnit?c.revUnit:(d.src&&d.src.unit)||c.unit||'as in source';
+  const i=erTips.push({cls:'',h:`${c.name} · ${qt} ${erEsc(lab)}`,t:`${erNum(v)} <span style="color:var(--text-mute)">(${erEsc(unit)})</span>`,s:erSrc(d)})-1;
+  return `<div class="er-c abs" style="width:${w}px" data-tip="${i}">${g.m==='rev'&&c.revUnit==='US$ mn'?'$':''}${erNum(v)}</div>`;
+}
+function erArrow(key){ return erState.sort===key?(erState.dir<0?'▼':'▲'):''; }
+function erRender(){
+  const grid=document.getElementById('erGrid'); if(!grid||!ER) return;
+  const rows=erRows(); erTips=[];
+  const groups=ER_GROUPS.map(g=>({g,qs:erQuarters(g)})).filter(x=>x.qs.length);
+  // Season tally for the latest quarter with an overall verdict.
+  const ovq=[...new Set(ER.companies.flatMap(c=>Object.keys(c.q||{}).filter(k=>c.q[k].overall)))].sort((a,b)=>erQIdx(b)-erQIdx(a));
+  const tally=document.getElementById('erTally');
+  if(tally){
+    tally.innerHTML=ovq.slice(0,2).map(qt=>{
+      const n={beat:0,inline:0,miss:0}; ER.companies.forEach(c=>{const v=((c.q||{})[qt]||{}).overall; if(v) n[v]++;});
+      const tot=n.beat+n.inline+n.miss;
+      return `<span class="t">${qt} season · <b>${tot}</b> reported · <b style="color:var(--up)">${n.beat}</b> beat · <b style="color:var(--saffron)">${n.inline}</b> in-line · <b style="color:var(--down)">${n.miss}</b> missed</span>`;
+    }).join('');
+  }
+  const sub=document.getElementById('erSub');
+  if(sub) sub.textContent=`${rows.length} of ${ER.companies.length} companies · revenue & EBITDA (or sector equivalents) YoY vs consensus · updated ${ER.updated||'—'}`;
+  const fixHead=`<div class="er-fix"><div class="er-gt">Company</div><div class="er-sh">
+      <button type="button" data-sort="name" style="width:160px">Name ${erArrow('name')}</button>
+      <button type="button" class="d" data-sort="sector" style="width:74px">Sector ${erArrow('sector')}</button>
+      <button type="button" class="d" data-sort="mcap" style="width:78px;justify-content:flex-end">Mkt cap ${erArrow('mcap')}</button></div></div>`;
+  const paneW=x=>x.qs.length*x.g.w;
+  // Overall + YoY panes keep whole columns (up to 3 visible, the rest scroll); the long
+  // absolute-figure panes absorb the squeeze. Narrow screens: every pane may shrink to one column.
+  const paneAttrs=x=>{ const pri=x.g.kind!=='abs'; const nat=pri?Math.min(paneW(x),3*x.g.w):paneW(x);
+    return `style="--nat:${nat}px;--min:${pri?nat:x.g.w}px;--one:${x.g.w}px" data-pri="${pri?1:0}"`; };
+  const heads=groups.map(x=>`<div class="er-pane" ${paneAttrs(x)}>
+      <button type="button" class="er-gt" data-flip="${x.g.id}" title="${x.g.title}: quarters ${erState.flip[x.g.id]?'oldest → newest':'newest → oldest'} · click to flip"><span class="tt">${x.g.title}</span><span class="ar">⇄</span></button>
+      <div class="er-scroll er-hs" data-g="${x.g.id}"><div class="er-sh" style="width:${paneW(x)}px">${
+        x.qs.map(qt=>`<button type="button" data-sort="${x.g.id}:${qt}" style="width:${x.g.w}px" title="Sort companies by ${x.g.title} ${qt}">${qt} ${erArrow(x.g.id+':'+qt)}</button>`).join('')
+      }</div></div></div>`).join('');
+  if(!rows.length){
+    grid.innerHTML=`<div class="er-head">${fixHead}${heads}</div><div class="er-empty">No companies match the filter.</div>`;
+  } else {
+    const fixBody=`<div class="er-fix">${rows.map((c,i)=>{
+      const m=c.metrics||{}; const mt=(m.rev&&m.rev!=='Revenue')||(m.ebitda&&m.ebitda!=='EBITDA')||c.revUnit
+        ? `${c.revUnit==='US$ mn'?'US$ ':''}${m.rev||'Revenue'} / ${m.ebitda||'EBITDA'}`:'';
+      return `<div class="er-r" data-i="${i}">
+        <div class="er-c er-nm"><button type="button" data-co="${erEsc(c.name)}" title="${erEsc(c.name)}${c.note?' — '+erEsc(c.note):''}">${erEsc(c.name)}</button><span class="sub">${erEsc(c.sector||'')} · ${erMcap(c._mc)}</span></div>
+        <div class="er-c er-sc"><span>${erEsc(c.sector||'')}</span>${mt?`<span class="mt" title="Metrics used for this company">${erEsc(mt)}</span>`:''}</div>
+        <div class="er-c er-mc" title="${c.sym?erEsc(c.sym)+' · full market cap':''}">${erMcap(c._mc)}</div></div>`;
+    }).join('')}</div>`;
+    const bodies=groups.map(x=>`<div class="er-pane" ${paneAttrs(x)}><div class="er-scroll er-bs" data-g="${x.g.id}"><div style="width:${paneW(x)}px">${
+      rows.map((c,i)=>`<div class="er-r" data-i="${i}">${x.qs.map(qt=>erCell(c,x.g,qt)).join('')}</div>`).join('')
+    }</div></div></div>`).join('');
+    grid.innerHTML=`<div class="er-head">${fixHead}${heads}</div><div class="er-body">${fixBody}${bodies}</div>`;
+  }
+  const fix=grid.querySelector('.er-fix'), narrow=window.matchMedia('(max-width:1200px)').matches;
+  const minW=(fix?fix.offsetWidth:0)+groups.reduce((t,x)=>t+(narrow||x.g.kind==='abs'?x.g.w:Math.min(paneW(x),3*x.g.w)),0);
+  grid.querySelectorAll('.er-head,.er-body').forEach(el=>el.style.minWidth=minW+'px');
+  // Keep each group's header strip and body scrolling together.
+  grid.querySelectorAll('.er-hs').forEach(h=>{
+    const b=grid.querySelector(`.er-bs[data-g="${h.dataset.g}"]`); if(!b) return;
+    // Copy only when different: assigning an equal scrollLeft fires no event, so no feedback loop.
+    const sync=(from,to)=>()=>{ if(to.scrollLeft!==from.scrollLeft) to.scrollLeft=from.scrollLeft; };
+    h.addEventListener('scroll',sync(h,b),{passive:true}); b.addEventListener('scroll',sync(b,h),{passive:true});
+  });
+}
+function erPopShow(el){
+  const pop=document.getElementById('erPop'); const t=erTips[+el.dataset.tip]; if(!pop||!t) return;
+  pop.className='show '+(t.cls||'');
+  pop.innerHTML=`<div class="h">${t.h}</div><div>${t.t||''}</div>${t.s?`<div class="s">${erEsc(t.s)}</div>`:''}`;
+  const r=el.getBoundingClientRect(), pw=Math.min(340,window.innerWidth-16);
+  let x=r.left+r.width/2-pw/2; x=Math.max(8,Math.min(x,window.innerWidth-pw-8));
+  pop.style.width=pw+'px'; pop.style.left=x+'px';
+  const ph=pop.offsetHeight; let y=r.bottom+6; if(y+ph>window.innerHeight-8) y=r.top-ph-6;
+  pop.style.top=Math.max(8,y)+'px';
+}
+function erPopHide(){ const p=document.getElementById('erPop'); if(p) p.className=''; }
+(function erWire(){
+  const grid=document.getElementById('erGrid'); if(!grid) return;
+  if(!document.getElementById('erPop')){ const p=document.createElement('div'); p.id='erPop'; document.body.appendChild(p); }
+  let hl=null;
+  grid.addEventListener('mouseover',e=>{
+    const c=e.target.closest('[data-tip]'); if(c) erPopShow(c);
+    const r=e.target.closest('.er-r'); const i=r?r.dataset.i:null;
+    if(i!==hl){ grid.querySelectorAll('.er-r.hl').forEach(x=>x.classList.remove('hl'));
+      if(i!=null) grid.querySelectorAll(`.er-r[data-i="${i}"]`).forEach(x=>x.classList.add('hl')); hl=i; }
+  });
+  grid.addEventListener('mouseout',e=>{ if(e.target.closest('[data-tip]')&&!(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest('[data-tip]'))) erPopHide(); });
+  grid.addEventListener('scroll',erPopHide,{passive:true});
+  grid.addEventListener('click',e=>{
+    const tip=e.target.closest('[data-tip]'); if(tip){ erPopShow(tip); return; }
+    const fl=e.target.closest('[data-flip]');
+    if(fl){ const id=fl.dataset.flip; erState.flip[id]=!erState.flip[id]; erSave(); erRender(); return; }
+    const so=e.target.closest('[data-sort]');
+    if(so){ const k=so.dataset.sort;
+      if(erState.sort!==k){ erState.sort=k; erState.dir=(k==='name'||k==='sector')?1:-1; }
+      else if(erState.dir===((k==='name'||k==='sector')?1:-1)) erState.dir*=-1;
+      else erState.sort=null;
+      erSave(); erRender(); return; }
+    const co=e.target.closest('[data-co]');
+    if(co){ const name=co.dataset.co; const coSel=document.getElementById('nbSelectCo');
+      if(coSel) for(const opt of coSel.options){ if(opt.textContent===name){ coSel.value=opt.value; break; } }
+      if(typeof loadCompanyChart==='function') loadCompanyChart(name);
+      const nav=document.querySelector('.nav-item[data-view="screener"]'); if(nav) nav.click(); }
+  });
+  document.addEventListener('scroll',erPopHide,{passive:true});
+  let rt=null; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ const v=document.getElementById('viewEarnings'); if(ER&&v&&!v.hidden) erRender(); },200); });
+  const s=document.getElementById('erSearch'); if(s) s.addEventListener('input',()=>{ erState.q=s.value; erRender(); });
+  const sel=document.getElementById('erSector'); if(sel) sel.addEventListener('change',()=>{ erState.sec=sel.value; erRender(); });
+})();
+
 /* ---------- Positioning tab · FII/DII daily flows ---------- */
 let fiiFlowChart=null, diiFlowChart=null;
 function posDateFull(iso){ const d=new Date(iso+'T00:00:00');
@@ -8611,12 +8527,12 @@ async function loadModelPortfolios(){
         vM=document.getElementById('viewMarkets'),
         vW=document.getElementById('viewWatchlist'),
         vScr=document.getElementById('viewScreener'),
-        vSec=document.getElementById('viewSector'),
+        vEarn=document.getElementById('viewEarnings'),
         vP=document.getElementById('viewPositioning'),
         vC=document.getElementById('viewCharts'),
         vS=document.getElementById('viewSoon'),
         title=document.querySelector('.topbar .title');
-  let marketsLoaded=false, watchlistLoaded=false, positioningLoaded=false, sectorLoaded=false, strategyLoaded=false, chartsLoaded=false;
+  let marketsLoaded=false, watchlistLoaded=false, positioningLoaded=false, earningsLoaded=false, strategyLoaded=false, chartsLoaded=false;
   function showView(v,label){
     vO.hidden=v!=='overview';
     vR.hidden=v!=='research';
@@ -8625,7 +8541,7 @@ async function loadModelPortfolios(){
     vM.hidden=v!=='markets';
     vW.hidden=v!=='watchlist';
     vScr.hidden=v!=='screener';
-    if(vSec) vSec.hidden=v!=='sector';
+    if(vEarn) vEarn.hidden=v!=='earnings';
     vP.hidden=v!=='positioning';
     vC.hidden=v!=='charts';
     if(v==='charts' && !chartsLoaded){ chartsLoaded=true; loadCharts(); }
@@ -8633,7 +8549,7 @@ async function loadModelPortfolios(){
     if(v==='positioning' && !positioningLoaded){ positioningLoaded=true; loadPositioning(); }
     if(v==='soon') document.getElementById('soonTitle').textContent=label;
     if(v==='screener' && !screenerLoaded){ screenerLoaded=true; loadScreener(); }
-    if(v==='sector' && !sectorLoaded){ sectorLoaded=true; loadSectorPicker(); }
+    if(v==='earnings' && !earningsLoaded){ earningsLoaded=true; loadEarnings(); }
     if(v==='markets' && !marketsLoaded){
       marketsLoaded=true;
       // Macro tab now hosts: News You Need to Know, Earnings Calendar, Macro Snapshot
