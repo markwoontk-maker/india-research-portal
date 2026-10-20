@@ -4,9 +4,7 @@ Paste this into the routine's **Initial message** field at
 https://claude.ai/code/routines (or it is embedded directly when the routine is
 created via the API), then ensure it is **enabled**.
 
-Suggested cron (UTC): `30 1 2,17 * *` — **9:30 AM Malaysia time (MYT) on the 2nd
-& 17th** of each month (after NSDL posts the fortnightly sector data; broker
-model portfolios are monthly and handled idempotently).
+Schedule: local Windows task **India Positioning Refresh** - days 15-31 of each month at 12:00 MYT; the first run that updates files closes that month's window (AMFI publishes the prior month ~10th and NSDL's month-end sector report is out by mid-month; broker model portfolios are monthly and handled idempotently).
 
 Repo: `markwoontk-maker/india-research-portal` · branch `main`.
 Tools: `Bash, Read, Write, Edit, WebFetch, WebSearch` · model `claude-sonnet-4-6`.
@@ -117,7 +115,7 @@ is unchanged.
 Powers the "MF Category Flows" card on the Positioning tab. Official AMFI net
 inflows + AUM for the **6 equity cap categories** (canonical names: `Large Cap`,
 `Large & Mid Cap`, `Mid Cap`, `Small Cap`, `Multi Cap`, `Flexi Cap`). Run on the
-**17th** (after AMFI's ~10th-of-month release).
+**15th** (after AMFI's ~10th-of-month release).
 
 1. Fetch the latest completed month's category **net inflow (₹ cr)** + **AUM**.
    Source: AMFI monthly (`amfiindia.com/research-information/amfi-monthly`, often
@@ -143,7 +141,7 @@ inflows + AUM for the **6 equity cap categories** (canonical names: `Large Cap`,
 ## 2c. `data/sip_flows.json` — monthly SIP contribution (AMFI, **APPEND-ONLY**)
 
 Powers the "MF SIP Flows" chart. Official AMFI **monthly SIP contribution (₹ cr)**
-plus latest SIP AUM + accounts. Run on the **17th** (after AMFI's ~10th release).
+plus latest SIP AUM + accounts. Run on the **15th** (after AMFI's ~10th release).
 1. Fetch the latest completed month's **total SIP contribution (₹ cr)** and the
    latest **SIP AUM (₹ cr)** + **SIP accounts (crore)**. Sources: AMFI monthly
    (often flaky — WebFetch/proxy), finnovate / cafemutual / valueresearch /

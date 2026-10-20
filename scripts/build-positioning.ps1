@@ -1,18 +1,20 @@
-# Positioning-data build step (invoked by daily-refresh.ps1).
+# Positioning-data build step. Invoked by scripts\refresh-positioning-task.ps1,
+# the standalone "India Positioning Refresh" scheduled task (which commits +
+# pushes the result). It is NO LONGER a step in daily-refresh.ps1.
 #
 # Runs the Claude headless miner against docs/positioning-data-refresher-prompt.md
 # to refresh the four web-sourced positioning data files:
 #   data/fpi_sectors.json, data/mf_categories.json, data/sip_flows.json,
 #   data/model_portfolios.json
-# This replaces the cloud "Positioning Data Refresher" routine, whose git push
-# silently fails (the CCR env clones the public repo read-only). Running locally
-# means daily-refresh's git step actually publishes the result.
+# Local (not a cloud routine) because a CCR git push silently fails here.
 #
-# Gated: fires at most twice a month (a "H1" window on/after the 2nd, a "H2"
-# window on/after the 17th) to mirror the old 2nd/17th cron and avoid burning a
-# 15-min headless run every day. Per-file validation: a file that comes back
-# malformed is reverted individually; the valid ones are kept. ALWAYS exits 0 so
-# it never aborts the rest of the daily refresh.
+# Gated MONTHLY, starting on the 15th: one window per calendar month ("yyyy-MM"),
+# opening on the 15th (AMFI publishes the prior month ~10th; NSDL's month-end
+# sector report is out by then too). The task fires on days 15-31; the first run
+# that actually updates files closes the month's window, later days are a no-op.
+# A failed / auth-lapsed / no-change run leaves the window open, so it retries the
+# next day. Per-file validation: a malformed file is reverted individually.
+# ALWAYS exits 0.
 #
 # Manual run:  powershell -ExecutionPolicy Bypass -File scripts\build-positioning.ps1
 
@@ -52,11 +54,16 @@ if (-not (Test-Path -LiteralPath $claude)) {
 }
 if (-not (Test-Path -LiteralPath $promptFile)) { Out-Log "prompt file missing - skipping."; exit 0 }
 
-# --- gate: fortnightly window, once each -------------------------------------
+# A pasted CLAUDE_CODE_OAUTH_TOKEN once picked up a space from terminal line-wrap
+# (109 chars instead of 108), which made claude report "Not logged in" on every
+# scheduled run Oct 2026 while the credentials file itself was fine. A real token
+# never contains whitespace, so strip it before the child process inherits it.
+if ($env:CLAUDE_CODE_OAUTH_TOKEN) { $env:CLAUDE_CODE_OAUTH_TOKEN = $env:CLAUDE_CODE_OAUTH_TOKEN -replace '\s','' }
+
+# --- gate: one window per month, opening on the 15th -------------------------
 $now = Get-Date
-$ym  = $now.ToString("yyyy-MM")
-$window = if ($now.Day -ge 17) { "$ym-H2" } elseif ($now.Day -ge 2) { "$ym-H1" } else { $null }
-if (-not $window) { Out-Log "1st of month - too early; skipping."; exit 0 }
+$window = if ($now.Day -ge 15) { $now.ToString("yyyy-MM") } else { $null }
+if (-not $window) { Out-Log "before the 15th - monthly window not open yet; skipping."; exit 0 }
 $lastWindow = ""
 if (Test-Path -LiteralPath $stateFile) {
   try { $lastWindow = (Get-Content -LiteralPath $stateFile -Raw | ConvertFrom-Json).lastWindow } catch { $lastWindow = "" }

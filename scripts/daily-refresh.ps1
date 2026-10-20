@@ -196,13 +196,12 @@ Step "refresh-movers" { & $node "scripts\refresh-movers.js" }
 #      snapshot here; the intraday task refreshes it ~every 30 min in-session.
 Step "refresh-sectors" { & $node "scripts\refresh-sectors.js" }
 
-# 8c. Refresh the monthly Positioning data files (fpi_sectors, mf_categories,
-#     sip_flows, model_portfolios) via the Claude headless miner. Gated to ~twice
-#     a month (2nd & 17th windows); replaces the cloud routine that can't push.
-#     Per-file validate + selective revert. Always exits 0.
-Step "build-positioning" {
-  & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-positioning.ps1"
-}
+# 8c. MOVED OUT (2026-10-20): the monthly Positioning files (fpi_sectors,
+#     mf_categories, sip_flows, model_portfolios) are now refreshed by their own
+#     scheduled task "India Positioning Refresh" (days 15-31 of each month, 12:00;
+#     scripts\refresh-positioning-task.ps1 -> build-positioning.ps1), which commits
+#     + pushes them itself. They were dropped from this script's git-add list too,
+#     so a half-written miner file can never be swept into the daily commit.
 
 # 8c2 + 8d. DISABLED (2026-07-29 user request): both build-company-qa-sync
 #           and build-company-qa upload/query NotebookLM. Skipping keeps the
@@ -249,8 +248,8 @@ $stageList = @('data/pdfdata.json','data/pdfmap.json','data/research.json','data
   'data/theses.json','data/theses-manual.json','data/financials.json','data/financials-manual.json',
   'data/model_portfolios_house.json','data/mf_sectors.json','data/fii_dii.json','data/highs.json',
   'data/movers.json','data/sectors.json','data/wl_returns.json','data/wl_quotes.json',
-  'data/earnings_calendar.json','data/fpi_sectors.json','data/mf_categories.json','data/sip_flows.json',
-  'data/model_portfolios.json','data/company_qa.json','data/company_questions.json',
+  'data/earnings_calendar.json',
+  'data/company_qa.json','data/company_questions.json',
   'data/sector_notebooks.json','data/house_view_notes.json','data/earnings.json','index.html',
   'scripts/notes-recent.txt','scripts/notes-prior.txt')
 Step "git stage" {
