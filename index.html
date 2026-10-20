@@ -962,6 +962,11 @@
   .er-nm .sub{display:none}
   .er-sc{flex:0 0 74px;justify-content:center;flex-direction:column;align-items:flex-start;
     font-family:'Manrope';font-size:11px;color:var(--text-dim);line-height:1.15;overflow:hidden}
+  .er-sc{cursor:pointer;border-radius:6px} .er-sc:hover{background:var(--panel-2);color:var(--text)}
+  .er-sc.edited span:first-child{color:var(--saffron)}
+  .er-sec-sel{width:100%;background:var(--ink-2);color:var(--text);border:1px solid var(--saffron);border-radius:6px;font-family:'Manrope';font-size:11px;padding:3px 2px}
+  .er-btn{background:var(--ink-2);border:1px solid var(--line);color:var(--text-dim);border-radius:8px;padding:7px 10px;font-family:'Manrope';font-size:12px;cursor:pointer}
+  .er-btn:hover{color:var(--text);border-color:var(--saffron)}
   .er-sc .mt{font-family:'Roboto Mono';font-size:9px;color:var(--text-mute);white-space:nowrap}
   .er-mc{flex:0 0 70px;justify-content:flex-end;color:var(--text)}
   .er-empty{padding:30px;text-align:center;color:var(--text-mute);font-size:12.5px}
@@ -2244,12 +2249,13 @@
           <div class="er-tools">
             <input id="erSearch" type="search" placeholder="Filter company or sector…" aria-label="Filter companies" />
             <select id="erSector" aria-label="Filter by sector"><option value="">All sectors</option></select>
+            <button type="button" id="erSecReset" class="er-btn" hidden>Reset sector changes</button>
           </div>
         </div>
         <div id="erTally" class="er-tally"></div>
         <div id="erGrid" class="er-grid"></div>
         <p class="er-legend"><span class="sw" style="background:rgba(63,199,138,.45)"></span>beat consensus · <span class="sw" style="background:rgba(240,106,106,.45)"></span>missed consensus · uncoloured = in line (or no consensus in the notes) · <span style="color:var(--saffron)">◥</span> corner = explanation, hover or tap any cell to read it.
-        Click a group title (e.g. <b>Revenue YoY</b>) to flip its quarters new ⇄ old; click a quarter, Name, Sector or Mkt cap header to sort (click again to reverse, a third time to reset).
+        <b>Click a company's sector to move it</b> to another or a new sector (✎ marks your changes; saved in this browser) — the sector filter and the Earnings Summary below regroup at once. Click a group title (e.g. <b>Revenue YoY</b>) to flip its quarters new ⇄ old; click a quarter, Name, Sector or Mkt cap header to sort (click again to reverse, a third time to reset).
         Lenders show Total operating income / PPOP, life insurers APE / VNB, general insurers GWP (or NEP) / PBT; IT revenue is in US$ mn with EBITDA/EBIT in ₹. Absolute figures are in each company's reporting unit (hover for it).
         Figures come only from the analyst workbook and the broker results notes in the PDF library — for any quarter, revenue, EBITDA and their year-ago values come from one report. Market cap = full market cap in US$ bn (Nifty 500 snapshot converted at its ₹/US$ rate, refreshed daily; hover for ₹ Cr). <b>Outlook</b> = the latest results notes' read on guidance, demand and estimate changes (not the stock rating) — hover for the detail. Every pop-up names the broker note it came from; a dotted underline marks a figure whose YoY disagreed with the growth the note itself prints (re-checked, still flagged). Refreshed weekdays 09:30 MYT after the daily-return run.</p>
       </div>
@@ -7636,13 +7642,52 @@ async function loadEarnings(){
   const fx=s&&s.desk&&s.desk['INR=X']&&s.desk['INR=X'].p; ER_FX=fx>0?fx:null;
   e.companies.forEach(c=>{ const x=c.sym&&q[c.sym]; c._mc=(x&&x.mc)||c.mcap||null; c._usd=c._mc&&ER_FX?c._mc*1e7/ER_FX/1e9:null; });
   ER=e;
-  const sel=document.getElementById('erSector');
-  if(sel){
-    const secs=[...new Set(e.companies.map(c=>c.sector).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
-    sel.innerHTML='<option value="">All sectors</option>'+secs.map(x=>`<option>${erEsc(x)}</option>`).join('');
-  }
+  erApplySectors();
+  erFillSectorFilter();
   erRender();
   esInit();
+}
+
+// Sector re-assignment: the user can move a company to another (or a new) sector from
+// the tracker. Choices live in this browser (localStorage), keyed by company name, and are
+// re-applied on every load, so the daily data refresh never undoes them. The tracker,
+// the sector filter and the Earnings Summary (bars + table) all read c.sector.
+const ER_SEC_LS='irp_earn_sector_v1';
+function erSecOv(){ try{ const v=JSON.parse(localStorage.getItem(ER_SEC_LS)||'{}'); return v&&typeof v==='object'?v:{}; }catch(e){ return {}; } }
+function erSecSave(m){ try{ localStorage.setItem(ER_SEC_LS,JSON.stringify(m)); }catch(e){} }
+function erApplySectors(){
+  const ov=erSecOv();
+  ER.companies.forEach(c=>{ if(c._origSector===undefined) c._origSector=c.sector||''; c.sector=ov[c.name]||c._origSector; });
+  const n=ER.companies.filter(c=>c.sector!==c._origSector).length, b=document.getElementById('erSecReset');
+  if(b){ b.hidden=!n; b.textContent=`Reset sector changes (${n})`; }
+}
+function erAllSectors(){ return [...new Set(ER.companies.flatMap(c=>[c.sector,c._origSector]).filter(Boolean))].sort((a,b)=>a.localeCompare(b)); }
+function erFillSectorFilter(){
+  const sel=document.getElementById('erSector'); if(!sel) return;
+  const secs=[...new Set(ER.companies.map(c=>c.sector).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  if(erState.sec&&!secs.includes(erState.sec)) erState.sec='';
+  sel.innerHTML='<option value="">All sectors</option>'+secs.map(x=>`<option${x===erState.sec?' selected':''}>${erEsc(x)}</option>`).join('');
+}
+function erSetSector(name,sector){
+  const c=ER&&ER.companies.find(x=>x.name===name); if(!c) return;
+  const ov=erSecOv(); sector=String(sector||'').trim().slice(0,40);
+  if(!sector||sector===c._origSector) delete ov[name]; else ov[name]=sector;
+  erSecSave(ov); erApplySectors(); erFillSectorFilter(); erRender(); esRender();
+}
+function erOpenSecEditor(cell){
+  const name=cell.dataset.secEdit, c=ER.companies.find(x=>x.name===name); if(!c) return;
+  const edited=c.sector!==c._origSector;
+  cell.innerHTML=`<select class="er-sec-sel" aria-label="Sector for ${erEsc(name)}">${
+    erAllSectors().map(s=>`<option value="${erEsc(s)}"${s===c.sector?' selected':''}>${erEsc(s)}${s===c._origSector&&edited?' (original)':''}</option>`).join('')
+  }<option value="__new">＋ New sector…</option>${edited?`<option value="__reset">↺ Reset to ${erEsc(c._origSector)}</option>`:''}</select>`;
+  const sel=cell.querySelector('select'); let done=false;
+  sel.addEventListener('change',()=>{ done=true; let v=sel.value;
+    if(v==='__new'){ v=window.prompt(`New sector for ${name}:`,''); if(v==null||!v.trim()){ erRender(); return; } }
+    if(v==='__reset') v=c._origSector;
+    erSetSector(name,v); });
+  sel.addEventListener('blur',()=>{ if(!done) erRender(); });
+  sel.addEventListener('keydown',e=>{ if(e.key==='Escape'){ done=true; erRender(); } });
+  sel.focus();
 }
 
 // Quarters a group shows: every quarter at least one row has data for.
@@ -7775,7 +7820,7 @@ function erRender(){
       const ol=c.outlook?` · <span class="ol-${c.outlook.call}">${ER_OUTLOOK[c.outlook.call]}</span>`:'';
       return `<div class="er-r" data-i="${i}">
         <div class="er-c er-nm"><button type="button" data-co="${erEsc(c.name)}" title="${erEsc(c.name)}${c.note?' — '+erEsc(c.note):''}">${erEsc(c.name)}</button><span class="sub">${erEsc(c.sector||'')} · ${erUsd(c._usd)}${ol}</span></div>
-        <div class="er-c er-sc"><span>${erEsc(c.sector||'')}</span>${mt?`<span class="mt" title="Metrics used for this company">${erEsc(mt)}</span>`:''}</div>
+        <div class="er-c er-sc${c.sector!==c._origSector?' edited':''}" data-sec-edit="${erEsc(c.name)}" title="Click to change sector${c.sector!==c._origSector?' (originally '+erEsc(c._origSector)+')':''}"><span>${erEsc(c.sector||'—')}${c.sector!==c._origSector?' ✎':''}</span>${mt?`<span class="mt" title="Metrics used for this company">${erEsc(mt)}</span>`:''}</div>
         <div class="er-c er-mc" title="${c._mc?'₹'+Math.round(c._mc).toLocaleString('en-IN')+' Cr'+(ER_FX?' at ₹'+ER_FX.toFixed(2)+'/US$':''):''}${c.sym?' · '+erEsc(c.sym):''}">${erUsd(c._usd)}</div>
         ${erOutlookCell(c)}</div>`;
     }).join('')}</div>`;
@@ -7834,9 +7879,13 @@ function erOpenCompany(name){
       else if(erState.dir===((k==='name'||k==='sector')?1:-1)) erState.dir*=-1;
       else erState.sort=null;
       erSave(); erRender(); return; }
+    if(e.target.closest('select')) return;
+    const se=e.target.closest('[data-sec-edit]'); if(se){ erOpenSecEditor(se); return; }
     const co=e.target.closest('[data-co]'); if(co) erOpenCompany(co.dataset.co);
   });
   document.addEventListener('scroll',erPopHide,{passive:true});
+  const rs=document.getElementById('erSecReset');
+  if(rs) rs.addEventListener('click',()=>{ if(!ER||!window.confirm('Put every company back in its original sector?')) return; erSecSave({}); erApplySectors(); erFillSectorFilter(); erRender(); esRender(); });
   let rt=null; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ const v=document.getElementById('viewEarnings'); if(ER&&v&&!v.hidden){ erRender(); esRender(); } },200); });
   const s=document.getElementById('erSearch'); if(s) s.addEventListener('input',()=>{ erState.q=s.value; erRender(); });
   const sel=document.getElementById('erSector'); if(sel) sel.addEventListener('change',()=>{ erState.sec=sel.value; erRender(); });

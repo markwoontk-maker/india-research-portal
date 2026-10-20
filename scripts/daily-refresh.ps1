@@ -233,7 +233,9 @@ Step "build-house-view-notes" {
 #      Headless claude reads pymupdf-rendered page images; budget $env:EARN_BUDGET
 #      (default 1500 s). Rows from the analyst workbook are never overwritten. Always exits 0.
 Step "build-earnings" {
-  & $node "scriptsearningsuild-earnings.js"
+  # stderr folded into the log (string-converted, so PS 5.1 NativeCommandError records
+  # don't trip anything); the step always continues.
+  & $node "scripts\earnings\build-earnings.js" 2>&1 | ForEach-Object { "$_" }
   $global:LASTEXITCODE = 0
 }
 

@@ -406,6 +406,17 @@ function mergeDir(E) {
     const E = readJSON(OUT, null);
     if (!E || !Array.isArray(E.companies)) { log('data/earnings.json missing or invalid - skipping.'); return; }
     fs.mkdirSync(WORK, { recursive: true });
+    // One miner at a time: a manual backfill and the 09:30 step must never both write
+    // data/earnings.json. A lock whose process is gone is stale and taken over.
+    const LOCK = path.join(WORK, 'run.lock');
+    if (mode !== '--count') {
+      const held = readJSON(LOCK, null);
+      let alive = false;
+      if (held && held.pid && held.pid !== process.pid) { try { process.kill(held.pid, 0); alive = true; } catch (e) {} }
+      if (alive) { log(`another earnings run (pid ${held.pid}, since ${held.t}) is in progress - skipping.`); return; }
+      fs.writeFileSync(LOCK, JSON.stringify({ pid: process.pid, t: new Date().toISOString(), mode }));
+      process.on('exit', () => { try { if ((readJSON(LOCK, {}) || {}).pid === process.pid) fs.unlinkSync(LOCK); } catch (e) {} });
+    }
 
     if (mode === '--merge') { const n = mergeDir(E); postPass(E); finalize(E); log(`merged ${n} result(s).`); return; }
     if (mode === '--postpass') { postPass(E); finalize(E); return; }
