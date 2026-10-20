@@ -93,7 +93,14 @@ const FOLDER_ALIAS = {
   'ICICI Prudential Asset Management Company Limited': 'ICICI Prudential AMC', 'ICICI Prudential Life Insurance': 'ICICI Prudential Life',
   'ICICI Life Insurance': 'ICICI Prudential Life', 'Groww': "Billionbrains Garage Ventures ('Groww')", 'Canfin': 'Can Fin Homes',
   'Sterlite Tech [SOTL IN]': 'Sterlite Tech', 'Tata Comm': 'Tata Communications', 'GRAVITA': 'Gravita India', 'TCS': 'Tata Consultancy Services',
+  'Tata Consultancy': 'Tata Consultancy Services', 'PNB': 'Punjab National Bank', 'Sun Pharmaceutical Industries': 'Sun Pharmaceuticals',
+  'Crompton Greaves Consumer Electrical': 'Crompton Greaves Consumer Electricals', 'Urban Co': 'Urban Company',
 };
+
+// Library folders that are sector / theme / macro collections, not companies. Every other
+// folder is treated as a company: the user wants every company in the library in the tab,
+// not only the ones on the portal's companies.json list.
+const NON_COMPANY_RE = /^(India\b|Indian\b|Asia|Global\b|IT Services\b|GDPI|Actual Cash|Friday Flash|Jul-\d\d|Quant Research|Snapshot of|Sorting Folder|Unknown$|Urban$|Wedding Calendar)/i;
 
 // ---------- work list ----------
 function buildWorkList(E, { allSeasons }) {
@@ -107,7 +114,7 @@ function buildWorkList(E, { allSeasons }) {
     if (rows[folder]) return folder;
     const k = norm(folder);
     if (byNorm[k]) return byNorm[k];
-    if (COMPANIES[folder] && !/^India\b/.test(folder)) return folder;   // covered company not yet in the tab -> new row
+    if (!NON_COMPANY_RE.test(folder)) return folder;                 // any company folder not yet in the tab -> new row
     return null;
   };
 

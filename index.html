@@ -978,14 +978,16 @@
   .es-chart-box{height:330px;position:relative}
   .es-tbl-wrap{overflow:auto;max-height:70vh;border:1px solid var(--line-soft);border-radius:10px}
   .es-tbl{border-collapse:collapse;width:100%;font-family:'Roboto Mono';font-size:11.5px;font-variant-numeric:tabular-nums}
-  .es-tbl th,.es-tbl td{padding:6px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line-soft)}
+  .es-tbl{table-layout:auto}
+  .es-tbl th,.es-tbl td{padding:5px 6px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line-soft)}
+  .es-tbl tbody td{font-size:11px}
   .es-tbl thead th{position:sticky;top:0;background:var(--panel);z-index:2;color:var(--text-mute);font-size:9.5px;
     text-transform:uppercase;letter-spacing:.03em;font-weight:600}
   .es-tbl thead tr:nth-child(2) th{top:29px}
   .es-tbl thead th.es-q{text-align:center;color:var(--text);font-size:10.5px}
   .es-tbl th button{background:none;border:none;color:inherit;font:inherit;text-transform:inherit;letter-spacing:inherit;cursor:pointer;padding:0}
   .es-tbl th button:hover{color:var(--text)}
-  .es-tbl .es-name{text-align:left;position:sticky;left:0;background:var(--panel);z-index:1;min-width:190px}
+  .es-tbl .es-name{text-align:left;position:sticky;left:0;background:var(--panel);z-index:1;min-width:150px;max-width:190px;overflow:hidden;text-overflow:ellipsis}
   .es-tbl thead .es-name{z-index:3}
   .es-tbl td.es-name button{background:none;border:none;color:var(--text);font-family:'Manrope';font-size:12px;cursor:pointer;padding:0;text-align:left}
   .es-tbl td.es-name button:hover{color:var(--saffron)}
@@ -7653,15 +7655,17 @@ async function loadEarnings(){
 // re-applied on every load, so the daily data refresh never undoes them. The tracker,
 // the sector filter and the Earnings Summary (bars + table) all read c.sector.
 const ER_SEC_LS='irp_earn_sector_v1';
+const ER_SECTOR_RENAME={'4W':'4W/CV','CV':'4W/CV','E-com':'EC/QC','QC':'EC/QC','Hotels':'Travel'};
 function erSecOv(){ try{ const v=JSON.parse(localStorage.getItem(ER_SEC_LS)||'{}'); return v&&typeof v==='object'?v:{}; }catch(e){ return {}; } }
 function erSecSave(m){ try{ localStorage.setItem(ER_SEC_LS,JSON.stringify(m)); }catch(e){} }
 function erApplySectors(){
   const ov=erSecOv();
-  ER.companies.forEach(c=>{ if(c._origSector===undefined) c._origSector=c.sector||''; c.sector=ov[c.name]||c._origSector; });
+  ER.companies.forEach(c=>{ if(c._origSector===undefined) c._origSector=c.sector||'';
+    const o=ov[c.name]; c.sector=(o&&(ER_SECTOR_RENAME[o]||o))||c._origSector; });
   const n=ER.companies.filter(c=>c.sector!==c._origSector).length, b=document.getElementById('erSecReset');
   if(b){ b.hidden=!n; b.textContent=`Reset sector changes (${n})`; }
 }
-function erAllSectors(){ return [...new Set(ER.companies.flatMap(c=>[c.sector,c._origSector]).filter(Boolean))].sort((a,b)=>a.localeCompare(b)); }
+function erAllSectors(){ return [...new Set(ER.companies.map(c=>c.sector).filter(Boolean))].sort((a,b)=>a.localeCompare(b)); }
 function erFillSectorFilter(){
   const sel=document.getElementById('erSector'); if(!sel) return;
   const secs=[...new Set(ER.companies.map(c=>c.sector).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
@@ -7678,7 +7682,7 @@ function erOpenSecEditor(cell){
   const name=cell.dataset.secEdit, c=ER.companies.find(x=>x.name===name); if(!c) return;
   const edited=c.sector!==c._origSector;
   cell.innerHTML=`<select class="er-sec-sel" aria-label="Sector for ${erEsc(name)}">${
-    erAllSectors().map(s=>`<option value="${erEsc(s)}"${s===c.sector?' selected':''}>${erEsc(s)}${s===c._origSector&&edited?' (original)':''}</option>`).join('')
+    erAllSectors().map(s=>`<option value="${erEsc(s)}"${s===c.sector?' selected':''}>${erEsc(s)}</option>`).join('')
   }<option value="__new">＋ New sector…</option>${edited?`<option value="__reset">↺ Reset to ${erEsc(c._origSector)}</option>`:''}</select>`;
   const sel=cell.querySelector('select'); let done=false;
   sel.addEventListener('change',()=>{ done=true; let v=sel.value;
@@ -7937,7 +7941,7 @@ function esInit(){
   const seasons=esSeasons();
   if(esState.q!=='all'&&!seasons.includes(esState.q)) esState.q='all';
   const qSeg=document.getElementById('esQ'), mSel=document.getElementById('esM');
-  qSeg.innerHTML=[...seasons,'all'].map(q=>`<button type="button" data-q="${q}" class="${esState.q===q?'on':''}">${q==='all'?'All':q}</button>`).join('');
+  qSeg.innerHTML=[...seasons.slice().reverse(),'all'].map(q=>`<button type="button" data-q="${q}" class="${esState.q===q?'on':''}">${q==='all'?'All':q}</button>`).join('');
   mSel.innerHTML=ES_METRICS.map(m=>`<option value="${m.id}"${esState.m===m.id?' selected':''}>${m.label}</option>`).join('');
   if(!card.dataset.wired){
     card.dataset.wired='1';
@@ -7959,17 +7963,17 @@ function esInit(){
 function esFmt(v,growth){ if(v==null) return '—'; const p=v*100; return growth?(p>0?'+':'')+p.toFixed(1)+'%':Math.round(p)+'%'; }
 function esRender(){
   if(!ER) return;
-  const seasons=esSeasons(); const shown=esState.q==='all'?seasons:[esState.q];
+  const seasons=esSeasons(); const shown=esState.q==='all'?seasons.slice().reverse():[esState.q];   // newest first
   const bySec=esBySector();
   const secs=Object.keys(bySec).filter(s=>shown.some(q=>esStats(bySec[s],q).n>0)).sort((a,b)=>a.localeCompare(b));
   const metric=ES_METRICS.find(m=>m.id===esState.m)||ES_METRICS[0];
   const stats={}; secs.forEach(s=>{ stats[s]={}; shown.forEach(q=>stats[s][q]=esStats(bySec[s],q)); });
   // ---- chart ----
   const box=document.getElementById('esChartBox'), cv=document.getElementById('esChart');
-  box.style.minWidth=Math.max(0,secs.length*(shown.length*12+14)+60)+'px';
+  box.style.minWidth=Math.max(0,secs.length*(shown.length*6+6)+44)+'px';   // compact so ~50 sectors fit without scrolling
   const data={labels:secs, datasets:shown.map(q=>({label:q, data:secs.map(s=>{ const v=stats[s][q][metric.id]; return v==null?null:+(v*100).toFixed(1); }),
     backgroundColor:esColor(q), borderRadius:{topLeft:4,topRight:4,bottomLeft:0,bottomRight:0}, borderSkipped:'bottom',
-    maxBarThickness:14, categoryPercentage:0.78, barPercentage:0.92}))};
+    maxBarThickness:12, categoryPercentage:0.86, barPercentage:0.94}))};
   const opts={responsive:true, maintainAspectRatio:false, animation:false,
     plugins:{legend:{display:true, position:'top', align:'end', labels:{color:'#9aa2b1', boxWidth:10, boxHeight:10, font:{family:'Roboto Mono',size:11}}},
       tooltip:{backgroundColor:'#11151c', borderColor:'#252c39', borderWidth:1, titleColor:'#e9e6dd', bodyColor:'#9aa2b1', padding:9,
@@ -7984,8 +7988,9 @@ function esRender(){
   else if(typeof Chart!=='undefined') esChart=new Chart(cv,{type:'bar', data, options:opts});
   document.getElementById('esSub').textContent=`${metric.label} by sector · ${shown.join(' vs ')} · ${secs.length} sectors`;
   // ---- table ----
-  const cols=[['n','Cos'],['br','% beat revenue'],['bb','% beat bottom line'],['gr','Wtd revenue growth'],['gb','Wtd bottom-line growth']];
-  const sk=esState.sort; const sq=shown[shown.length-1];
+  const cols=[['n','Cos','Companies reporting'],['br','Beat rev','% of companies beating consensus on revenue'],['bb','Beat BL','% of companies beating consensus on the bottom line'],
+    ['gr','Rev g','Market-cap-weighted revenue growth (YoY)'],['gb','BL g','Market-cap-weighted bottom-line growth (YoY)']];
+  const sk=esState.sort;
   const sorted=secs.slice().sort((a,b)=>{
     if(sk==='name') return a.localeCompare(b)*esState.dir;
     const [q,k]=sk.split(':'); const va=(stats[a][q]||{})[k], vb=(stats[b][q]||{})[k];
@@ -7995,8 +8000,8 @@ function esRender(){
   const arrow=k=>esState.sort===k?(esState.dir<0?' ▼':' ▲'):'';
   let h='<thead>';
   if(shown.length>1) h+=`<tr><th></th>${shown.map(q=>`<th colspan="${cols.length}" class="es-q" style="box-shadow:inset 0 -2px 0 ${esColor(q)}">${q}</th>`).join('')}</tr>`;
-  h+=`<tr><th class="es-name"><button type="button" data-es-sort="name">Sector${arrow('name')}</button></th>${shown.map(q=>cols.map(([k,l])=>
-    `<th><button type="button" data-es-sort="${q}:${k}" title="Sort by ${l} (${q})">${l}${arrow(q+':'+k)}</button></th>`).join('')).join('')}</tr></thead><tbody>`;
+  h+=`<tr><th class="es-name"><button type="button" data-es-sort="name">Sector${arrow('name')}</button></th>${shown.map(q=>cols.map(([k,l,t])=>
+    `<th><button type="button" data-es-sort="${q}:${k}" title="${t} — ${q}. Click to sort">${l}${arrow(q+':'+k)}</button></th>`).join('')).join('')}</tr></thead><tbody>`;
   const all={}; shown.forEach(q=>all[q]=esStats(ER.companies,q));
   const cell=(st,k)=>{ if(k==='n') return `<td>${st.n||'—'}</td>`;
     const v=st[k], g=k==='gr'||k==='gb'; const kk=st.k[k]; const sub=Array.isArray(kk)?`${kk[0]}/${kk[1]}`:kk?`n=${kk}`:'';
