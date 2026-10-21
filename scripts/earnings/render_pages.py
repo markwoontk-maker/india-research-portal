@@ -9,7 +9,7 @@ column layout scrambles them; the Claude Read tool views the PNGs.
 import os
 import sys
 
-import fitz  # pymupdf
+import pymupdf as fitz
 
 
 def main():
