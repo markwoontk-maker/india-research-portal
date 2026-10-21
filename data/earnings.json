@@ -3918,7 +3918,7 @@
     "date": "260811",
     "quarter": "1Q27"
    },
-   "mcap": 5250,
+   "mcap": 5138,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -4122,7 +4122,7 @@
     "date": "260807",
     "quarter": "1Q27"
    },
-   "mcap": 6096,
+   "mcap": 5812,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -4327,7 +4327,7 @@
     }
    },
    "sym": "MANYAVAR",
-   "mcap": 12388,
+   "mcap": 12132,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "neutral",
@@ -4536,7 +4536,7 @@
     "date": "260806",
     "quarter": "1Q27"
    },
-   "mcap": 11171,
+   "mcap": 10855,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -6275,7 +6275,7 @@
     "date": "260806",
     "quarter": "1Q27"
    },
-   "mcap": 12270,
+   "mcap": 12138,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -10320,7 +10320,7 @@
     }
    },
    "sym": "VGUARD",
-   "mcap": 12456,
+   "mcap": 12268,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -11531,7 +11531,7 @@
     "date": "260816",
     "quarter": "1Q27"
    },
-   "mcap": 5060,
+   "mcap": 4877,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -11729,6 +11729,109 @@
     "note": "Order inflow was strong at Rs63.3bn (+17% yoy, ~1.3x sales) and broad-based across grid, data centres, commercial real estate and automation. Margin compression from commodity and FX is the key worry, though, and consensus is likely to wait for clarity on price hikes. Kotak cut FY27/28/29 estimates by 5%/1%/0% and retains SELL. JPM stays Underweight and sees the stock sideways. (Kotak, JP)",
     "broker": "Kotak",
     "date": "260811",
+    "quarter": "1Q27"
+   }
+  },
+  {
+   "name": "Voltas",
+   "sector": "Capital goods",
+   "ticker": "",
+   "sym": "VOLTAS",
+   "basis": "",
+   "note": "",
+   "unit": "INR mn",
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {
+    "1Q27": {
+     "abs": {
+      "rev": {
+       "key": "MorganStanley|260817|Voltas|f1q27ebitdamissdrivenbyprojectsbusinessew",
+       "broker": "MorganStanley",
+       "date": "260817",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "MorganStanley|260817|Voltas|f1q27ebitdamissdrivenbyprojectsbusinessew",
+       "broker": "MorganStanley",
+       "date": "260817",
+       "role": "own"
+      }
+     },
+     "rev": 46735,
+     "ebitda": 2655,
+     "revYoY": 0.1866,
+     "ebitdaYoY": 0.4874,
+     "revVs": "miss",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Revenue of Rs46.7bn (+19% YoY) was about 7% below consensus (12% below Nomura's estimate). Unitary cooling grew 32% YoY but fell short of expectations, and projects revenue fell 27% YoY (Nomura, MS).",
+     "ebitdaNote": "EBITDA of Rs2.7bn (+49% YoY, from a low base) was in line with consensus. The margin was 5.7% against 5.3% consensus, on a 5.3% UCP EBIT margin. It missed MS's own estimate by 13% because of the projects business (Nomura, CLSA, MS).",
+     "src": {
+      "kind": "pdf",
+      "broker": "MorganStanley",
+      "date": "260817",
+      "key": "MorganStanley|260817|Voltas|f1q27ebitdamissdrivenbyprojectsbusinessew",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|260817|Voltas|strongracgrowth",
+       "GoldmanSachs|260816|Voltas|1qfy27belowexpectationsonrevenueandmarginssell",
+       "Jefferies|260814|Voltas|mixedjun26qforayincompressormfg",
+       "Kotak|260815|Voltas|racoutperformspartlyaidedbyafavorablebase",
+       "MorganStanley|260817|Voltas|f1q27ebitdamissdrivenbyprojectsbusinessew",
+       "Nomura|260814|Voltas|riskstomarginrecoveryfromhighcompetition1qfy27ebitdainlinewithconsensusfocusongrowthhighcompetitiontodelaymarginrecovery"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "1Q26": {
+     "abs": {
+      "rev": {
+       "key": "MorganStanley|260817|Voltas|f1q27ebitdamissdrivenbyprojectsbusinessew",
+       "broker": "MorganStanley",
+       "date": "260817",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "MorganStanley|260817|Voltas|f1q27ebitdamissdrivenbyprojectsbusinessew",
+       "broker": "MorganStanley",
+       "date": "260817",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 39386,
+     "ebitda": 1785
+    },
+    "4Q26": {
+     "abs": {
+      "rev": {
+       "key": "MorganStanley|260817|Voltas|f1q27ebitdamissdrivenbyprojectsbusinessew",
+       "broker": "MorganStanley",
+       "date": "260817",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "MorganStanley|260817|Voltas|f1q27ebitdamissdrivenbyprojectsbusinessew",
+       "broker": "MorganStanley",
+       "date": "260817",
+       "role": "prevQ"
+      }
+     },
+     "rev": 48878,
+     "ebitda": 2207
+    }
+   },
+   "added": "pdf",
+   "outlook": {
+    "call": "neutral",
+    "note": "Management expects UCP margins to improve gradually to 7%+ as it passes on most of the 10-12% cost increase, with RAC channel inventory at a normal ~4 weeks. Nomura says high competition and a focus on share over profitability will delay margin recovery. It cut revenue estimates ~4% and FY27F/28F UCP margins by 50bp/70bp, leading to ~8% lower EPS, and lowered its TP to Rs1,357. CLSA raised FY27-29 EBITDA by 1-3% but cut FY27/28 PAT by 5%/1% on higher JV losses, and lifted its TP to Rs1,160 (Nomura, CLSA).",
+    "broker": "Nomura",
+    "date": "260814",
     "quarter": "1Q27"
    }
   },
@@ -12033,7 +12136,7 @@
     }
    },
    "sym": "BLUEJET",
-   "mcap": 8803,
+   "mcap": 8574,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "neutral",
@@ -14920,7 +15023,7 @@
     }
    },
    "sym": "KANSAINER",
-   "mcap": 14677,
+   "mcap": 14789,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "neutral",
@@ -15128,7 +15231,7 @@
     }
    },
    "sym": "NEOGEN",
-   "mcap": 7456,
+   "mcap": 7075,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -15369,7 +15472,7 @@
     }
    },
    "sym": "RALLIS",
-   "mcap": 3980,
+   "mcap": 3942,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -15472,7 +15575,7 @@
     "date": "260729",
     "quarter": "1Q27"
    },
-   "mcap": 1867,
+   "mcap": 1800,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -15851,7 +15954,7 @@
     "date": "260813",
     "quarter": "1Q27"
    },
-   "mcap": 11604,
+   "mcap": 11327,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -16481,7 +16584,7 @@
     }
    },
    "sym": "BLACKBUCK",
-   "mcap": 10648,
+   "mcap": 10138,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "neutral",
@@ -19302,7 +19405,7 @@
     "date": "260805",
     "quarter": "1Q27"
    },
-   "mcap": 13514,
+   "mcap": 13380,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -20224,7 +20327,7 @@
     "date": "260903",
     "quarter": "1Q27"
    },
-   "mcap": 6451,
+   "mcap": 6241,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -20328,7 +20431,7 @@
     }
    },
    "sym": "SAPPHIRE",
-   "mcap": 6314,
+   "mcap": 6065,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -20481,7 +20584,7 @@
     }
    },
    "sym": "WESTLIFE",
-   "mcap": 8554,
+   "mcap": 8315,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -20793,7 +20896,7 @@
     "date": "260811",
     "quarter": "1Q27"
    },
-   "mcap": 3386,
+   "mcap": 3301,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -22510,7 +22613,7 @@
     }
    },
    "sym": "GODIGIT",
-   "mcap": 26575,
+   "mcap": 26071,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "negative",
@@ -23344,7 +23447,7 @@
     }
    },
    "sym": "NIVABUPA",
-   "mcap": 14109,
+   "mcap": 13608,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -25125,7 +25228,7 @@
     }
    },
    "sym": "JUSTDIAL",
-   "mcap": 6223,
+   "mcap": 6178,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -26911,7 +27014,7 @@
     }
    },
    "sym": "BLUESTONE",
-   "mcap": 11702,
+   "mcap": 11344,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -27579,7 +27682,7 @@
     }
    },
    "sym": "SHADOWFAX",
-   "mcap": 16631,
+   "mcap": 15867,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -27781,7 +27884,7 @@
     "date": "260806",
     "quarter": "1Q27"
    },
-   "mcap": 1803,
+   "mcap": 1758,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -29951,7 +30054,7 @@
     "date": "260811",
     "quarter": "1Q27"
    },
-   "mcap": 2421,
+   "mcap": 2332,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -33106,7 +33209,7 @@
     "date": "260812",
     "quarter": "1Q27"
    },
-   "mcap": 7413,
+   "mcap": 7162,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -33309,7 +33412,7 @@
     "date": "260817",
     "quarter": "1Q27"
    },
-   "mcap": 4959,
+   "mcap": 4798,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -34467,7 +34570,7 @@
     "date": "260810",
     "quarter": "1Q27"
    },
-   "mcap": 6552,
+   "mcap": 6392,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -34979,7 +35082,7 @@
     }
    },
    "sym": "MEDPLUS",
-   "mcap": 7197,
+   "mcap": 7160,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "neutral",
@@ -35546,7 +35649,7 @@
     "date": "260813",
     "quarter": "1Q27"
    },
-   "mcap": 8032,
+   "mcap": 7888,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -38729,7 +38832,7 @@
    },
    "q": {},
    "sym": "SUNTECK",
-   "mcap": 3926,
+   "mcap": 3919,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -38759,7 +38862,7 @@
     }
    },
    "sym": "WEWORK",
-   "mcap": 9218,
+   "mcap": 8994,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -39263,7 +39366,7 @@
     "date": "260731",
     "quarter": "1Q27"
    },
-   "mcap": 4325,
+   "mcap": 4299,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -39530,7 +39633,7 @@
     "date": "261017",
     "quarter": "2Q27"
    },
-   "mcap": 24268,
+   "mcap": 23578,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -40112,7 +40215,7 @@
     "date": "260730",
     "quarter": "1Q27"
    },
-   "mcap": 1693,
+   "mcap": 1671,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -41099,7 +41202,7 @@
     "date": "260813",
     "quarter": "1Q27"
    },
-   "mcap": 6422,
+   "mcap": 6330,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -42015,7 +42118,7 @@
     }
    },
    "sym": "ORKLAINDIA",
-   "mcap": 7477,
+   "mcap": 7519,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "neutral",
@@ -42369,7 +42472,7 @@
    "ticker": "",
    "basis": "",
    "note": "",
-   "unit": null,
+   "unit": "INR mn",
    "revUnit": null,
    "metrics": {
     "rev": "Revenue",
@@ -42378,33 +42481,100 @@
    "q": {
     "1Q26": {
      "rev": 31403,
-     "ebitda": 4592
+     "ebitda": 4592,
+     "abs": {
+      "wb_rev": 31403,
+      "rev": {
+       "key": "MorganStanley|260723|Vishal Mega Mart|1qf27inlineconsistentdelivery",
+       "broker": "MorganStanley",
+       "date": "260723",
+       "role": "yearAgo"
+      },
+      "wb_ebitda": 4592,
+      "ebitda": {
+       "key": "MorganStanley|260723|Vishal Mega Mart|1qf27inlineconsistentdelivery",
+       "broker": "MorganStanley",
+       "date": "260723",
+       "role": "yearAgo"
+      }
+     }
     },
     "4Q26": {
      "rev": 31141,
-     "ebitda": 4248
+     "ebitda": 4248,
+     "abs": {
+      "wb_rev": 31141,
+      "rev": {
+       "key": "MorganStanley|260723|Vishal Mega Mart|1qf27inlineconsistentdelivery",
+       "broker": "MorganStanley",
+       "date": "260723",
+       "role": "prevQ"
+      },
+      "wb_ebitda": 4248,
+      "ebitda": {
+       "key": "MorganStanley|260723|Vishal Mega Mart|1qf27inlineconsistentdelivery",
+       "broker": "MorganStanley",
+       "date": "260723",
+       "role": "prevQ"
+      }
+     }
     },
     "1Q27": {
      "rev": 37270,
      "ebitda": 5446,
      "revYoY": 0.1868,
-     "revVs": "miss",
-     "revNote": "SSSG of 10.0% and an 11.3% yoy increase in the retail area.",
      "ebitdaYoY": 0.186,
-     "ebitdaVs": "beat",
-     "overall": "inline",
      "src": {
-      "kind": "sheet",
-      "file": "2026 (Autosaved).xlsx",
-      "attrib": {
-       "broker": "Kotak",
-       "date": "260724",
-       "key": "Kotak|260724|Vishal Mega Mart|decentrevenueprintmarginsdisappointatad"
+      "kind": "pdf",
+      "broker": "MorganStanley",
+      "date": "260723",
+      "key": "MorganStanley|260723|Vishal Mega Mart|1qf27inlineconsistentdelivery",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Bernstein|260723|Vishal Mega Mart|vishalmegamart",
+       "JPMorgan|260723|Vishal Mega Mart|firsttakeq1fy27inlineoperationalprint",
+       "JPMorgan|260724|Vishal Mega Mart|q1reviewsteadyoperationalperformance",
+       "Kotak|260724|Vishal Mega Mart|decentrevenueprintmarginsdisappointatad",
+       "MorganStanley|260723|Vishal Mega Mart|1qf27inlineconsistentdelivery",
+       "MorganStanley|260723|Vishal Mega Mart|f1q27offthecallstrongexecutioncontinues"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     },
+     "abs": {
+      "wb_rev": 37270,
+      "rev": {
+       "key": "MorganStanley|260723|Vishal Mega Mart|1qf27inlineconsistentdelivery",
+       "broker": "MorganStanley",
+       "date": "260723",
+       "role": "own"
+      },
+      "wb_ebitda": 5446,
+      "ebitda": {
+       "key": "MorganStanley|260723|Vishal Mega Mart|1qf27inlineconsistentdelivery",
+       "broker": "MorganStanley",
+       "date": "260723",
+       "role": "own"
       }
-     }
+     },
+     "revVs": "inline",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Revenue grew 19% YoY to Rs37.3bn, 1% below consensus (Rs37.6bn) and MSe, so in line. Growth was broad-based across categories at ~19%, with SSSG of 10% and 24 net store additions to 819 stores. (MS, JP)",
+     "ebitdaNote": "EBITDA rose 19% YoY to Rs5.4bn and was 1% below consensus, so in line. Gross margin expanded 30bps YoY to 28.7%, but a 25% YoY rise in employee costs held the EBITDA margin flat at 14.6%. (MS, JP)",
+     "revCons": 37563,
+     "ebitdaCons": 5482
     }
    },
-   "sym": "VMM"
+   "sym": "VMM",
+   "outlook": {
+    "call": "neutral",
+    "note": "Management said elevated inflation hit demand in 1Q and expects the impact to taper in coming quarters. It expects accelerated small-format store additions, with ~3,000 long-term potential. JP sees marginal earnings revisions after an in-line print and keeps its Rs145 target (FY27E EBITDA Rs22.4bn, +19.1% YoY). The board approved capping foreign ownership at 49.99%. Elevated employee costs from minimum-wage hikes are capping margin expansion. (JP, MS)",
+    "broker": "JPMorgan",
+    "date": "260724",
+    "quarter": "1Q27"
+   }
   },
   {
    "name": "Jindal Stainless",
@@ -43752,7 +43922,7 @@
     }
    },
    "sym": "CHALET",
-   "mcap": 18455,
+   "mcap": 18217,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "neutral",
@@ -44127,7 +44297,7 @@
     }
    },
    "sym": "THELEELA",
-   "mcap": 20797,
+   "mcap": 19765,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -44235,7 +44405,7 @@
     "date": "260804",
     "quarter": "1Q27"
    },
-   "mcap": 3264,
+   "mcap": 3248,
    "mcapAsOf": "2026-10-21"
   },
   {
