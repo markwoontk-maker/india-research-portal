@@ -365,18 +365,41 @@
      "abs": {
       "wb_rev": 60801,
       "rev": {
-       "key": "Kotak|260730|Eicher Motors|higheraspsdriveebitdabeat",
+       "key": "Kotak|260523|Eicher Motors|inlinequarter",
        "broker": "Kotak",
-       "date": "260730",
-       "role": "prevQ"
+       "date": "260523",
+       "role": "own"
       },
       "wb_ebitda": 15137,
       "ebitda": {
-       "key": "Kotak|260730|Eicher Motors|higheraspsdriveebitdabeat",
+       "key": "Kotak|260523|Eicher Motors|inlinequarter",
        "broker": "Kotak",
-       "date": "260730",
-       "role": "prevQ"
+       "date": "260523",
+       "role": "own"
       }
+     },
+     "revYoY": 0.1601,
+     "ebitdaYoY": 0.2035,
+     "revVs": "inline",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Consolidated revenue of Rs60.8bn (+16% YoY) was 1.5% above Kotak's estimate. Volumes rose 12.3% YoY and ASPs 3.3% YoY (Kotak). JPMorgan put it 2% above JPMe and slightly ahead of consensus (JP).",
+     "ebitdaNote": "Consolidated EBITDA of Rs15.1bn (+20% YoY) was 0.6% above Kotak's estimate, helped by better gross margins and offset by higher other expenses. Margin was 24.9% (+90bps YoY, -60bps QoQ), 20bps below Kotak's estimate. JPMorgan had EBITDA 3% above JPMe (Kotak, JP).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260523",
+      "key": "Kotak|260523|Eicher Motors|inlinequarter",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "JPMorgan|260525|Eicher Motors|anotheryearofjostlingbetweengrowthandmargins",
+       "Jefferies|260522|Eicher Motors|growingwellandexpandingcapacity",
+       "Kotak|260523|Eicher Motors|inlinequarter"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
      }
     },
     "1Q27": {
@@ -426,6 +449,42 @@
      "revNote": "Consolidated revenue of Rs66.3bn (+32% yoy) was 4-5% above consensus and estimates, led by higher ASPs (Rs200.7k/unit, +5.7% yoy, +4% qoq) on a richer mix of parts and accessories and price hikes, partly offset by weaker export pricing (Nomura, Kotak).",
      "ebitdaNote": "Consolidated EBITDA of Rs15.9bn (+32% yoy) was ~4% above consensus of Rs15.3bn (2.8% above Kotak), driven by better ASPs and lower other expenses (10.7% of sales vs 12% expected), partly offset by weaker gross margin (RM/sales 58.5%, +290bps qoq); EBITDA margin 24.0%, in line with consensus (Nomura, Kotak).",
      "ebitdaCons": 15300
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260523|Eicher Motors|inlinequarter",
+       "broker": "Kotak",
+       "date": "260523",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260523|Eicher Motors|inlinequarter",
+       "broker": "Kotak",
+       "date": "260523",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 52411,
+     "ebitda": 12577
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260523|Eicher Motors|inlinequarter",
+       "broker": "Kotak",
+       "date": "260523",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260523|Eicher Motors|inlinequarter",
+       "broker": "Kotak",
+       "date": "260523",
+       "role": "prevQ"
+      }
+     },
+     "rev": 61140,
+     "ebitda": 15567
     }
    },
    "sym": "EICHERMOT",
@@ -1796,22 +1855,48 @@
     },
     "4Q26": {
      "rev": 224384,
-     "ebitda": 13565,
+     "ebitda": 8100,
      "abs": {
       "wb_rev": 224384,
       "rev": {
-       "key": "Jefferies|260724|InterGlobe Aviation|navigatingturbulence",
-       "broker": "Jefferies",
-       "date": "260724",
-       "role": "prevQ"
+       "key": "Kotak|260530|InterGlobe Aviation|steadyquarter1qtobeatestofdemandelasticity",
+       "broker": "Kotak",
+       "date": "260530",
+       "role": "own"
       },
       "wb_ebitda": 8100,
       "ebitda": {
-       "key": "Jefferies|260724|InterGlobe Aviation|navigatingturbulence",
-       "broker": "Jefferies",
-       "date": "260724",
-       "role": "prevQ"
+       "key": "Kotak|260530|InterGlobe Aviation|steadyquarter1qtobeatestofdemandelasticity",
+       "broker": "Kotak",
+       "date": "260530",
+       "role": "own"
       }
+     },
+     "revYoY": 0.0129,
+     "ebitdaYoY": -0.867,
+     "revVs": "inline",
+     "ebitdaVs": "miss",
+     "overall": "beat",
+     "revNote": "Total income of Rs224bn was +1.3% yoy and 0.2% above Kotak's estimate. Weaker yields (Rs5.19/RPK, -1.6% vs estimate) were offset by higher ancillary revenue (+9.2% yoy) and other operating income (+53% yoy). (Kotak)",
+     "ebitdaNote": "Reported EBITDA of Rs8.1bn was 18% below Kotak's estimate and down 87% yoy, hit by a ~Rs48bn forex loss (largely MTM). Adjusted EBITDAR of Rs64.0bn was 6% above estimate. The 9 paise operating-spread hit from grounded planes was partly offset by lower lease liabilities and supplementary rentals. The net loss of Rs23bn was Rs3bn smaller than Kotak expected, a modest beat. (Kotak)",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260530",
+      "key": "Kotak|260530|InterGlobe Aviation|steadyquarter1qtobeatestofdemandelasticity",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "JPMorgan|260601|InterGlobe Aviation|alleyesonfy28butriskrewardnotattractiveenoughyet",
+       "JPMorgan|260609|InterGlobe Aviation|bringingbackfocusonthelongtermgoals",
+       "Jefferies|260529|InterGlobe Aviation|cloudedneartermoutlook",
+       "Jefferies|260613|InterGlobe Aviation|takeawaysfromjefferiesukindiaaccessday2026",
+       "Kotak|260530|InterGlobe Aviation|steadyquarter1qtobeatestofdemandelasticity",
+       "Kotak|260615|InterGlobe Aviation|hoponandstayputfinancialrationalitystartingtoprevail"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
      }
     },
     "1Q27": {
@@ -1858,6 +1943,42 @@
      "revNote": "Revenue of Rs245.8bn (+19.9% YoY) was about 1% above JPMorgan's estimate and 2% above GS's. Yields were strong (+21% YoY to Rs6.04/RPK, PRASK +20%), which outweighed ASK growth of only 3% and RPK growth of 1% (Jeff, JP, GS).",
      "ebitdaNote": "EBITDA of Rs30.6bn (-40.9% YoY) with a margin of 12.5% against 25.3% a year ago. JPMorgan's EBITDA estimate was Rs39.5bn, so this is a 19% miss. Fuel and non-fuel costs came in above forecasts: fuel CASK rose 81% YoY, and CASK ex-fuel ex-forex rose 11% YoY. JPMorgan says the result missed both its and consensus forecasts, and GS puts costs ex-forex 5% above its estimate. PAT was a loss of Rs3.8bn (Jeff, JP, GS).",
      "vsBasis": "broker estimate (JPMorgan)"
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260530|InterGlobe Aviation|steadyquarter1qtobeatestofdemandelasticity",
+       "broker": "Kotak",
+       "date": "260530",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260530|InterGlobe Aviation|steadyquarter1qtobeatestofdemandelasticity",
+       "broker": "Kotak",
+       "date": "260530",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 221519,
+     "ebitda": 60894
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260530|InterGlobe Aviation|steadyquarter1qtobeatestofdemandelasticity",
+       "broker": "Kotak",
+       "date": "260530",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260530|InterGlobe Aviation|steadyquarter1qtobeatestofdemandelasticity",
+       "broker": "Kotak",
+       "date": "260530",
+       "role": "prevQ"
+      }
+     },
+     "rev": 234719,
+     "ebitda": 53674
     }
    },
    "sym": "INDIGO",
@@ -1945,20 +2066,77 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Jefferies|260813|GMR Airports|junqfirstcutresilientandbroadlyinline",
-       "broker": "Jefferies",
-       "date": "260813",
-       "role": "prevQ"
+       "key": "Kotak|260529|GMR Airports|abreatheraheadbeforeastrongcomebackinfy2028",
+       "broker": "Kotak",
+       "date": "260529",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Jefferies|260813|GMR Airports|junqfirstcutresilientandbroadlyinline",
-       "broker": "Jefferies",
-       "date": "260813",
-       "role": "prevQ"
+       "key": "Kotak|260529|GMR Airports|abreatheraheadbeforeastrongcomebackinfy2028",
+       "broker": "Kotak",
+       "date": "260529",
+       "role": "own"
       }
      },
      "rev": 39382,
-     "ebitda": 14836
+     "ebitda": 14836,
+     "revYoY": 0.3754,
+     "ebitdaYoY": 0.4662,
+     "revVs": "inline",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Revenue grew 38% yoy to Rs39.4 bn, 0.9% below Kotak's estimate (Rs39.7 bn) and down 1.4% qoq. No consensus figure is printed, so this is judged against Kotak's own estimate. (Kotak)",
+     "ebitdaNote": "EBITDA rose 47% yoy to Rs14.8 bn, 4.2% below Kotak's estimate (Rs15.5 bn) and down 13.5% qoq. Kotak attributes the miss to volatile line items. Top-three-asset EBITDA was a modest beat, and the EBITDA margin was 37.7% against 38.9% estimated. (Kotak)",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260529",
+      "key": "Kotak|260529|GMR Airports|abreatheraheadbeforeastrongcomebackinfy2028",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|260529|GMR Airports|abreatheraheadbeforeastrongcomebackinfy2028"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260529|GMR Airports|abreatheraheadbeforeastrongcomebackinfy2028",
+       "broker": "Kotak",
+       "date": "260529",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260529|GMR Airports|abreatheraheadbeforeastrongcomebackinfy2028",
+       "broker": "Kotak",
+       "date": "260529",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 28633,
+     "ebitda": 10119
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260529|GMR Airports|abreatheraheadbeforeastrongcomebackinfy2028",
+       "broker": "Kotak",
+       "date": "260529",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260529|GMR Airports|abreatheraheadbeforeastrongcomebackinfy2028",
+       "broker": "Kotak",
+       "date": "260529",
+       "role": "prevQ"
+      }
+     },
+     "rev": 39940,
+     "ebitda": 17148
     }
    },
    "added": "pdf",
@@ -4034,7 +4212,7 @@
     "date": "260811",
     "quarter": "1Q27"
    },
-   "mcap": 5138,
+   "mcap": 5233,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -4296,7 +4474,7 @@
     "date": "260807",
     "quarter": "1Q27"
    },
-   "mcap": 5812,
+   "mcap": 5753,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -4501,7 +4679,7 @@
     }
    },
    "sym": "MANYAVAR",
-   "mcap": 12132,
+   "mcap": 12190,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "neutral",
@@ -4770,7 +4948,7 @@
     "date": "260806",
     "quarter": "1Q27"
    },
-   "mcap": 10855,
+   "mcap": 10895,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -6567,7 +6745,7 @@
     "date": "260806",
     "quarter": "1Q27"
    },
-   "mcap": 12138,
+   "mcap": 12174,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -10033,20 +10211,77 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Jefferies|260811|Finolex Cables|ofcourseitsastrongmarginquarter",
+       "key": "Jefferies|260601|Finolex Cables|goodperformancefavourableriskreward",
        "broker": "Jefferies",
-       "date": "260811",
-       "role": "prevQ"
+       "date": "260601",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Jefferies|260811|Finolex Cables|ofcourseitsastrongmarginquarter",
+       "key": "Jefferies|260601|Finolex Cables|goodperformancefavourableriskreward",
        "broker": "Jefferies",
-       "date": "260811",
-       "role": "prevQ"
+       "date": "260601",
+       "role": "own"
       }
      },
      "rev": 19511,
-     "ebitda": 2033
+     "ebitda": 2033,
+     "revYoY": 0.2236,
+     "ebitdaYoY": 0.2225,
+     "revVs": null,
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Standalone net sales rose 22% YoY and 22% QoQ to Rs19.5bn, led by Electrical Cables (+22% YoY, with Auto, Flexible and Power cables all growing), Communication cables (+32% YoY on optic fibre) and Copper Rods (+20%); price hikes passed on copper costs (~20% in FY26) also lifted sales (Jeff).",
+     "ebitdaNote": "EBITDA rose 22% YoY to Rs2,033mn and Jefferies called it a beat, but margin was flat YoY at 10.4% (-1bp). Gross margin fell 210bps YoY to 17.5% on copper volatility (+37% YoY in Q4) and supply-chain disruption, offset by lower other expenses (Jeff).",
+     "vsBasis": "report wording (Jefferies: 'Mar26-Q EBITDA was a beat'); no consensus figure printed",
+     "src": {
+      "kind": "pdf",
+      "broker": "Jefferies",
+      "date": "260601",
+      "key": "Jefferies|260601|Finolex Cables|goodperformancefavourableriskreward",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260601|Finolex Cables|goodperformancefavourableriskreward"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260601|Finolex Cables|goodperformancefavourableriskreward",
+       "broker": "Jefferies",
+       "date": "260601",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Jefferies|260601|Finolex Cables|goodperformancefavourableriskreward",
+       "broker": "Jefferies",
+       "date": "260601",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 15946,
+     "ebitda": 1663
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260601|Finolex Cables|goodperformancefavourableriskreward",
+       "broker": "Jefferies",
+       "date": "260601",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Jefferies|260601|Finolex Cables|goodperformancefavourableriskreward",
+       "broker": "Jefferies",
+       "date": "260601",
+       "role": "prevQ"
+      }
+     },
+     "rev": 15986,
+     "ebitda": 1528
     }
    },
    "added": "pdf",
@@ -10666,7 +10901,7 @@
     }
    },
    "sym": "VGUARD",
-   "mcap": 12268,
+   "mcap": 12266,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -11210,20 +11445,78 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Nomura|260805|Cummins India|sharperthanexpectedgrossmargindipleadstoebitdamiss",
-       "broker": "Nomura",
-       "date": "260805",
-       "role": "prevQ"
+       "key": "JPMorgan|260531|Cummins India|downgradetoneutralstrongperformancebutpricedinnow",
+       "broker": "JPMorgan",
+       "date": "260531",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Nomura|260805|Cummins India|sharperthanexpectedgrossmargindipleadstoebitdamiss",
-       "broker": "Nomura",
-       "date": "260805",
-       "role": "prevQ"
+       "key": "JPMorgan|260531|Cummins India|downgradetoneutralstrongperformancebutpricedinnow",
+       "broker": "JPMorgan",
+       "date": "260531",
+       "role": "own"
       }
      },
      "rev": 30112,
-     "ebitda": 6422
+     "ebitda": 6422,
+     "revYoY": 0.2189,
+     "ebitdaYoY": 0.2228,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Total operating income of Rs30.1bn grew 22% y/y and was 10% ahead of JPMorgan's estimate. Domestic sales grew 30% y/y, led by power generation (+48%) and distribution (+21%), with a ~Rs2.5bn hyperscaler data-centre delivery. Exports fell 6% y/y. (JP)",
+     "ebitdaNote": "EBITDA of Rs6.4bn grew 22% y/y and was 11% above JPMorgan's estimate. The margin was 21.3%, 33bps above JPMorgan's estimate and flat y/y. Gross margin compressed ~150bps y/y but lower other expenses offset it. (JP)",
+     "vsBasis": "broker estimate (JPMorgan)",
+     "src": {
+      "kind": "pdf",
+      "broker": "JPMorgan",
+      "date": "260531",
+      "key": "JPMorgan|260531|Cummins India|downgradetoneutralstrongperformancebutpricedinnow",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "JPMorgan|260531|Cummins India|downgradetoneutralstrongperformancebutpricedinnow",
+       "Nomura|260601|Cummins India|steadydemandoutlooktemperedbymarginchallenges"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260531|Cummins India|downgradetoneutralstrongperformancebutpricedinnow",
+       "broker": "JPMorgan",
+       "date": "260531",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260531|Cummins India|downgradetoneutralstrongperformancebutpricedinnow",
+       "broker": "JPMorgan",
+       "date": "260531",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 24704,
+     "ebitda": 5252
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260531|Cummins India|downgradetoneutralstrongperformancebutpricedinnow",
+       "broker": "JPMorgan",
+       "date": "260531",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260531|Cummins India|downgradetoneutralstrongperformancebutpricedinnow",
+       "broker": "JPMorgan",
+       "date": "260531",
+       "role": "prevQ"
+      }
+     },
+     "rev": 30549,
+     "ebitda": 6345
     }
    },
    "added": "pdf",
@@ -11313,20 +11606,79 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Nomura|260805|GE Vernova T&D India|steadyoperatingperformanceoibelowestimate",
+       "key": "Nomura|260519|GE Vernova T&D India|exemplaryperformancein4qbeatsestimates",
        "broker": "Nomura",
-       "date": "260805",
-       "role": "prevQ"
+       "date": "260519",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Nomura|260805|GE Vernova T&D India|steadyoperatingperformanceoibelowestimate",
+       "key": "Nomura|260519|GE Vernova T&D India|exemplaryperformancein4qbeatsestimates",
        "broker": "Nomura",
-       "date": "260805",
-       "role": "prevQ"
+       "date": "260519",
+       "role": "own"
       }
      },
      "rev": 16371,
-     "ebitda": 4449
+     "ebitda": 4449,
+     "revYoY": 0.4205,
+     "ebitdaYoY": 0.7648,
+     "revVs": "miss",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue of INR16.4bn grew 42% y-y but came in 5% below Bloomberg consensus (INR17.2bn) and 3% below Nomura's estimate, and fell 4% q-q. (Nomura)",
+     "ebitdaNote": "EBITDA of INR4.45bn (+76% y-y) beat consensus and Nomura by 7%. Gross margin expanded 468bp y-y to 47.0% and EBITDA margin rose 530bp y-y to 27.2%, 292bp above consensus. (Nomura)",
+     "revCons": 17174,
+     "ebitdaCons": 4167,
+     "src": {
+      "kind": "pdf",
+      "broker": "Nomura",
+      "date": "260519",
+      "key": "Nomura|260519|GE Vernova T&D India|exemplaryperformancein4qbeatsestimates",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Nomura|260519|GE Vernova T&D India|anotherquarteranotherupwardrevision",
+       "Nomura|260519|GE Vernova T&D India|exemplaryperformancein4qbeatsestimates"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Nomura|260519|GE Vernova T&D India|exemplaryperformancein4qbeatsestimates",
+       "broker": "Nomura",
+       "date": "260519",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Nomura|260519|GE Vernova T&D India|exemplaryperformancein4qbeatsestimates",
+       "broker": "Nomura",
+       "date": "260519",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 11525,
+     "ebitda": 2521
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Nomura|260519|GE Vernova T&D India|exemplaryperformancein4qbeatsestimates",
+       "broker": "Nomura",
+       "date": "260519",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Nomura|260519|GE Vernova T&D India|exemplaryperformancein4qbeatsestimates",
+       "broker": "Nomura",
+       "date": "260519",
+       "role": "prevQ"
+      }
+     },
+     "rev": 17006,
+     "ebitda": 4546
     }
    },
    "added": "pdf",
@@ -11412,20 +11764,77 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Jefferies|260819|Jupiter Wagons|weakquarterwheelplantcommissioningandwagonorderkey",
+       "key": "Jefferies|260602|Jupiter Wagons|weakquarterwheelmanufacturingplantcommissioningholds",
        "broker": "Jefferies",
-       "date": "260819",
-       "role": "prevQ"
+       "date": "260602",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Jefferies|260819|Jupiter Wagons|weakquarterwheelplantcommissioningandwagonorderkey",
+       "key": "Jefferies|260602|Jupiter Wagons|weakquarterwheelmanufacturingplantcommissioningholds",
        "broker": "Jefferies",
-       "date": "260819",
-       "role": "prevQ"
+       "date": "260602",
+       "role": "own"
       }
      },
      "rev": 7802,
-     "ebitda": 833
+     "ebitda": 833,
+     "revYoY": -0.253,
+     "ebitdaYoY": -0.4545,
+     "revVs": "miss",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Sales of Rs7.8bn fell 25% YoY and came in 14% below JEFe, as wagon sales declined 43% YoY on supply-chain issues; wheelset sales grew 19% YoY and CV load bodies 37% (Jeff).",
+     "ebitdaNote": "EBITDA of Rs833mn was 32% below JEFe and down 45% YoY, with margin at 10.7% vs 14.6% a year ago; gross margin at 26% surprised positively, but negative operating leverage hit EBITDA (Jeff).",
+     "vsBasis": "broker estimate (Jefferies)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Jefferies",
+      "date": "260602",
+      "key": "Jefferies|260602|Jupiter Wagons|weakquarterwheelmanufacturingplantcommissioningholds",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260602|Jupiter Wagons|weakquarterwheelmanufacturingplantcommissioningholds"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260602|Jupiter Wagons|weakquarterwheelmanufacturingplantcommissioningholds",
+       "broker": "Jefferies",
+       "date": "260602",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Jefferies|260602|Jupiter Wagons|weakquarterwheelmanufacturingplantcommissioningholds",
+       "broker": "Jefferies",
+       "date": "260602",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 10445,
+     "ebitda": 1527
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260602|Jupiter Wagons|weakquarterwheelmanufacturingplantcommissioningholds",
+       "broker": "Jefferies",
+       "date": "260602",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Jefferies|260602|Jupiter Wagons|weakquarterwheelmanufacturingplantcommissioningholds",
+       "broker": "Jefferies",
+       "date": "260602",
+       "role": "prevQ"
+      }
+     },
+     "rev": 8904,
+     "ebitda": 1159
     }
    },
    "added": "pdf",
@@ -11612,20 +12021,78 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Nomura|260810|KEC International|1qfy27operatingperformancemissesestimates",
+       "key": "Nomura|260519|KEC International|persistentweaknessinoperatingperformanceguidancesoft",
        "broker": "Nomura",
-       "date": "260810",
-       "role": "prevQ"
+       "date": "260519",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Nomura|260810|KEC International|1qfy27operatingperformancemissesestimates",
+       "key": "Nomura|260519|KEC International|persistentweaknessinoperatingperformanceguidancesoft",
        "broker": "Nomura",
-       "date": "260810",
-       "role": "prevQ"
+       "date": "260519",
+       "role": "own"
       }
      },
      "rev": 63898,
-     "ebitda": 4481
+     "ebitda": 4481,
+     "revYoY": -0.0702,
+     "ebitdaYoY": -0.1683,
+     "revVs": "miss",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "4Q revenue of INR63.9bn fell 7% y-y and came in 13% below consensus (9% below Nomura). T&D ex-SAE was up 1% y-y, while railways (-55%), renewables (-81%) and civil (-15%) fell; West Asia disruptions and labour/payment/ROW headwinds weighed. (Nomura)",
+     "ebitdaNote": "EBITDA of INR4.5bn fell 17% y-y and was 16% below consensus (9% below Nomura). Margin of 7.0% was down 83bp y-y and 28bp below consensus, with gross margin down 14bp y-y and employee cost up 105bp as a share of sales. (Nomura)",
+     "revCons": 73586,
+     "ebitdaCons": 5365,
+     "src": {
+      "kind": "pdf",
+      "broker": "Nomura",
+      "date": "260519",
+      "key": "Nomura|260519|KEC International|persistentweaknessinoperatingperformanceguidancesoft",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Nomura|260519|KEC International|persistentweaknessinoperatingperformanceguidancesoft"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Nomura|260519|KEC International|persistentweaknessinoperatingperformanceguidancesoft",
+       "broker": "Nomura",
+       "date": "260519",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Nomura|260519|KEC International|persistentweaknessinoperatingperformanceguidancesoft",
+       "broker": "Nomura",
+       "date": "260519",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 68721,
+     "ebitda": 5388
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Nomura|260519|KEC International|persistentweaknessinoperatingperformanceguidancesoft",
+       "broker": "Nomura",
+       "date": "260519",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Nomura|260519|KEC International|persistentweaknessinoperatingperformanceguidancesoft",
+       "broker": "Nomura",
+       "date": "260519",
+       "role": "prevQ"
+      }
+     },
+     "rev": 60014,
+     "ebitda": 4300
     }
    },
    "added": "pdf"
@@ -11811,20 +12278,79 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Jefferies|260813|LG Electronics India|jun26qmarginbeatlifestaysgood",
+       "key": "Jefferies|260522|LG Electronics India|mar26qinlinepatindustryleadingmargin",
        "broker": "Jefferies",
-       "date": "260813",
-       "role": "prevQ"
+       "date": "260522",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Jefferies|260813|LG Electronics India|jun26qmarginbeatlifestaysgood",
+       "key": "Jefferies|260522|LG Electronics India|mar26qinlinepatindustryleadingmargin",
        "broker": "Jefferies",
-       "date": "260813",
-       "role": "prevQ"
+       "date": "260522",
+       "role": "own"
       }
      },
      "rev": 80536,
-     "ebitda": 9454
+     "ebitda": 9454,
+     "revYoY": 0.0813,
+     "ebitdaYoY": -0.0981,
+     "revVs": "inline",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Revenue of Rs80.5bn (+8% YoY) was about 0.8% below consensus, so in line. Broad-based demand and premiumisation after the new BEE rating transition on 1 Jan 2026 supported it. Home Appliances & Air Solutions grew 6% to Rs65.2bn and Home Entertainment grew 20% to Rs15.4bn on large-screen TV demand during the Cricket World Cup (Jeff, Kotak).",
+     "ebitdaNote": "EBITDA of Rs9.5bn (-10% YoY) was about 10.7% below consensus, with margin down 240bps YoY to 11.7% against Kotak's 13% estimate. The causes were commodity price inflation, INR depreciation (about 100bps) and strategic channel investments (about 110bps). Higher e-waste expenses added about 20bps. Jefferies said the margin dip left profit below consensus but in line with its own estimate (Jeff, Kotak).",
+     "src": {
+      "kind": "pdf",
+      "broker": "Jefferies",
+      "date": "260522",
+      "key": "Jefferies|260522|LG Electronics India|mar26qinlinepatindustryleadingmargin",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260522|LG Electronics India|mar26qinlinepatindustryleadingmargin",
+       "Jefferies|260522|LG Electronics India|optimisticoutlookstrongpricehikes",
+       "Kotak|260523|LG Electronics India|betterplacedthanpeers",
+       "Nomura|260526|LG Electronics India|managementmeettakeaways"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260522|LG Electronics India|mar26qinlinepatindustryleadingmargin",
+       "broker": "Jefferies",
+       "date": "260522",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Jefferies|260522|LG Electronics India|mar26qinlinepatindustryleadingmargin",
+       "broker": "Jefferies",
+       "date": "260522",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 74484,
+     "ebitda": 10482
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260522|LG Electronics India|mar26qinlinepatindustryleadingmargin",
+       "broker": "Jefferies",
+       "date": "260522",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Jefferies|260522|LG Electronics India|mar26qinlinepatindustryleadingmargin",
+       "broker": "Jefferies",
+       "date": "260522",
+       "role": "prevQ"
+      }
+     },
+     "rev": 41144,
+     "ebitda": 1961
     }
    },
    "added": "pdf",
@@ -11935,7 +12461,7 @@
     "date": "260816",
     "quarter": "1Q27"
    },
-   "mcap": 4877,
+   "mcap": 4871,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -12657,7 +13183,7 @@
     }
    },
    "sym": "BLUEJET",
-   "mcap": 8574,
+   "mcap": 8593,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "neutral",
@@ -12970,18 +13496,41 @@
      "abs": {
       "wb_rev": 28310,
       "rev": {
-       "key": "GoldmanSachs|260802|Divi's Laboratories|1q27abovecustomsynthesisbeatsraiseepstpreiteratebuyaddressingkeyinvestordebates",
-       "broker": "GoldmanSachs",
-       "date": "260802",
-       "role": "prevQ"
+       "key": "Kotak|260524|Divi's Laboratories|thewaitcontinues",
+       "broker": "Kotak",
+       "date": "260524",
+       "role": "own"
       },
       "wb_ebitda": 9340,
       "ebitda": {
-       "key": "GoldmanSachs|260802|Divi's Laboratories|1q27abovecustomsynthesisbeatsraiseepstpreiteratebuyaddressingkeyinvestordebates",
-       "broker": "GoldmanSachs",
-       "date": "260802",
-       "role": "prevQ"
+       "key": "Kotak|260524|Divi's Laboratories|thewaitcontinues",
+       "broker": "Kotak",
+       "date": "260524",
+       "role": "own"
       }
+     },
+     "revYoY": 0.0952,
+     "ebitdaYoY": 0.0542,
+     "revVs": "inline",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Sales of Rs28.3bn (+9.5% YoY) were 1.3% below Kotak's estimate. Custom synthesis grew 15.7% YoY and nutraceuticals 17.1%, while generics were flat at +0.8% YoY on pricing pressure (Kotak). Jefferies and JPMorgan put the revenue shortfall at about 2% vs their estimates (Jeff, JP).",
+     "ebitdaNote": "EBITDA of Rs9.34bn (+5.4% YoY) was 3.6% below Kotak's estimate. Margin was 33.0%, down 128bps YoY, as gross margin fell 158bps on RM costs and higher freight from the Middle East conflict (Kotak). Jefferies had it 3% below its estimate and JPMorgan 4% below (Jeff, JP).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260524",
+      "key": "Kotak|260524|Divi's Laboratories|thewaitcontinues",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "JPMorgan|260524|Divi's Laboratories|peptideambitionsbuildingcustomsynthesiscommercializationtounlocknextlegofgrowth",
+       "Jefferies|260523|Divi's Laboratories|inlinemarqawaitinglaunchofkeyprojects",
+       "Kotak|260524|Divi's Laboratories|thewaitcontinues"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
      }
     },
     "1Q27": {
@@ -13025,6 +13574,42 @@
      "overall": "beat",
      "revNote": "Revenue grew 28% YoY (+9% QoQ) to Rs30.8bn, about 12% above consensus (16% above JPMe). Custom synthesis (~60% of revenue) rose 45% YoY on validation batches shipped in the quarter, nutraceuticals rose 19% and generic APIs 6% (JP, GS, Kotak).",
      "ebitdaNote": "EBITDA rose 72% YoY to Rs12.55bn, about 41% above consensus (47% above JPMe). Margin was 40.7%, up about 1,050bps YoY and 775bps QoQ, helped by a richer custom-synthesis mix (gross margin 68%) and operating leverage. Management cautioned against extrapolating the quarter's margins (JP, GS, Kotak)."
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260524|Divi's Laboratories|thewaitcontinues",
+       "broker": "Kotak",
+       "date": "260524",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260524|Divi's Laboratories|thewaitcontinues",
+       "broker": "Kotak",
+       "date": "260524",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 25850,
+     "ebitda": 8860
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260524|Divi's Laboratories|thewaitcontinues",
+       "broker": "Kotak",
+       "date": "260524",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260524|Divi's Laboratories|thewaitcontinues",
+       "broker": "Kotak",
+       "date": "260524",
+       "role": "prevQ"
+      }
+     },
+     "rev": 26040,
+     "ebitda": 8900
     }
    },
    "sym": "DIVISLAB",
@@ -14082,20 +14667,78 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Kotak|260721|JK Cement|beatonhealthyvolumes",
+       "key": "Kotak|260526|JK Cement|inlineset",
        "broker": "Kotak",
-       "date": "260721",
-       "role": "prevQ"
+       "date": "260526",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Kotak|260721|JK Cement|beatonhealthyvolumes",
+       "key": "Kotak|260526|JK Cement|inlineset",
        "broker": "Kotak",
-       "date": "260721",
-       "role": "prevQ"
+       "date": "260526",
+       "role": "own"
       }
      },
      "rev": 36839,
-     "ebitda": 6700
+     "ebitda": 6700,
+     "revYoY": 0.0905,
+     "ebitdaYoY": -0.09,
+     "revVs": "inline",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Standalone net sales of Rs36.8bn were in line with Kotak's estimate (Rs36.8bn), up 9% YoY on 12.3% higher grey cement volumes and 16% higher white cement volumes. Blended realisations were flat QoQ and down 3.1% YoY at Rs5,556/ton (Kotak).",
+     "ebitdaNote": "Standalone EBITDA of Rs6.7bn was 0.9% below Kotak's estimate of Rs6.76bn, down 9% YoY. Higher volumes and lower blended costs (Rs4,546/ton vs Rs4,607/ton est., on lower RM-energy costs) were largely offset by lower realisations. EBITDA/ton was Rs1,010 vs Rs1,037 est. and Rs927 in 3QFY26 (Kotak; Jeff also called it in line).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260526",
+      "key": "Kotak|260526|JK Cement|inlineset",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260524|JK Cement|mar26qfirstcutebitdabroadlyinlinealbeitgrowthmut",
+       "Kotak|260526|JK Cement|inlineset"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260526|JK Cement|inlineset",
+       "broker": "Kotak",
+       "date": "260526",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260526|JK Cement|inlineset",
+       "broker": "Kotak",
+       "date": "260526",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 33783,
+     "ebitda": 7363
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260526|JK Cement|inlineset",
+       "broker": "Kotak",
+       "date": "260526",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260526|JK Cement|inlineset",
+       "broker": "Kotak",
+       "date": "260526",
+       "role": "prevQ"
+      }
+     },
+     "rev": 32128,
+     "ebitda": 5356
     }
    },
    "sym": "JKCEMENT",
@@ -14184,20 +14827,78 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Kotak|260815|JSW Cement|cautiousstarttotheyear",
+       "key": "Kotak|260522|JSW Cement|executionphasecommenceswithnorthregionentry",
        "broker": "Kotak",
-       "date": "260815",
-       "role": "prevQ"
+       "date": "260522",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Kotak|260815|JSW Cement|cautiousstarttotheyear",
+       "key": "Kotak|260522|JSW Cement|executionphasecommenceswithnorthregionentry",
        "broker": "Kotak",
-       "date": "260815",
-       "role": "prevQ"
+       "date": "260522",
+       "role": "own"
       }
      },
      "rev": 18950,
-     "ebitda": 3651
+     "ebitda": 3651,
+     "revYoY": 0.1086,
+     "ebitdaYoY": 0.4598,
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue of Rs18.95bn rose 10.9% YoY and 16.9% QoQ, 0.7% above Kotak's estimate. Blended volumes grew 7% YoY (cement +12%) and blended realisations rose 4.3% QoQ to Rs4,749/ton, though GGBS volumes were hit by slag shortages at Dolvi and RMC plant closures in Maharashtra (Kotak, Jeff).",
+     "ebitdaNote": "EBITDA of Rs3.65bn (+46% YoY, +28% QoQ) was 4.5% above Kotak's estimate and about 7% above Jefferies' Rs3.4bn, driven by better realisations. EBITDA/ton was Rs915 (est Rs850), partly offset by higher freight and other costs from slag rerouting and Nagaur expansion (Kotak, Jeff).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260522",
+      "key": "Kotak|260522|JSW Cement|executionphasecommenceswithnorthregionentry",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260521|JSW Cement|realisationdrivenbeat",
+       "Kotak|260522|JSW Cement|executionphasecommenceswithnorthregionentry"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260522|JSW Cement|executionphasecommenceswithnorthregionentry",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260522|JSW Cement|executionphasecommenceswithnorthregionentry",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 17094,
+     "ebitda": 2501
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260522|JSW Cement|executionphasecommenceswithnorthregionentry",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260522|JSW Cement|executionphasecommenceswithnorthregionentry",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "prevQ"
+      }
+     },
+     "rev": 16212,
+     "ebitda": 2850
     }
    },
    "added": "pdf",
@@ -15435,20 +16136,77 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Kotak|260807|Deepak Nitrite|makinghaywhilethesunshines",
+       "key": "Kotak|260518|Deepak Nitrite|windfallprofitsmaynotlastbeyondacoupleofquarters",
        "broker": "Kotak",
-       "date": "260807",
-       "role": "prevQ"
+       "date": "260518",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Kotak|260807|Deepak Nitrite|makinghaywhilethesunshines",
+       "key": "Kotak|260518|Deepak Nitrite|windfallprofitsmaynotlastbeyondacoupleofquarters",
        "broker": "Kotak",
-       "date": "260807",
-       "role": "prevQ"
+       "date": "260518",
+       "role": "own"
       }
      },
      "rev": 21203,
-     "ebitda": 3760
+     "ebitda": 3760,
+     "revYoY": -0.0273,
+     "ebitdaYoY": 0.188,
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Net sales of Rs21.2 bn were 0.5% above Kotak's estimate, up 7.4% qoq but down 2.7% yoy. Phenolics revenue fell 6.8% yoy, while advanced intermediates rose 8.2% yoy on better pricing (Kotak).",
+     "ebitdaNote": "EBITDA of Rs3.76 bn beat Kotak's estimate by 5.8%, up 78% qoq and 19% yoy. The margin was 17.7% (+705 bps qoq). Phenol spreads spiked late in the quarter after the Iran war, and phenolics segment EBIT nearly doubled qoq to a 20% margin (Kotak).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260518",
+      "key": "Kotak|260518|Deepak Nitrite|windfallprofitsmaynotlastbeyondacoupleofquarters",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|260518|Deepak Nitrite|windfallprofitsmaynotlastbeyondacoupleofquarters"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260518|Deepak Nitrite|windfallprofitsmaynotlastbeyondacoupleofquarters",
+       "broker": "Kotak",
+       "date": "260518",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260518|Deepak Nitrite|windfallprofitsmaynotlastbeyondacoupleofquarters",
+       "broker": "Kotak",
+       "date": "260518",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 21797,
+     "ebitda": 3165
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260518|Deepak Nitrite|windfallprofitsmaynotlastbeyondacoupleofquarters",
+       "broker": "Kotak",
+       "date": "260518",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260518|Deepak Nitrite|windfallprofitsmaynotlastbeyondacoupleofquarters",
+       "broker": "Kotak",
+       "date": "260518",
+       "role": "prevQ"
+      }
+     },
+     "rev": 19750,
+     "ebitda": 2109
     }
    },
    "added": "pdf",
@@ -15536,20 +16294,77 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Kotak|260723|Jubilant Ingrevia|earningsimprovefurtherqoqoutlookremainspositive",
+       "key": "Kotak|260527|Jubilant Ingrevia|muchimprovedresultsbetterstillliesahead",
        "broker": "Kotak",
-       "date": "260723",
-       "role": "prevQ"
+       "date": "260527",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Kotak|260723|Jubilant Ingrevia|earningsimprovefurtherqoqoutlookremainspositive",
+       "key": "Kotak|260527|Jubilant Ingrevia|muchimprovedresultsbetterstillliesahead",
        "broker": "Kotak",
-       "date": "260723",
-       "role": "prevQ"
+       "date": "260527",
+       "role": "own"
       }
      },
      "rev": 11787,
-     "ebitda": 1626
+     "ebitda": 1626,
+     "revYoY": 0.1213,
+     "ebitdaYoY": 0.1084,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue of Rs11.8 bn grew 12.1% yoy and qoq, 2.8% above Kotak's estimate, with a broad-based pickup across all three segments led by volume growth; Specialty Chemicals revenue rose 12.7% qoq and Chemical Intermediates 10.2% qoq (Kotak).",
+     "ebitdaNote": "EBITDA of Rs1.63 bn rose 10.9% yoy and 28.5% qoq, 3.9% above Kotak's estimate. Specialty Chemicals margin expanded 161 bps qoq to 26.9% on a higher share of value-added CDMO products and better Fine Chemicals contribution, and the other two segments also reported higher EBITDA (Kotak).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260527",
+      "key": "Kotak|260527|Jubilant Ingrevia|muchimprovedresultsbetterstillliesahead",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|260527|Jubilant Ingrevia|muchimprovedresultsbetterstillliesahead"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260527|Jubilant Ingrevia|muchimprovedresultsbetterstillliesahead",
+       "broker": "Kotak",
+       "date": "260527",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260527|Jubilant Ingrevia|muchimprovedresultsbetterstillliesahead",
+       "broker": "Kotak",
+       "date": "260527",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 10512,
+     "ebitda": 1467
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260527|Jubilant Ingrevia|muchimprovedresultsbetterstillliesahead",
+       "broker": "Kotak",
+       "date": "260527",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260527|Jubilant Ingrevia|muchimprovedresultsbetterstillliesahead",
+       "broker": "Kotak",
+       "date": "260527",
+       "role": "prevQ"
+      }
+     },
+     "rev": 10510,
+     "ebitda": 1266
     }
    },
    "added": "pdf",
@@ -15661,7 +16476,7 @@
     }
    },
    "sym": "KANSAINER",
-   "mcap": 14789,
+   "mcap": 14942,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "neutral",
@@ -15869,7 +16684,7 @@
     }
    },
    "sym": "NEOGEN",
-   "mcap": 7075,
+   "mcap": 7090,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -16110,7 +16925,7 @@
     }
    },
    "sym": "RALLIS",
-   "mcap": 3942,
+   "mcap": 3973,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -16213,7 +17028,7 @@
     "date": "260729",
     "quarter": "1Q27"
    },
-   "mcap": 1800,
+   "mcap": 1803,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -16592,7 +17407,7 @@
     "date": "260813",
     "quarter": "1Q27"
    },
-   "mcap": 11327,
+   "mcap": 11371,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -17000,20 +17815,79 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "JPMorgan|260813|Grasim Industries|strongquartermostbusinessesdidwellnewroyaltiesadragonstandalone",
-       "broker": "JPMorgan",
-       "date": "260813",
+       "key": "Kotak|260521|Grasim Industries|strongallroundquarterupgradetoadd",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Kotak|260521|Grasim Industries|strongallroundquarterupgradetoadd",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "own"
+      }
+     },
+     "rev": 117743,
+     "ebitda": 5405,
+     "revYoY": 0.3191,
+     "ebitdaYoY": 1.4501,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Standalone net sales of Rs117.7bn rose 31.9% YoY and 12.9% QoQ, 8.8% above Kotak's Rs108.3bn estimate. Growth was led by Paints & B2B e-commerce (+27% QoQ, revenue ~Rs42bn), with CSF revenue up 13.9% YoY on 11.5% higher volumes. The notes show standalone figures only, not consolidated, so the figures differ in scale from the consolidated figures already held for other quarters. (Kotak)",
+     "ebitdaNote": "Standalone EBITDA of Rs5.4bn was up 145% YoY and 3.9% above Kotak's estimate (Jefferies' own estimate was Rs4.8bn, about 12% below actual). The beat came from CSF EBITDA doubling YoY on volumes, product mix and benign pulp prices, plus narrower paints losses (Rs3.0bn vs Rs3.1bn QoQ). Chemicals EBITDA was Rs3.04bn, slightly ahead. (Kotak, Jeff)",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260521",
+      "key": "Kotak|260521|Grasim Industries|strongallroundquarterupgradetoadd",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260520|Grasim Industries|improvingstandalonebizdrivestrongexittofy26",
+       "Jefferies|260520|Grasim Industries|marqfirstcutstrongerperformanceacrosssegments",
+       "Kotak|260521|Grasim Industries|strongallroundquarterupgradetoadd"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260521|Grasim Industries|strongallroundquarterupgradetoadd",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260521|Grasim Industries|strongallroundquarterupgradetoadd",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 89258,
+     "ebitda": 2206
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260521|Grasim Industries|strongallroundquarterupgradetoadd",
+       "broker": "Kotak",
+       "date": "260521",
        "role": "prevQ"
       },
       "ebitda": {
-       "key": "JPMorgan|260813|Grasim Industries|strongquartermostbusinessesdidwellnewroyaltiesadragonstandalone",
-       "broker": "JPMorgan",
-       "date": "260813",
+       "key": "Kotak|260521|Grasim Industries|strongallroundquarterupgradetoadd",
+       "broker": "Kotak",
+       "date": "260521",
        "role": "prevQ"
       }
      },
-     "rev": 511011,
-     "ebitda": 77832
+     "rev": 104318,
+     "ebitda": 4792
     }
    },
    "added": "pdf",
@@ -17281,7 +18155,7 @@
     }
    },
    "sym": "BLACKBUCK",
-   "mcap": 10138,
+   "mcap": 10091,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "neutral",
@@ -17430,18 +18304,39 @@
      "abs": {
       "wb_rev": 19270,
       "rev": {
-       "key": "Kotak|260730|IRB Infrastructure|strongperformancenewtotwinsremainkey",
+       "key": "Kotak|260522|IRB Infrastructure|steadyperformancenewtotwinsremainkey",
        "broker": "Kotak",
-       "date": "260730",
-       "role": "prevQ"
+       "date": "260522",
+       "role": "own"
       },
       "wb_ebitda": 10828,
       "ebitda": {
-       "key": "Kotak|260730|IRB Infrastructure|strongperformancenewtotwinsremainkey",
+       "key": "Kotak|260522|IRB Infrastructure|steadyperformancenewtotwinsremainkey",
        "broker": "Kotak",
-       "date": "260730",
-       "role": "prevQ"
+       "date": "260522",
+       "role": "own"
       }
+     },
+     "revYoY": -0.1034,
+     "ebitdaYoY": 0.0851,
+     "revVs": "miss",
+     "ebitdaVs": "miss",
+     "overall": "inline",
+     "revNote": "Revenue of Rs19.3 bn was 6% below Kotak's estimate and down 10.3% yoy, as strong BOT and InvIT segment performance was offset by lower construction revenue (Rs8.1 bn vs Rs12.0 bn a year ago) on a declining order book (Kotak).",
+     "ebitdaNote": "EBITDA of Rs10.8 bn was 3.7% below Kotak's estimate but up 8.5% yoy. The margin of 56.2% beat the 54.6% estimate on a favourable mix, with a higher share from BOT and InvIT segments. Recurring PAT was 26% ahead of expectations on a lower tax rate (Kotak).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260522",
+      "key": "Kotak|260522|IRB Infrastructure|steadyperformancenewtotwinsremainkey",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|260522|IRB Infrastructure|steadyperformancenewtotwinsremainkey"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
      }
     },
     "1Q27": {
@@ -17488,6 +18383,42 @@
      "vsBasis": "broker estimate (Kotak)",
      "revCons": 18800,
      "ebitdaCons": 9964
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260522|IRB Infrastructure|steadyperformancenewtotwinsremainkey",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260522|IRB Infrastructure|steadyperformancenewtotwinsremainkey",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 21492,
+     "ebitda": 9979
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260522|IRB Infrastructure|steadyperformancenewtotwinsremainkey",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260522|IRB Infrastructure|steadyperformancenewtotwinsremainkey",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "prevQ"
+      }
+     },
+     "rev": 18712,
+     "ebitda": 10224
     }
    },
    "sym": "IRB"
@@ -17619,6 +18550,86 @@
     "broker": "Jefferies",
     "date": "260728",
     "quarter": "1Q27"
+   }
+  },
+  {
+   "name": "Nagarjuna",
+   "sector": "Construction",
+   "ticker": "",
+   "sym": "NCC",
+   "basis": "",
+   "note": "",
+   "unit": "INR mn",
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {
+    "4Q26": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|260518|Nagarjuna|stillhazyordefensive",
+       "broker": "CLSA",
+       "date": "260518",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "CLSA|260518|Nagarjuna|stillhazyordefensive",
+       "broker": "CLSA",
+       "date": "260518",
+       "role": "own"
+      }
+     },
+     "rev": 53157,
+     "ebitda": 4488,
+     "revYoY": -0.011,
+     "ebitdaYoY": -0.093,
+     "revVs": null,
+     "ebitdaVs": null,
+     "overall": "miss",
+     "revNote": "Net income (NCC parent) was Rs53.2bn, down 1.1% YoY and flat on a higher base. The prolonged monsoon and tighter central-government oversight of state water capex hurt execution, which fell 1% YoY. The year-ago figure is back-calculated from the printed YoY, because the table gives no 4QFY25 column. No consensus or estimate for the quarter is printed. (CLSA)",
+     "ebitdaNote": "EBITDA fell 9.3% YoY to Rs4.5bn, with margin at 8.4% (down 76bps). Sites were loaded for ~15% top-line growth, but revenue did not arrive, so fixed costs went unabsorbed. Recurring PAT fell 11.1% YoY to Rs2.2bn. The year-ago figure is back-calculated from the printed YoY. No consensus or estimate for the quarter is printed. (CLSA)",
+     "src": {
+      "kind": "pdf",
+      "broker": "CLSA",
+      "date": "260518",
+      "key": "CLSA|260518|Nagarjuna|stillhazyordefensive",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|260518|Nagarjuna|stillhazyordefensive"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|260518|Nagarjuna|stillhazyordefensive",
+       "broker": "CLSA",
+       "date": "260518",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "CLSA|260518|Nagarjuna|stillhazyordefensive",
+       "broker": "CLSA",
+       "date": "260518",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 53749,
+     "ebitda": 4948
+    }
+   },
+   "added": "pdf",
+   "outlook": {
+    "call": "negative",
+    "note": "NCC withdrew its FY26 guidance in 2Q and gave none for FY27, citing the Middle East crisis and its effect on government capex. CLSA cut FY27-28CL EPS by 21%/17% and its target price from Rs234 to Rs216, citing weak FY26CL, material cost pressures and slower project starts. It cut FY27/28CL revenue forecasts by 18.9%/18.0%. Offsetting this, the backlog was at a record US$8.7bn (+16% YoY), FY26 orders were Rs319bn, a further Rs17bn was won in April, and the pipeline is Rs2.5tn. (CLSA)",
+    "broker": "CLSA",
+    "date": "260518",
+    "quarter": "4Q26"
    }
   },
   {
@@ -19258,20 +20269,81 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "MorganStanley|260804|FSN E-commerce Ventures|f1q27strongdeliverymarginbroadlyinlinewithestimates",
-       "broker": "MorganStanley",
-       "date": "260804",
-       "role": "prevQ"
+       "key": "CLSA|260522|FSN E-commerce Ventures|marginexpansioncontinues",
+       "broker": "CLSA",
+       "date": "260522",
+       "role": "own"
       },
       "ebitda": {
-       "key": "MorganStanley|260804|FSN E-commerce Ventures|f1q27strongdeliverymarginbroadlyinlinewithestimates",
-       "broker": "MorganStanley",
-       "date": "260804",
-       "role": "prevQ"
+       "key": "CLSA|260522|FSN E-commerce Ventures|marginexpansioncontinues",
+       "broker": "CLSA",
+       "date": "260522",
+       "role": "own"
       }
      },
      "rev": 26482,
-     "ebitda": 2229
+     "ebitda": 2229,
+     "revYoY": 0.2844,
+     "ebitdaYoY": 0.6722,
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Net sales rose 28.4% YoY to Rs26.5bn, 1.5% above consensus and 1% above CLSA's estimate. Beauty GMV grew 27% and Fashion GMV 29%, with Fashion NSV up 42% (CLSA, Kotak).",
+     "ebitdaNote": "EBITDA of Rs2.2bn was 7.5% above consensus (CLSA says 8%). Margin was a record 8.4%, up 195bps YoY and 47bps above consensus, driven by rising own-brand salience in Beauty. Fashion EBITDA broke even for the first time on marketing efficiency (CLSA, JP, Kotak).",
+     "revCons": 26094,
+     "ebitdaCons": 2073,
+     "src": {
+      "kind": "pdf",
+      "broker": "CLSA",
+      "date": "260522",
+      "key": "CLSA|260522|FSN E-commerce Ventures|marginexpansioncontinues",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|260522|FSN E-commerce Ventures|marginexpansioncontinues",
+       "JPMorgan|260522|FSN E-commerce Ventures|goodq4beautycompoundsandfashionbreakseven",
+       "Kotak|260522|FSN E-commerce Ventures|solidperformanceacrossbpcandfashionverticals",
+       "Nomura|260521|FSN E-commerce Ventures|marginleversplayingoutalongwithstronggrowth"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|260522|FSN E-commerce Ventures|marginexpansioncontinues",
+       "broker": "CLSA",
+       "date": "260522",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "CLSA|260522|FSN E-commerce Ventures|marginexpansioncontinues",
+       "broker": "CLSA",
+       "date": "260522",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 20618,
+     "ebitda": 1333
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|260522|FSN E-commerce Ventures|marginexpansioncontinues",
+       "broker": "CLSA",
+       "date": "260522",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "CLSA|260522|FSN E-commerce Ventures|marginexpansioncontinues",
+       "broker": "CLSA",
+       "date": "260522",
+       "role": "prevQ"
+      }
+     },
+     "rev": 28733,
+     "ebitda": 2298
     }
    },
    "added": "pdf",
@@ -19463,20 +20535,77 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "JPMorgan|260811|Info Edge|naukrimakingacomebackwithpivottopremium",
-       "broker": "JPMorgan",
-       "date": "260811",
-       "role": "prevQ"
+       "key": "Kotak|260525|Info Edge|decent4qneartermgrowthrisksfornaukripersist",
+       "broker": "Kotak",
+       "date": "260525",
+       "role": "own"
       },
       "ebitda": {
-       "key": "JPMorgan|260811|Info Edge|naukrimakingacomebackwithpivottopremium",
-       "broker": "JPMorgan",
-       "date": "260811",
-       "role": "prevQ"
+       "key": "Kotak|260525|Info Edge|decent4qneartermgrowthrisksfornaukripersist",
+       "broker": "Kotak",
+       "date": "260525",
+       "role": "own"
       }
      },
      "rev": 8051,
-     "ebitda": 3497
+     "ebitda": 3497,
+     "revYoY": 0.1717,
+     "ebitdaYoY": 0.3507,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue grew 17.2% yoy and was about 3% ahead of consensus (3.6% ahead of Kotak's estimate). Recruitment Solutions grew 13.7% and 99acres grew 36%, boosted by a one-off Rs205 mn write-back (16-17% excluding it). Other verticals grew 14.4% (Kotak, JP).",
+     "ebitdaNote": "EBITDA rose 35.0% yoy with margin up 574 bps yoy to 43.4%, about 390 bps ahead of consensus. Lower marketing spend (down 13% yoy) drove the margin, and Naukri margin stayed above 60%. 99acres turned EBITDA positive at Rs89 mn on the write-back (Kotak, JP).",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260525",
+      "key": "Kotak|260525|Info Edge|decent4qneartermgrowthrisksfornaukripersist",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "JPMorgan|260523|Info Edge|naukriremainssoftcheapstockvaluationshouldinspireabuyback",
+       "Kotak|260525|Info Edge|decent4qneartermgrowthrisksfornaukripersist"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260525|Info Edge|decent4qneartermgrowthrisksfornaukripersist",
+       "broker": "Kotak",
+       "date": "260525",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260525|Info Edge|decent4qneartermgrowthrisksfornaukripersist",
+       "broker": "Kotak",
+       "date": "260525",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 6871,
+     "ebitda": 2589
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260525|Info Edge|decent4qneartermgrowthrisksfornaukripersist",
+       "broker": "Kotak",
+       "date": "260525",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260525|Info Edge|decent4qneartermgrowthrisksfornaukripersist",
+       "broker": "Kotak",
+       "date": "260525",
+       "role": "prevQ"
+      }
+     },
+     "rev": 7646,
+     "ebitda": 3246
     }
    },
    "added": "pdf"
@@ -20322,7 +21451,7 @@
     "date": "260805",
     "quarter": "1Q27"
    },
-   "mcap": 13380,
+   "mcap": 13356,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -20975,22 +22104,43 @@
     },
     "4Q26": {
      "rev": 14369,
-     "ebitda": 2295,
+     "ebitda": 2177,
      "abs": {
       "wb_rev": 14369,
       "rev": {
-       "key": "JPMorgan|260729|Devyani International|firsttakeq1fy27marginbeatinlinerevenue",
-       "broker": "JPMorgan",
-       "date": "260729",
-       "role": "prevQ"
+       "key": "Kotak|260517|Devyani International|awelcomerelief",
+       "broker": "Kotak",
+       "date": "260517",
+       "role": "own"
       },
       "wb_ebitda": 2295,
       "ebitda": {
-       "key": "JPMorgan|260729|Devyani International|firsttakeq1fy27marginbeatinlinerevenue",
-       "broker": "JPMorgan",
-       "date": "260729",
-       "role": "prevQ"
+       "key": "Kotak|260517|Devyani International|awelcomerelief",
+       "broker": "Kotak",
+       "date": "260517",
+       "role": "own"
       }
+     },
+     "revYoY": 0.185,
+     "ebitdaYoY": 0.1623,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue grew 18.5% yoy to Rs14.4 bn, 4.7% above Kotak's estimate, on 10.6% store growth (about 6.2% organic) and a KFC SSSG of +4.9%, the first positive print after 11 quarters of decline. International revenue rose 19.3% yoy. (Kotak)",
+     "ebitdaNote": "Reported EBITDA (post-Ind AS 116) of Rs2.18 bn was up 16.2% yoy and about 12% above Kotak's estimate, with gross margin up 30 bps yoy to 68.8%. The margin fell 35 bps yoy to 8.6% on pre-Ind AS 116 EBITDA. Pre-Ind AS 116 EBITDA of Rs1.2 bn (+13.8% yoy) beat by about 19%, led by international EBITDA growth of about 44% yoy. India business EBITDA fell 3.2% on adverse operating leverage. (Kotak)",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260517",
+      "key": "Kotak|260517|Devyani International|awelcomerelief",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|260517|Devyani International|awelcomerelief"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
      }
     },
     "1Q27": {
@@ -21036,6 +22186,42 @@
      "revNote": "Revenue grew 16% y/y (vs +18% in Q4) to Rs15.8 bn, in line with JPMe and Street. It was led by KFC SSSG of 3.3%, with international revenue up 21% and Pizza Hut SSSG at -2.2%. Kotak also calls it in line, at -0.3% vs its estimate (JP, Kotak).",
      "ebitdaNote": "EBITDA rose 24% y/y to Rs2.55 bn with margin up 100 bps y/y to 16.1%, helped by gross margin up 90 bps to 69.1%. On a pre-Ind AS 116 basis, Kotak has EBITDA +38% y/y, 4.2% above its estimate, and GS calls it 'well ahead' of its estimates. On the reported (Ind AS) EBITDA, JP says the number was in line with JPMe and Kotak puts it only 0.9% above its estimate. The beat is therefore driven by margins and is clearest pre-Ind AS 116 (JP, Kotak, GS).",
      "vsBasis": "revenue: Street (JP); EBITDA: broker estimate (Kotak, GS)"
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260517|Devyani International|awelcomerelief",
+       "broker": "Kotak",
+       "date": "260517",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260517|Devyani International|awelcomerelief",
+       "broker": "Kotak",
+       "date": "260517",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 12126,
+     "ebitda": 1873
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260517|Devyani International|awelcomerelief",
+       "broker": "Kotak",
+       "date": "260517",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260517|Devyani International|awelcomerelief",
+       "broker": "Kotak",
+       "date": "260517",
+       "role": "prevQ"
+      }
+     },
+     "rev": 14409,
+     "ebitda": 2278
     }
    },
    "sym": "DEVYANI",
@@ -21127,20 +22313,78 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "MorganStanley|260813|Jubilant FoodWorks|f1q27broadlyinlineimprovingoutlook",
-       "broker": "MorganStanley",
-       "date": "260813",
-       "role": "prevQ"
+       "key": "Jefferies|260520|Jubilant FoodWorks|stillwaitingforpickupinearningsgrowth",
+       "broker": "Jefferies",
+       "date": "260520",
+       "role": "own"
       },
       "ebitda": {
-       "key": "MorganStanley|260813|Jubilant FoodWorks|f1q27broadlyinlineimprovingoutlook",
-       "broker": "MorganStanley",
-       "date": "260813",
-       "role": "prevQ"
+       "key": "Jefferies|260520|Jubilant FoodWorks|stillwaitingforpickupinearningsgrowth",
+       "broker": "Jefferies",
+       "date": "260520",
+       "role": "own"
       }
      },
      "rev": 24995,
-     "ebitda": 4849
+     "ebitda": 4849,
+     "revYoY": 0.1884,
+     "ebitdaYoY": 0.2478,
+     "revVs": "miss",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Consolidated revenue grew 19% YoY, helped by subsidiaries (DP Eurasia, +59% YoY, with a ~23% FX tailwind). Standalone revenue grew 6.4% YoY, a 2.4% miss vs Kotak's estimate, as Domino's India LFL growth slowed to flat on a high base, lower AOV after the delivery threshold was cut to Rs99, and weak dine-in. (Jeff, Kotak)",
+     "ebitdaNote": "Consolidated EBITDA grew 25% YoY. Standalone EBITDA of Rs3,444 mn was ~2% above Kotak's estimate, and Jefferies called it ahead of its own estimate. Gross margin expanded ~100 bps YoY to 75.5%, but energy and wage inflation held the standalone EBITDA margin flat YoY at 20.5%. Kotak's pre-Ind AS margin of 12.1% was 20 bps below its estimate. (Jeff, Kotak)",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Jefferies",
+      "date": "260520",
+      "key": "Jefferies|260520|Jubilant FoodWorks|stillwaitingforpickupinearningsgrowth",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260520|Jubilant FoodWorks|stillwaitingforpickupinearningsgrowth",
+       "Kotak|260521|Jubilant FoodWorks|weakquarterandsoftneartermoutlook"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260520|Jubilant FoodWorks|stillwaitingforpickupinearningsgrowth",
+       "broker": "Jefferies",
+       "date": "260520",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Jefferies|260520|Jubilant FoodWorks|stillwaitingforpickupinearningsgrowth",
+       "broker": "Jefferies",
+       "date": "260520",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 21032,
+     "ebitda": 3886
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260520|Jubilant FoodWorks|stillwaitingforpickupinearningsgrowth",
+       "broker": "Jefferies",
+       "date": "260520",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Jefferies|260520|Jubilant FoodWorks|stillwaitingforpickupinearningsgrowth",
+       "broker": "Jefferies",
+       "date": "260520",
+       "role": "prevQ"
+      }
+     },
+     "rev": 24372,
+     "ebitda": 4824
     }
    },
    "added": "pdf"
@@ -21244,7 +22488,7 @@
     "date": "260903",
     "quarter": "1Q27"
    },
-   "mcap": 6241,
+   "mcap": 6235,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -21348,7 +22592,7 @@
     }
    },
    "sym": "SAPPHIRE",
-   "mcap": 6065,
+   "mcap": 6209,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -21556,7 +22800,7 @@
     }
    },
    "sym": "WESTLIFE",
-   "mcap": 8315,
+   "mcap": 8289,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -21875,7 +23119,7 @@
     "date": "260811",
     "quarter": "1Q27"
    },
-   "mcap": 3301,
+   "mcap": 3311,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -22428,20 +23672,77 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "MorganStanley|260804|Dr Agarwal's Health Care|impressivequartersamestoresalesgrowthimproves",
-       "broker": "MorganStanley",
-       "date": "260804",
-       "role": "prevQ"
+       "key": "Jefferies|260521|Dr Agarwal's Health Care|stronggrowthcontinuesbutvaluationsremainpunchy",
+       "broker": "Jefferies",
+       "date": "260521",
+       "role": "own"
       },
       "ebitda": {
-       "key": "MorganStanley|260804|Dr Agarwal's Health Care|impressivequartersamestoresalesgrowthimproves",
-       "broker": "MorganStanley",
-       "date": "260804",
-       "role": "prevQ"
+       "key": "Jefferies|260521|Dr Agarwal's Health Care|stronggrowthcontinuesbutvaluationsremainpunchy",
+       "broker": "Jefferies",
+       "date": "260521",
+       "role": "own"
       }
      },
      "rev": 5641,
-     "ebitda": 1615
+     "ebitda": 1615,
+     "revYoY": 0.2258,
+     "ebitdaYoY": 0.2328,
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue of INR5.6bn (+23% YoY) was 2% above Jefferies' estimate, i.e. largely in line. Growth came from 24% volume growth, with cataract surgeries up 29% YoY and same-store sales up ~14%, and 16 net new facilities in the quarter. (Jeff)",
+     "ebitdaNote": "EBITDA of INR1.6bn (+23% YoY) was 10% above Jefferies' estimate. Margin was 28.6% (+16bps YoY), ~200bps above estimate, on a gross margin of 79.1% (+154bps YoY) and lower-than-expected employee costs. (Jeff)",
+     "vsBasis": "broker estimate (Jefferies)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Jefferies",
+      "date": "260521",
+      "key": "Jefferies|260521|Dr Agarwal's Health Care|stronggrowthcontinuesbutvaluationsremainpunchy",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260521|Dr Agarwal's Health Care|stronggrowthcontinuesbutvaluationsremainpunchy"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260521|Dr Agarwal's Health Care|stronggrowthcontinuesbutvaluationsremainpunchy",
+       "broker": "Jefferies",
+       "date": "260521",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Jefferies|260521|Dr Agarwal's Health Care|stronggrowthcontinuesbutvaluationsremainpunchy",
+       "broker": "Jefferies",
+       "date": "260521",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 4602,
+     "ebitda": 1310
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260521|Dr Agarwal's Health Care|stronggrowthcontinuesbutvaluationsremainpunchy",
+       "broker": "Jefferies",
+       "date": "260521",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Jefferies|260521|Dr Agarwal's Health Care|stronggrowthcontinuesbutvaluationsremainpunchy",
+       "broker": "Jefferies",
+       "date": "260521",
+       "role": "prevQ"
+      }
+     },
+     "rev": 5299,
+     "ebitda": 1441
     }
    },
    "added": "pdf",
@@ -22637,20 +23938,78 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "GoldmanSachs|260807|Fortis Healthcare|1q27inlinedecentunderlyingperformancebalancedriskrewardretainneutral",
-       "broker": "GoldmanSachs",
-       "date": "260807",
-       "role": "prevQ"
+       "key": "Nomura|260523|Fortis Healthcare|4qfy26revenuebeatbutebitdamiss",
+       "broker": "Nomura",
+       "date": "260523",
+       "role": "own"
       },
       "ebitda": {
-       "key": "GoldmanSachs|260807|Fortis Healthcare|1q27inlinedecentunderlyingperformancebalancedriskrewardretainneutral",
-       "broker": "GoldmanSachs",
-       "date": "260807",
-       "role": "prevQ"
+       "key": "Nomura|260523|Fortis Healthcare|4qfy26revenuebeatbutebitdamiss",
+       "broker": "Nomura",
+       "date": "260523",
+       "role": "own"
       }
      },
      "rev": 23647,
-     "ebitda": 5310
+     "ebitda": 5323,
+     "revYoY": 0.1781,
+     "ebitdaYoY": 0.2223,
+     "revVs": "inline",
+     "ebitdaVs": "miss",
+     "overall": "inline",
+     "revNote": "Revenue of INR 23.6bn (+17.8% YoY, +4.4% QoQ) was about 2% above Nomura's estimate of INR 23.3bn. Hospital revenue rose ~19% on facility expansion and ~17% higher occupied beds, with ARPOB up ~2% (its slowest growth in 21 quarters). Diagnostics revenue grew 11.7% (Nomura). Jefferies also calls revenue 2% above its estimate (Jeff).",
+     "ebitdaNote": "EBITDA of INR 5.3bn (+22.2% YoY) missed Nomura's estimate by 3%. EBITDA margin was 22.5% (+82bp YoY), 109bp below the 23.6% Nomura expected (Nomura). Jefferies had EBITDA 4% above its own estimate, led by a 5% hospital EBITDA beat on bed expansion (Jeff).",
+     "vsBasis": "broker estimate (Nomura)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Nomura",
+      "date": "260523",
+      "key": "Nomura|260523|Fortis Healthcare|4qfy26revenuebeatbutebitdamiss",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260525|Fortis Healthcare|steadymarqoutlookintactreiteratebuy",
+       "Nomura|260523|Fortis Healthcare|4qfy26revenuebeatbutebitdamiss"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Nomura|260523|Fortis Healthcare|4qfy26revenuebeatbutebitdamiss",
+       "broker": "Nomura",
+       "date": "260523",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Nomura|260523|Fortis Healthcare|4qfy26revenuebeatbutebitdamiss",
+       "broker": "Nomura",
+       "date": "260523",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 20072,
+     "ebitda": 4355
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Nomura|260523|Fortis Healthcare|4qfy26revenuebeatbutebitdamiss",
+       "broker": "Nomura",
+       "date": "260523",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Nomura|260523|Fortis Healthcare|4qfy26revenuebeatbutebitdamiss",
+       "broker": "Nomura",
+       "date": "260523",
+       "role": "prevQ"
+      }
+     },
+     "rev": 22650,
+     "ebitda": 5057
     }
    },
    "added": "pdf",
@@ -22844,20 +24203,77 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "GoldmanSachs|260804|Krishna Institute of Medical Sciences|1q27aboveencouragingprogressonhospitalsrampupatthecuspofebitdagrowthinflectionretainbuy",
-       "broker": "GoldmanSachs",
-       "date": "260804",
-       "role": "prevQ"
+       "key": "Kotak|260518|Krishna Institute of Medical Sciences|stillnotthereyet",
+       "broker": "Kotak",
+       "date": "260518",
+       "role": "own"
       },
       "ebitda": {
-       "key": "GoldmanSachs|260804|Krishna Institute of Medical Sciences|1q27aboveencouragingprogressonhospitalsrampupatthecuspofebitdagrowthinflectionretainbuy",
-       "broker": "GoldmanSachs",
-       "date": "260804",
-       "role": "prevQ"
+       "key": "Kotak|260518|Krishna Institute of Medical Sciences|stillnotthereyet",
+       "broker": "Kotak",
+       "date": "260518",
+       "role": "own"
       }
      },
      "rev": 10746,
-     "ebitda": 2065
+     "ebitda": 2065,
+     "revYoY": 0.3485,
+     "ebitdaYoY": 0.0429,
+     "revVs": "inline",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Sales grew 34.8% yoy and 7.7% qoq to Rs10.7 bn, 1.2% below Kotak's estimate and largely in line, as new hospitals ramped up and ARPOB grew ~14% yoy (Kotak).",
+     "ebitdaNote": "EBITDA of Rs2.1 bn (+4.3% yoy) was ~5% below Kotak's estimate (-4.8%). Margin fell to 19.2% (-563 bps yoy) on losses of ~Rs320 mn at new hospitals, caused by delays in insurance empanelment. Mature hospitals held ~29% margins (Kotak).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260518",
+      "key": "Kotak|260518|Krishna Institute of Medical Sciences|stillnotthereyet",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|260518|Krishna Institute of Medical Sciences|stillnotthereyet"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260518|Krishna Institute of Medical Sciences|stillnotthereyet",
+       "broker": "Kotak",
+       "date": "260518",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260518|Krishna Institute of Medical Sciences|stillnotthereyet",
+       "broker": "Kotak",
+       "date": "260518",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 7969,
+     "ebitda": 1980
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260518|Krishna Institute of Medical Sciences|stillnotthereyet",
+       "broker": "Kotak",
+       "date": "260518",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260518|Krishna Institute of Medical Sciences|stillnotthereyet",
+       "broker": "Kotak",
+       "date": "260518",
+       "role": "prevQ"
+      }
+     },
+     "rev": 9977,
+     "ebitda": 1989
     }
    },
    "added": "pdf",
@@ -22947,20 +24363,81 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "GoldmanSachs|260814|Max Healthcare|1q27inlinedecentquarterontracktomonetisebrownfieldexpansionsfromh2fy27retainbuy",
-       "broker": "GoldmanSachs",
-       "date": "260814",
-       "role": "prevQ"
+       "key": "JPMorgan|260522|Max Healthcare|firsttake4qfy26broadlyinlinemarginstrengthdespiteslightrevenuemiss",
+       "broker": "JPMorgan",
+       "date": "260522",
+       "role": "own"
       },
       "ebitda": {
-       "key": "GoldmanSachs|260814|Max Healthcare|1q27inlinedecentquarterontracktomonetisebrownfieldexpansionsfromh2fy27retainbuy",
-       "broker": "GoldmanSachs",
-       "date": "260814",
-       "role": "prevQ"
+       "key": "JPMorgan|260522|Max Healthcare|firsttake4qfy26broadlyinlinemarginstrengthdespiteslightrevenuemiss",
+       "broker": "JPMorgan",
+       "date": "260522",
+       "role": "own"
       }
      },
      "rev": 25360,
-     "ebitda": 6800
+     "ebitda": 6770,
+     "revYoY": 0.1017,
+     "ebitdaYoY": 0.1153,
+     "revVs": "inline",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Revenue grew 10% YoY and 3% QoQ to Rs25.4bn, driven by higher occupied bed days. This was partly offset by the discontinuation of chemo drugs for institutional patients (oncology share fell to 21.2% from 25.7%) and by flat ARPOB QoQ on higher ALOS. CLSA calls network revenue in line with consensus; JPM sees it ~2% below JPMe. (CLSA, JP)",
+     "ebitdaNote": "EBITDA of Rs6.8bn (+12% YoY, +7% QoQ) was in line. Margin of 26.7% was up 30bps YoY despite higher clinician costs from aggressive hiring ahead of expansions. CLSA calls EBITDA in line with consensus; JPM calls it largely in line. (CLSA, JP)",
+     "src": {
+      "kind": "pdf",
+      "broker": "JPMorgan",
+      "date": "260522",
+      "key": "JPMorgan|260522|Max Healthcare|firsttake4qfy26broadlyinlinemarginstrengthdespiteslightrevenuemiss",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|260523|Max Healthcare|aggressivecapacitybuildout",
+       "JPMorgan|260522|Max Healthcare|firsttake4qfy26broadlyinlinemarginstrengthdespiteslightrevenuemiss",
+       "JPMorgan|260522|Max Healthcare|neartermbumpscapacityexecutiontounlocknextlegofgrowth",
+       "Jefferies|260522|Max Healthcare|tepidmarqdelaysinbedadditionsdrivesharpebitdacuts",
+       "Kotak|260523|Max Healthcare|offthepace",
+       "Kotak|260608|Max Healthcare|mumbaindrdelayednotderailed"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260522|Max Healthcare|firsttake4qfy26broadlyinlinemarginstrengthdespiteslightrevenuemiss",
+       "broker": "JPMorgan",
+       "date": "260522",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260522|Max Healthcare|firsttake4qfy26broadlyinlinemarginstrengthdespiteslightrevenuemiss",
+       "broker": "JPMorgan",
+       "date": "260522",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 23020,
+     "ebitda": 6070
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260522|Max Healthcare|firsttake4qfy26broadlyinlinemarginstrengthdespiteslightrevenuemiss",
+       "broker": "JPMorgan",
+       "date": "260522",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260522|Max Healthcare|firsttake4qfy26broadlyinlinemarginstrengthdespiteslightrevenuemiss",
+       "broker": "JPMorgan",
+       "date": "260522",
+       "role": "prevQ"
+      }
+     },
+     "rev": 24680,
+     "ebitda": 6320
     }
    },
    "added": "pdf",
@@ -23501,6 +24978,105 @@
    }
   },
   {
+   "name": "General Insurance Corp of India",
+   "sector": "Insurance",
+   "ticker": "",
+   "sym": "GICRE",
+   "basis": "",
+   "note": "",
+   "unit": "INR mn",
+   "revUnit": null,
+   "metrics": {
+    "rev": "GWP",
+    "ebitda": "PBT"
+   },
+   "q": {
+    "4Q26": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260527|General Insurance Corp of India|4q26resultsunderwritingimprovementsustainsmaintainow",
+       "broker": "JPMorgan",
+       "date": "260527",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260527|General Insurance Corp of India|4q26resultsunderwritingimprovementsustainsmaintainow",
+       "broker": "JPMorgan",
+       "date": "260527",
+       "role": "own"
+      }
+     },
+     "rev": 110305,
+     "ebitda": 29600,
+     "revYoY": 0.064,
+     "ebitdaYoY": 0.0128,
+     "revVs": null,
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "GWP grew 6% YoY to Rs 110.3bn, with growth across both domestic and international books. The business mix was largely stable, with fire at 30% of NWP, motor 19% and health 23%. The note gives no estimate or consensus for GWP, so it is not rated (JP).",
+     "ebitdaNote": "PBT rose 1% YoY to Rs 29.6bn. JPMorgan puts net profit 31% above its estimate, mainly from forex gains as the rupee depreciated and a smaller underwriting loss (Rs 3.6bn, -15% YoY). The combined ratio of 103.4% was in line with its 103.2% estimate. Investment income fell 22% YoY, and the Rs 2.4bn higher catastrophe reserve provisioning held back profit. The beat call is based on net profit because the note gives no PBT estimate (JP).",
+     "vsBasis": "broker estimate (JPMorgan)",
+     "src": {
+      "kind": "pdf",
+      "broker": "JPMorgan",
+      "date": "260527",
+      "key": "JPMorgan|260527|General Insurance Corp of India|4q26resultsunderwritingimprovementsustainsmaintainow",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "JPMorgan|260527|General Insurance Corp of India|4q26resultsunderwritingimprovementsustainsmaintainow"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260527|General Insurance Corp of India|4q26resultsunderwritingimprovementsustainsmaintainow",
+       "broker": "JPMorgan",
+       "date": "260527",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260527|General Insurance Corp of India|4q26resultsunderwritingimprovementsustainsmaintainow",
+       "broker": "JPMorgan",
+       "date": "260527",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 103671,
+     "ebitda": 29227
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260527|General Insurance Corp of India|4q26resultsunderwritingimprovementsustainsmaintainow",
+       "broker": "JPMorgan",
+       "date": "260527",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260527|General Insurance Corp of India|4q26resultsunderwritingimprovementsustainsmaintainow",
+       "broker": "JPMorgan",
+       "date": "260527",
+       "role": "prevQ"
+      }
+     },
+     "rev": 109866,
+     "ebitda": 21169
+    }
+   },
+   "added": "pdf",
+   "outlook": {
+    "call": "positive",
+    "note": "JPMorgan raised its Mar-27 PT to Rs 500 from Rs 480 (1.4x FY28E P/BV) and kept its OW rating. It cut its FY27E/FY28E combined ratio estimates by 20bp/30bp to 105.3%/103.9%, which lifts APAT by 10%/4%. It expects the underwriting improvement to continue on a better business mix, especially overseas, where the FY26 combined ratio stayed high at 120%. Solvency of 421% is a comfortable buffer (JP).",
+    "broker": "JPMorgan",
+    "date": "260527",
+    "quarter": "4Q26"
+   }
+  },
+  {
    "name": "Go Digit General Insurance",
    "sheetName": "Go Digit",
    "sector": "Insurance",
@@ -23592,7 +25168,7 @@
     }
    },
    "sym": "GODIGIT",
-   "mcap": 26071,
+   "mcap": 26122,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "negative",
@@ -24199,20 +25775,80 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "GoldmanSachs|260807|LIC India|1q27abovevnbmarginscontinuetoexpandonproductmixretainneutral",
-       "broker": "GoldmanSachs",
-       "date": "260807",
-       "role": "prevQ"
+       "key": "Bernstein|260521|LIC India|quicktake21may2026",
+       "broker": "Bernstein",
+       "date": "260521",
+       "role": "own"
       },
       "ebitda": {
-       "key": "GoldmanSachs|260807|LIC India|1q27abovevnbmarginscontinuetoexpandonproductmixretainneutral",
-       "broker": "GoldmanSachs",
-       "date": "260807",
-       "role": "prevQ"
+       "key": "Bernstein|260521|LIC India|quicktake21may2026",
+       "broker": "Bernstein",
+       "date": "260521",
+       "role": "own"
       }
      },
      "rev": 229540,
-     "ebitda": 58910
+     "ebitda": 58910,
+     "revYoY": 0.2175,
+     "ebitdaYoY": 0.6669,
+     "revVs": null,
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "APE rose 22% YoY (+53% QoQ) to Rs 229.5bn off a low base. Individual APE grew 16% and group APE 37%, led by agency (+12.9%) and non-par (JP's NPAR share up 7.4pp in FY26) (Bern, JP). No report gives a consensus APE figure, so no beat/miss call.",
+     "ebitdaNote": "VNB of Rs 58.9bn (+67% YoY) was well above JP's consensus of Rs 42.7bn (about 38% higher) and above JPM's own forecast of Rs 38.7bn; Jefferies puts the beat at 22%/33% vs JEFe/FactSet consensus. VNB margin rose to 25.7% from 18.7%, helped by non-par mix (about 300bp) and a favourable yield curve (about 340bp), partly offset by GST and persistency (about 280bp) (Bern, JP, Jeff).",
+     "ebitdaCons": 42700,
+     "src": {
+      "kind": "pdf",
+      "broker": "Bernstein",
+      "date": "260521",
+      "key": "Bernstein|260521|LIC India|quicktake21may2026",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Bernstein|260521|LIC India|quicktake21may2026",
+       "JPMorgan|260522|LIC India|4q26resultsmixandhigheryieldsoffsetgstimpactanddrivestrongbeat",
+       "Jefferies|260522|LIC India|mar26qtrpositivemarginsurprisevnbgrowthgapwithpvtpeersclosing",
+       "Kotak|260521|LIC India|strongvnbgrowthmtmhitshard"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Bernstein|260521|LIC India|quicktake21may2026",
+       "broker": "Bernstein",
+       "date": "260521",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Bernstein|260521|LIC India|quicktake21may2026",
+       "broker": "Bernstein",
+       "date": "260521",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 188530,
+     "ebitda": 35340
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Bernstein|260521|LIC India|quicktake21may2026",
+       "broker": "Bernstein",
+       "date": "260521",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Bernstein|260521|LIC India|quicktake21may2026",
+       "broker": "Bernstein",
+       "date": "260521",
+       "role": "prevQ"
+      }
+     },
+     "rev": 149730,
+     "ebitda": 31770
     }
    },
    "added": "pdf",
@@ -24426,7 +26062,7 @@
     }
    },
    "sym": "NIVABUPA",
-   "mcap": 13608,
+   "mcap": 13600,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -26207,7 +27843,7 @@
     }
    },
    "sym": "JUSTDIAL",
-   "mcap": 6178,
+   "mcap": 6525,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -28037,7 +29673,7 @@
     }
    },
    "sym": "BLUESTONE",
-   "mcap": 11344,
+   "mcap": 11303,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -28087,18 +29723,39 @@
      "abs": {
       "wb_rev": 3686,
       "rev": {
-       "key": "MorganStanley|260723|International Gemmological Institute|1qf27beatgooddelivery",
-       "broker": "MorganStanley",
-       "date": "260723",
-       "role": "prevQ"
+       "key": "Kotak|260521|International Gemmological Institute|goodexecution",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "own"
       },
       "wb_ebitda": 2359,
       "ebitda": {
-       "key": "MorganStanley|260723|International Gemmological Institute|1qf27beatgooddelivery",
-       "broker": "MorganStanley",
-       "date": "260723",
-       "role": "prevQ"
+       "key": "Kotak|260521|International Gemmological Institute|goodexecution",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "own"
       }
+     },
+     "revYoY": 0.2093,
+     "ebitdaYoY": 0.2054,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Consolidated revenue grew 21% yoy and was ~4.2% above Kotak's estimate. Certification revenue rose 21%, with LGD up 35% on new customer additions and capacity adds at growers. ASP rose 3.7% on a richer mix, and volumes rose 16%. The AGL acquisition added ~2pp to growth (two months of consolidation). (Kotak)",
+     "ebitdaNote": "Consolidated EBITDA grew ~21% yoy and was ~6.1% above Kotak's estimate. Margin was 64.0%, down 20 bps yoy but 415 bps above the prior quarter. Standalone margin fell to 74.2% on higher commissions to Dubai and the US plus ~Rs25 mn of AGL deal costs. Subsidiary margins expanded 275 bps. AGL added ~3pp to EBITDA growth. (Kotak)",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260521",
+      "key": "Kotak|260521|International Gemmological Institute|goodexecution",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|260521|International Gemmological Institute|goodexecution"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
      }
     },
     "1Q27": {
@@ -28143,6 +29800,42 @@
      "ebitdaNote": "Consolidated EBITDA rose 29% YoY, 7% above consensus (4% above MS). Margin expanded 269bps YoY to 60.4%. Strong subsidiary profitability, up 27ppts on the US business traction, offset a 416bps YoY standalone margin decline from higher commission payouts, marketing (IPL) and headcount costs. Organic EBITDA growth was 27%. (MS, Kotak)",
      "revCons": 3444,
      "ebitdaCons": 2094
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260521|International Gemmological Institute|goodexecution",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260521|International Gemmological Institute|goodexecution",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 3048,
+     "ebitda": 1957
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260521|International Gemmological Institute|goodexecution",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260521|International Gemmological Institute|goodexecution",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "prevQ"
+      }
+     },
+     "rev": 3197,
+     "ebitda": 1913
     }
    },
    "sym": "IGIL",
@@ -28450,18 +30143,40 @@
      "abs": {
       "wb_rev": 22568,
       "rev": {
-       "key": "JPMorgan|260724|Container Corporation of India|firsttakeinlineprintvolumebeatoffsetbyweakerrealizations",
-       "broker": "JPMorgan",
-       "date": "260724",
-       "role": "prevQ"
+       "key": "Jefferies|260526|Container Corporation of India|catalystaheadbutexecutionkey",
+       "broker": "Jefferies",
+       "date": "260526",
+       "role": "own"
       },
       "wb_ebitda": 4203,
       "ebitda": {
-       "key": "JPMorgan|260724|Container Corporation of India|firsttakeinlineprintvolumebeatoffsetbyweakerrealizations",
-       "broker": "JPMorgan",
-       "date": "260724",
-       "role": "prevQ"
+       "key": "Jefferies|260526|Container Corporation of India|catalystaheadbutexecutionkey",
+       "broker": "Jefferies",
+       "date": "260526",
+       "role": "own"
       }
+     },
+     "revYoY": -0.0108,
+     "ebitdaYoY": -0.0148,
+     "revVs": "inline",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Sales of Rs22.6bn were down 1.1% YoY and 1.5% above Jefferies' estimate. EXIM volumes fell 2% YoY while domestic volumes rose 6%, trailing a 7% rise in port container volumes (Jeff).",
+     "ebitdaNote": "EBITDA of Rs4.2bn was 6.3% below Jefferies' estimate and down 1.5% YoY. Margin was 18.6% against 18.7% a year ago and 20.2% estimated, the lowest since Mar-21. Higher domestic empty-running costs hurt even though the land license fee (LLF) was lower. JPMorgan also called the quarter an earnings miss (Jeff, JP).",
+     "vsBasis": "broker estimate (Jefferies)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Jefferies",
+      "date": "260526",
+      "key": "Jefferies|260526|Container Corporation of India|catalystaheadbutexecutionkey",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "JPMorgan|260527|Container Corporation of India|post4qcallmanagementlowersgrowthguidancemarketsharedeclinecontinues",
+       "Jefferies|260526|Container Corporation of India|catalystaheadbutexecutionkey"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
      }
     },
     "1Q27": {
@@ -28508,6 +30223,24 @@
      "revNote": "Revenue was flat YoY and 1%/2% below JPMe/BBGe: handling volumes grew 9% (EXIM +10%), but handling realizations fell 8% YoY and EXIM realizations fell 3%, so volume did not turn into revenue growth (JP, GS, Jeff).",
      "ebitdaNote": "EBITDA rose 2% YoY and was 1% below JPMe, with the margin up 41bps YoY to 20.2%. EXIM EBIT margin gained 108bps YoY to 21.8% on lower empty running costs, while domestic EBIT margin recovered QoQ to 3.5% but was below 5.0% a year ago. GS saw it as weak against its Rs4.9bn estimate; Jeff saw it 19% above JEFe (JP, GS, Jeff).",
      "vsBasis": "broker estimate (JPMorgan)"
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260526|Container Corporation of India|catalystaheadbutexecutionkey",
+       "broker": "Jefferies",
+       "date": "260526",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Jefferies|260526|Container Corporation of India|catalystaheadbutexecutionkey",
+       "broker": "Jefferies",
+       "date": "260526",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 22814,
+     "ebitda": 4266
     }
    },
    "sym": "CONCOR",
@@ -28596,20 +30329,79 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "JPMorgan|260809|Delhivery|1qreviewtransitorycostsweighonearningsoutlookremainssolid",
+       "key": "JPMorgan|260518|Delhivery|herecomesthefcf",
        "broker": "JPMorgan",
-       "date": "260809",
-       "role": "prevQ"
+       "date": "260518",
+       "role": "own"
       },
       "ebitda": {
-       "key": "JPMorgan|260809|Delhivery|1qreviewtransitorycostsweighonearningsoutlookremainssolid",
+       "key": "JPMorgan|260518|Delhivery|herecomesthefcf",
        "broker": "JPMorgan",
-       "date": "260809",
-       "role": "prevQ"
+       "date": "260518",
+       "role": "own"
       }
      },
      "rev": 28500,
-     "ebitda": 2142
+     "ebitda": 2142,
+     "revYoY": 0.3004,
+     "ebitdaYoY": 0.7985,
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue grew 30% YoY to Rs28.5bn, 1% above JPMe, driven by Express Parcel shipments up 73% YoY to 306mn and Part Truck Load tonnage up 20%. JPM says it was ahead of JPMe/BBG consensus, but no revenue consensus figure is printed. (JP)",
+     "ebitdaNote": "Reported EBITDA of Rs2.14bn rose 80% YoY and was about 9% above Street (Rs1.97bn) and 6% above JPMe (Rs2.02bn). Express Parcel service EBITDA margin rose to 18.8% and PTL service EBITDA margin to 13.5%. (JP)",
+     "vsBasis": "EBITDA: consensus (Street Rs1.97bn); revenue: broker estimate (JPMorgan, JPMe Rs28,092mn),",
+     "ebitdaCons": 1970,
+     "src": {
+      "kind": "pdf",
+      "broker": "JPMorgan",
+      "date": "260518",
+      "key": "JPMorgan|260518|Delhivery|herecomesthefcf",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "JPMorgan|260518|Delhivery|herecomesthefcf",
+       "Jefferies|260520|Delhivery|datainsightsportcontainervolumesholdingup"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260518|Delhivery|herecomesthefcf",
+       "broker": "JPMorgan",
+       "date": "260518",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260518|Delhivery|herecomesthefcf",
+       "broker": "JPMorgan",
+       "date": "260518",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 21916,
+     "ebitda": 1191
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260518|Delhivery|herecomesthefcf",
+       "broker": "JPMorgan",
+       "date": "260518",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260518|Delhivery|herecomesthefcf",
+       "broker": "JPMorgan",
+       "date": "260518",
+       "role": "prevQ"
+      }
+     },
+     "rev": 28050,
+     "ebitda": 2088
     }
    },
    "added": "pdf",
@@ -28763,7 +30555,7 @@
     }
    },
    "sym": "SHADOWFAX",
-   "mcap": 15867,
+   "mcap": 15944,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -28965,7 +30757,7 @@
     "date": "260806",
     "quarter": "1Q27"
    },
-   "mcap": 1758,
+   "mcap": 1786,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -29549,20 +31341,79 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "MorganStanley|260809|Hindalco Industries|strongbeatgoodoutlook",
-       "broker": "Morgan Stanley",
-       "date": "260809",
-       "role": "prevQ"
+       "key": "Kotak|260524|Hindalco Industries|beatacrossdivisions",
+       "broker": "Kotak",
+       "date": "260524",
+       "role": "own"
       },
       "ebitda": {
-       "key": "MorganStanley|260809|Hindalco Industries|strongbeatgoodoutlook",
-       "broker": "Morgan Stanley",
-       "date": "260809",
-       "role": "prevQ"
+       "key": "Kotak|260524|Hindalco Industries|beatacrossdivisions",
+       "broker": "Kotak",
+       "date": "260524",
+       "role": "own"
       }
      },
      "rev": 781330,
-     "ebitda": 100180
+     "ebitda": 101760,
+     "revYoY": 0.2041,
+     "ebitdaYoY": 0.059,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Consolidated net sales of Rs781bn (+20.4% YoY, +17.5% QoQ) were 7.2% above Kotak's estimate. Higher aluminium volumes and prices, plus higher sulphuric acid realisations in copper, drove the beat; Novelis' reported EBITDA stayed hit by the Oswego fires. India net sales rose 34.3% YoY (Kotak).",
+     "ebitdaNote": "Consolidated EBITDA of Rs101.8bn (+5.9% YoY, +27.6% QoQ) beat Kotak's estimate by 20.4%, with beats in both aluminium and copper. India aluminium EBITDA was Rs51.8bn (+9.3% YoY) on better volumes and margins. India copper EBITDA of Rs9.1bn (+48% YoY) was an all-time high on sulphuric acid realisations. Jefferies also put EBITDA 11% above its estimate (Kotak, Jeff).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260524",
+      "key": "Kotak|260524|Hindalco Industries|beatacrossdivisions",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "JPMorgan|260524|Hindalco Industries|inasweetspot",
+       "Jefferies|260522|Hindalco Industries|novelisuncertaintybutaluminumpricetailwind",
+       "Kotak|260524|Hindalco Industries|beatacrossdivisions"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260524|Hindalco Industries|beatacrossdivisions",
+       "broker": "Kotak",
+       "date": "260524",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260524|Hindalco Industries|beatacrossdivisions",
+       "broker": "Kotak",
+       "date": "260524",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 648900,
+     "ebitda": 96090
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260524|Hindalco Industries|beatacrossdivisions",
+       "broker": "Kotak",
+       "date": "260524",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260524|Hindalco Industries|beatacrossdivisions",
+       "broker": "Kotak",
+       "date": "260524",
+       "role": "prevQ"
+      }
+     },
+     "rev": 665210,
+     "ebitda": 79750
     }
    },
    "added": "pdf",
@@ -31211,20 +33062,79 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "CLSA|260811|Fusion Finance|turningaround",
+       "key": "CLSA|260518|Fusion Finance|someimprovement",
        "broker": "CLSA",
-       "date": "260811",
-       "role": "prevQ"
+       "date": "260518",
+       "role": "own"
       },
       "ebitda": {
-       "key": "CLSA|260811|Fusion Finance|turningaround",
+       "key": "CLSA|260518|Fusion Finance|someimprovement",
        "broker": "CLSA",
-       "date": "260811",
-       "role": "prevQ"
+       "date": "260518",
+       "role": "own"
       }
      },
      "rev": 2980,
-     "ebitda": 931
+     "ebitda": 931,
+     "revYoY": 0.0047,
+     "ebitdaYoY": 0.0333,
+     "revVs": "miss",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Total income of Rs2,980m was flat YoY and 1% down QoQ, about 3% below CLSA's Rs3,057m. Other income came in 12% below estimate at Rs677m, and NII was 4% lower QoQ at Rs2,304m (CLSA).",
+     "ebitdaNote": "PPOP (operating profit) of Rs931m was 1% above CLSA's Rs925m and in line with its estimate. It was up 3% YoY, with opex 4% below estimate at Rs2,050m. PPOP has been rangebound at about Rs900m for five quarters (CLSA).",
+     "vsBasis": "broker estimate (CLSA)",
+     "revCons": 3057,
+     "ebitdaCons": 925,
+     "src": {
+      "kind": "pdf",
+      "broker": "CLSA",
+      "date": "260518",
+      "key": "CLSA|260518|Fusion Finance|someimprovement",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|260518|Fusion Finance|someimprovement"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|260518|Fusion Finance|someimprovement",
+       "broker": "CLSA",
+       "date": "260518",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "CLSA|260518|Fusion Finance|someimprovement",
+       "broker": "CLSA",
+       "date": "260518",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 2966,
+     "ebitda": 901
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|260518|Fusion Finance|someimprovement",
+       "broker": "CLSA",
+       "date": "260518",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "CLSA|260518|Fusion Finance|someimprovement",
+       "broker": "CLSA",
+       "date": "260518",
+       "role": "prevQ"
+      }
+     },
+     "rev": 3006,
+     "ebitda": 936
     }
    },
    "added": "pdf",
@@ -31235,7 +33145,7 @@
     "date": "260811",
     "quarter": "1Q27"
    },
-   "mcap": 2332,
+   "mcap": 2330,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -33262,35 +35172,65 @@
     },
     "3Q26": {
      "rev": 340515,
-     "ebitda": null,
+     "ebitda": 26552,
      "abs": {
       "rev": {
-       "role": "workbook"
+       "key": "Kotak|260525|GAIL India|worstbehinddisruptionablessingupgradetoadd",
+       "broker": "Kotak",
+       "date": "260525",
+       "role": "prevQ"
       },
       "wb_ebitda": 26552,
       "ebitda": {
-       "role": "workbook-dropped"
+       "key": "Kotak|260525|GAIL India|worstbehinddisruptionablessingupgradetoadd",
+       "broker": "Kotak",
+       "date": "260525",
+       "role": "prevQ"
       }
      }
     },
     "4Q26": {
-     "rev": 347970,
-     "ebitda": 11524,
+     "rev": 347725,
+     "ebitda": 11525,
      "abs": {
       "wb_rev": 347725,
       "rev": {
-       "key": "JPMorgan|260802|GAIL India|1qfy27astrongcommodityledbeat",
-       "broker": "JPMorgan",
-       "date": "260802",
-       "role": "prevQ"
+       "key": "Kotak|260525|GAIL India|worstbehinddisruptionablessingupgradetoadd",
+       "broker": "Kotak",
+       "date": "260525",
+       "role": "own"
       },
       "wb_ebitda": 11524,
       "ebitda": {
-       "key": "JPMorgan|260802|GAIL India|1qfy27astrongcommodityledbeat",
-       "broker": "JPMorgan",
-       "date": "260802",
-       "role": "prevQ"
+       "key": "Kotak|260525|GAIL India|worstbehinddisruptionablessingupgradetoadd",
+       "broker": "Kotak",
+       "date": "260525",
+       "role": "own"
       }
+     },
+     "revYoY": -0.0256,
+     "ebitdaYoY": -0.6417,
+     "revVs": "beat",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Standalone net sales of Rs347.7bn were down 2.6% YoY but 7.6% above Kotak's estimate, up 2.1% QoQ; Kotak's table shows no consensus for revenue, so the beat is vs its own estimate. Segment revenue was 7.5% higher YoY, with gas marketing sales up 8.9% and petchem sales up 10.0% vs the estimate. (Kotak)",
+     "ebitdaNote": "Reported EBITDA of Rs11.5bn (-64% YoY, -57% QoQ) missed Kotak by 58% after a Rs6.7bn provision for NFCL dues; adjusted EBITDA of Rs18.3bn (-43% YoY) was still 34% below Kotak's estimate. Jefferies called it a sharp miss to its own estimate and consensus on weak gas trading and petchem. CLSA was the outlier, calling it an all-round beat (EBITDA 55% ahead of CLSA's estimate) after adjusting for one-offs. Weakness was broad-based apart from transmission: West Asia disruption cut volumes, and petchem posted another large loss. (Kotak, Jeff, CLSA)",
+     "vsBasis": "revenue: broker estimate (Kotak); EBITDA: consensus (Jefferies) and Kotak estimate",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260525",
+      "key": "Kotak|260525|GAIL India|worstbehinddisruptionablessingupgradetoadd",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|260524|GAIL India|anallroundbeat",
+       "Jefferies|260524|GAIL India|mar26reviewbigmissmeconflicttoweighonfy27perfor",
+       "Kotak|260525|GAIL India|worstbehinddisruptionablessingupgradetoadd",
+       "Nomura|260525|GAIL India|resilientearningsdespitethewar"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
      }
     },
     "1Q27": {
@@ -33337,6 +35277,24 @@
      "ebitdaNote": "Standalone EBITDA of Rs63.8bn (+91% YoY) was about 2.2x the Rs28.6bn consensus and about 2x JPMorgan's Rs32.2bn estimate. Gas trading EBITDA hit a record Rs37.7bn (Rs38bn per JPMorgan's text) because 2.8 MTPA of LNG purchases are linked to a 9-month rolling JCC while sales are linked to a 3-month rolling JCC. Transmission volumes (122 mmscmd) and lower QoQ costs also helped. Petchem was weak, with volumes down sharply. [JP, Kotak]",
      "vsBasis": "consensus for EBITDA; broker estimate (JPMorgan) for revenue",
      "ebitdaCons": 28600
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260525|GAIL India|worstbehinddisruptionablessingupgradetoadd",
+       "broker": "Kotak",
+       "date": "260525",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260525|GAIL India|worstbehinddisruptionablessingupgradetoadd",
+       "broker": "Kotak",
+       "date": "260525",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 356852,
+     "ebitda": 32164
     }
    },
    "sym": "GAIL",
@@ -33346,6 +35304,106 @@
     "broker": "JPMorgan",
     "date": "260802",
     "quarter": "1Q27"
+   }
+  },
+  {
+   "name": "Gujarat Gas",
+   "sector": "O&G",
+   "ticker": "",
+   "sym": "GUJGASLTD",
+   "basis": "",
+   "note": "",
+   "unit": "INR mn",
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {
+    "4Q26": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260601|Gujarat Gas|firsttake4qfy26cgdmarginsunderpressurepowerbusinessdragsconsolearnings",
+       "broker": "JPMorgan",
+       "date": "260601",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260601|Gujarat Gas|firsttake4qfy26cgdmarginsunderpressurepowerbusinessdragsconsolearnings",
+       "broker": "JPMorgan",
+       "date": "260601",
+       "role": "own"
+      }
+     },
+     "rev": 57919,
+     "ebitda": 6088,
+     "revYoY": -0.0898,
+     "ebitdaYoY": 0.2768,
+     "revVs": null,
+     "ebitdaVs": null,
+     "overall": "inline",
+     "revNote": "Consolidated net revenues fell 9% YoY and 3% QoQ to Rs57.9bn. This is the first quarter of the merged Gujarat Energy (CGD, gas trading, power, E&P, regas), so it is not comparable with history or with estimates. CGD volume was 8.9mmscmd (-5% YoY, +6% QoQ), 7% above CLSA's estimate on industrial volumes. No consensus figure is printed for the consolidated line. (JP, CLSA)",
+     "ebitdaNote": "Consolidated EBITDA rose 28% YoY but fell 35% QoQ to Rs6.1bn. Standalone EBITDA was Rs7.8bn, and the gap is mainly the power business, with losses of Rs1.2bn EBIT. CGD EBIT/unit fell to Rs4.1 (-15% YoY). Jefferies calculated CGD EBITDA at Rs5.4bn, 71% above its estimate, on Rs6.8/scm. No consensus is printed, so no beat/miss call is made. (JP, Jeff)",
+     "src": {
+      "kind": "pdf",
+      "broker": "JPMorgan",
+      "date": "260601",
+      "key": "JPMorgan|260601|Gujarat Gas|firsttake4qfy26cgdmarginsunderpressurepowerbusinessdragsconsolearnings",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|260601|Gujarat Gas|abeatonvolume",
+       "JPMorgan|260601|Gujarat Gas|firsttake4qfy26cgdmarginsunderpressurepowerbusinessdragsconsolearnings",
+       "Jefferies|260601|Gujarat Gas|mar26reviewaheadneartermboostinmorbi"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260601|Gujarat Gas|firsttake4qfy26cgdmarginsunderpressurepowerbusinessdragsconsolearnings",
+       "broker": "JPMorgan",
+       "date": "260601",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260601|Gujarat Gas|firsttake4qfy26cgdmarginsunderpressurepowerbusinessdragsconsolearnings",
+       "broker": "JPMorgan",
+       "date": "260601",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 63634,
+     "ebitda": 4768
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260601|Gujarat Gas|firsttake4qfy26cgdmarginsunderpressurepowerbusinessdragsconsolearnings",
+       "broker": "JPMorgan",
+       "date": "260601",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260601|Gujarat Gas|firsttake4qfy26cgdmarginsunderpressurepowerbusinessdragsconsolearnings",
+       "broker": "JPMorgan",
+       "date": "260601",
+       "role": "prevQ"
+      }
+     },
+     "rev": 59977,
+     "ebitda": 9348
+    }
+   },
+   "added": "pdf",
+   "outlook": {
+    "call": "neutral",
+    "note": "Mixed read. JP expects consensus to be revised down on CGD margin stress and power losses, and keeps UW with a Rs270 target. Jefferies upgraded to Hold (target Rs415) and raised FY27E CGD EBITDA by 45% as Morbi volumes hit 7.8mmscmd in May on propane unavailability, with gas trading EBIT guided at Rs10-11bn for FY27. CLSA stays at Hold (target Rs375), citing the industrial volume recovery as the key upside risk. (JP, Jeff, CLSA)",
+    "broker": "Jefferies",
+    "date": "260601",
+    "quarter": "4Q26"
    }
   },
   {
@@ -33508,15 +35566,21 @@
      }
     },
     "3Q26": {
-     "rev": null,
+     "rev": 2044244,
      "ebitda": 208240,
      "abs": {
       "wb_rev": 369530,
       "rev": {
-       "role": "workbook-dropped"
+       "key": "JPMorgan|260519|Indian Oil Corporation|firsttake4qfy26inventorygainsdrivethebeat",
+       "broker": "JPMorgan",
+       "date": "260519",
+       "role": "prevQ"
       },
       "ebitda": {
-       "role": "workbook"
+       "key": "JPMorgan|260519|Indian Oil Corporation|firsttake4qfy26inventorygainsdrivethebeat",
+       "broker": "JPMorgan",
+       "date": "260519",
+       "role": "prevQ"
       }
      }
     },
@@ -33526,18 +35590,44 @@
      "abs": {
       "wb_rev": 434165,
       "rev": {
-       "key": "JPMorgan|260802|Indian Oil Corporation|firsttake1qfy27abeatagainstallodds",
+       "key": "JPMorgan|260519|Indian Oil Corporation|firsttake4qfy26inventorygainsdrivethebeat",
        "broker": "JPMorgan",
-       "date": "260802",
-       "role": "prevQ"
+       "date": "260519",
+       "role": "own"
       },
       "wb_ebitda": 207156,
       "ebitda": {
-       "key": "JPMorgan|260802|Indian Oil Corporation|firsttake1qfy27abeatagainstallodds",
+       "key": "JPMorgan|260519|Indian Oil Corporation|firsttake4qfy26inventorygainsdrivethebeat",
        "broker": "JPMorgan",
-       "date": "260802",
-       "role": "prevQ"
+       "date": "260519",
+       "role": "own"
       }
+     },
+     "revYoY": 0.0662,
+     "ebitdaYoY": 0.5263,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Standalone net revenue of Rs2,079bn was +7% YoY, +2% QoQ and 19% above JPMorgan's Rs1,741bn estimate; no consensus revenue figure is printed. (JP)",
+     "ebitdaNote": "EBITDA of Rs207bn (+53% YoY, -1% QoQ) was 10% above Jefferies' estimate and 41% above consensus, helped by inventory gains, lagged crude pricing and strong refining margins, despite c.Rs31bn of impairment charges. Marketing margins were weak (gross marketing margin Rs3,064/kl, -35% YoY). (JP, Jeff)",
+     "vsBasis": "EBITDA: consensus (Jefferies: 41% above consensus); revenue: broker estimate (JPMorgan, 19",
+     "src": {
+      "kind": "pdf",
+      "broker": "JPMorgan",
+      "date": "260519",
+      "key": "JPMorgan|260519|Indian Oil Corporation|firsttake4qfy26inventorygainsdrivethebeat",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|260520|Indian Oil Corporation|strongbottomlinebutdetailsmissing",
+       "JPMorgan|260519|Indian Oil Corporation|firsttake4qfy26inventorygainsdrivethebeat",
+       "JPMorgan|260519|Indian Oil Corporation|strong4qgreaterrefiningexposurecouldhelpiocdobetterthanpeers",
+       "Jefferies|260519|Indian Oil Corporation|mar26reviewbeatvaluationfavourable",
+       "Kotak|260519|Indian Oil Corporation|4qmuchbetterlargelosslikelyin1hfy27",
+       "Nomura|260519|Indian Oil Corporation|toppickamongomcs"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
      }
     },
     "1Q27": {
@@ -33585,6 +35675,24 @@
      "ebitdaNote": "EBITDA of Rs19.5bn was slightly positive against our and consensus loss estimates (Nomura cites a Bloomberg consensus EBITDA loss of Rs145bn), down 85% YoY. Refining GRM of ~US$36/bbl (US$15.6/bbl net of SAED) and a ~Rs150bn marketing inventory gain more than offset marketing losses and LPG under-recoveries of Rs66.2bn (JP, Nomura, Jeff).",
      "vsBasis": "EBITDA vs Bloomberg consensus (Nomura); revenue vs broker estimate (JPMorgan)",
      "ebitdaCons": -145000
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260519|Indian Oil Corporation|firsttake4qfy26inventorygainsdrivethebeat",
+       "broker": "JPMorgan",
+       "date": "260519",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260519|Indian Oil Corporation|firsttake4qfy26inventorygainsdrivethebeat",
+       "broker": "JPMorgan",
+       "date": "260519",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 1949670,
+     "ebitda": 135725
     }
    },
    "sym": "IOC",
@@ -34225,20 +36333,78 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "MorganStanley|260804|MakeMyTrip|f1q27firstcutbroadbasedbeatvsconsensus",
-       "broker": "MorganStanley",
-       "date": "260804",
+       "key": "JPMorgan|260520|MakeMyTrip|recoverywilltaketime",
+       "broker": "JPMorgan",
+       "date": "260520",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260520|MakeMyTrip|recoverywilltaketime",
+       "broker": "JPMorgan",
+       "date": "260520",
+       "role": "own"
+      }
+     },
+     "rev": 282,
+     "ebitda": 47,
+     "revYoY": 0.0805,
+     "ebitdaYoY": 0.0444,
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Adj. revenue of US$282mn (+7.9% YoY, -9.4% QoQ) was 1.7% above consensus (US$277mn) but 5.5% below JPMorgan's US$298mn. Bus ticketing grew fastest (+12.7% YoY) while Air (+5.4%) and Hotels & Packages (+5.8%) were softer, and take rate rose 64bps YoY to 10.1% (JP).",
+     "ebitdaNote": "Adj. EBIT of US$47mn (+4.1% YoY) was 5.7% above consensus (US$44mn) and 5.6% below JPMorgan's estimate. Margin on adj. revenue was 16.5%, 63bps ahead of consensus but 61bps down YoY; the Middle East conflict and higher fuel-driven air fares hurt late-quarter volumes (JP).",
+     "revCons": 277,
+     "ebitdaCons": 44,
+     "src": {
+      "kind": "pdf",
+      "broker": "JPMorgan",
+      "date": "260520",
+      "key": "JPMorgan|260520|MakeMyTrip|recoverywilltaketime",
+      "unit": "US$ mn",
+      "model": "sonnet",
+      "considered": [
+       "JPMorgan|260520|MakeMyTrip|recoverywilltaketime"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260520|MakeMyTrip|recoverywilltaketime",
+       "broker": "JPMorgan",
+       "date": "260520",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260520|MakeMyTrip|recoverywilltaketime",
+       "broker": "JPMorgan",
+       "date": "260520",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 261,
+     "ebitda": 45
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260520|MakeMyTrip|recoverywilltaketime",
+       "broker": "JPMorgan",
+       "date": "260520",
        "role": "prevQ"
       },
       "ebitda": {
-       "key": "MorganStanley|260804|MakeMyTrip|f1q27firstcutbroadbasedbeatvsconsensus",
-       "broker": "MorganStanley",
-       "date": "260804",
+       "key": "JPMorgan|260520|MakeMyTrip|recoverywilltaketime",
+       "broker": "JPMorgan",
+       "date": "260520",
        "role": "prevQ"
       }
      },
-     "rev": 281.7,
-     "ebitda": 46.5
+     "rev": 311,
+     "ebitda": 51
     }
    },
    "added": "pdf",
@@ -34436,7 +36602,7 @@
     "date": "260812",
     "quarter": "1Q27"
    },
-   "mcap": 7162,
+   "mcap": 7235,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -34615,20 +36781,79 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Kotak|260817|Indigo Paints|growthlargelytrackingindustry",
+       "key": "Kotak|260526|Indigo Paints|steppingupgrowthaspirations",
        "broker": "Kotak",
-       "date": "260817",
-       "role": "prevQ"
+       "date": "260526",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Kotak|260817|Indigo Paints|growthlargelytrackingindustry",
+       "key": "Kotak|260526|Indigo Paints|steppingupgrowthaspirations",
        "broker": "Kotak",
-       "date": "260817",
-       "role": "prevQ"
+       "date": "260526",
+       "role": "own"
       }
      },
      "rev": 4253,
-     "ebitda": 956
+     "ebitda": 956,
+     "revYoY": 0.0973,
+     "ebitdaYoY": 0.0938,
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue grew 9.7% yoy to Rs4.25 bn, 0.6% ahead of Kotak's estimate (KIE: +9%). Decorative paints grew 8.5% yoy, a tad better than peers but below the 1.5-2X industry growth aspiration. Growth was helped by demand recovery since November, some channel stocking in March ahead of the price hike, and Apple Chemie at +34.7% yoy. (Kotak)",
+     "ebitdaNote": "EBITDA grew 9.3% yoy to Rs956 mn, 3.3% above Kotak's estimate. Margin was 22.5%, down 10 bps yoy, as a 180 bps gross-margin expansion was offset by sales team expansion and higher A&P spends (employee costs +28% yoy, A&P +~30%). (Kotak)",
+     "vsBasis": "broker estimate (Kotak)",
+     "revCons": 4226,
+     "ebitdaCons": 925,
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260526",
+      "key": "Kotak|260526|Indigo Paints|steppingupgrowthaspirations",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|260526|Indigo Paints|steppingupgrowthaspirations"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260526|Indigo Paints|steppingupgrowthaspirations",
+       "broker": "Kotak",
+       "date": "260526",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260526|Indigo Paints|steppingupgrowthaspirations",
+       "broker": "Kotak",
+       "date": "260526",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 3876,
+     "ebitda": 874
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260526|Indigo Paints|steppingupgrowthaspirations",
+       "broker": "Kotak",
+       "date": "260526",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260526|Indigo Paints|steppingupgrowthaspirations",
+       "broker": "Kotak",
+       "date": "260526",
+       "role": "prevQ"
+      }
+     },
+     "rev": 3588,
+     "ebitda": 683
     }
    },
    "added": "pdf",
@@ -34639,7 +36864,7 @@
     "date": "260817",
     "quarter": "1Q27"
    },
-   "mcap": 4798,
+   "mcap": 4789,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -35888,20 +38113,77 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Jefferies|260810|Entero Healthcare|fy27beginswithabangupsiderisktofy27guidancebuy",
+       "key": "Jefferies|260526|Entero Healthcare|mixedmarqstrongoutlookmaintainbuy",
        "broker": "Jefferies",
-       "date": "260810",
-       "role": "prevQ"
+       "date": "260526",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Jefferies|260810|Entero Healthcare|fy27beginswithabangupsiderisktofy27guidancebuy",
+       "key": "Jefferies|260526|Entero Healthcare|mixedmarqstrongoutlookmaintainbuy",
        "broker": "Jefferies",
-       "date": "260810",
-       "role": "prevQ"
+       "date": "260526",
+       "role": "own"
       }
      },
      "rev": 19099,
-     "ebitda": 860
+     "ebitda": 860,
+     "revYoY": 0.4263,
+     "ebitdaYoY": 0.7587,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue of INR19.1bn (+43% YoY, +12% QoQ) was 6% above Jefferies' estimate of INR18.0bn, aided by recent acquisitions. Organic growth was ~17% YoY. (Jeff)",
+     "ebitdaNote": "EBITDA of INR860mn (+76% YoY) was 15% above Jefferies' estimate of INR747mn. Gross margin expanded 109bps YoY to 10.9% and EBITDA margin rose 85bps YoY to 4.5%. PAT missed because of higher depreciation, finance costs and one-off minority interest. (Jeff)",
+     "vsBasis": "broker estimate (Jefferies)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Jefferies",
+      "date": "260526",
+      "key": "Jefferies|260526|Entero Healthcare|mixedmarqstrongoutlookmaintainbuy",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260526|Entero Healthcare|mixedmarqstrongoutlookmaintainbuy"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260526|Entero Healthcare|mixedmarqstrongoutlookmaintainbuy",
+       "broker": "Jefferies",
+       "date": "260526",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Jefferies|260526|Entero Healthcare|mixedmarqstrongoutlookmaintainbuy",
+       "broker": "Jefferies",
+       "date": "260526",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 13391,
+     "ebitda": 489
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260526|Entero Healthcare|mixedmarqstrongoutlookmaintainbuy",
+       "broker": "Jefferies",
+       "date": "260526",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Jefferies|260526|Entero Healthcare|mixedmarqstrongoutlookmaintainbuy",
+       "broker": "Jefferies",
+       "date": "260526",
+       "role": "prevQ"
+      }
+     },
+     "rev": 17065,
+     "ebitda": 678
     }
    },
    "added": "pdf",
@@ -35912,7 +38194,7 @@
     "date": "260810",
     "quarter": "1Q27"
    },
-   "mcap": 6392,
+   "mcap": 6471,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -35992,20 +38274,78 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "GoldmanSachs|260810|Gland Pharma|1q27abovemarginperformancehealthyremainsellonvaluation",
+       "key": "GoldmanSachs|260515|Gland Pharma|4q26abovegoodquarterloweredguidancereiteratedremainsell",
        "broker": "GoldmanSachs",
-       "date": "260810",
-       "role": "prevQ"
+       "date": "260515",
+       "role": "own"
       },
       "ebitda": {
-       "key": "GoldmanSachs|260810|Gland Pharma|1q27abovemarginperformancehealthyremainsellonvaluation",
+       "key": "GoldmanSachs|260515|Gland Pharma|4q26abovegoodquarterloweredguidancereiteratedremainsell",
        "broker": "GoldmanSachs",
-       "date": "260810",
-       "role": "prevQ"
+       "date": "260515",
+       "role": "own"
       }
      },
      "rev": 17428,
-     "ebitda": 5130
+     "ebitda": 5130,
+     "revYoY": 0.2231,
+     "ebitdaYoY": 0.4763,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue rose 22% YoY and 3% QoQ, about 6% above consensus (and 6% above GS's estimate). The US business grew 26% YoY on 5 new launches, including Dalbavancin, and higher volumes from recent GPO contracts. Nomura also cites steady Cenexi revenue, CDMO contract growth and INR depreciation (Nomura: sales 5% above consensus). (GS, Nomura)",
+     "ebitdaNote": "EBITDA grew 48% YoY to INR 5,130 mn, about 23% above consensus. Margin was 29.4%, up 505bp YoY and 417bp ahead of consensus, on better gross margin from mix and operating leverage. Nomura puts the beat at 22% vs consensus. (GS, Nomura)",
+     "src": {
+      "kind": "pdf",
+      "broker": "GoldmanSachs",
+      "date": "260515",
+      "key": "GoldmanSachs|260515|Gland Pharma|4q26abovegoodquarterloweredguidancereiteratedremainsell",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "GoldmanSachs|260515|Gland Pharma|4q26abovegoodquarterloweredguidancereiteratedremainsell",
+       "Jefferies|260517|Gland Pharma|marqimprovingoutlookexecutionkeytomonitor",
+       "Nomura|260517|Gland Pharma|4qfy26significantlyhigherthanourestimates"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "GoldmanSachs|260515|Gland Pharma|4q26abovegoodquarterloweredguidancereiteratedremainsell",
+       "broker": "GoldmanSachs",
+       "date": "260515",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "GoldmanSachs|260515|Gland Pharma|4q26abovegoodquarterloweredguidancereiteratedremainsell",
+       "broker": "GoldmanSachs",
+       "date": "260515",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 14249,
+     "ebitda": 3475
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "GoldmanSachs|260515|Gland Pharma|4q26abovegoodquarterloweredguidancereiteratedremainsell",
+       "broker": "GoldmanSachs",
+       "date": "260515",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "GoldmanSachs|260515|Gland Pharma|4q26abovegoodquarterloweredguidancereiteratedremainsell",
+       "broker": "GoldmanSachs",
+       "date": "260515",
+       "role": "prevQ"
+      }
+     },
+     "rev": 16955,
+     "ebitda": 4350
     }
    },
    "added": "pdf",
@@ -36090,20 +38430,77 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Nomura|260817|IPCA Laboratories|beatandraisein1qfy27",
+       "key": "Nomura|260531|IPCA Laboratories|4qfy26aheadofestimates",
        "broker": "Nomura",
-       "date": "260817",
-       "role": "prevQ"
+       "date": "260531",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Nomura|260817|IPCA Laboratories|beatandraisein1qfy27",
+       "key": "Nomura|260531|IPCA Laboratories|4qfy26aheadofestimates",
        "broker": "Nomura",
-       "date": "260817",
-       "role": "prevQ"
+       "date": "260531",
+       "role": "own"
       }
      },
      "rev": 23885,
-     "ebitda": 4902
+     "ebitda": 4902,
+     "revYoY": 0.0631,
+     "ebitdaYoY": 0.1965,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Total revenue of INR23.9bn was up 6% y-y and 3% ahead of Nomura's estimate. India sales grew 12% y-y (1% ahead) and exports grew 9% y-y (5% ahead), led by export formulations up 16% y-y. [Nomura]",
+     "ebitdaNote": "Core EBITDA of INR4.9bn grew 20% y-y and was 16% ahead of Nomura's estimate. Gross margin rose 257bp y-y to 71% on a higher formulations mix (76% of sales vs 73%), and EBITDA margin expanded 229bp y-y to 20.5%. [Nomura]",
+     "vsBasis": "broker estimate (Nomura)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Nomura",
+      "date": "260531",
+      "key": "Nomura|260531|IPCA Laboratories|4qfy26aheadofestimates",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Nomura|260531|IPCA Laboratories|4qfy26aheadofestimates"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Nomura|260531|IPCA Laboratories|4qfy26aheadofestimates",
+       "broker": "Nomura",
+       "date": "260531",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Nomura|260531|IPCA Laboratories|4qfy26aheadofestimates",
+       "broker": "Nomura",
+       "date": "260531",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 22467,
+     "ebitda": 4097
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Nomura|260531|IPCA Laboratories|4qfy26aheadofestimates",
+       "broker": "Nomura",
+       "date": "260531",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Nomura|260531|IPCA Laboratories|4qfy26aheadofestimates",
+       "broker": "Nomura",
+       "date": "260531",
+       "role": "prevQ"
+      }
+     },
+     "rev": 23925,
+     "ebitda": 5299
     }
    },
    "added": "pdf",
@@ -36257,22 +38654,44 @@
     },
     "4Q26": {
      "rev": 34429,
-     "ebitda": 9274,
+     "ebitda": 9299,
      "abs": {
       "wb_rev": 34429,
       "rev": {
-       "key": "Jefferies|260730|Mankind Pharma|june26qdemonstratescontinuedimprovementbuystays",
-       "broker": "Jefferies",
-       "date": "260730",
-       "role": "prevQ"
+       "key": "Kotak|260520|Mankind Pharma|recoverytakingshape",
+       "broker": "Kotak",
+       "date": "260520",
+       "role": "own"
       },
       "wb_ebitda": 9274,
       "ebitda": {
-       "key": "Jefferies|260730|Mankind Pharma|june26qdemonstratescontinuedimprovementbuystays",
-       "broker": "Jefferies",
-       "date": "260730",
-       "role": "prevQ"
+       "key": "Kotak|260520|Mankind Pharma|recoverytakingshape",
+       "broker": "Kotak",
+       "date": "260520",
+       "role": "own"
       }
+     },
+     "revYoY": 0.118,
+     "ebitdaYoY": 0.3611,
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Sales of Rs34.4 bn (+11.8% YoY) were 2.3% above Kotak's estimate of Rs33.7 bn, so broadly in line; organic domestic growth was about 10.5% YoY, with OTC up 20% and BSV up 25%+ in 2HFY26 on a low base (Kotak).",
+     "ebitdaNote": "EBITDA of Rs9.3 bn (+36% YoY) beat Kotak's Rs7.6 bn estimate by 23%, largely on lower staff costs (including a waiver of management incentives) and cost control; adjusted for the one-off staff-cost benefit, the beat was 19% and margin 26.1%, up about 360 bps vs Kotak's estimate (Kotak).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260520",
+      "key": "Kotak|260520|Mankind Pharma|recoverytakingshape",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260602|Mankind Pharma|turningthecorneramidlingeringskepticism",
+       "Kotak|260520|Mankind Pharma|recoverytakingshape"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
      }
     },
     "1Q27": {
@@ -36319,6 +38738,42 @@
      "revNote": "Revenue grew 13% YoY to INR40.3bn, 2% above Jefferies' INR39.5bn estimate (in line). Export formulations rose 29% YoY (15% above estimate) and India formulations rose 11% YoY (in line), while consumer healthcare grew only 4% (6% miss) after cash-and-carry discontinuation. Bernstein also called sales in line with its ~13% growth forecast (Jeff, Bern).",
      "ebitdaNote": "EBITDA grew 25% YoY to INR10.6bn, 7% above Jefferies' INR9.9bn estimate. Gross margin was 72.8% (+226bps YoY, 175bps above estimate) and EBITDA margin was 26.2% (+249bps YoY, 120bps above estimate). Jefferies called it a better-quality beat than Mar-Q. Bernstein saw EBITDA broadly in line with its estimates (Jeff, Bern).",
      "vsBasis": "broker estimate (Jefferies)"
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260520|Mankind Pharma|recoverytakingshape",
+       "broker": "Kotak",
+       "date": "260520",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260520|Mankind Pharma|recoverytakingshape",
+       "broker": "Kotak",
+       "date": "260520",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 30794,
+     "ebitda": 6832
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260520|Mankind Pharma|recoverytakingshape",
+       "broker": "Kotak",
+       "date": "260520",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260520|Mankind Pharma|recoverytakingshape",
+       "broker": "Kotak",
+       "date": "260520",
+       "role": "prevQ"
+      }
+     },
+     "rev": 35672,
+     "ebitda": 9194
     }
    },
    "sym": "MANKIND",
@@ -36424,7 +38879,7 @@
     }
    },
    "sym": "MEDPLUS",
-   "mcap": 7160,
+   "mcap": 7191,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "neutral",
@@ -37173,20 +39628,78 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Kotak|260813|Gujarat Pipavav Port|realizationdrivesbigbeatvolumerecoverymaytaketime",
+       "key": "Kotak|260601|Gujarat Pipavav Port|strongendtotheyearupgradetobuy",
        "broker": "Kotak",
-       "date": "260813",
-       "role": "prevQ"
+       "date": "260601",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Kotak|260813|Gujarat Pipavav Port|realizationdrivesbigbeatvolumerecoverymaytaketime",
+       "key": "Kotak|260601|Gujarat Pipavav Port|strongendtotheyearupgradetobuy",
        "broker": "Kotak",
-       "date": "260813",
-       "role": "prevQ"
+       "date": "260601",
+       "role": "own"
       }
      },
      "rev": 2677,
-     "ebitda": 1736
+     "ebitda": 1736,
+     "revYoY": 0.0631,
+     "ebitdaYoY": 0.1078,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue rose 6.3% YoY to Rs2,677 mn, 3.6% above Kotak's estimate, even though volumes fell 3% YoY. Blended realisation rose about 10% YoY, helped by the January 2026 price hikes of about 3%, and the bulk segment was weak. (Kotak)",
+     "ebitdaNote": "EBITDA rose 10.8% YoY to Rs1,736 mn, 10.3% above Kotak's estimate, with the margin up 260bps YoY to 64.9%. The margin gain came from better realisations and lower opex: cost de-escalations, the timing of staff costs, lower repair and maintenance, and lower bulk volumes. EBITDA is adjusted for SEIS income. Jefferies, adjusting for Rs496 mn of prior-period income, also calls it 13% above its estimate. (Kotak, Jeff)",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260601",
+      "key": "Kotak|260601|Gujarat Pipavav Port|strongendtotheyearupgradetobuy",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260531|Gujarat Pipavav Port|quarterabeatoutlookuncertain",
+       "Kotak|260601|Gujarat Pipavav Port|strongendtotheyearupgradetobuy"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260601|Gujarat Pipavav Port|strongendtotheyearupgradetobuy",
+       "broker": "Kotak",
+       "date": "260601",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260601|Gujarat Pipavav Port|strongendtotheyearupgradetobuy",
+       "broker": "Kotak",
+       "date": "260601",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 2518,
+     "ebitda": 1567
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260601|Gujarat Pipavav Port|strongendtotheyearupgradetobuy",
+       "broker": "Kotak",
+       "date": "260601",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260601|Gujarat Pipavav Port|strongendtotheyearupgradetobuy",
+       "broker": "Kotak",
+       "date": "260601",
+       "role": "prevQ"
+      }
+     },
+     "rev": 2919,
+     "ebitda": 1601
     }
    },
    "added": "pdf",
@@ -37197,7 +39710,7 @@
     "date": "260813",
     "quarter": "1Q27"
    },
-   "mcap": 7888,
+   "mcap": 7921,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -38016,20 +40529,76 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Jefferies|260807|Hitachi Energy India|allroundbeatretainbuy",
-       "broker": "Jefferies",
-       "date": "260807",
-       "role": "prevQ"
+       "key": "JPMorgan|260526|Hitachi Energy India|firsttakerevenuebeatbutflattishsequentialmargins2xcapexguide",
+       "broker": "JPMorgan",
+       "date": "260526",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Jefferies|260807|Hitachi Energy India|allroundbeatretainbuy",
-       "broker": "Jefferies",
-       "date": "260807",
-       "role": "prevQ"
+       "key": "JPMorgan|260526|Hitachi Energy India|firsttakerevenuebeatbutflattishsequentialmargins2xcapexguide",
+       "broker": "JPMorgan",
+       "date": "260526",
+       "role": "own"
       }
      },
      "rev": 27541,
-     "ebitda": 4163
+     "ebitda": 4163,
+     "revYoY": 0.4621,
+     "ebitdaYoY": 0.7492,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue from operations of Rs27.5bn (+46% YoY, +32% QoQ) came in 13% above both JPM and consensus, helped by exports at 37% of order inflow and strong HVDC/project execution (JP).",
+     "ebitdaNote": "Reported EBITDA of Rs4,163mn (after Rs315mn derivative/FX loss) was 5% above consensus. Adjusted operating EBITDA of Rs4,478mn was 13% above consensus, but its 16.3% margin was flat QoQ because gross margin fell 261bps and other expenses rose 27% QoQ (JP).",
+     "src": {
+      "kind": "pdf",
+      "broker": "JPMorgan",
+      "date": "260526",
+      "key": "JPMorgan|260526|Hitachi Energy India|firsttakerevenuebeatbutflattishsequentialmargins2xcapexguide",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "JPMorgan|260526|Hitachi Energy India|firsttakerevenuebeatbutflattishsequentialmargins2xcapexguide"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260526|Hitachi Energy India|firsttakerevenuebeatbutflattishsequentialmargins2xcapexguide",
+       "broker": "JPMorgan",
+       "date": "260526",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260526|Hitachi Energy India|firsttakerevenuebeatbutflattishsequentialmargins2xcapexguide",
+       "broker": "JPMorgan",
+       "date": "260526",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 18837,
+     "ebitda": 2380
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260526|Hitachi Energy India|firsttakerevenuebeatbutflattishsequentialmargins2xcapexguide",
+       "broker": "JPMorgan",
+       "date": "260526",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260526|Hitachi Energy India|firsttakerevenuebeatbutflattishsequentialmargins2xcapexguide",
+       "broker": "JPMorgan",
+       "date": "260526",
+       "role": "prevQ"
+      }
+     },
+     "rev": 20822,
+     "ebitda": 3453
     }
    },
    "added": "pdf",
@@ -40518,7 +43087,7 @@
    },
    "q": {},
    "sym": "SUNTECK",
-   "mcap": 3919,
+   "mcap": 3940,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -40613,7 +43182,7 @@
     }
    },
    "sym": "WEWORK",
-   "mcap": 8994,
+   "mcap": 9179,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -40853,20 +43422,76 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Jefferies|260807|Finolex Industries|missvolumedeclineoffsetsstrongmargins",
+       "key": "Jefferies|260528|Finolex Industries|marginbeatfavourableriskreward",
        "broker": "Jefferies",
-       "date": "260807",
-       "role": "prevQ"
+       "date": "260528",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Jefferies|260807|Finolex Industries|missvolumedeclineoffsetsstrongmargins",
+       "key": "Jefferies|260528|Finolex Industries|marginbeatfavourableriskreward",
        "broker": "Jefferies",
-       "date": "260807",
-       "role": "prevQ"
+       "date": "260528",
+       "role": "own"
       }
      },
      "rev": 13139,
-     "ebitda": 3320
+     "ebitda": 3320,
+     "revYoY": 0.1213,
+     "ebitdaYoY": 0.9381,
+     "revVs": null,
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Net sales rose 12% YoY (+46% QoQ) to Rs13.1bn on better realisations, as pipe volumes were flat YoY (~102k MT) and PVC prices rose sharply in March. The note gives no revenue consensus comparison. (Jeff)",
+     "ebitdaNote": "EBITDA was up 94% YoY to Rs3.3bn, beating both Jefferies' estimate and consensus. The margin expanded to 25.3% (+1,070bps YoY) on ~Rs500mn of inventory gains from the sharp March PVC price rise, plus backward integration and captive PVC resin. (Jeff)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Jefferies",
+      "date": "260528",
+      "key": "Jefferies|260528|Finolex Industries|marginbeatfavourableriskreward",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260528|Finolex Industries|marginbeatfavourableriskreward"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260528|Finolex Industries|marginbeatfavourableriskreward",
+       "broker": "Jefferies",
+       "date": "260528",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Jefferies|260528|Finolex Industries|marginbeatfavourableriskreward",
+       "broker": "Jefferies",
+       "date": "260528",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 11718,
+     "ebitda": 1713
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260528|Finolex Industries|marginbeatfavourableriskreward",
+       "broker": "Jefferies",
+       "date": "260528",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Jefferies|260528|Finolex Industries|marginbeatfavourableriskreward",
+       "broker": "Jefferies",
+       "date": "260528",
+       "role": "prevQ"
+      }
+     },
+     "rev": 8977,
+     "ebitda": 1231
     }
    },
    "added": "pdf",
@@ -41156,20 +43781,77 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Kotak|260731|ICRA|decentquarterattractivevaluationsdriveupgradetobuy",
+       "key": "Kotak|260522|ICRA|acquisitionledrevenuegrowth",
        "broker": "Kotak",
-       "date": "260731",
-       "role": "prevQ"
+       "date": "260522",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Kotak|260731|ICRA|decentquarterattractivevaluationsdriveupgradetobuy",
+       "key": "Kotak|260522|ICRA|acquisitionledrevenuegrowth",
        "broker": "Kotak",
-       "date": "260731",
-       "role": "prevQ"
+       "date": "260522",
+       "role": "own"
       }
      },
      "rev": 1749,
-     "ebitda": 696
+     "ebitda": 696,
+     "revYoY": 0.2841,
+     "ebitdaYoY": 0.1757,
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue rose 28% YoY and 7% QoQ to Rs1,749 mn, about 2% below Kotak's estimate. Non-ratings revenue grew 56% YoY, driven by the Fintellix acquisition, while ratings revenue grew 11% YoY (Kotak, 2026/05/22).",
+     "ebitdaNote": "EBITDA of Rs696 mn was 8% above Kotak's estimate (up 18% YoY, 38% QoQ). Operating costs came in 7% lower than expected, though they still rose 37% YoY on acquisition effects, so EBITDA grew slower than revenue (Kotak, 2026/05/22).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260522",
+      "key": "Kotak|260522|ICRA|acquisitionledrevenuegrowth",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|260522|ICRA|acquisitionledrevenuegrowth"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260522|ICRA|acquisitionledrevenuegrowth",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260522|ICRA|acquisitionledrevenuegrowth",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 1362,
+     "ebitda": 592
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260522|ICRA|acquisitionledrevenuegrowth",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260522|ICRA|acquisitionledrevenuegrowth",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "prevQ"
+      }
+     },
+     "rev": 1636,
+     "ebitda": 503
     }
    },
    "added": "pdf",
@@ -41180,7 +43862,7 @@
     "date": "260731",
     "quarter": "1Q27"
    },
-   "mcap": 4299,
+   "mcap": 4318,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -41264,20 +43946,78 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "CLSA|260813|Lenskart Solutions|beatclarityonlongtermvision",
-       "broker": "CLSA",
-       "date": "260813",
-       "role": "prevQ"
+       "key": "Kotak|260521|Lenskart Solutions|relatedresearch",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "own"
       },
       "ebitda": {
-       "key": "CLSA|260813|Lenskart Solutions|beatclarityonlongtermvision",
-       "broker": "CLSA",
-       "date": "260813",
-       "role": "prevQ"
+       "key": "Kotak|260521|Lenskart Solutions|relatedresearch",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "own"
       }
      },
      "rev": 25157,
-     "ebitda": 5384
+     "ebitda": 5384,
+     "revYoY": 0.4055,
+     "ebitdaYoY": 0.6158,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue of Rs25.2bn rose 40.5% yoy and came in 9.1% above Kotak's estimate. India grew 44% on a 23% rise in eyewear units, a 16% rise in ASP and 24% SSSG. International grew 35% on a 29% rise in units and better AOV. Kotak figures are pro forma, including Dealskart and Meller in the base quarter (Kotak).",
+     "ebitdaNote": "EBITDA of Rs5.4bn rose 61.6% yoy and was 21.9% above Kotak's estimate. Margin was 21.4%, up 278bp yoy, on operating leverage in marketing and other fixed costs. Gross margin was flat yoy at 69.6%, and pre-IndAS India EBITDA margin expanded 622bp (Kotak).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260521",
+      "key": "Kotak|260521|Lenskart Solutions|relatedresearch",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|260602|Lenskart Solutions|clearvisionexecutioninfocus",
+       "Kotak|260521|Lenskart Solutions|relatedresearch"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260521|Lenskart Solutions|relatedresearch",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260521|Lenskart Solutions|relatedresearch",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 17899,
+     "ebitda": 3332
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260521|Lenskart Solutions|relatedresearch",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260521|Lenskart Solutions|relatedresearch",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "prevQ"
+      }
+     },
+     "rev": 23077,
+     "ebitda": 4641
     }
    },
    "added": "pdf",
@@ -41365,20 +44105,43 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Kotak|260805|Metro Brands|onestepback",
+       "key": "Kotak|260521|Metro Brands|steppingup",
        "broker": "Kotak",
-       "date": "260805",
-       "role": "prevQ"
+       "date": "260521",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Kotak|260805|Metro Brands|onestepback",
+       "key": "Kotak|260521|Metro Brands|steppingup",
        "broker": "Kotak",
-       "date": "260805",
-       "role": "prevQ"
+       "date": "260521",
+       "role": "own"
       }
      },
      "rev": 7730,
-     "ebitda": 2379
+     "ebitda": 2379,
+     "revYoY": 0.2026,
+     "ebitdaYoY": 0.2064,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue grew 20.3% yoy to Rs7.7 bn, ~4.4% above Kotak's estimate, driven by festive and wedding season demand and the GST rate cut on footwear below Rs2,500. Sales per sq. ft stayed flat yoy at Rs4,750 (Kotak).",
+     "ebitdaNote": "EBITDA rose 20.6% yoy to Rs2.4 bn, ~4.7% above Kotak's estimate, with margin up 10 bps yoy to 30.8% on a 30 bps gross margin expansion to 57.8% (Kotak).",
+     "vsBasis": "broker estimate (Kotak)",
+     "revCons": 7401,
+     "ebitdaCons": 2271,
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260521",
+      "key": "Kotak|260521|Metro Brands|steppingup",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|260521|Metro Brands|steppingup"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
     },
     "2Q27": {
      "abs": {
@@ -41437,6 +44200,42 @@
      },
      "rev": 6511,
      "ebitda": 1707
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260521|Metro Brands|steppingup",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260521|Metro Brands|steppingup",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 6428,
+     "ebitda": 1972
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260521|Metro Brands|steppingup",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260521|Metro Brands|steppingup",
+       "broker": "Kotak",
+       "date": "260521",
+       "role": "prevQ"
+      }
+     },
+     "rev": 8112,
+     "ebitda": 2683
     }
    },
    "added": "pdf",
@@ -41447,7 +44246,7 @@
     "date": "261017",
     "quarter": "2Q27"
    },
-   "mcap": 23578,
+   "mcap": 23691,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -42029,7 +44828,7 @@
     "date": "260730",
     "quarter": "1Q27"
    },
-   "mcap": 1671,
+   "mcap": 1684,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -42534,7 +45333,9 @@
     "broker": "Kotak",
     "date": "260601",
     "quarter": "4Q26"
-   }
+   },
+   "mcap": 8320,
+   "mcapAsOf": "2026-10-21"
   },
   {
    "name": "Colgate-Palmolive (India)",
@@ -43049,20 +45850,77 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "GoldmanSachs|260804|Emami|1qfy27acceleratinggrowthasportfoliotransitionbeginsbuy",
-       "broker": "GoldmanSachs",
-       "date": "260804",
-       "role": "prevQ"
+       "key": "Jefferies|260521|Emami|anotherquarteranothermiss",
+       "broker": "Jefferies",
+       "date": "260521",
+       "role": "own"
       },
       "ebitda": {
-       "key": "GoldmanSachs|260804|Emami|1qfy27acceleratinggrowthasportfoliotransitionbeginsbuy",
-       "broker": "GoldmanSachs",
-       "date": "260804",
-       "role": "prevQ"
+       "key": "Jefferies|260521|Emami|anotherquarteranothermiss",
+       "broker": "Jefferies",
+       "date": "260521",
+       "role": "own"
       }
      },
      "rev": 9251,
-     "ebitda": 1867
+     "ebitda": 1867,
+     "revYoY": -0.0395,
+     "ebitdaYoY": -0.149,
+     "revVs": null,
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Consolidated revenue fell 4% YoY (domestic -3%, international -5%) as unfavourable weather hit the summer portfolio and the West Asia conflict disrupted international shipping; volumes declined 7% (+7% ex. summer portfolio). (Jeff)",
+     "ebitdaNote": "EBITDA fell 15% YoY to Rs 1.9bn, 5% below JEFe. Margin contracted c260bps YoY to 20.2% on negative operating leverage and A&P spend up 12%, despite gross margin expanding c250bps to 68.4% on price hikes and cost efficiencies. (Jeff)",
+     "vsBasis": "broker estimate (Jefferies)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Jefferies",
+      "date": "260521",
+      "key": "Jefferies|260521|Emami|anotherquarteranothermiss",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260521|Emami|anotherquarteranothermiss"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260521|Emami|anotherquarteranothermiss",
+       "broker": "Jefferies",
+       "date": "260521",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Jefferies|260521|Emami|anotherquarteranothermiss",
+       "broker": "Jefferies",
+       "date": "260521",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 9631,
+     "ebitda": 2194
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260521|Emami|anotherquarteranothermiss",
+       "broker": "Jefferies",
+       "date": "260521",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Jefferies|260521|Emami|anotherquarteranothermiss",
+       "broker": "Jefferies",
+       "date": "260521",
+       "role": "prevQ"
+      }
+     },
+     "rev": 11518,
+     "ebitda": 3842
     }
    },
    "added": "pdf",
@@ -43149,20 +46007,78 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Kotak|260813|Eureka Forbes|goodexecutioninproductsbusiness",
+       "key": "Kotak|260520|Eureka Forbes|backtodoubledigitgrowth",
        "broker": "Kotak",
-       "date": "260813",
-       "role": "prevQ"
+       "date": "260520",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Kotak|260813|Eureka Forbes|goodexecutioninproductsbusiness",
+       "key": "Kotak|260520|Eureka Forbes|backtodoubledigitgrowth",
        "broker": "Kotak",
-       "date": "260813",
-       "role": "prevQ"
+       "date": "260520",
+       "role": "own"
       }
      },
      "rev": 6837,
-     "ebitda": 856
+     "ebitda": 856,
+     "revYoY": 0.1159,
+     "ebitdaYoY": 0.1102,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Consolidated revenue grew 11.6% yoy to Rs6.8bn, about 2.4% above Kotak's estimate, led by early-teens growth in products. Double-digit growth in water purifiers and strong emerging categories (robotics, air purifiers up 4x), plus double-digit service bookings growth, drove it (Kotak).",
+     "ebitdaNote": "Reported EBITDA of Rs856mn (+11.0% yoy) was 14.1% above Kotak's estimate. Adjusted (ex-ESOP) EBITDA of Rs905mn grew 14.4% yoy and was ~13.4% above estimate. Tight cost control, with service charges down 105bps yoy to 12.4% of sales, offset a 75bps yoy gross margin decline to 58.9% (Kotak; Nomura also calls the EBITDA ahead of its estimates).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260520",
+      "key": "Kotak|260520|Eureka Forbes|backtodoubledigitgrowth",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|260520|Eureka Forbes|backtodoubledigitgrowth",
+       "Nomura|260520|Eureka Forbes|newcategoriestosupportgrowthmomentum"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260520|Eureka Forbes|backtodoubledigitgrowth",
+       "broker": "Kotak",
+       "date": "260520",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260520|Eureka Forbes|backtodoubledigitgrowth",
+       "broker": "Kotak",
+       "date": "260520",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 6127,
+     "ebitda": 771
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260520|Eureka Forbes|backtodoubledigitgrowth",
+       "broker": "Kotak",
+       "date": "260520",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260520|Eureka Forbes|backtodoubledigitgrowth",
+       "broker": "Kotak",
+       "date": "260520",
+       "role": "prevQ"
+      }
+     },
+     "rev": 6454,
+     "ebitda": 686
     }
    },
    "added": "pdf",
@@ -43173,7 +46089,7 @@
     "date": "260813",
     "quarter": "1Q27"
    },
-   "mcap": 6330,
+   "mcap": 6316,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -43475,20 +46391,78 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "CLSA|260814|Honasa Consumer|strongbeatguidancemaintained",
-       "broker": "CLSA",
-       "date": "260814",
-       "role": "prevQ"
+       "key": "Kotak|260522|Honasa Consumer|astrongquarterwithimprovingmomentum",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "own"
       },
       "ebitda": {
-       "key": "CLSA|260814|Honasa Consumer|strongbeatguidancemaintained",
-       "broker": "CLSA",
-       "date": "260814",
-       "role": "prevQ"
+       "key": "Kotak|260522|Honasa Consumer|astrongquarterwithimprovingmomentum",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "own"
       }
      },
      "rev": 6571,
-     "ebitda": 772
+     "ebitda": 772,
+     "revYoY": 0.2314,
+     "ebitdaYoY": 1.8593,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue grew 23% YoY (28% ex the change in accounting for Flipkart), about 6% ahead of consensus. Growth was volume-led (+30%), with focus categories up 35%, young brands up 28% and Mamaearth up in the mid-teens (CLSA, Kotak, JP).",
+     "ebitdaNote": "EBITDA of Rs772 mn was about 24% above consensus. The margin rose to 11.8% from 10.0% consensus, helped by A&P optimisation and operating leverage, even though gross margin fell 40bps YoY to 70.3% (CLSA, Kotak).",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260522",
+      "key": "Kotak|260522|Honasa Consumer|astrongquarterwithimprovingmomentum",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|260522|Honasa Consumer|strongbeatacrosstheboard",
+       "JPMorgan|260522|Honasa Consumer|marginaheadofexpectationsq4review",
+       "Kotak|260522|Honasa Consumer|astrongquarterwithimprovingmomentum"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260522|Honasa Consumer|astrongquarterwithimprovingmomentum",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260522|Honasa Consumer|astrongquarterwithimprovingmomentum",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 5336,
+     "ebitda": 270
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260522|Honasa Consumer|astrongquarterwithimprovingmomentum",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260522|Honasa Consumer|astrongquarterwithimprovingmomentum",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "prevQ"
+      }
+     },
+     "rev": 6015,
+     "ebitda": 655
     }
    },
    "added": "pdf",
@@ -43535,23 +46509,47 @@
      }
     },
     "4Q26": {
-     "rev": 216947,
+     "rev": 214634,
      "ebitda": 64260,
      "abs": {
       "wb_rev": 158192,
       "rev": {
-       "key": "GoldmanSachs|260802|ITC|1qfy27missonaccountoflargerthanexpecteddeclineincigaretteebit",
-       "broker": "GoldmanSachs",
-       "date": "260802",
-       "role": "prevQ"
+       "key": "Kotak|260522|ITC|underlyingtrendsmaskedbynoiseinthenumbers",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "own"
       },
       "wb_ebitda": 61946,
       "ebitda": {
-       "key": "GoldmanSachs|260802|ITC|1qfy27missonaccountoflargerthanexpecteddeclineincigaretteebit",
-       "broker": "GoldmanSachs",
-       "date": "260802",
-       "role": "prevQ"
+       "key": "Kotak|260522|ITC|underlyingtrendsmaskedbynoiseinthenumbers",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "own"
       }
+     },
+     "revYoY": 0.175,
+     "ebitdaYoY": 0.0734,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Total gross revenues (incl. excise) rose 17.5% YoY to Rs214.6bn, 10.3% above Kotak's Rs194.6bn estimate, with cigarette gross revenue +31.7% on the Feb-26 tax-structure change and channel stocking. Net operating income (net of excise) fell 6.9% YoY to Rs160.5bn, but the tax change makes it non-comparable. FMCG-others revenue grew 14.7% YoY, 4% ahead of Kotak (CLSA: 2% above its own estimate and 5% above consensus). Agri revenue fell 15.7% on Middle East disruptions. (Kotak, CLSA)",
+     "ebitdaNote": "EBITDA grew 7.3% YoY to Rs64.3bn, 3.2% above Kotak's estimate, and JPM calls it 3% ahead of its estimate. Cigarette EBIT rose 7.2% (CLSA: 15% ahead of consensus), FMCG EBIT margin expanded to 8.3%, and paperboard EBIT rose 21%. Agri EBIT fell 29.8%. (Kotak, JP, CLSA)",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260522",
+      "key": "Kotak|260522|ITC|underlyingtrendsmaskedbynoiseinthenumbers",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|260522|ITC|transitionalquarter",
+       "JPMorgan|260522|ITC|q4ebitdabeatsalleyesonq1ascigarettetaximpactplaysout",
+       "Kotak|260522|ITC|underlyingtrendsmaskedbynoiseinthenumbers",
+       "Nomura|260522|ITC|4qnotcomparablefullimpactoftaxpricehiketobeseenin1q"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
      }
     },
     "1Q27": {
@@ -43599,6 +46597,42 @@
      "revNote": "Net sales rose 27.9% YoY to Rs269.4bn, but GS says revenue is not comparable post the tax change: GST cess was earlier netted off revenue, while the excise duty that replaced GST is now booked as a cost. Cigarette net sales fell 23-26% on the sharp tax increase, FMCG grew 12% and paper 9% (GS, JP).",
      "ebitdaNote": "EBITDA fell 28% YoY to Rs45.1bn, ~6% below GS estimates, with margin down ~1,300bps to 16.8%. Cigarette EBIT fell 35% as price hikes only partly passed on the tax increase. Paper EBIT rose 38% and FMCG EBIT 21%, which cushioned the decline (GS, JP).",
      "vsBasis": "broker estimate (GoldmanSachs)"
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260522|ITC|underlyingtrendsmaskedbynoiseinthenumbers",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260522|ITC|underlyingtrendsmaskedbynoiseinthenumbers",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 182662,
+     "ebitda": 59864
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260522|ITC|underlyingtrendsmaskedbynoiseinthenumbers",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260522|ITC|underlyingtrendsmaskedbynoiseinthenumbers",
+       "broker": "Kotak",
+       "date": "260522",
+       "role": "prevQ"
+      }
+     },
+     "rev": 191989,
+     "ebitda": 62712
     }
    },
    "sym": "ITC",
@@ -44089,7 +47123,7 @@
     }
    },
    "sym": "ORKLAINDIA",
-   "mcap": 7519,
+   "mcap": 7445,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "neutral",
@@ -46052,7 +49086,7 @@
     }
    },
    "sym": "CHALET",
-   "mcap": 18217,
+   "mcap": 18159,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "neutral",
@@ -46243,20 +49277,77 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Jefferies|260716|ITC Hotels|inlineoperatingperformance",
+       "key": "Jefferies|260517|ITC Hotels|ftaimpactdrivesweakqtr",
        "broker": "Jefferies",
-       "date": "260716",
-       "role": "prevQ"
+       "date": "260517",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Jefferies|260716|ITC Hotels|inlineoperatingperformance",
+       "key": "Jefferies|260517|ITC Hotels|ftaimpactdrivesweakqtr",
        "broker": "Jefferies",
-       "date": "260716",
-       "role": "prevQ"
+       "date": "260517",
+       "role": "own"
       }
      },
      "rev": 12537,
-     "ebitda": 4663
+     "ebitda": 4663,
+     "revYoY": 0.1821,
+     "ebitdaYoY": 0.131,
+     "revVs": null,
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Consolidated revenue rose 18% YoY to Rs12.5bn, but the growth is flattered by Sri Lanka real-estate income. Ex-RE revenue grew only 6% YoY, on 3% RevPAR growth for owned rooms, as March was hit by weaker South India assets and the FTA impact (Jeff).",
+     "ebitdaNote": "EBITDA of Rs4.67bn was up 13% YoY but about 5% below Jefferies' estimate, mainly on weaker standalone EBITDA. Ex-RE EBITDA grew just 2% YoY, and consolidated margin fell 168bps YoY to 37.2% on negative operating leverage (Jeff).",
+     "vsBasis": "broker estimate (Jefferies)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Jefferies",
+      "date": "260517",
+      "key": "Jefferies|260517|ITC Hotels|ftaimpactdrivesweakqtr",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|260517|ITC Hotels|ftaimpactdrivesweakqtr"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260517|ITC Hotels|ftaimpactdrivesweakqtr",
+       "broker": "Jefferies",
+       "date": "260517",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Jefferies|260517|ITC Hotels|ftaimpactdrivesweakqtr",
+       "broker": "Jefferies",
+       "date": "260517",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 10606,
+     "ebitda": 4123
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|260517|ITC Hotels|ftaimpactdrivesweakqtr",
+       "broker": "Jefferies",
+       "date": "260517",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Jefferies|260517|ITC Hotels|ftaimpactdrivesweakqtr",
+       "broker": "Jefferies",
+       "date": "260517",
+       "role": "prevQ"
+      }
+     },
+     "rev": 12307,
+     "ebitda": 4671
     }
    },
    "sym": "ITCHOTELS",
@@ -46427,7 +49518,7 @@
     }
    },
    "sym": "THELEELA",
-   "mcap": 19765,
+   "mcap": 19553,
    "mcapAsOf": "2026-10-21",
    "outlook": {
     "call": "positive",
@@ -46436,6 +49527,100 @@
     "date": "261015",
     "quarter": "2Q27"
    }
+  },
+  {
+   "name": "Lemon Tree Hotels",
+   "sector": "Travel",
+   "ticker": "",
+   "sym": "LEMONTREE",
+   "basis": "",
+   "note": "",
+   "unit": "INR mn",
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {
+    "4Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260601|Lemon Tree Hotels|profitabilityimpactedintheabsenceofinputtaxcredit",
+       "broker": "Kotak",
+       "date": "260601",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Kotak|260601|Lemon Tree Hotels|profitabilityimpactedintheabsenceofinputtaxcredit",
+       "broker": "Kotak",
+       "date": "260601",
+       "role": "own"
+      }
+     },
+     "rev": 4164,
+     "ebitda": 2153,
+     "revYoY": 0.1001,
+     "ebitdaYoY": 0.0549,
+     "revVs": "miss",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Revenue grew 10% yoy to Rs4,164 mn, led by a 6% yoy ARR rise to Rs7,457/day and occupancy up 78 bps to 78.5%, but came in 3% below Kotak's Rs4,284 mn estimate. Management fees grew 29% yoy on a 34% larger managed base of 6,013 keys (Kotak).",
+     "ebitdaNote": "EBITDA rose only 5% yoy to Rs2,153 mn, 4% below Kotak's estimate. Margin fell 223 bps yoy to 51.7%, as renovation, technology and the loss of GST input tax credit (about 1% of revenue) pushed operating expenses up 29% yoy (Kotak).",
+     "vsBasis": "broker estimate (Kotak)",
+     "revCons": 4284,
+     "ebitdaCons": 2233,
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260601",
+      "key": "Kotak|260601|Lemon Tree Hotels|profitabilityimpactedintheabsenceofinputtaxcredit",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|260601|Lemon Tree Hotels|profitabilityimpactedintheabsenceofinputtaxcredit"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260601|Lemon Tree Hotels|profitabilityimpactedintheabsenceofinputtaxcredit",
+       "broker": "Kotak",
+       "date": "260601",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260601|Lemon Tree Hotels|profitabilityimpactedintheabsenceofinputtaxcredit",
+       "broker": "Kotak",
+       "date": "260601",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 3785,
+     "ebitda": 2041
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260601|Lemon Tree Hotels|profitabilityimpactedintheabsenceofinputtaxcredit",
+       "broker": "Kotak",
+       "date": "260601",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260601|Lemon Tree Hotels|profitabilityimpactedintheabsenceofinputtaxcredit",
+       "broker": "Kotak",
+       "date": "260601",
+       "role": "prevQ"
+      }
+     },
+     "rev": 4061,
+     "ebitda": 2047
+    }
+   },
+   "added": "pdf"
   },
   {
    "name": "SAMHI Hotels",
@@ -46535,7 +49720,7 @@
     "date": "260804",
     "quarter": "1Q27"
    },
-   "mcap": 3248,
+   "mcap": 3271,
    "mcapAsOf": "2026-10-21"
   },
   {
@@ -47533,20 +50718,81 @@
     "4Q26": {
      "abs": {
       "rev": {
-       "key": "Nomura|260813|Indraprastha Gas|1qmissonmarginsvolumeinline",
-       "broker": "Nomura",
-       "date": "260813",
-       "role": "prevQ"
+       "key": "JPMorgan|260520|Indraprastha Gas|costpressurescancontinuenearterm",
+       "broker": "JPMorgan",
+       "date": "260520",
+       "role": "own"
       },
       "ebitda": {
-       "key": "Nomura|260813|Indraprastha Gas|1qmissonmarginsvolumeinline",
-       "broker": "Nomura",
-       "date": "260813",
-       "role": "prevQ"
+       "key": "JPMorgan|260520|Indraprastha Gas|costpressurescancontinuenearterm",
+       "broker": "JPMorgan",
+       "date": "260520",
+       "role": "own"
       }
      },
      "rev": 41626,
-     "ebitda": 4229
+     "ebitda": 4229,
+     "revYoY": 0.0859,
+     "ebitdaYoY": 0.1132,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Net sales rose 9% YoY and 2% QoQ, 8% above JPMe, on total volumes of 9.7mmscmd (+6% YoY), about 2% above Jefferies' estimate. CNG volume was 7.07mmscmd (+5% YoY), and net realisation was Rs47.7/scm (+3% YoY). (JP, Jeff)",
+     "ebitdaNote": "EBITDA of Rs4.2bn (+11% YoY, -10% QoQ) was 33% above Jefferies' estimate and 33% above CLSA's on a per-unit basis (Rs4.86/scm), helped by lower Gujarat VAT and lower transmission tariffs. JPMorgan was the outlier: it put EBITDA 18% below its estimate (Rs4.8/scm vs Rs6.3 modelled), citing higher gas costs and other costs per unit. Overall PAT of Rs2.77bn (-21% YoY) was 12% above Jefferies' estimate and 34% above CLSA's, but 24% below JPMe. (Jeff, CLSA, JP)",
+     "vsBasis": "broker estimate (Jefferies, CLSA, JPMorgan)",
+     "src": {
+      "kind": "pdf",
+      "broker": "JPMorgan",
+      "date": "260520",
+      "key": "JPMorgan|260520|Indraprastha Gas|costpressurescancontinuenearterm",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|260520|Indraprastha Gas|weatheringthestorm",
+       "JPMorgan|260520|Indraprastha Gas|costpressurescancontinuenearterm",
+       "Jefferies|260519|Indraprastha Gas|mar26reviewbeatneartermheadwinds",
+       "Kotak|260519|Indraprastha Gas|cngpriceincreasesgettingeasier",
+       "Nomura|260520|Indraprastha Gas|neartermmarginrisksvolumemaysurprise"
+      ],
+      "runs": 1,
+      "mined": "2026-10-21"
+     }
+    },
+    "4Q25": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260520|Indraprastha Gas|costpressurescancontinuenearterm",
+       "broker": "JPMorgan",
+       "date": "260520",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260520|Indraprastha Gas|costpressurescancontinuenearterm",
+       "broker": "JPMorgan",
+       "date": "260520",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 38333,
+     "ebitda": 3799
+    },
+    "3Q26": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|260520|Indraprastha Gas|costpressurescancontinuenearterm",
+       "broker": "JPMorgan",
+       "date": "260520",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "JPMorgan|260520|Indraprastha Gas|costpressurescancontinuenearterm",
+       "broker": "JPMorgan",
+       "date": "260520",
+       "role": "prevQ"
+      }
+     },
+     "rev": 40672,
+     "ebitda": 4725
     }
    },
    "added": "pdf",
@@ -48314,6 +51560,37 @@
     "CLSA|260604|Coforge|ndrtakeawaysaicyclewinner"
    ],
    "reason": "CLSA 260604 is a non-deal roadshow (NDR) takeaways note, not a 4Q26 results note. It prints only annual FY24A–FY28CL financials (e.g. FY26CL revenue Rs162,385mn, Op EBITDA Rs29,450mn). It has no quart"
+  },
+  "Dabur India|4Q26": {
+   "considered": [
+    "JPMorgan|260527|Dabur India|takeawaysfromjpmindiaconsumerceofiresidechatseries"
+   ],
+   "reason": "The only report is a JPMorgan CEO fireside-chat note (27 May 2026), not a results note. It prints no 4Q26 or 4Q25 P&L table and no consensus comparison. It gives only FY26A to FY29E annual estimates a"
+  },
+  "Dr Reddy's Laboratories|4Q26": {
+   "considered": [
+    "Nomura|260607|Dr Reddy's Laboratories|ndrnotes"
+   ],
+   "reason": "Nomura 7 Jun 2026 'NDR notes' is a management-roadshow quick note (Semaglutide, Abatacept, guidance). It has no 4Q26 results table, so it has no revenue or EBITDA actuals, year-ago figures or consensu"
+  },
+  "Havells India|4Q26": {
+   "considered": [
+    "Jefferies|260605|Havells India|momentumtomoderationfy26aranalysis"
+   ],
+   "reason": "Jefferies 260605 is a FY26 annual-report analysis ('Momentum to Moderation; FY26 AR Analysis'), not a 4Q26 results note. Its tables show only annual FY26A–FY29E figures and the analysis text, with no "
+  },
+  "Mahindra & Mahindra|4Q26": {
+   "considered": [
+    "Nomura|260604|Mahindra & Mahindra|stronggrowthoutlookintact"
+   ],
+   "reason": "Nomura 4 Jun 2026 'Strong growth outlook intact' is an investor-forum takeaways note (NIFA 2026), not a 4Q26 results note. It has only annual FY24-FY28F estimates and no quarterly P&L, so it has no 4Q"
+  },
+  "Maruti Suzuki|4Q26": {
+   "considered": [
+    "JPMorgan|260605|Maruti Suzuki|thegrowththesisisplayingoutweexpectmarginstobottomin1hfy27",
+    "Nomura|260615|Maruti Suzuki|priceshikedby04butmuchmoreneeded"
+   ],
+   "reason": "Neither report is a 4Q26 results note. Nomura (15 Jun 2026) covers a price hike and 1QFY27 margin pressure. JPMorgan (5 Jun 2026) is a Catalyst Watch note on market share and margins. Both show only a"
   }
  }
 }
