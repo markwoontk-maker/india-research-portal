@@ -90,10 +90,10 @@ const norm = s => String(s || '').toLowerCase().replace(/\[.*?\]|\(.*?\)/g, ' ')
 // Library folders that hold the same company under another name.
 const FOLDER_ALIAS = {
   'HDFC Asset Management': 'HDFC AMC', 'ICICI Prudential Asset Management': 'ICICI Prudential AMC',
-  'ICICI Prudential Asset Management Company Limited': 'ICICI Prudential AMC', 'ICICI Prudential Life Insurance': 'ICICI Prudential Life',
-  'ICICI Life Insurance': 'ICICI Prudential Life', 'Groww': "Billionbrains Garage Ventures ('Groww')", 'Canfin': 'Can Fin Homes',
+  'ICICI Prudential Asset Management Company Limited': 'ICICI Prudential AMC', 'ICICI Prudential Life': 'ICICI Prudential Life Insurance',
+  'ICICI Life Insurance': 'ICICI Prudential Life Insurance', "Billionbrains Garage Ventures ('Groww')": 'Groww', 'Canfin': 'Can Fin Homes',
   'Sterlite Tech [SOTL IN]': 'Sterlite Tech', 'Tata Comm': 'Tata Communications', 'GRAVITA': 'Gravita India', 'TCS': 'Tata Consultancy Services',
-  'Tata Consultancy': 'Tata Consultancy Services', 'PNB': 'Punjab National Bank', 'Sun Pharmaceutical Industries': 'Sun Pharmaceuticals',
+  'Tata Consultancy': 'Tata Consultancy Services', 'PNB': 'Punjab National Bank', 'Sun Pharmaceuticals': 'Sun Pharmaceutical Industries',
   'Crompton Greaves Consumer Electrical': 'Crompton Greaves Consumer Electricals', 'Urban Co': 'Urban Company',
 };
 

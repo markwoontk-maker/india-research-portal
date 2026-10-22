@@ -2423,6 +2423,24 @@
    }
   },
   {
+   "name": "Sula Vineyards",
+   "sector": "Alcohol",
+   "ticker": "",
+   "sym": "SULA",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder",
+   "mcap": 1123,
+   "mcapAsOf": "2026-10-22"
+  },
+  {
    "name": "United Breweries",
    "sector": "Alcohol",
    "ticker": "",
@@ -2958,6 +2976,22 @@
    }
   },
   {
+   "name": "Anand Rathi Wealth",
+   "sector": "AMC",
+   "ticker": "",
+   "sym": "ANANDRATHI",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
+  },
+  {
    "name": "Angel One",
    "sheetName": "Angel One",
    "sector": "AMC",
@@ -3119,7 +3153,117 @@
    }
   },
   {
-   "name": "Billionbrains Garage Ventures ('Groww')",
+   "name": "CAMS",
+   "sheetName": "CAMS",
+   "sector": "AMC",
+   "ticker": "",
+   "basis": "",
+   "note": "",
+   "unit": "INR mn",
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {
+    "1Q26": {
+     "rev": 3542,
+     "ebitda": 1543,
+     "abs": {
+      "wb_rev": 3542,
+      "rev": {
+       "key": "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
+       "broker": "Jefferies",
+       "date": "260803",
+       "role": "yearAgo"
+      },
+      "wb_ebitda": 1543,
+      "ebitda": {
+       "key": "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
+       "broker": "Jefferies",
+       "date": "260803",
+       "role": "yearAgo"
+      }
+     }
+    },
+    "4Q26": {
+     "rev": 3952,
+     "ebitda": 1831,
+     "abs": {
+      "wb_rev": 3952,
+      "rev": {
+       "key": "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
+       "broker": "Jefferies",
+       "date": "260803",
+       "role": "prevQ"
+      },
+      "wb_ebitda": 1551,
+      "ebitda": {
+       "key": "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
+       "broker": "Jefferies",
+       "date": "260803",
+       "role": "prevQ"
+      }
+     }
+    },
+    "1Q27": {
+     "rev": 3950,
+     "ebitda": 1827,
+     "revYoY": 0.1152,
+     "ebitdaYoY": 0.1841,
+     "src": {
+      "kind": "pdf",
+      "broker": "Jefferies",
+      "date": "260803",
+      "key": "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "JPMorgan|260804|CAMS|1q27yieldcompressioneasesmarginsholdretainow",
+       "JPMorgan|260804|CAMS|modelupdate",
+       "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
+       "Jefferies|260804|CAMS|jun26qtrresultsdeliversonnonmfgrowthcostmgmt",
+       "Kotak|260804|CAMS|fy2027isofftoagoodstart"
+      ],
+      "runs": 1,
+      "mined": "2026-10-19"
+     },
+     "abs": {
+      "wb_rev": 3950,
+      "rev": {
+       "key": "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
+       "broker": "Jefferies",
+       "date": "260803",
+       "role": "own"
+      },
+      "wb_ebitda": 1582,
+      "ebitda": {
+       "key": "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
+       "broker": "Jefferies",
+       "date": "260803",
+       "role": "own"
+      }
+     },
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "inline",
+     "revNote": "Revenue of Rs3.95bn (+12% y-y, flat q-q) was about 1.9% below consensus of ~Rs4.0bn and 0.3% below JEFe, so in line. MF revenue grew 9% y-y, with MF RTA yield down 1% q-q to 2.41bps, while non-MF revenue grew 28% y-y to 14.9% of the mix. (Jeff, JP)",
+     "ebitdaNote": "EBITDA of Rs1.83bn (+18% y-y, margin 46.3%, up 270bps y-y) was 3% above JEFe, because total expenses grew only 6% y-y on deferred employee appraisals. JP puts EBIT at Rs1.58bn, 2.4% above consensus. (Jeff, JP)",
+     "vsBasis": "revenue: consensus (JP); EBITDA: broker estimate (Jefferies)",
+     "revCons": 4000
+    }
+   },
+   "sym": "CAMS",
+   "outlook": {
+    "call": "positive",
+    "note": "Management has guided for opex growth of under 10% y-y over the next 2-3 years, and for FY27 cost growth of under 9%. Net headcount fell about 225 q-q, with a further 4-5% reduction expected this year. Jefferies raised FY27-29e EBITDA by 3-5% (16% 3-yr CAGR) and its PT to Rs960 from Rs910. JP retained OW with a PT of Rs950, noting yield compression is easing. (Jeff, JP)",
+    "broker": "Jefferies",
+    "date": "260804",
+    "quarter": "1Q27"
+   }
+  },
+  {
+   "name": "Groww",
    "sheetName": "Billionbrains Garage Ventures",
    "sector": "AMC",
    "ticker": "",
@@ -3286,117 +3430,8 @@
     "broker": "JPMorgan",
     "date": "261015",
     "quarter": "2Q27"
-   }
-  },
-  {
-   "name": "CAMS",
-   "sheetName": "CAMS",
-   "sector": "AMC",
-   "ticker": "",
-   "basis": "",
-   "note": "",
-   "unit": "INR mn",
-   "revUnit": null,
-   "metrics": {
-    "rev": "Revenue",
-    "ebitda": "EBITDA"
    },
-   "q": {
-    "1Q26": {
-     "rev": 3542,
-     "ebitda": 1543,
-     "abs": {
-      "wb_rev": 3542,
-      "rev": {
-       "key": "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
-       "broker": "Jefferies",
-       "date": "260803",
-       "role": "yearAgo"
-      },
-      "wb_ebitda": 1543,
-      "ebitda": {
-       "key": "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
-       "broker": "Jefferies",
-       "date": "260803",
-       "role": "yearAgo"
-      }
-     }
-    },
-    "4Q26": {
-     "rev": 3952,
-     "ebitda": 1831,
-     "abs": {
-      "wb_rev": 3952,
-      "rev": {
-       "key": "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
-       "broker": "Jefferies",
-       "date": "260803",
-       "role": "prevQ"
-      },
-      "wb_ebitda": 1551,
-      "ebitda": {
-       "key": "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
-       "broker": "Jefferies",
-       "date": "260803",
-       "role": "prevQ"
-      }
-     }
-    },
-    "1Q27": {
-     "rev": 3950,
-     "ebitda": 1827,
-     "revYoY": 0.1152,
-     "ebitdaYoY": 0.1841,
-     "src": {
-      "kind": "pdf",
-      "broker": "Jefferies",
-      "date": "260803",
-      "key": "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
-      "unit": "INR mn",
-      "model": "sonnet",
-      "considered": [
-       "JPMorgan|260804|CAMS|1q27yieldcompressioneasesmarginsholdretainow",
-       "JPMorgan|260804|CAMS|modelupdate",
-       "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
-       "Jefferies|260804|CAMS|jun26qtrresultsdeliversonnonmfgrowthcostmgmt",
-       "Kotak|260804|CAMS|fy2027isofftoagoodstart"
-      ],
-      "runs": 1,
-      "mined": "2026-10-19"
-     },
-     "abs": {
-      "wb_rev": 3950,
-      "rev": {
-       "key": "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
-       "broker": "Jefferies",
-       "date": "260803",
-       "role": "own"
-      },
-      "wb_ebitda": 1582,
-      "ebitda": {
-       "key": "Jefferies|260803|CAMS|jun26qtrfirstcutinlineresult",
-       "broker": "Jefferies",
-       "date": "260803",
-       "role": "own"
-      }
-     },
-     "revVs": "inline",
-     "ebitdaVs": "beat",
-     "overall": "inline",
-     "revNote": "Revenue of Rs3.95bn (+12% y-y, flat q-q) was about 1.9% below consensus of ~Rs4.0bn and 0.3% below JEFe, so in line. MF revenue grew 9% y-y, with MF RTA yield down 1% q-q to 2.41bps, while non-MF revenue grew 28% y-y to 14.9% of the mix. (Jeff, JP)",
-     "ebitdaNote": "EBITDA of Rs1.83bn (+18% y-y, margin 46.3%, up 270bps y-y) was 3% above JEFe, because total expenses grew only 6% y-y on deferred employee appraisals. JP puts EBIT at Rs1.58bn, 2.4% above consensus. (Jeff, JP)",
-     "vsBasis": "revenue: consensus (JP); EBITDA: broker estimate (Jefferies)",
-     "revCons": 4000
-    }
-   },
-   "sym": "CAMS",
-   "outlook": {
-    "call": "positive",
-    "note": "Management has guided for opex growth of under 10% y-y over the next 2-3 years, and for FY27 cost growth of under 9%. Net headcount fell about 225 q-q, with a further 4-5% reduction expected this year. Jefferies raised FY27-29e EBITDA by 3-5% (16% 3-yr CAGR) and its PT to Rs960 from Rs910. JP retained OW with a PT of Rs950, noting yield compression is easing. (Jeff, JP)",
-    "broker": "Jefferies",
-    "date": "260804",
-    "quarter": "1Q27"
-   }
+   "formerName": "Billionbrains Garage Ventures ('Groww')"
   },
   {
    "name": "HDFC AMC",
@@ -4073,10 +4108,28 @@
    }
   },
   {
+   "name": "SBI Funds Management",
+   "sector": "AMC",
+   "ticker": "",
+   "sym": "SBIFUNDS",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder",
+   "mcap": 95711,
+   "mcapAsOf": "2026-10-22"
+  },
+  {
    "name": "UTI AMC",
    "sector": "AMC",
    "ticker": "",
-   "sym": "",
+   "sym": "UTIAMC",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -4332,14 +4385,14 @@
     "date": "260811",
     "quarter": "1Q27"
    },
-   "mcap": 5233,
+   "mcap": 5093,
    "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Aditya Birla Lifestyle Brands",
    "sector": "Apparels",
    "ticker": "",
-   "sym": "",
+   "sym": "ABLBL",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -4434,7 +4487,9 @@
     "broker": "MorganStanley",
     "date": "260803",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 8847,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Campus Activewear",
@@ -4594,7 +4649,7 @@
     "date": "260807",
     "quarter": "1Q27"
    },
-   "mcap": 5753,
+   "mcap": 5702,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -4856,7 +4911,7 @@
     }
    },
    "sym": "MANYAVAR",
-   "mcap": 12190,
+   "mcap": 11984,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "neutral",
@@ -5125,7 +5180,7 @@
     "date": "260806",
     "quarter": "1Q27"
    },
-   "mcap": 10895,
+   "mcap": 10935,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -5395,7 +5450,7 @@
    "name": "C.E. Info Systems",
    "sector": "Auto",
    "ticker": "",
-   "sym": "",
+   "sym": "MAPMYINDIA",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -5490,7 +5545,25 @@
     "broker": "GoldmanSachs",
     "date": "260804",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 4769,
+   "mcapAsOf": "2026-10-22"
+  },
+  {
+   "name": "CIE Automotive",
+   "sector": "Auto",
+   "ticker": "",
+   "sym": "CIEINDIA",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
   },
   {
    "name": "Craftsman Automation",
@@ -5592,6 +5665,24 @@
     "date": "260730",
     "quarter": "1Q27"
    }
+  },
+  {
+   "name": "Dhoot Transmission",
+   "sector": "Auto",
+   "ticker": "",
+   "sym": "DHOOTTRANS",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder",
+   "mcap": 28582,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Endurance Technologies",
@@ -5804,6 +5895,22 @@
    }
   },
   {
+   "name": "Gabriel India",
+   "sector": "Auto",
+   "ticker": "",
+   "sym": "GABRIEL",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
+  },
+  {
    "name": "Motherson Sumi Wiring India",
    "sector": "Auto",
    "ticker": "",
@@ -5907,7 +6014,7 @@
    "name": "Pricol",
    "sector": "Auto",
    "ticker": "",
-   "sym": "",
+   "sym": "PRICOLLTD",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -6000,7 +6107,9 @@
     "broker": "GoldmanSachs",
     "date": "260731",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 7930,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Samvardhana Motherson International",
@@ -6432,7 +6541,7 @@
    "name": "SJS Enterprises",
    "sector": "Auto",
    "ticker": "",
-   "sym": "",
+   "sym": "SJS",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -6528,13 +6637,15 @@
     "broker": "GoldmanSachs",
     "date": "260807",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 6220,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "SKF",
    "sector": "Auto",
    "ticker": "",
-   "sym": "",
+   "sym": "SKFINDIA",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -6627,7 +6738,9 @@
     "broker": "Kotak",
     "date": "260817",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 7011,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Sona BLW",
@@ -7214,7 +7327,7 @@
     "date": "260806",
     "quarter": "1Q27"
    },
-   "mcap": 12174,
+   "mcap": 12137,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -8257,7 +8370,7 @@
    "name": "DCB Bank",
    "sector": "Banks",
    "ticker": "",
-   "sym": "",
+   "sym": "DCBBANK",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -8350,13 +8463,15 @@
     "broker": "Kotak",
     "date": "260725",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 6734,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Equitas Small Finance Bank",
    "sector": "Banks",
    "ticker": "",
-   "sym": "",
+   "sym": "EQUITASBNK",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -8449,7 +8564,9 @@
     "broker": "Kotak",
     "date": "260729",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 7722,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Federal Bank",
@@ -10201,7 +10318,7 @@
    "name": "Ujjivan Small Finance Bank",
    "sector": "Banks",
    "ticker": "",
-   "sym": "",
+   "sym": "UJJIVANSFB",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -10294,7 +10411,9 @@
     "broker": "Kotak",
     "date": "261018",
     "quarter": "2Q27"
-   }
+   },
+   "mcap": 11933,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Union Bank of India",
@@ -10401,7 +10520,7 @@
    "name": "Utkarsh Small Finance Bank",
    "sector": "Banks",
    "ticker": "",
-   "sym": "",
+   "sym": "UTKARSHBNK",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -10496,7 +10615,9 @@
     "broker": "Kotak",
     "date": "260802",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 2224,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Yes Bank",
@@ -11428,7 +11549,7 @@
     }
    },
    "sym": "VGUARD",
-   "mcap": 12266,
+   "mcap": 12111,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "positive",
@@ -11442,7 +11563,7 @@
    "name": "Aequs",
    "sector": "Capital goods",
    "ticker": "",
-   "sym": "",
+   "sym": "AEQUS",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -11536,7 +11657,9 @@
     "broker": "JMFinancial",
     "date": "260729",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 15880,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "AIA Engineering",
@@ -12216,6 +12339,24 @@
     "date": "260810",
     "quarter": "1Q27"
    }
+  },
+  {
+   "name": "INDO-MIM",
+   "sector": "Capital goods",
+   "ticker": "",
+   "sym": "INDOMIM",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder",
+   "mcap": 56084,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Jupiter Wagons",
@@ -13046,7 +13187,7 @@
     "date": "260816",
     "quarter": "1Q27"
    },
-   "mcap": 4871,
+   "mcap": 4770,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -13920,7 +14061,7 @@
     }
    },
    "sym": "BLUEJET",
-   "mcap": 8593,
+   "mcap": 8639,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "neutral",
@@ -14596,7 +14737,7 @@
    "name": "Neuland Labs",
    "sector": "CDMO",
    "ticker": "",
-   "sym": "",
+   "sym": "NEULANDLAB",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -16186,6 +16327,22 @@
    }
   },
   {
+   "name": "Aarti Industries",
+   "sector": "Chemicals",
+   "ticker": "",
+   "sym": "AARTIIND",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
+  },
+  {
    "name": "Aether Industries",
    "sector": "Chemicals",
    "ticker": "",
@@ -16564,7 +16721,7 @@
    "name": "Bayer Cropscience",
    "sector": "Chemicals",
    "ticker": "",
-   "sym": "",
+   "sym": "BAYERCROP",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -16657,7 +16814,9 @@
     "broker": "Kotak",
     "date": "260816",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 15604,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Castrol India",
@@ -16762,7 +16921,7 @@
    "name": "Clean Science & Technology",
    "sector": "Chemicals",
    "ticker": "",
-   "sym": "",
+   "sym": "CLEAN",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -17272,7 +17431,7 @@
     }
    },
    "sym": "KANSAINER",
-   "mcap": 14942,
+   "mcap": 14785,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "neutral",
@@ -17480,7 +17639,7 @@
     }
    },
    "sym": "NEOGEN",
-   "mcap": 7090,
+   "mcap": 6879,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "positive",
@@ -17779,7 +17938,7 @@
     }
    },
    "sym": "RALLIS",
-   "mcap": 3973,
+   "mcap": 3948,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -17939,7 +18098,7 @@
     "date": "260729",
     "quarter": "1Q27"
    },
-   "mcap": 1803,
+   "mcap": 1820,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -18375,7 +18534,7 @@
     "date": "260813",
     "quarter": "1Q27"
    },
-   "mcap": 11371,
+   "mcap": 11377,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -19123,7 +19282,7 @@
     }
    },
    "sym": "BLACKBUCK",
-   "mcap": 10091,
+   "mcap": 10034,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "neutral",
@@ -19137,7 +19296,7 @@
    "name": "G R Infraprojects",
    "sector": "Construction",
    "ticker": "",
-   "sym": "",
+   "sym": "GRINFRA",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -19230,7 +19389,9 @@
     "broker": "Kotak",
     "date": "260807",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 7384,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "IRB Infrastructure",
@@ -19604,7 +19765,7 @@
    "name": "Astra Microwave",
    "sector": "Defense",
    "ticker": "",
-   "sym": "",
+   "sym": "ASTRAMICRO",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -19699,7 +19860,9 @@
     "broker": "GoldmanSachs",
     "date": "260811",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 14809,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Azad Engineering",
@@ -20486,7 +20649,7 @@
    "name": "Mazagon Dock Shipbuilders",
    "sector": "Defense",
    "ticker": "",
-   "sym": "",
+   "sym": "MAZDOCK",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -21802,7 +21965,7 @@
    "name": "Unicommerce eSolutions",
    "sector": "EC/QC",
    "ticker": "",
-   "sym": "",
+   "sym": "UNIECOM",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -21895,7 +22058,9 @@
     "broker": "CLSA",
     "date": "260814",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 908,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Urban Company",
@@ -22478,7 +22643,7 @@
     "date": "260805",
     "quarter": "1Q27"
    },
-   "mcap": 13356,
+   "mcap": 13042,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -23572,7 +23737,7 @@
     "date": "260903",
     "quarter": "1Q27"
    },
-   "mcap": 6235,
+   "mcap": 6171,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -23676,7 +23841,7 @@
     }
    },
    "sym": "SAPPHIRE",
-   "mcap": 6209,
+   "mcap": 6182,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "positive",
@@ -23690,7 +23855,7 @@
    "name": "Travel Food Services",
    "sector": "F&B",
    "ticker": "",
-   "sym": "",
+   "sym": "TRAVELFOOD",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -23842,7 +24007,9 @@
     "broker": "Kotak",
     "date": "260817",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 15213,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Westlife Foodworld",
@@ -23943,7 +24110,7 @@
     }
    },
    "sym": "WESTLIFE",
-   "mcap": 8289,
+   "mcap": 8308,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "positive",
@@ -24262,7 +24429,7 @@
     "date": "260811",
     "quarter": "1Q27"
    },
-   "mcap": 3311,
+   "mcap": 3283,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -24539,6 +24706,22 @@
    }
   },
   {
+   "name": "Turtlemint Fintech Solutions",
+   "sector": "Fintech",
+   "ticker": "",
+   "sym": "TURTLEMINT",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
+  },
+  {
    "name": "Apollo Hospitals",
    "sector": "Hospitals",
    "ticker": "",
@@ -24805,7 +24988,7 @@
    "name": "Dr Agarwal's Health Care",
    "sector": "Hospitals",
    "ticker": "",
-   "sym": "",
+   "sym": "AGARWALEYE",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -24955,7 +25138,9 @@
     "broker": "Jefferies",
     "date": "260804",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 14518,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Dr Lal PathLabs",
@@ -25333,6 +25518,24 @@
    }
   },
   {
+   "name": "Healthcare Global Enterprises",
+   "sector": "Hospitals",
+   "ticker": "",
+   "sym": "HCG",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder",
+   "mcap": 8279,
+   "mcapAsOf": "2026-10-22"
+  },
+  {
    "name": "Krishna Institute of Medical Sciences",
    "sector": "Hospitals",
    "ticker": "",
@@ -25487,6 +25690,22 @@
     "date": "260804",
     "quarter": "1Q27"
    }
+  },
+  {
+   "name": "Manipal Health",
+   "sector": "Hospitals",
+   "ticker": "",
+   "sym": "",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
   },
   {
    "name": "Max Healthcare",
@@ -25656,7 +25875,7 @@
    "name": "Metropolis Healthcare",
    "sector": "Hospitals",
    "ticker": "",
-   "sym": "",
+   "sym": "METROPOLIS",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -25753,7 +25972,27 @@
     "broker": "Kotak",
     "date": "260805",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 11013,
+   "mcapAsOf": "2026-10-22"
+  },
+  {
+   "name": "Molbio Diagnostics",
+   "sector": "Hospitals",
+   "ticker": "",
+   "sym": "MOLBIO",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder",
+   "mcap": 14831,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Narayana Hrudayalaya",
@@ -25922,7 +26161,7 @@
    "name": "Nephrocare Health Services",
    "sector": "Hospitals",
    "ticker": "",
-   "sym": "",
+   "sym": "NEPHROPLUS",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -26072,7 +26311,9 @@
     "broker": "Nomura",
     "date": "260812",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 6039,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Rainbow Children's Hospitals",
@@ -26542,7 +26783,7 @@
     }
    },
    "sym": "GODIGIT",
-   "mcap": 26122,
+   "mcap": 25424,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "negative",
@@ -26899,7 +27140,7 @@
    }
   },
   {
-   "name": "ICICI Prudential Life",
+   "name": "ICICI Prudential Life Insurance",
    "sheetName": "ICICI Life",
    "sector": "Insurance",
    "ticker": "",
@@ -27069,7 +27310,8 @@
     "broker": "Kotak",
     "date": "261014",
     "quarter": "2Q27"
-   }
+   },
+   "formerName": "ICICI Prudential Life"
   },
   {
    "name": "LIC India",
@@ -27436,7 +27678,7 @@
     }
    },
    "sym": "NIVABUPA",
-   "mcap": 13600,
+   "mcap": 13317,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "positive",
@@ -27672,7 +27914,7 @@
    "name": "Amagi Media Labs",
    "sector": "IT",
    "ticker": "",
-   "sym": "",
+   "sym": "AMAGI",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -27766,7 +28008,9 @@
     "broker": "Kotak",
     "date": "260814",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 12206,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Birlasoft",
@@ -28814,7 +29058,7 @@
    "name": "Indegene",
    "sector": "IT",
    "ticker": "",
-   "sym": "",
+   "sym": "INDGN",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -28908,7 +29152,9 @@
     "broker": "Kotak",
     "date": "260801",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 13941,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Infosys",
@@ -29217,7 +29463,7 @@
     }
    },
    "sym": "JUSTDIAL",
-   "mcap": 6525,
+   "mcap": 6368,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "positive",
@@ -29767,7 +30013,7 @@
    "name": "Newgen Software",
    "sector": "IT",
    "ticker": "",
-   "sym": "",
+   "sym": "NEWGEN",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -29860,7 +30106,9 @@
     "broker": "Jefferies",
     "date": "260716",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 6781,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Persistent Systems",
@@ -30144,7 +30392,7 @@
     "date": "260522",
     "quarter": "4Q26"
    },
-   "mcap": 9238,
+   "mcap": 9282,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -31150,7 +31398,7 @@
     }
    },
    "sym": "BLUESTONE",
-   "mcap": 11303,
+   "mcap": 11389,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "positive",
@@ -31323,6 +31571,22 @@
     "date": "260724",
     "quarter": "1Q27"
    }
+  },
+  {
+   "name": "Kalyan Jewellers",
+   "sector": "Jewellery",
+   "ticker": "",
+   "sym": "KALYANKJIL",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
   },
   {
    "name": "Titan Company",
@@ -31894,7 +32158,7 @@
    "name": "Gateway Distriparks",
    "sector": "Logistics",
    "ticker": "",
-   "sym": "",
+   "sym": "GATEWAY",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -31987,7 +32251,25 @@
     "broker": "Kotak",
     "date": "260804",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 2385,
+   "mcapAsOf": "2026-10-22"
+  },
+  {
+   "name": "Great Eastern Shipping",
+   "sector": "Logistics",
+   "ticker": "",
+   "sym": "GESHIP",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
   },
   {
    "name": "Shadowfax",
@@ -32032,14 +32314,14 @@
     }
    },
    "sym": "SHADOWFAX",
-   "mcap": 15944,
+   "mcap": 15818,
    "mcapAsOf": "2026-10-22"
   },
   {
    "name": "SIS",
    "sector": "Logistics",
    "ticker": "",
-   "sym": "",
+   "sym": "SIS",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -32134,7 +32416,9 @@
     "broker": "Kotak",
     "date": "260805",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 5288,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "TCI Express",
@@ -32291,14 +32575,14 @@
     "date": "260806",
     "quarter": "1Q27"
    },
-   "mcap": 1786,
+   "mcap": 1781,
    "mcapAsOf": "2026-10-22"
   },
   {
    "name": "DB Corp",
    "sector": "Media",
    "ticker": "",
-   "sym": "",
+   "sym": "DBCORP",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -32391,13 +32675,51 @@
     "broker": "CLSA",
     "date": "260716",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 2783,
+   "mcapAsOf": "2026-10-22"
+  },
+  {
+   "name": "Dish TV",
+   "sector": "Media",
+   "ticker": "",
+   "sym": "DISHTV",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder",
+   "mcap": 372,
+   "mcapAsOf": "2026-10-22"
+  },
+  {
+   "name": "Jagran",
+   "sector": "Media",
+   "ticker": "",
+   "sym": "JAGRAN",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder",
+   "mcap": 1312,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Nazara Tech",
    "sector": "Media",
    "ticker": "",
-   "sym": "",
+   "sym": "NAZARA",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -32490,7 +32812,9 @@
     "broker": "CLSA",
     "date": "260804",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 15800,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Sun TV Network",
@@ -34851,7 +35175,7 @@
     "date": "260811",
     "quarter": "1Q27"
    },
-   "mcap": 2330,
+   "mcap": 2249,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -35129,6 +35453,42 @@
     "date": "260727",
     "quarter": "1Q27"
    }
+  },
+  {
+   "name": "India Shelter",
+   "sector": "NBFC",
+   "ticker": "",
+   "sym": "INDIASHLTR",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Total op. income",
+    "ebitda": "PPOP"
+   },
+   "q": {},
+   "added": "folder",
+   "mcap": 6623,
+   "mcapAsOf": "2026-10-22"
+  },
+  {
+   "name": "IndoStar Capital Finance",
+   "sector": "NBFC",
+   "ticker": "",
+   "sym": "INDOSTAR",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Total op. income",
+    "ebitda": "PPOP"
+   },
+   "q": {},
+   "added": "folder",
+   "mcap": 2888,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "L&T Finance",
@@ -36242,10 +36602,26 @@
    }
   },
   {
+   "name": "Sammaan Capital",
+   "sector": "NBFC",
+   "ticker": "",
+   "sym": "SAMMAANCAP",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Total op. income",
+    "ebitda": "PPOP"
+   },
+   "q": {},
+   "added": "folder"
+  },
+  {
    "name": "SBFC",
    "sector": "NBFC",
    "ticker": "",
-   "sym": "",
+   "sym": "SBFC",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -38425,7 +38801,7 @@
     "date": "260812",
     "quarter": "1Q27"
    },
-   "mcap": 7235,
+   "mcap": 7191,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -38687,7 +39063,7 @@
     "date": "260817",
     "quarter": "1Q27"
    },
-   "mcap": 4789,
+   "mcap": 4822,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -38897,7 +39273,7 @@
    "name": "Alivus Life Sciences",
    "sector": "Pharma",
    "ticker": "",
-   "sym": "",
+   "sym": "ALIVUS",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -38990,7 +39366,9 @@
     "broker": "Kotak",
     "date": "260731",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 15473,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Alkem Laboratories",
@@ -39523,7 +39901,7 @@
    "name": "Corona Remedies",
    "sector": "Pharma",
    "ticker": "",
-   "sym": "",
+   "sym": "CORONA",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -40017,7 +40395,7 @@
     "date": "260810",
     "quarter": "1Q27"
    },
-   "mcap": 6471,
+   "mcap": 6534,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -40702,7 +41080,7 @@
     }
    },
    "sym": "MEDPLUS",
-   "mcap": 7191,
+   "mcap": 7140,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "neutral",
@@ -40713,7 +41091,7 @@
    }
   },
   {
-   "name": "Sun Pharmaceuticals",
+   "name": "Sun Pharmaceutical Industries",
    "sheetName": "Sun Pharma",
    "sector": "Pharma",
    "ticker": "SUNPHARMA.NS",
@@ -40882,7 +41260,8 @@
     "broker": "MorganStanley",
     "date": "260802",
     "quarter": "1Q27"
-   }
+   },
+   "formerName": "Sun Pharmaceuticals"
   },
   {
    "name": "Torrent Pharmaceuticals",
@@ -41715,7 +42094,7 @@
     "date": "260813",
     "quarter": "1Q27"
    },
-   "mcap": 7921,
+   "mcap": 7814,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -43703,6 +44082,38 @@
    }
   },
   {
+   "name": "Anant Raj",
+   "sector": "Property",
+   "ticker": "",
+   "sym": "ANANTRAJ",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
+  },
+  {
+   "name": "Bagmane Prime Office REIT",
+   "sector": "Property",
+   "ticker": "",
+   "sym": "BAGMANE",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
+  },
+  {
    "name": "Brigade Enterprises",
    "sector": "Property",
    "ticker": "",
@@ -43805,7 +44216,7 @@
    "name": "Brookfield India REIT",
    "sector": "Property",
    "ticker": "",
-   "sym": "",
+   "sym": "BIRET",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -44500,7 +44911,7 @@
    "name": "Mindspace Business Parks REIT",
    "sector": "Property",
    "ticker": "",
-   "sym": "",
+   "sym": "MINDSPACE",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -45295,7 +45706,7 @@
    "name": "Smartworks Coworking Space",
    "sector": "Property",
    "ticker": "",
-   "sym": "",
+   "sym": "SMARTWORKS",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -45388,7 +45799,25 @@
     "broker": "Kotak",
     "date": "260723",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 5361,
+   "mcapAsOf": "2026-10-22"
+  },
+  {
+   "name": "Sobha",
+   "sector": "Property",
+   "ticker": "",
+   "sym": "SOBHA",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
   },
   {
    "name": "Sunteck Realty",
@@ -45405,7 +45834,7 @@
    },
    "q": {},
    "sym": "SUNTECK",
-   "mcap": 3940,
+   "mcap": 4126,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -45558,7 +45987,7 @@
     }
    },
    "sym": "WEWORK",
-   "mcap": 9179,
+   "mcap": 8786,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "positive",
@@ -46238,8 +46667,24 @@
     "date": "260731",
     "quarter": "1Q27"
    },
-   "mcap": 4318,
+   "mcap": 4289,
    "mcapAsOf": "2026-10-22"
+  },
+  {
+   "name": "Bata India",
+   "sector": "Retail",
+   "ticker": "",
+   "sym": "BATAINDIA",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
   },
   {
    "name": "Lenskart Solutions",
@@ -46622,7 +47067,7 @@
     "date": "261017",
     "quarter": "2Q27"
    },
-   "mcap": 23691,
+   "mcap": 23358,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -47323,7 +47768,7 @@
     "date": "260730",
     "quarter": "1Q27"
    },
-   "mcap": 1684,
+   "mcap": 1647,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -47829,7 +48274,7 @@
     "date": "260601",
     "quarter": "4Q26"
    },
-   "mcap": 8320,
+   "mcap": 8284,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -48584,8 +49029,24 @@
     "date": "260813",
     "quarter": "1Q27"
    },
-   "mcap": 6316,
+   "mcap": 6147,
    "mcapAsOf": "2026-10-22"
+  },
+  {
+   "name": "Godrej Agrovet",
+   "sector": "Staples",
+   "ticker": "",
+   "sym": "GODREJIND",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
   },
   {
    "name": "Godrej Consumer Products",
@@ -49143,7 +49604,7 @@
    "name": "Jyothy Labs",
    "sector": "Staples",
    "ticker": "",
-   "sym": "",
+   "sym": "JYOTHYLAB",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -49238,7 +49699,9 @@
     "broker": "Kotak",
     "date": "260813",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 6703,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Marico",
@@ -49675,7 +50138,7 @@
     }
    },
    "sym": "ORKLAINDIA",
-   "mcap": 7445,
+   "mcap": 7339,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "neutral",
@@ -49993,7 +50456,7 @@
     "date": "260524",
     "quarter": "4Q26"
    },
-   "mcap": 7038,
+   "mcap": 6991,
    "mcapAsOf": "2026-10-22"
   },
   {
@@ -50658,6 +51121,22 @@
    }
   },
   {
+   "name": "Lloyds Metals and Energy",
+   "sector": "Steel",
+   "ticker": "",
+   "sym": "LLOYDSME",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
+  },
+  {
    "name": "Shyam Metalics and Energy",
    "sheetName": "Shyam Metalics & Energy",
    "sector": "Steel",
@@ -51158,6 +51637,22 @@
     "date": "260801",
     "quarter": "1Q27"
    }
+  },
+  {
+   "name": "Welspun Corp",
+   "sector": "Steel",
+   "ticker": "",
+   "sym": "WELCORP",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
   },
   {
    "name": "Bharti Airtel",
@@ -52226,7 +52721,7 @@
     }
    },
    "sym": "CHALET",
-   "mcap": 18159,
+   "mcap": 18048,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "neutral",
@@ -52500,6 +52995,24 @@
    }
   },
   {
+   "name": "Juniper Hotels",
+   "sector": "Travel",
+   "ticker": "",
+   "sym": "JUNIPER",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder",
+   "mcap": 4588,
+   "mcapAsOf": "2026-10-22"
+  },
+  {
    "name": "Leela Palaces Hotels & Resorts",
    "sheetName": "Leela Palaces (Luxury)",
    "sector": "Travel",
@@ -52658,7 +53171,7 @@
     }
    },
    "sym": "THELEELA",
-   "mcap": 19553,
+   "mcap": 20046,
    "mcapAsOf": "2026-10-22",
    "outlook": {
     "call": "positive",
@@ -52917,14 +53430,14 @@
     "date": "260804",
     "quarter": "1Q27"
    },
-   "mcap": 3271,
+   "mcap": 3332,
    "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Ventive Hospitality",
    "sector": "Travel",
    "ticker": "",
-   "sym": "",
+   "sym": "VENTIVE",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -53019,7 +53532,9 @@
     "broker": "Kotak",
     "date": "260805",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 12799,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Apollo Tyres",
@@ -53686,10 +54201,26 @@
    }
   },
   {
-   "name": "Gujarat Energy",
+   "name": "Continuum Green",
    "sector": "Utilities",
    "ticker": "",
    "sym": "",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
+  },
+  {
+   "name": "Gujarat Energy",
+   "sector": "Utilities",
+   "ticker": "",
+   "sym": "GUJENERGY",
    "basis": "",
    "note": "",
    "unit": "INR mn",
@@ -53782,7 +54313,9 @@
     "broker": "Nomura",
     "date": "260813",
     "quarter": "1Q27"
-   }
+   },
+   "mcap": 20680,
+   "mcapAsOf": "2026-10-22"
   },
   {
    "name": "Indian Energy Exchange",
@@ -54104,6 +54637,24 @@
    }
   },
   {
+   "name": "Juniper Green Energy",
+   "sector": "Utilities",
+   "ticker": "",
+   "sym": "JNPR",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder",
+   "mcap": 14125,
+   "mcapAsOf": "2026-10-22"
+  },
+  {
    "name": "NTPC",
    "sheetName": "NTPC",
    "sector": "Utilities",
@@ -54375,6 +54926,22 @@
     "date": "260726",
     "quarter": "1Q27"
    }
+  },
+  {
+   "name": "ReNew",
+   "sector": "Utilities",
+   "ticker": "",
+   "sym": "RNW",
+   "basis": "",
+   "note": "",
+   "unit": null,
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {},
+   "added": "folder"
   },
   {
    "name": "Tata Power",

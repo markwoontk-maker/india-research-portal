@@ -7661,7 +7661,7 @@ function erSecSave(m){ try{ localStorage.setItem(ER_SEC_LS,JSON.stringify(m)); }
 function erApplySectors(){
   const ov=erSecOv();
   ER.companies.forEach(c=>{ if(c._origSector===undefined) c._origSector=c.sector||'';
-    const o=ov[c.name]; c.sector=(o&&(ER_SECTOR_RENAME[o]||o))||c._origSector; });
+    const o=ov[c.name]||(c.formerName&&ov[c.formerName]); c.sector=(o&&(ER_SECTOR_RENAME[o]||o))||c._origSector; });
   const n=ER.companies.filter(c=>c.sector!==c._origSector).length, b=document.getElementById('erSecReset');
   if(b){ b.hidden=!n; b.textContent=`Reset sector changes (${n})`; }
 }

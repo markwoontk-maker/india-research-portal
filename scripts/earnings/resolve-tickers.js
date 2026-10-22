@@ -18,9 +18,9 @@ const C = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'companies.json'), 
 const OVERRIDE = {
   'Mahindra & Mahindra': 'M&M', 'United Spirits': 'UNITDSPR', 'HDFC AMC': 'HDFCAMC', 'ICICI Prudential AMC': 'ICICIAMC',
   'ABSL AMC': 'ABSLAMC', 'Nippon AMC': 'NAM-INDIA', 'Nuvama': 'NUVAMA', 'CAMS': 'CAMS', 'KFin Technologies': 'KFINTECH',
-  "Billionbrains Garage Ventures ('Groww')": 'GROWW', 'Sona BLW': 'SONACOMS', 'Can Fin Homes': 'CANFINHOME',
+  'Groww': 'GROWW', 'Sona BLW': 'SONACOMS', 'Can Fin Homes': 'CANFINHOME',
   'Bajaj Finserv': 'BAJAJFINSV', 'Go Digit General Insurance': 'GODIGIT', 'Niva Bupa Health Insurance': 'NIVABUPA',
-  'Star Health': 'STARHEALTH', 'ICICI Prudential Life': 'ICICIPRULI', 'ICICI Lombard General Insurance': 'ICICIGI',
+  'Star Health': 'STARHEALTH', 'ICICI Prudential Life Insurance': 'ICICIPRULI', 'ICICI Lombard General Insurance': 'ICICIGI',
   'SBI Life Insurance': 'SBILIFE', 'HDFC Life': 'HDFCLIFE', 'Hexaware Technologies': 'HEXT', 'LTIMindtree': 'LTM',
   'Tata Consultancy Services': 'TCS', 'Allied Blenders & Distillers': 'ABDL', 'Vedant Fashions': 'MANYAVAR', 'Rallis India': 'RALLIS',
   'Blackbuck': 'BLACKBUCK', 'Sapphire Foods India': 'SAPPHIRE', 'Leela Palaces Hotels & Resorts': 'THELEELA', 'Just Dial': 'JUSTDIAL',
@@ -30,7 +30,7 @@ const OVERRIDE = {
   'Bharat Petroleum': 'BPCL', 'Hindustan Petroleum': 'HINDPETRO', 'Indian Oil Corporation': 'IOC', 'GAIL India': 'GAIL',
   'Steel Authority of India': 'SAIL', 'Jindal Steel': 'JINDALSTEL', 'Hindustan Unilever': 'HINDUNILVR', 'Avenue Supermarts': 'DMART',
   'Colgate-Palmolive (India)': 'COLPAL', 'Tata Consumer Products': 'TATACONSUM', 'Varun Beverages': 'VBL', 'Vishal Mega Mart': 'VMM',
-  'Indian Hotels Company': 'INDHOTEL', 'Sun Pharmaceuticals': 'SUNPHARMA', 'Torrent Pharmaceuticals': 'TORNTPHARM',
+  'Indian Hotels Company': 'INDHOTEL', 'Sun Pharmaceutical Industries': 'SUNPHARMA', 'Torrent Pharmaceuticals': 'TORNTPHARM',
   "Dr Reddy's Laboratories": 'DRREDDY', "Divi's Laboratories": 'DIVISLAB', 'Mankind Pharma': 'MANKIND', 'Medplus Health Services': 'MEDPLUS',
   'Dr Lal PathLabs': 'LALPATHLAB', 'Global Health (Medanta)': 'MEDANTA', 'Narayana Hrudayalaya': 'NH', 'Larsen & Toubro': 'LT',
   'Central Depository Services (India)': 'CDSL', 'Bajaj Finance': 'BAJFINANCE', 'Cholamandalam': 'CHOLAFIN', 'Mahindra Finance': 'M&MFIN',
@@ -51,7 +51,8 @@ const OVERRIDE = {
   'Dabur India': 'DABUR', 'Nestle India': 'NESTLEIND', 'AWL Agri Business': 'AWL', 'Jindal Stainless': 'JSL', 'JSW Steel': 'JSWSTEEL',
   'Tata Steel': 'TATASTEEL', 'Shyam Metalics and Energy': 'SHYAMMETL', 'Vedanta Aluminium': 'VEDL', 'Granules India': 'GRANULES',
   'Laurus Labs': 'LAURUSLABS', 'Piramal Pharma': 'PPLPHARMA', 'Syngene International': 'SYNGENE', 'Concord Biotech': 'CONCORDBIO',
-  'Blue Jet Healthcare': 'BLUEJET', 'Acutaas Chemicals': 'ACUTAAS', 'Asian Paints': 'ASIANPAINT', 'Info Edge': 'NAUKRI', 'IndiaMART': 'INDIAMART',
+  'Blue Jet Healthcare': 'BLUEJET', 'Acutaas Chemicals': 'ACUTAAS', 'Asian Paints': 'ASIANPAINT', 'UTI AMC': 'UTIAMC', 'Neuland Labs': 'NEULANDLAB', 'Clean Science & Technology': 'CLEAN', 'SBFC': 'SBFC',
+  'Brookfield India REIT': 'BIRET', 'Mindspace Business Parks REIT': 'MINDSPACE', 'Gujarat Gas': 'GUJGASLTD', 'Info Edge': 'NAUKRI', 'IndiaMART': 'INDIAMART',
 };
 
 const norm = s => String(s || '').toLowerCase().replace(/\(.*?\)/g, ' ')
@@ -60,18 +61,38 @@ const norm = s => String(s || '').toLowerCase().replace(/\(.*?\)/g, ' ')
 const byName = {};
 for (const [sym, q] of Object.entries(S.q || {})) { const k = norm(q.n); if (k) byName[k] = sym; }
 
+// NSE equity master (all listed EQ/BE names, not just the Nifty 500), so smaller
+// companies get a symbol too; their caps then come from the Yahoo fallback below.
+async function nseMaster() {
+  for (const u of ['https://archives.nseindia.com/content/equities/EQUITY_L.csv', 'https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv']) {
+    try {
+      const r = await fetch(u, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/150.0 Safari/537.36', Accept: 'text/csv,*/*', Referer: 'https://www.nseindia.com/' } });
+      if (!r.ok) continue;
+      const lines = (await r.text()).split(/\r?\n/), map = {};
+      for (const line of lines.slice(1)) {
+        const [sym, name, series] = line.split(',').map(x => (x || '').trim());
+        if (sym && name && (!series || series === 'EQ' || series === 'BE')) { const k = norm(name); if (k && !map[k]) map[k] = sym; }
+      }
+      if (Object.keys(map).length > 500) return map;
+    } catch (e) {}
+  }
+  return {};
+}
+const nameLookup = (map, k) => {
+  if (map[k]) return map[k];
+  if (k.length > 4) { const c = Object.keys(map).filter(n => n.startsWith(k) || k.startsWith(n)); if (c.length === 1) return map[c[0]]; }
+  return null;
+};
+
 (async () => {
 let hit = 0; const miss = [];
+const NSE = await nseMaster();
 for (const c of E.companies) {
   let sym = OVERRIDE[c.name] || OVERRIDE[c.sheetName] || '';
   if (!sym && C[c.name] && C[c.name].ticker) sym = C[c.name].ticker.replace(/\.(NS|BO)$/, '');
   if (!sym || !(S.q || {})[sym]) {
     const k = norm(c.name);
-    let m = byName[k];
-    if (!m && k.length > 4) {
-      const cands = Object.keys(byName).filter(n => n.startsWith(k) || k.startsWith(n));
-      if (cands.length === 1) m = byName[cands[0]];
-    }
+    const m = nameLookup(byName, k) || (!sym && nameLookup(NSE, k));
     if (m) sym = m;
   }
   c.sym = sym || '';
