@@ -1,113 +1,958 @@
 {
   "_note": "Model portfolios mined from the local India Strategy PDFs (the covered houses). Kept separate from model_portfolios.json (which the remote India Positioning Data Refresher regenerates from public sources) so the two never clobber each other. 'wt' = absolute portfolio weight % where the house publishes per-stock weights; '' renders '—'. 'report' = path under the India Related Reports root, served by scripts/pdf-server.js at http://127.0.0.1:8788/ (file:// fallback when opened from disk); the house name links to it.",
-  "asOf": "2026-09",
+  "asOf": "2026-10",
   "houses": [
     {
       "broker": "JPMorgan",
-      "asOf": "2026-08",
+      "asOf": "2026-10",
       "benchmark": "MSCI India",
-      "report": "India Strategy/[260816] [JPMorgan] India Equity Strategy - Highest earnings growth since Jun-2024, reiterate Nifty50 target 27K.pdf",
-      "note": "Stocks named in JPMorgan's sector model portfolio (16 Aug, 1QFY27 earnings review) — OW Financials, Industrials, Health Care, Materials, Consumer Discretionary; UW IT. No per-stock weights published.",
+      "report": "India Strategy/[261008] [JPMorgan] India Strategy - 2QFY27 earnings preview, Double-digit growth continues.pdf",
+      "note": "Stocks named in JPMorgan's sector allocation (8 Oct, 2QFY27 earnings preview) — OW Financials, Industrials, Health Care, Materials, Consumer Discretionary; UW IT. No per-stock weights published. Dropped vs 16 Aug: Cholamandalam, M&M, TVS Motor, LG Electronics.",
       "overweight": [
-        { "stock": "ICICI Bank", "ticker": "ICICIBANK.NS", "wt": "", "change": "held", "note": "Financials OW" },
-        { "stock": "State Bank of India", "ticker": "SBIN.NS", "wt": "", "change": "new", "note": "Financials OW" },
-        { "stock": "Bajaj Finance", "ticker": "BAJFINANCE.NS", "wt": "", "change": "new", "note": "Financials OW" },
-        { "stock": "Cholamandalam Investment", "ticker": "CHOLAFIN.NS", "wt": "", "change": "new", "note": "Financials OW" },
-        { "stock": "SBI Life Insurance", "ticker": "SBILIFE.NS", "wt": "", "change": "new", "note": "Financials OW" },
-        { "stock": "Larsen & Toubro", "ticker": "LT.NS", "wt": "", "change": "held", "note": "Industrials OW" },
-        { "stock": "Bharat Electronics", "ticker": "BEL.NS", "wt": "", "change": "held", "note": "Industrials/Defence OW" },
-        { "stock": "Adani Ports", "ticker": "ADANIPORTS.NS", "wt": "", "change": "new", "note": "Industrials OW" },
-        { "stock": "NTPC", "ticker": "NTPC.NS", "wt": "", "change": "new", "note": "Industrials OW" },
-        { "stock": "Apollo Hospitals", "ticker": "APOLLOHOSP.NS", "wt": "", "change": "held", "note": "Health Care OW" },
-        { "stock": "Max Healthcare", "ticker": "MAXHEALTH.NS", "wt": "", "change": "new", "note": "Health Care OW" },
-        { "stock": "Cipla", "ticker": "CIPLA.NS", "wt": "", "change": "new", "note": "Health Care OW (pharma folded in)" },
-        { "stock": "Hindalco Industries", "ticker": "HINDALCO.NS", "wt": "", "change": "new", "note": "Materials OW" },
-        { "stock": "JSW Steel", "ticker": "JSWSTEEL.NS", "wt": "", "change": "held", "note": "Materials OW" },
-        { "stock": "Mahindra & Mahindra", "ticker": "M&M.NS", "wt": "", "change": "held", "note": "Consumer Discretionary OW" },
-        { "stock": "TVS Motor", "ticker": "TVSMOTOR.NS", "wt": "", "change": "new", "note": "Consumer Discretionary OW" },
-        { "stock": "Eternal", "ticker": "ETERNAL.NS", "wt": "", "change": "new", "note": "Consumer Discretionary OW" }
+        {
+          "stock": "ICICI Bank",
+          "ticker": "ICICIBANK.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Financials OW"
+        },
+        {
+          "stock": "AU Small Finance Bank",
+          "ticker": "AUBANK.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Financials OW"
+        },
+        {
+          "stock": "Bajaj Finance",
+          "ticker": "BAJFINANCE.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Financials OW"
+        },
+        {
+          "stock": "State Bank of India",
+          "ticker": "SBIN.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Financials OW"
+        },
+        {
+          "stock": "PNB Housing Finance",
+          "ticker": "PNBHOUSING.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Financials OW"
+        },
+        {
+          "stock": "IIFL Finance",
+          "ticker": "IIFL.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Financials OW"
+        },
+        {
+          "stock": "Muthoot Finance",
+          "ticker": "MUTHOOTFIN.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Financials OW"
+        },
+        {
+          "stock": "SBI Life Insurance",
+          "ticker": "SBILIFE.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Financials OW"
+        },
+        {
+          "stock": "MCX",
+          "ticker": "MCX.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Financials OW"
+        },
+        {
+          "stock": "HDFC Life Insurance",
+          "ticker": "HDFCLIFE.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Financials OW"
+        },
+        {
+          "stock": "ICICI Lombard",
+          "ticker": "ICICIGI.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Financials OW"
+        },
+        {
+          "stock": "Larsen & Toubro",
+          "ticker": "LT.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Industrials OW"
+        },
+        {
+          "stock": "Bharat Electronics",
+          "ticker": "BEL.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Industrials/Defence OW"
+        },
+        {
+          "stock": "Adani Ports",
+          "ticker": "ADANIPORTS.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Industrials OW"
+        },
+        {
+          "stock": "NTPC",
+          "ticker": "NTPC.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Industrials OW"
+        },
+        {
+          "stock": "GE Vernova T&D India",
+          "ticker": "GVT&D.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Industrials OW"
+        },
+        {
+          "stock": "Hitachi Energy India",
+          "ticker": "POWERINDIA.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Industrials OW"
+        },
+        {
+          "stock": "Polycab India",
+          "ticker": "POLYCAB.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Industrials OW"
+        },
+        {
+          "stock": "Divi's Laboratories",
+          "ticker": "DIVISLAB.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Health Care OW"
+        },
+        {
+          "stock": "Apollo Hospitals",
+          "ticker": "APOLLOHOSP.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Health Care OW"
+        },
+        {
+          "stock": "Max Healthcare",
+          "ticker": "MAXHEALTH.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Health Care OW"
+        },
+        {
+          "stock": "Torrent Pharmaceuticals",
+          "ticker": "TORNTPHARM.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Health Care OW"
+        },
+        {
+          "stock": "Fortis Healthcare",
+          "ticker": "FORTIS.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Health Care OW"
+        },
+        {
+          "stock": "Cipla",
+          "ticker": "CIPLA.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Health Care OW"
+        },
+        {
+          "stock": "Anthem Biosciences",
+          "ticker": "ANTHEM.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Health Care OW"
+        },
+        {
+          "stock": "JSW Steel",
+          "ticker": "JSWSTEEL.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Materials OW"
+        },
+        {
+          "stock": "Hindalco Industries",
+          "ticker": "HINDALCO.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Materials OW"
+        },
+        {
+          "stock": "Pidilite Industries",
+          "ticker": "PIDILITIND.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Materials OW"
+        },
+        {
+          "stock": "Hero MotoCorp",
+          "ticker": "HEROMOTOCO.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Consumer Discretionary OW"
+        },
+        {
+          "stock": "Tata Motors (CV)",
+          "ticker": "TMCV.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Consumer Discretionary OW"
+        },
+        {
+          "stock": "Samvardhana Motherson",
+          "ticker": "MOTHERSON.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Consumer Discretionary OW"
+        },
+        {
+          "stock": "Exide Industries",
+          "ticker": "EXIDEIND.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Consumer Discretionary OW"
+        },
+        {
+          "stock": "Eternal",
+          "ticker": "ETERNAL.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Consumer Discretionary OW"
+        },
+        {
+          "stock": "Titan Company",
+          "ticker": "TITAN.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Consumer Discretionary OW"
+        },
+        {
+          "stock": "Lenskart",
+          "ticker": "LENSKART.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Consumer Discretionary OW"
+        }
       ],
       "underweight": [
-        { "stock": "Information Technology (sector)", "ticker": "", "wt": "", "change": "held", "note": "Sole Underweight sector — weak demand, pricing, AI disruption" }
+        {
+          "stock": "Information Technology (sector)",
+          "ticker": "",
+          "wt": "",
+          "change": "held",
+          "note": "Sole Underweight sector — weak demand, pricing, AI disruption"
+        }
       ]
     },
     {
       "broker": "Nomura",
-      "asOf": "2026-08",
-      "benchmark": "",
-      "report": "India Strategy/[260818] [Nomura] India Strategy - 1QFY27 earnings review.pdf",
-      "note": "Top picks from Nomura's 1QFY27 earnings review (Fig. 103 Portfolio stance & top picks / Fig. 104 bottom-up top picks). All Buy-rated; no per-stock weights published. Sector model unchanged from 1 Jun.",
+      "asOf": "2026-10",
+      "benchmark": "Nifty 50",
+      "report": "India Strategy/[261004] [Nomura] India Strategy - Rising yields, fading premium, Stay selective.pdf",
+      "note": "Top picks from Nomura's 4 Oct note (Fig. 56 sector stance & top picks), Mar-2027 Nifty target cut to 24,000 (17.0x). All Buy-rated; no per-stock weights published. Sector stances unchanged vs 18 Aug.",
       "overweight": [
-        { "stock": "ICICI Bank", "ticker": "ICICIBANK.NS", "wt": "", "change": "new", "note": "Financials — Bullish" },
-        { "stock": "Kotak Mahindra Bank", "ticker": "KOTAKBANK.NS", "wt": "", "change": "held", "note": "Financials — Bullish" },
-        { "stock": "Shriram Finance", "ticker": "SHRIRAMFIN.NS", "wt": "", "change": "held", "note": "Financials — Bullish" },
-        { "stock": "SBI Life Insurance", "ticker": "SBILIFE.NS", "wt": "", "change": "held", "note": "Financials — Bullish" },
-        { "stock": "IDFC First Bank", "ticker": "IDFCFIRSTB.NS", "wt": "", "change": "new", "note": "Financials — Bullish" },
-        { "stock": "Piramal Enterprises", "ticker": "PEL.NS", "wt": "", "change": "new", "note": "Financials — Bullish" },
-        { "stock": "Niva Bupa Health Insurance", "ticker": "NIVABUPA.NS", "wt": "", "change": "new", "note": "Financials — Bullish" },
-        { "stock": "Reliance Industries", "ticker": "RELIANCE.NS", "wt": "", "change": "held", "note": "Top pick" },
-        { "stock": "Bharti Airtel", "ticker": "BHARTIARTL.NS", "wt": "", "change": "new", "note": "Telecom — Neutral, top pick" },
-        { "stock": "Coforge", "ticker": "COFORGE.NS", "wt": "", "change": "held", "note": "IT Services — Bullish" },
-        { "stock": "Dr Reddy's Laboratories", "ticker": "DRREDDY.NS", "wt": "", "change": "held", "note": "Pharmaceuticals — Bullish" },
-        { "stock": "Titan Company", "ticker": "TITAN.NS", "wt": "", "change": "new", "note": "Manufacturing Services — Bullish" },
-        { "stock": "Mahindra & Mahindra", "ticker": "M&M.NS", "wt": "", "change": "new", "note": "Auto ancillaries/EMS — Bullish" },
-        { "stock": "Sona BLW Precision Forgings", "ticker": "SONACOMS.NS", "wt": "", "change": "held", "note": "Auto ancillaries — Bullish" },
-        { "stock": "LG Electronics India", "ticker": "LGEL.NS", "wt": "", "change": "held", "note": "Manufacturing Services — Bullish" },
-        { "stock": "Swiggy", "ticker": "SWIGGY.NS", "wt": "", "change": "held", "note": "Internet — Bullish" },
-        { "stock": "UltraTech Cement", "ticker": "ULTRACEMCO.NS", "wt": "", "change": "held", "note": "Top pick" },
-        { "stock": "Hindustan Aeronautics", "ticker": "HAL.NS", "wt": "", "change": "held", "note": "Capital goods/Defence — Bullish" },
-        { "stock": "CG Power & Industrial Solutions", "ticker": "CGPOWER.NS", "wt": "", "change": "held", "note": "Capital goods — Bullish" },
-        { "stock": "Prestige Estates Projects", "ticker": "PRESTIGE.NS", "wt": "", "change": "held", "note": "Real Estate — Bullish" },
-        { "stock": "Ather Energy", "ticker": "ATHERENERG.NS", "wt": "", "change": "held", "note": "Auto — top pick" }
+        {
+          "stock": "ICICI Bank",
+          "ticker": "ICICIBANK.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Financials — Bullish"
+        },
+        {
+          "stock": "Kotak Mahindra Bank",
+          "ticker": "KOTAKBANK.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Financials — Bullish"
+        },
+        {
+          "stock": "HDFC Bank",
+          "ticker": "HDFCBANK.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Financials — Bullish"
+        },
+        {
+          "stock": "Shriram Finance",
+          "ticker": "SHRIRAMFIN.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Financials — Bullish"
+        },
+        {
+          "stock": "SBI Life Insurance",
+          "ticker": "SBILIFE.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Financials — Bullish"
+        },
+        {
+          "stock": "IDFC First Bank",
+          "ticker": "IDFCFIRSTB.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Financials — Bullish"
+        },
+        {
+          "stock": "Niva Bupa Health Insurance",
+          "ticker": "NIVABUPA.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Financials — Bullish"
+        },
+        {
+          "stock": "Reliance Industries",
+          "ticker": "RELIANCE.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Oil & Gas — Neutral, top pick"
+        },
+        {
+          "stock": "Gujarat Energy",
+          "ticker": "",
+          "wt": "",
+          "change": "new",
+          "note": "Oil & Gas — Neutral, top pick"
+        },
+        {
+          "stock": "Cognizant",
+          "ticker": "CTSH",
+          "wt": "",
+          "change": "new",
+          "note": "IT Services — Bullish (US-listed)"
+        },
+        {
+          "stock": "Dr Reddy's Laboratories",
+          "ticker": "DRREDDY.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Pharmaceuticals — Bullish"
+        },
+        {
+          "stock": "Sun Pharmaceutical Industries",
+          "ticker": "SUNPHARMA.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Pharmaceuticals — Bullish"
+        },
+        {
+          "stock": "MedPlus Health Services",
+          "ticker": "MEDPLUS.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Healthcare services — Bearish, top pick"
+        },
+        {
+          "stock": "Titan Company",
+          "ticker": "TITAN.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Discretionary — Bearish, top pick"
+        },
+        {
+          "stock": "LG Electronics India",
+          "ticker": "LGEINDIA.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Discretionary — Bearish, top pick"
+        },
+        {
+          "stock": "Lenskart",
+          "ticker": "LENSKART.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Discretionary — Bearish, top pick"
+        },
+        {
+          "stock": "Sona BLW Precision Forgings",
+          "ticker": "SONACOMS.NS",
+          "wt": "",
+          "change": "held",
+          "note": "EMS & auto ancillaries — Bullish"
+        },
+        {
+          "stock": "Mahindra & Mahindra",
+          "ticker": "M&M.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Autos — Bearish, top pick"
+        },
+        {
+          "stock": "Ather Energy",
+          "ticker": "ATHERENERG.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Autos — Bearish, top pick"
+        },
+        {
+          "stock": "Swiggy",
+          "ticker": "SWIGGY.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Internet — Bullish"
+        },
+        {
+          "stock": "Tata Consumer Products",
+          "ticker": "TATACONSUM.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Staples — Bearish, top pick"
+        },
+        {
+          "stock": "UltraTech Cement",
+          "ticker": "ULTRACEMCO.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Cement — Neutral, top pick"
+        },
+        {
+          "stock": "Dalmia Bharat",
+          "ticker": "DALBHARAT.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Cement — Neutral, top pick"
+        },
+        {
+          "stock": "Hindustan Aeronautics",
+          "ticker": "HAL.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Capital goods/Defence — Bullish"
+        },
+        {
+          "stock": "CG Power & Industrial Solutions",
+          "ticker": "CGPOWER.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Capital goods — Bullish"
+        },
+        {
+          "stock": "Bharat Electronics",
+          "ticker": "BEL.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Capital goods/Defence — Bullish"
+        },
+        {
+          "stock": "Bharti Airtel",
+          "ticker": "BHARTIARTL.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Telecom — Bullish"
+        },
+        {
+          "stock": "Jindal Stainless",
+          "ticker": "JSL.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Metals — Neutral, top pick"
+        },
+        {
+          "stock": "Prestige Estates Projects",
+          "ticker": "PRESTIGE.NS",
+          "wt": "",
+          "change": "held",
+          "note": "Real Estate — Bearish, top pick"
+        }
       ],
       "underweight": []
     },
     {
       "broker": "CLSA",
-      "asOf": "2026-09",
+      "asOf": "2026-10",
       "benchmark": "Nifty",
-      "report": "India Strategy/[260922] [CLSA] India Strategy - More attractive less loved at IF26.pdf",
-      "note": "India Focus Portfolio current constituents as stated in CLSA's 22 Sep IF26 note (unchanged from the 9 Sep reweight toward banks, exiting Eternal and all demerged Vedanta entities bar Vedanta Aluminium, other than the addition of Tata Motors PV as a distinct constituent). Per-stock weights are login-gated, so weights aren't shown.",
+      "report": "India Strategy/[261006] [CLSA] India Strategy - Market Strategy.pdf",
+      "note": "India Focus Portfolio current constituents as stated in CLSA's 6 Oct 'Taking stock – September 2026' (unchanged since 22 Sep; Tata Motors CV+PV, only Vedanta Aluminium retained). Per-stock weights are login-gated, so weights aren't shown.",
       "overweight": [
-        { "stock": "HDFC Bank", "ticker": "HDFCBANK.NS", "wt": "", "change": "held", "note": "India Focus Portfolio — raised weight in banks (9 Sep)" },
-        { "stock": "State Bank of India", "ticker": "SBIN.NS", "wt": "", "change": "held", "note": "India Focus Portfolio — raised weight in banks (9 Sep)" },
-        { "stock": "ICICI Bank", "ticker": "ICICIBANK.NS", "wt": "", "change": "held", "note": "India Focus Portfolio — raised weight in banks (9 Sep)" },
-        { "stock": "Infosys", "ticker": "INFY.NS", "wt": "", "change": "held", "note": "India Focus Portfolio" },
-        { "stock": "Bajaj Finance", "ticker": "BAJFINANCE.NS", "wt": "", "change": "held", "note": "India Focus Portfolio" },
-        { "stock": "Larsen & Toubro", "ticker": "LT.NS", "wt": "", "change": "held", "note": "India Focus Portfolio" },
-        { "stock": "Mahindra & Mahindra", "ticker": "M&M.NS", "wt": "", "change": "held", "note": "India Focus Portfolio" },
-        { "stock": "Oil & Natural Gas Corp", "ticker": "ONGC.NS", "wt": "", "change": "held", "note": "India Focus Portfolio" },
-        { "stock": "Avenue Supermarts (DMart)", "ticker": "DMART.NS", "wt": "", "change": "held", "note": "India Focus Portfolio" },
-        { "stock": "Vedanta Aluminium", "ticker": "", "wt": "", "change": "held", "note": "India Focus Portfolio — only Vedanta demerged entity retained" },
-        { "stock": "Tata Motors", "ticker": "TATAMOTORS.NS", "wt": "", "change": "held", "note": "India Focus Portfolio — commercial vehicles entity" },
-        { "stock": "Tata Motors PV", "ticker": "TMPV.NS", "wt": "", "change": "new", "note": "India Focus Portfolio — passenger vehicles entity, added as a distinct constituent (22 Sep)" },
-        { "stock": "Varun Beverages", "ticker": "VBL.NS", "wt": "", "change": "held", "note": "India Focus Portfolio" },
-        { "stock": "Godrej Properties", "ticker": "GODREJPROP.NS", "wt": "", "change": "held", "note": "India Focus Portfolio — Real Estate added (9 Sep)" }
+        {
+          "stock": "HDFC Bank",
+          "ticker": "HDFCBANK.NS",
+          "wt": "",
+          "change": "held",
+          "note": "India Focus Portfolio"
+        },
+        {
+          "stock": "State Bank of India",
+          "ticker": "SBIN.NS",
+          "wt": "",
+          "change": "held",
+          "note": "India Focus Portfolio"
+        },
+        {
+          "stock": "ICICI Bank",
+          "ticker": "ICICIBANK.NS",
+          "wt": "",
+          "change": "held",
+          "note": "India Focus Portfolio"
+        },
+        {
+          "stock": "Infosys",
+          "ticker": "INFY.NS",
+          "wt": "",
+          "change": "held",
+          "note": "India Focus Portfolio"
+        },
+        {
+          "stock": "Bajaj Finance",
+          "ticker": "BAJFINANCE.NS",
+          "wt": "",
+          "change": "held",
+          "note": "India Focus Portfolio"
+        },
+        {
+          "stock": "Larsen & Toubro",
+          "ticker": "LT.NS",
+          "wt": "",
+          "change": "held",
+          "note": "India Focus Portfolio"
+        },
+        {
+          "stock": "Mahindra & Mahindra",
+          "ticker": "M&M.NS",
+          "wt": "",
+          "change": "held",
+          "note": "India Focus Portfolio"
+        },
+        {
+          "stock": "Oil & Natural Gas Corp",
+          "ticker": "ONGC.NS",
+          "wt": "",
+          "change": "held",
+          "note": "India Focus Portfolio"
+        },
+        {
+          "stock": "Avenue Supermarts (DMart)",
+          "ticker": "DMART.NS",
+          "wt": "",
+          "change": "held",
+          "note": "India Focus Portfolio"
+        },
+        {
+          "stock": "Vedanta Aluminium",
+          "ticker": "",
+          "wt": "",
+          "change": "held",
+          "note": "India Focus Portfolio — only Vedanta demerged entity retained"
+        },
+        {
+          "stock": "Tata Motors",
+          "ticker": "TMCV.NS",
+          "wt": "",
+          "change": "held",
+          "note": "India Focus Portfolio — commercial vehicles entity"
+        },
+        {
+          "stock": "Tata Motors PV",
+          "ticker": "TMPV.NS",
+          "wt": "",
+          "change": "held",
+          "note": "India Focus Portfolio — passenger vehicles entity"
+        },
+        {
+          "stock": "Varun Beverages",
+          "ticker": "VBL.NS",
+          "wt": "",
+          "change": "held",
+          "note": "India Focus Portfolio"
+        },
+        {
+          "stock": "Godrej Properties",
+          "ticker": "GODREJPROP.NS",
+          "wt": "",
+          "change": "held",
+          "note": "India Focus Portfolio"
+        }
+      ],
+      "underweight": []
+    },
+    {
+      "broker": "Jefferies — India Model Portfolio",
+      "asOf": "2026-10",
+      "benchmark": "MSCI India",
+      "report": "India Strategy/[261006] [Jefferies] India Strategy - Rising bond yields, Increase weight on Largecaps.pdf",
+      "note": "Jefferies India Model Portfolio (Exhibit 17, updated 5 Oct 2026), stock-level absolute weights vs MSCI India; sector stance in the note. Changes this month: Kotak Mahindra Bank and Welspun Corp added, Reliance increased, NBFCs/Real Estate/Eicher trimmed.",
+      "overweight": [
+        {
+          "stock": "HDFC Bank",
+          "ticker": "HDFCBANK.NS",
+          "wt": 8.6,
+          "change": "",
+          "note": "Financials OWT"
+        },
+        {
+          "stock": "Axis Bank",
+          "ticker": "AXISBANK.NS",
+          "wt": 3.7,
+          "change": "",
+          "note": "Financials OWT"
+        },
+        {
+          "stock": "State Bank of India",
+          "ticker": "SBIN.NS",
+          "wt": 5.8,
+          "change": "",
+          "note": "Financials OWT"
+        },
+        {
+          "stock": "Kotak Mahindra Bank",
+          "ticker": "KOTAKBANK.NS",
+          "wt": 2.0,
+          "change": "",
+          "note": "Financials OWT — added 5 Oct"
+        },
+        {
+          "stock": "AU Small Finance Bank",
+          "ticker": "AUBANK.NS",
+          "wt": 3.6,
+          "change": "",
+          "note": "Financials OWT"
+        },
+        {
+          "stock": "Bajaj Finance",
+          "ticker": "BAJFINANCE.NS",
+          "wt": 3.8,
+          "change": "",
+          "note": "Financials OWT — trimmed"
+        },
+        {
+          "stock": "Manappuram Finance",
+          "ticker": "MANAPPURAM.NS",
+          "wt": 2.5,
+          "change": "",
+          "note": "Financials OWT"
+        },
+        {
+          "stock": "Star Health Insurance",
+          "ticker": "STARHEALTH.NS",
+          "wt": 2.1,
+          "change": "",
+          "note": "Financials OWT"
+        },
+        {
+          "stock": "Groww",
+          "ticker": "GROWW.NS",
+          "wt": 2.0,
+          "change": "",
+          "note": "Financials OWT"
+        },
+        {
+          "stock": "Infosys",
+          "ticker": "INFY.NS",
+          "wt": 2.5,
+          "change": "",
+          "note": "IT Neutral"
+        },
+        {
+          "stock": "Coforge",
+          "ticker": "COFORGE.NS",
+          "wt": 2.6,
+          "change": "",
+          "note": "IT Neutral"
+        },
+        {
+          "stock": "Sagility India",
+          "ticker": "SAGILITY.NS",
+          "wt": 1.6,
+          "change": "",
+          "note": "IT Neutral"
+        },
+        {
+          "stock": "Reliance Industries",
+          "ticker": "RELIANCE.NS",
+          "wt": 7.5,
+          "change": "",
+          "note": "Energy OWT — weight increased 5 Oct"
+        },
+        {
+          "stock": "Bharti Airtel",
+          "ticker": "BHARTIARTL.NS",
+          "wt": 5.5,
+          "change": "",
+          "note": "Telecom OWT"
+        },
+        {
+          "stock": "Radico Khaitan",
+          "ticker": "RADICO.NS",
+          "wt": 2.5,
+          "change": "",
+          "note": "Consumer Staples UWT"
+        },
+        {
+          "stock": "GMR Airports",
+          "ticker": "GMRAIRPORT.NS",
+          "wt": 2.9,
+          "change": "",
+          "note": "Consumer Discretionary UWT"
+        },
+        {
+          "stock": "Vishal Mega Mart",
+          "ticker": "VMM.NS",
+          "wt": 2.0,
+          "change": "",
+          "note": "Consumer Discretionary UWT"
+        },
+        {
+          "stock": "Eternal",
+          "ticker": "ETERNAL.NS",
+          "wt": 2.7,
+          "change": "",
+          "note": "Consumer Discretionary UWT"
+        },
+        {
+          "stock": "Meesho",
+          "ticker": "MEESHO.NS",
+          "wt": 2.3,
+          "change": "",
+          "note": "Consumer Discretionary UWT"
+        },
+        {
+          "stock": "Hindustan Zinc",
+          "ticker": "HINDZINC.NS",
+          "wt": 2.0,
+          "change": "",
+          "note": "Metals OWT"
+        },
+        {
+          "stock": "JSW Steel",
+          "ticker": "JSWSTEEL.NS",
+          "wt": 2.1,
+          "change": "",
+          "note": "Metals OWT"
+        },
+        {
+          "stock": "Grasim Industries",
+          "ticker": "GRASIM.NS",
+          "wt": 2.4,
+          "change": "",
+          "note": "Materials ex-metals UWT"
+        },
+        {
+          "stock": "Navin Fluorine",
+          "ticker": "NAVINFLUOR.NS",
+          "wt": 2.1,
+          "change": "",
+          "note": "Materials ex-metals UWT"
+        },
+        {
+          "stock": "Max Healthcare",
+          "ticker": "MAXHEALTH.NS",
+          "wt": 2.1,
+          "change": "",
+          "note": "Healthcare Neutral"
+        },
+        {
+          "stock": "Sai Life Sciences",
+          "ticker": "SAILIFE.NS",
+          "wt": 2.9,
+          "change": "",
+          "note": "Healthcare Neutral"
+        },
+        {
+          "stock": "Mankind Pharma",
+          "ticker": "MANKIND.NS",
+          "wt": 1.8,
+          "change": "",
+          "note": "Healthcare Neutral"
+        },
+        {
+          "stock": "Bharat Electronics",
+          "ticker": "BEL.NS",
+          "wt": 2.4,
+          "change": "",
+          "note": "Industrials Neutral"
+        },
+        {
+          "stock": "Bharat Forge",
+          "ticker": "BHARATFORG.NS",
+          "wt": 3.0,
+          "change": "",
+          "note": "Industrials Neutral"
+        },
+        {
+          "stock": "Welspun Corp",
+          "ticker": "WELCORP.NS",
+          "wt": 2.4,
+          "change": "",
+          "note": "Industrials Neutral — added 5 Oct"
+        },
+        {
+          "stock": "Adani Ports",
+          "ticker": "ADANIPORTS.NS",
+          "wt": 1.1,
+          "change": "",
+          "note": "Industrials Neutral"
+        },
+        {
+          "stock": "Adani Energy Solutions",
+          "ticker": "ADANIENSOL.NS",
+          "wt": 2.0,
+          "change": "",
+          "note": "Power/Utilities OWT"
+        },
+        {
+          "stock": "Premier Energies",
+          "ticker": "PREMIERENE.NS",
+          "wt": 1.9,
+          "change": "",
+          "note": "Power/Utilities OWT"
+        },
+        {
+          "stock": "JSW Energy",
+          "ticker": "JSWENERGY.NS",
+          "wt": 2.8,
+          "change": "",
+          "note": "Power/Utilities OWT"
+        },
+        {
+          "stock": "Lodha Developers",
+          "ticker": "LODHA.NS",
+          "wt": 1.6,
+          "change": "",
+          "note": "Real Estate OWT — trimmed"
+        },
+        {
+          "stock": "Godrej Properties",
+          "ticker": "GODREJPROP.NS",
+          "wt": 1.0,
+          "change": "",
+          "note": "Real Estate OWT — trimmed"
+        }
       ],
       "underweight": []
     },
     {
       "broker": "Kotak — Alphabet All-Season (broad)",
-      "asOf": "2026-09",
+      "asOf": "2026-10",
       "benchmark": "Nifty 50",
-      "report": "India Strategy/[260901] [Kotak] India Strategy - Momentum resilient as Multifactor alpha endures.pdf",
-      "note": "All-Season multifactor BROAD portfolio (top-15 by factor score; quant model, not fundamental KIE views), Sep 2026. wt = published broad-portfolio weight; chip = KIE analyst rating.",
+      "report": "India Strategy/[261005] [Kotak] India Strategy - Alphabet, Staying with strength.pdf",
+      "note": "All-Season multifactor BROAD portfolio for October 2026 (top-15 by factor score; quant model, not fundamental KIE views). wt = published broad-portfolio weight; chip = KIE analyst rating.",
       "overweight": [
-        { "stock": "Bharti Airtel", "ticker": "BHARTIARTL.NS", "wt": 10.52, "change": "held", "note": "KIE BUY" },
-        { "stock": "Sun Pharmaceutical Industries", "ticker": "SUNPHARMA.NS", "wt": 11.69, "change": "new", "note": "KIE ADD" },
-        { "stock": "Nestlé India", "ticker": "NESTLEIND.NS", "wt": 8.90, "change": "held", "note": "KIE REDUCE" },
-        { "stock": "State Bank of India", "ticker": "SBIN.NS", "wt": 7.49, "change": "held", "note": "KIE BUY" },
-        { "stock": "SBI Life Insurance", "ticker": "SBILIFE.NS", "wt": 7.12, "change": "new", "note": "KIE BUY" },
-        { "stock": "Power Grid", "ticker": "POWERGRID.NS", "wt": 6.97, "change": "held", "note": "KIE REDUCE" },
-        { "stock": "Apollo Hospitals", "ticker": "APOLLOHOSP.NS", "wt": 6.90, "change": "new", "note": "KIE BUY" },
-        { "stock": "Bajaj Finance", "ticker": "BAJFINANCE.NS", "wt": 6.57, "change": "new", "note": "KIE BUY" },
-        { "stock": "NTPC", "ticker": "NTPC.NS", "wt": 5.66, "change": "held", "note": "KIE REDUCE" },
-        { "stock": "Tata Steel", "ticker": "TATASTEEL.NS", "wt": 4.73, "change": "new", "note": "KIE SELL" },
-        { "stock": "Bajaj Auto", "ticker": "BAJAJ-AUTO.NS", "wt": 4.92, "change": "new", "note": "KIE SELL" },
-        { "stock": "Eicher Motors", "ticker": "EICHERMOT.NS", "wt": 5.21, "change": "held", "note": "KIE ADD" },
-        { "stock": "Hindalco Industries", "ticker": "HINDALCO.NS", "wt": 4.01, "change": "new", "note": "KIE BUY" },
-        { "stock": "Asian Paints", "ticker": "ASIANPAINT.NS", "wt": 5.51, "change": "new", "note": "KIE REDUCE" },
-        { "stock": "Bharat Electronics", "ticker": "BEL.NS", "wt": 3.82, "change": "held", "note": "KIE REDUCE" }
+        {
+          "stock": "Coal India",
+          "ticker": "COALINDIA.NS",
+          "wt": 4.89,
+          "change": "new",
+          "note": "KIE SELL"
+        },
+        {
+          "stock": "Titan Company",
+          "ticker": "TITAN.NS",
+          "wt": 5.78,
+          "change": "new",
+          "note": "KIE ADD"
+        },
+        {
+          "stock": "Bajaj Finance",
+          "ticker": "BAJFINANCE.NS",
+          "wt": 6.27,
+          "change": "held",
+          "note": "KIE BUY"
+        },
+        {
+          "stock": "Nestlé India",
+          "ticker": "NESTLEIND.NS",
+          "wt": 8.38,
+          "change": "held",
+          "note": "KIE REDUCE"
+        },
+        {
+          "stock": "ICICI Bank",
+          "ticker": "ICICIBANK.NS",
+          "wt": 11.45,
+          "change": "new",
+          "note": "KIE BUY"
+        },
+        {
+          "stock": "Cipla",
+          "ticker": "CIPLA.NS",
+          "wt": 8.02,
+          "change": "new",
+          "note": "KIE BUY"
+        },
+        {
+          "stock": "State Bank of India",
+          "ticker": "SBIN.NS",
+          "wt": 7.14,
+          "change": "held",
+          "note": "KIE BUY"
+        },
+        {
+          "stock": "JSW Steel",
+          "ticker": "JSWSTEEL.NS",
+          "wt": 6.42,
+          "change": "new",
+          "note": "KIE BUY"
+        },
+        {
+          "stock": "Grasim Industries",
+          "ticker": "GRASIM.NS",
+          "wt": 6.68,
+          "change": "new",
+          "note": "KIE ADD"
+        },
+        {
+          "stock": "Hindalco Industries",
+          "ticker": "HINDALCO.NS",
+          "wt": 3.85,
+          "change": "held",
+          "note": "KIE BUY"
+        },
+        {
+          "stock": "Eicher Motors",
+          "ticker": "EICHERMOT.NS",
+          "wt": 4.81,
+          "change": "held",
+          "note": "KIE ADD"
+        },
+        {
+          "stock": "Apollo Hospitals",
+          "ticker": "APOLLOHOSP.NS",
+          "wt": 6.61,
+          "change": "held",
+          "note": "KIE BUY"
+        },
+        {
+          "stock": "Shriram Finance",
+          "ticker": "SHRIRAMFIN.NS",
+          "wt": 3.26,
+          "change": "new",
+          "note": "KIE ADD"
+        },
+        {
+          "stock": "Sun Pharmaceutical Industries",
+          "ticker": "SUNPHARMA.NS",
+          "wt": 11.04,
+          "change": "held",
+          "note": "KIE ADD"
+        },
+        {
+          "stock": "NTPC",
+          "ticker": "NTPC.NS",
+          "wt": 5.39,
+          "change": "held",
+          "note": "KIE ADD"
+        }
       ],
       "underweight": []
     }
