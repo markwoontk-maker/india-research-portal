@@ -13,106 +13,6 @@
  ],
  "companies": [
   {
-   "name": "MRF",
-   "sector": "",
-   "ticker": "",
-   "sym": "MRF",
-   "basis": "",
-   "note": "",
-   "unit": "INR mn",
-   "revUnit": null,
-   "metrics": {
-    "rev": "Revenue",
-    "ebitda": "EBITDA"
-   },
-   "q": {
-    "1Q27": {
-     "abs": {
-      "rev": {
-       "key": "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins",
-       "broker": "Kotak",
-       "date": "260811",
-       "role": "own"
-      },
-      "ebitda": {
-       "key": "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins",
-       "broker": "Kotak",
-       "date": "260811",
-       "role": "own"
-      }
-     },
-     "rev": 82916,
-     "ebitda": 9486,
-     "revYoY": 0.0967,
-     "ebitdaYoY": -0.0829,
-     "revVs": "inline",
-     "ebitdaVs": "miss",
-     "overall": "miss",
-     "revNote": "Revenue rose 9.7% YoY and 4.8% QoQ, 2.1% below Kotak's estimate (CLSA calls it broadly in line). The shortfall came from low-teens growth in 2W OEM and mid-single-digit growth in TBR/2W replacement, and 10% YoY growth lagged peers, possibly from replacement-market share loss. (Kotak, CLSA)",
-     "ebitdaNote": "EBITDA fell 8.3% YoY and 25% QoQ, 6.5% below Kotak's estimate, with margin at 11.4% (-460bps QoQ). Gross margin dropped about 560bps QoQ on a 16-18% QoQ rise in raw material costs, and other expenses (possibly marketing) were higher than expected. CLSA put the margin about 200bps below its estimate. (Kotak, CLSA)",
-     "vsBasis": "broker estimate (Kotak)",
-     "src": {
-      "kind": "pdf",
-      "broker": "Kotak",
-      "date": "260811",
-      "key": "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins",
-      "unit": "INR mn",
-      "model": "sonnet",
-      "considered": [
-       "CLSA|260811|MRF|marginssuccumbtocostinflation",
-       "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins"
-      ],
-      "runs": 1,
-      "mined": "2026-10-20"
-     }
-    },
-    "1Q26": {
-     "abs": {
-      "rev": {
-       "key": "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins",
-       "broker": "Kotak",
-       "date": "260811",
-       "role": "yearAgo"
-      },
-      "ebitda": {
-       "key": "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins",
-       "broker": "Kotak",
-       "date": "260811",
-       "role": "yearAgo"
-      }
-     },
-     "rev": 75603,
-     "ebitda": 10344
-    },
-    "4Q26": {
-     "abs": {
-      "rev": {
-       "key": "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins",
-       "broker": "Kotak",
-       "date": "260811",
-       "role": "prevQ"
-      },
-      "ebitda": {
-       "key": "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins",
-       "broker": "Kotak",
-       "date": "260811",
-       "role": "prevQ"
-      }
-     },
-     "rev": 79084,
-     "ebitda": 12632
-    }
-   },
-   "added": "pdf",
-   "outlook": {
-    "call": "negative",
-    "note": "Kotak expects margin pressure to continue near term as rubber prices stay elevated and crude is volatile, and sees BKT's entry into TBR/PCR adding competition. It cut FY27-29 EPS by 2-12% (FY27E by 12%) and kept SELL with a Rs125,000 fair value. CLSA says industry price hikes of 7-9% in 1QFY27, with a further 5-6% planned in 2QFY27, should help margins recover sequentially. It cut FY27CL EPS by 8% (EBITDA margin 14% from 15%), raised its target price to Rs165,238 and kept O-PF. Net, the estimate cuts outweigh the recovery view. (Kotak, CLSA)",
-    "broker": "Kotak",
-    "date": "260811",
-    "quarter": "1Q27"
-   }
-  },
-  {
    "name": "Ather Energy",
    "sheetName": "Ather Energy",
    "sector": "2W",
@@ -56674,6 +56574,106 @@
     "broker": "Kotak",
     "date": "261015",
     "quarter": "2Q27"
+   }
+  },
+  {
+   "name": "MRF",
+   "sector": "Tyre",
+   "ticker": "",
+   "sym": "MRF",
+   "basis": "",
+   "note": "",
+   "unit": "INR mn",
+   "revUnit": null,
+   "metrics": {
+    "rev": "Revenue",
+    "ebitda": "EBITDA"
+   },
+   "q": {
+    "1Q27": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins",
+       "broker": "Kotak",
+       "date": "260811",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins",
+       "broker": "Kotak",
+       "date": "260811",
+       "role": "own"
+      }
+     },
+     "rev": 82916,
+     "ebitda": 9486,
+     "revYoY": 0.0967,
+     "ebitdaYoY": -0.0829,
+     "revVs": "inline",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Revenue rose 9.7% YoY and 4.8% QoQ, 2.1% below Kotak's estimate (CLSA calls it broadly in line). The shortfall came from low-teens growth in 2W OEM and mid-single-digit growth in TBR/2W replacement, and 10% YoY growth lagged peers, possibly from replacement-market share loss. (Kotak, CLSA)",
+     "ebitdaNote": "EBITDA fell 8.3% YoY and 25% QoQ, 6.5% below Kotak's estimate, with margin at 11.4% (-460bps QoQ). Gross margin dropped about 560bps QoQ on a 16-18% QoQ rise in raw material costs, and other expenses (possibly marketing) were higher than expected. CLSA put the margin about 200bps below its estimate. (Kotak, CLSA)",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "260811",
+      "key": "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|260811|MRF|marginssuccumbtocostinflation",
+       "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins"
+      ],
+      "runs": 1,
+      "mined": "2026-10-20"
+     }
+    },
+    "1Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins",
+       "broker": "Kotak",
+       "date": "260811",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins",
+       "broker": "Kotak",
+       "date": "260811",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 75603,
+     "ebitda": 10344
+    },
+    "4Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins",
+       "broker": "Kotak",
+       "date": "260811",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|260811|MRF|commodityheadwindscontinuetoweighsonmargins",
+       "broker": "Kotak",
+       "date": "260811",
+       "role": "prevQ"
+      }
+     },
+     "rev": 79084,
+     "ebitda": 12632
+    }
+   },
+   "added": "pdf",
+   "outlook": {
+    "call": "negative",
+    "note": "Kotak expects margin pressure to continue near term as rubber prices stay elevated and crude is volatile, and sees BKT's entry into TBR/PCR adding competition. It cut FY27-29 EPS by 2-12% (FY27E by 12%) and kept SELL with a Rs125,000 fair value. CLSA says industry price hikes of 7-9% in 1QFY27, with a further 5-6% planned in 2QFY27, should help margins recover sequentially. It cut FY27CL EPS by 8% (EBITDA margin 14% from 15%), raised its target price to Rs165,238 and kept O-PF. Net, the estimate cuts outweigh the recovery view. (Kotak, CLSA)",
+    "broker": "Kotak",
+    "date": "260811",
+    "quarter": "1Q27"
    }
   },
   {

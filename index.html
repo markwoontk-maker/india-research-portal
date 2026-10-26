@@ -910,7 +910,7 @@
   .er-head{position:sticky;top:0;z-index:6;display:flex;background:var(--panel);
     border-bottom:1px solid var(--line)}
   .er-body{display:flex}
-  .er-fix{flex:0 0 400px;border-right:1px solid var(--line);background:var(--panel);min-width:0;
+  .er-fix{flex:0 0 426px;border-right:1px solid var(--line);background:var(--panel);min-width:0;
     position:sticky;left:0;z-index:4}
   .er-pane{flex:1 1 var(--nat);min-width:var(--min);border-right:1px solid var(--line-soft)}
   .er-pane[data-pri="1"]{flex:0 0 var(--nat)}
@@ -954,6 +954,10 @@
   .er-c.ov.inline{color:var(--saffron)}
   .er-c.ov.beat,.er-c.ov.miss,.er-c.ov.inline{text-shadow:0 0 18px currentColor}
   .er-c.abs{color:var(--text-dim)}
+  .er-st{flex:0 0 26px;padding:0;justify-content:center}
+  .er-star{background:none;border:none;cursor:pointer;font-size:15px;line-height:1;color:var(--text-mute);padding:4px;border-radius:5px}
+  .er-star:hover{color:var(--saffron);background:var(--panel-2)}
+  .er-star.on{color:var(--saffron)}
   .er-nm{flex:0 0 160px;justify-content:flex-start;font-family:'Manrope';font-size:12px;color:var(--text);
     overflow:hidden;min-width:0}
   .er-nm button{background:none;border:none;color:inherit;font:inherit;cursor:pointer;text-align:left;
@@ -1015,7 +1019,7 @@
   #erPop .h{font-family:'Manrope';font-weight:700;color:var(--text);font-size:12px;margin-bottom:3px}
   #erPop .s{font-family:'Roboto Mono';font-size:10px;color:var(--text-mute);margin-top:6px}
   @media (max-width:700px){
-    .er-fix{flex-basis:136px}
+    .er-fix{flex-basis:162px}
     .er-nm{flex:1 1 auto;flex-direction:column;align-items:flex-start;justify-content:center;line-height:1.2}
     .er-nm .sub{display:block;font-family:'Roboto Mono';font-size:9px;color:var(--text-mute);white-space:nowrap;
       overflow:hidden;text-overflow:ellipsis;max-width:100%}
@@ -7628,6 +7632,9 @@ async function loadEarnings(){
 // the tracker. Choices live in this browser (localStorage), keyed by company name, and are
 // re-applied on every load, so the daily data refresh never undoes them. The tracker,
 // the sector filter and the Earnings Summary (bars + table) all read c.sector.
+const ER_STAR_LS='irp_earn_star_v1';
+function erStars(){ try{ const v=JSON.parse(localStorage.getItem(ER_STAR_LS)||'[]'); return new Set(Array.isArray(v)?v:[]); }catch(e){ return new Set(); } }
+function erToggleStar(name){ const s=erStars(); s.has(name)?s.delete(name):s.add(name); try{ localStorage.setItem(ER_STAR_LS,JSON.stringify([...s])); }catch(e){} return s.has(name); }
 const ER_SEC_LS='irp_earn_sector_v1';
 const ER_SECTOR_RENAME={'4W':'4W/CV','CV':'4W/CV','E-com':'EC/QC','QC':'EC/QC','Hotels':'Travel'};
 function erSecOv(){ try{ const v=JSON.parse(localStorage.getItem(ER_SEC_LS)||'{}'); return v&&typeof v==='object'?v:{}; }catch(e){ return {}; } }
@@ -7680,6 +7687,7 @@ function erQuarters(g){
   return erState.flip[g.id] ? qs.reverse() : qs;
 }
 function erVal(c,key){
+  if(key==='star') return erStars().has(c.name)?1:0;
   if(key==='name') return c.name.toLowerCase();
   if(key==='sector') return (c.sector||'').toLowerCase();
   if(key==='mcap') return c._usd;
@@ -7775,6 +7783,7 @@ function erRender(){
   const sub=document.getElementById('erSub');
   if(sub) sub.textContent=`${rows.length} of ${ER.companies.length} companies · revenue & EBITDA (or sector equivalents) YoY vs consensus · updated ${ER.updated||'—'}`;
   const fixHead=`<div class="er-fix"><div class="er-gt">Company</div><div class="er-sh">
+      <button type="button" class="er-sth" data-sort="star" style="width:26px;justify-content:center;padding:0" title="Companies you like · click to sort">★${erArrow('star')}</button>
       <button type="button" data-sort="name" style="width:160px">Name ${erArrow('name')}</button>
       <button type="button" class="d" data-sort="sector" style="width:74px">Sector ${erArrow('sector')}</button>
       <button type="button" class="d" data-sort="mcap" style="width:70px;justify-content:flex-end" title="Full market cap, US$ bn">Mkt cap ${erArrow('mcap')}</button>
@@ -7792,11 +7801,13 @@ function erRender(){
   if(!rows.length){
     grid.innerHTML=`<div class="er-head">${fixHead}${heads}</div><div class="er-empty">No companies match the filter.</div>`;
   } else {
+    const stars=erStars();
     const fixBody=`<div class="er-fix">${rows.map((c,i)=>{
       const m=c.metrics||{}; const mt=(m.rev&&m.rev!=='Revenue')||(m.ebitda&&m.ebitda!=='EBITDA')||c.revUnit
         ? `${c.revUnit==='US$ mn'?'US$ ':''}${m.rev||'Revenue'} / ${m.ebitda||'EBITDA'}`:'';
       const ol=c.outlook?` · <span class="ol-${c.outlook.call}">${ER_OUTLOOK[c.outlook.call]}</span>`:'';
       return `<div class="er-r" data-i="${i}">
+        <div class="er-c er-st"><button type="button" class="er-star${stars.has(c.name)?' on':''}" data-star="${erEsc(c.name)}" aria-pressed="${stars.has(c.name)}" title="${stars.has(c.name)?'Unstar':'Star'} ${erEsc(c.name)}">${stars.has(c.name)?'★':'☆'}</button></div>
         <div class="er-c er-nm"><button type="button" data-co="${erEsc(c.name)}" title="${erEsc(c.name)}${c.note?' — '+erEsc(c.note):''}">${erEsc(c.name)}</button><span class="sub">${erEsc(c.sector||'')} · ${erUsd(c._usd)}${ol}</span></div>
         <div class="er-c er-sc${c.sector!==c._origSector?' edited':''}" data-sec-edit="${erEsc(c.name)}" title="Click to change sector${c.sector!==c._origSector?' (originally '+erEsc(c._origSector)+')':''}"><span>${erEsc(c.sector||'—')}${c.sector!==c._origSector?' ✎':''}</span>${mt?`<span class="mt" title="Metrics used for this company">${erEsc(mt)}</span>`:''}</div>
         <div class="er-c er-mc" title="${c._mc?'₹'+Math.round(c._mc).toLocaleString('en-IN')+' Cr'+(ER_FX?' at ₹'+ER_FX.toFixed(2)+'/US$':''):''}${c.sym?' · '+erEsc(c.sym):''}">${erUsd(c._usd)}</div>
@@ -7858,6 +7869,10 @@ function erOpenCompany(name){
       else erState.sort=null;
       erSave(); erRender(); return; }
     if(e.target.closest('select')) return;
+    const st=e.target.closest('[data-star]');
+    if(st){ const on=erToggleStar(st.dataset.star);
+      if(erState.sort==='star'){ erRender(); return; }
+      st.classList.toggle('on',on); st.textContent=on?'★':'☆'; st.setAttribute('aria-pressed',on); st.title=(on?'Unstar ':'Star ')+st.dataset.star; return; }
     const se=e.target.closest('[data-sec-edit]'); if(se){ erOpenSecEditor(se); return; }
     const co=e.target.closest('[data-co]'); if(co) erOpenCompany(co.dataset.co);
   });
