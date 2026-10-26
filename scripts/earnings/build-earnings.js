@@ -74,12 +74,16 @@ function textLooksLikeResults(key, pdfPath, quarter) {
   if (!classifyCache) classifyCache = readJSON(CLASSIFY, {});
   const ck = key + '#' + quarter;
   if (ck in classifyCache) return classifyCache[ck];
-  let ok = false;
+  let t = '';
   try {
-    const t = execFileSync('pdftotext', ['-l', '2', pdfPath, '-'], { maxBuffer: 16 << 20, timeout: 30000, stdio: ['ignore', 'pipe', 'ignore'] }).toString();
-    const hits = (t.match(new RegExp(RESULT_WORDS.source, 'gi')) || []).length;
-    ok = Q_TEXT[+quarter[0]](+quarter.slice(2)).test(t) && hits >= 3;
-  } catch (e) { ok = false; }
+    t = execFileSync('pdftotext', ['-l', '2', pdfPath, '-'], { maxBuffer: 16 << 20, timeout: 30000, stdio: ['ignore', 'pipe', 'ignore'] }).toString();
+  } catch (e) { t = ''; }
+  // An extraction that failed or came back empty (file still being written / locked) is
+  // NOT cached, so the note is re-checked next run. A cached "no" from such a failure
+  // hid Kajaria's 2Q27 results note on 2026-10-26.
+  if (t.trim().length < 200) return false;
+  const hits = (t.match(new RegExp(RESULT_WORDS.source, 'gi')) || []).length;
+  const ok = Q_TEXT[+quarter[0]](+quarter.slice(2)).test(t) && hits >= 3;
   classifyCache[ck] = ok;
   return ok;
 }
