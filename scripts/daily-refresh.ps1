@@ -33,6 +33,12 @@ $repo = "C:\Users\admin\India-Research-Portal"
 $node = "C:\Program Files\nodejs\node.exe"
 Set-Location $repo
 
+# pdftotext (used by extract-pdfdata / build-financials / the earnings miner) ships with Git for
+# Windows in mingw64\bin, which is NOT on Task Scheduler's PATH - without this every pdftotext
+# call in the 09:30 run failed silently (found 2026-10-28).
+$gitBin = "C:\Program Files\Git\mingw64\bin"
+if ((Test-Path -LiteralPath $gitBin) -and ($env:Path -notlike "*$gitBin*")) { $env:Path = "$gitBin;$env:Path" }
+
 $logDir = Join-Path $repo "scripts\logs"
 New-Item -ItemType Directory -Force $logDir | Out-Null
 $log = Join-Path $logDir ("refresh-" + (Get-Date -f "yyyyMMdd-HHmmss") + ".log")

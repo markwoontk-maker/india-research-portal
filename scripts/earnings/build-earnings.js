@@ -29,6 +29,12 @@ const WORK = path.join(ROOT, 'scripts', '.earnings-work');
 const AUDIT = path.join(WORK, 'audit.jsonl');
 const PROMPT = path.join(ROOT, 'docs', 'earnings-miner-prompt.md');
 const CLAUDE = process.env.CLAUDE_EXE || 'C:\\Users\\admin\\.local\\bin\\claude.exe';
+// pdftotext ships with Git for Windows (mingw64\bin), which is on an interactive shell's PATH
+// but NOT on the 09:30 Task Scheduler PATH; calling it by bare name there failed every text
+// check (Kajaria / WeWork 2Q27 notes were missed). Resolve it absolutely when present.
+const PDFTOTEXT = process.env.PDFTOTEXT_EXE || [
+  'C:\\Program Files\\Git\\mingw64\\bin\\pdftotext.exe', 'C:\\Program Files (x86)\\Git\\mingw64\\bin\\pdftotext.exe',
+].find(p => fs.existsSync(p)) || 'pdftotext';
 const UV = process.env.UV_EXE || 'C:\\Users\\admin\\.local\\bin\\uv.exe';
 const MODEL = process.env.EARN_MODEL || 'sonnet';
 const CHECK_MODEL = process.env.EARN_CHECK_MODEL || 'opus';
@@ -76,7 +82,7 @@ function textLooksLikeResults(key, pdfPath, quarter) {
   if (ck in classifyCache) return classifyCache[ck];
   let t = '';
   try {
-    t = execFileSync('pdftotext', ['-l', '2', pdfPath, '-'], { maxBuffer: 16 << 20, timeout: 30000, stdio: ['ignore', 'pipe', 'ignore'] }).toString();
+    t = execFileSync(PDFTOTEXT, ['-l', '2', pdfPath, '-'], { maxBuffer: 16 << 20, timeout: 30000, stdio: ['ignore', 'pipe', 'ignore'] }).toString();
   } catch (e) { t = ''; }
   // An extraction that failed or came back empty (file still being written / locked) is
   // NOT cached, so the note is re-checked next run. A cached "no" from such a failure
@@ -360,7 +366,7 @@ function attributeWorkbookNotes(E) {
   const byFolder = {};
   for (const [key, p] of Object.entries(PDFMAP)) { const [h, d, f] = key.split('|'); if (h && d && f) (byFolder[f] = byFolder[f] || []).push({ key, p, broker: h, date: d }); }
   const textCache = {};
-  const textOf = n => { if (!(n.key in textCache)) { try { textCache[n.key] = flat(execFileSync('pdftotext', ['-l', '4', n.p, '-'], { maxBuffer: 16 << 20, timeout: 30000, stdio: ['ignore', 'pipe', 'ignore'] }).toString()); } catch (e) { textCache[n.key] = ''; } } return textCache[n.key]; };
+  const textOf = n => { if (!(n.key in textCache)) { try { textCache[n.key] = flat(execFileSync(PDFTOTEXT, ['-l', '4', n.p, '-'], { maxBuffer: 16 << 20, timeout: 30000, stdio: ['ignore', 'pipe', 'ignore'] }).toString()); } catch (e) { textCache[n.key] = ''; } } return textCache[n.key]; };
   let n = 0;
   for (const c of E.companies) {
     const keys = new Set([norm(c.name), norm(c.sheetName)]);
