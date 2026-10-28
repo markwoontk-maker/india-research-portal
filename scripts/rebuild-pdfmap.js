@@ -21,6 +21,7 @@ const FOLDER_ALIAS = {
   "Oil and Natural Gas":          "ONGC",
   "IndiGo":                       "InterGlobe Aviation",
   "Rainbow Children's Medicare":  "Rainbow Children's Hospitals",
+  "UNICOM":                       "Unicommerce eSolutions",
 };
 
 const map = {};

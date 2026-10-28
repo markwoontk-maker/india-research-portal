@@ -24790,18 +24790,78 @@
      },
      "rev": 516.3,
      "ebitda": 69.4
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261027|Unicommerce eSolutions|2q27strongbeatonmargins",
+       "broker": "CLSA",
+       "date": "261027",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "CLSA|261027|Unicommerce eSolutions|2q27strongbeatonmargins",
+       "broker": "CLSA",
+       "date": "261027",
+       "role": "own"
+      }
+     },
+     "rev": 590.8,
+     "ebitda": 85.9,
+     "revYoY": 0.1499,
+     "ebitdaYoY": -0.0591,
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Consolidated revenue of Rs591m (+15.0% YoY, +15.0% QoQ) was in line with CLSA's Rs588m estimate (+0.4%). Standalone grew 14.5% and Shipway 15.7% YoY, with 121 enterprise client additions in the quarter (CLSA).",
+     "ebitdaNote": "Ebitda of Rs85.9m was 26% above CLSA's Rs68.0m estimate, as margin of 14.5% beat the 11.6% estimate on lower employee expenses (-8.3% vs estimate) and lower D&A. Ebitda fell 5.9% YoY but rose 57% QoQ (CLSA).",
+     "vsBasis": "broker estimate (CLSA)",
+     "revCons": 588.3,
+     "ebitdaCons": 68,
+     "src": {
+      "kind": "pdf",
+      "broker": "CLSA",
+      "date": "261027",
+      "key": "CLSA|261027|Unicommerce eSolutions|2q27strongbeatonmargins",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|261027|Unicommerce eSolutions|2q27strongbeatonmargins"
+      ],
+      "runs": 1,
+      "mined": "2026-10-28"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261027|Unicommerce eSolutions|2q27strongbeatonmargins",
+       "broker": "CLSA",
+       "date": "261027",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "CLSA|261027|Unicommerce eSolutions|2q27strongbeatonmargins",
+       "broker": "CLSA",
+       "date": "261027",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 513.8,
+     "ebitda": 91.3
     }
    },
    "added": "pdf",
    "outlook": {
-    "call": "neutral",
-    "note": "Management expects standalone and Shipway growth of 15%+ and 20%+ YoY respectively from 4Q27 onwards. It also expects Shipway to break even from 3QFY27, with operating leverage benefits in 2HFY27. Investments will keep margins subdued through 1HFY27. CLSA cut FY27/28 EPS by up to 2% (FY27 net profit forecast -11.9%) and kept its Rs128 TP and O-PF rating (CLSA).",
+    "call": "positive",
+    "note": "Management targets 5x revenue growth over five years and a 20% Ebitda margin, with 15%+/20%+ YoY standalone/Shipway growth from 4Q27 onwards. Incremental Shipway investments moderate from 3Q, with adjusted Ebitda profitability improving from 3Q and PAT profitability from 4Q. CLSA raised FY27-29CL EPS by 2-21% on the margin beat and lifted TP to Rs130 from Rs128 (CLSA).",
     "broker": "CLSA",
-    "date": "260814",
-    "quarter": "1Q27"
+    "date": "261027",
+    "quarter": "2Q27"
    },
    "mcap": 911,
-   "mcapAsOf": "2026-10-28"
+   "mcapAsOf": "2026-10-28",
+   "formerName": "UNICOM"
   },
   {
    "name": "Urban Company",
@@ -34453,109 +34513,6 @@
     "date": "261016",
     "quarter": "2Q27"
    }
-  },
-  {
-   "name": "UNICOM",
-   "sector": "IT",
-   "ticker": "",
-   "sym": "UNIECOM",
-   "basis": "",
-   "note": "",
-   "unit": "INR mn",
-   "revUnit": null,
-   "metrics": {
-    "rev": "Revenue",
-    "ebitda": "Ebitda"
-   },
-   "q": {
-    "2Q27": {
-     "abs": {
-      "rev": {
-       "key": "CLSA|261027|UNICOM|2q27strongbeatonmargins",
-       "broker": "CLSA",
-       "date": "261027",
-       "role": "own"
-      },
-      "ebitda": {
-       "key": "CLSA|261027|UNICOM|2q27strongbeatonmargins",
-       "broker": "CLSA",
-       "date": "261027",
-       "role": "own"
-      }
-     },
-     "rev": 590.8,
-     "ebitda": 85.9,
-     "revYoY": 0.1499,
-     "ebitdaYoY": -0.0591,
-     "revVs": "inline",
-     "ebitdaVs": "beat",
-     "overall": "beat",
-     "revNote": "Consolidated revenue of Rs591m (+15.0% YoY, +15.0% QoQ) was in line with CLSA's Rs588m estimate (+0.4%). Standalone grew 14.5% and Shipway 15.7% YoY, with 121 enterprise client additions in the quarter (CLSA).",
-     "ebitdaNote": "Ebitda of Rs85.9m was 26% above CLSA's Rs68.0m estimate, as margin of 14.5% beat the 11.6% estimate on lower employee expenses (-8.3% vs estimate) and lower D&A. Ebitda fell 5.9% YoY but rose 57% QoQ (CLSA).",
-     "vsBasis": "broker estimate (CLSA)",
-     "revCons": 588.3,
-     "ebitdaCons": 68,
-     "src": {
-      "kind": "pdf",
-      "broker": "CLSA",
-      "date": "261027",
-      "key": "CLSA|261027|UNICOM|2q27strongbeatonmargins",
-      "unit": "INR mn",
-      "model": "sonnet",
-      "considered": [
-       "CLSA|261027|UNICOM|2q27strongbeatonmargins"
-      ],
-      "runs": 1,
-      "mined": "2026-10-28"
-     }
-    },
-    "2Q26": {
-     "abs": {
-      "rev": {
-       "key": "CLSA|261027|UNICOM|2q27strongbeatonmargins",
-       "broker": "CLSA",
-       "date": "261027",
-       "role": "yearAgo"
-      },
-      "ebitda": {
-       "key": "CLSA|261027|UNICOM|2q27strongbeatonmargins",
-       "broker": "CLSA",
-       "date": "261027",
-       "role": "yearAgo"
-      }
-     },
-     "rev": 513.8,
-     "ebitda": 91.3
-    },
-    "1Q27": {
-     "abs": {
-      "rev": {
-       "key": "CLSA|261027|UNICOM|2q27strongbeatonmargins",
-       "broker": "CLSA",
-       "date": "261027",
-       "role": "prevQ"
-      },
-      "ebitda": {
-       "key": "CLSA|261027|UNICOM|2q27strongbeatonmargins",
-       "broker": "CLSA",
-       "date": "261027",
-       "role": "prevQ"
-      }
-     },
-     "rev": 513.7,
-     "ebitda": 54.7
-    }
-   },
-   "added": "pdf",
-   "outlook": {
-    "call": "positive",
-    "note": "Management targets 5x revenue growth over five years and a 20% Ebitda margin, with 15%+/20%+ YoY standalone/Shipway growth from 4Q27 onwards. Incremental Shipway investments moderate from 3Q, with adjusted Ebitda profitability improving from 3Q and PAT profitability from 4Q. CLSA raised FY27-29CL EPS by 2-21% on the margin beat and lifted TP to Rs130 from Rs128 (CLSA).",
-    "broker": "CLSA",
-    "date": "261027",
-    "quarter": "2Q27"
-   },
-   "mcap": 911,
-   "mcapAsOf": "2026-10-28"
   },
   {
    "name": "Wipro",
