@@ -948,13 +948,13 @@
      "abs": {
       "rev": {
        "key": "GoldmanSachs|261028|TVS Motor|2qbeatexpect2hmarginpickupmktsharegainbuy",
-       "broker": "GoldmanSachs",
+       "broker": "GS",
        "date": "261028",
        "role": "own"
       },
       "ebitda": {
        "key": "GoldmanSachs|261028|TVS Motor|2qbeatexpect2hmarginpickupmktsharegainbuy",
-       "broker": "GoldmanSachs",
+       "broker": "GS",
        "date": "261028",
        "role": "own"
       }
@@ -963,16 +963,9 @@
      "ebitda": 22190,
      "revYoY": 0.4366,
      "ebitdaYoY": 0.4709,
-     "revVs": "beat",
-     "ebitdaVs": "beat",
-     "overall": "beat",
-     "revNote": "Revenue grew 44% YoY and 23% QoQ to Rs171.0bn, 5% above Bloomberg consensus, on 27% YoY volume growth (1.92mn units) and a 13% YoY rise in ASP to Rs89k, 5% above GS's estimate (GS, JP).",
-     "ebitdaNote": "EBITDA rose 47% YoY to Rs22.2bn, 7% above consensus. The margin of 13.0% was up 30bps YoY and 17bps QoQ and 20bps ahead of consensus, as a 1.6% price hike, operating leverage and cost reduction offset a 1.9% QoQ rise in commodity costs; staff costs were 13% above GS's estimate (GS, CLSA, JP).",
-     "revCons": 162167,
-     "ebitdaCons": 20716,
      "src": {
       "kind": "pdf",
-      "broker": "GoldmanSachs",
+      "broker": "GS",
       "date": "261028",
       "key": "GoldmanSachs|261028|TVS Motor|2qbeatexpect2hmarginpickupmktsharegainbuy",
       "unit": "INR mn",
@@ -981,12 +974,20 @@
        "CLSA|261029|TVS Motor|continuingtoshine",
        "GoldmanSachs|261028|TVS Motor|2qbeatexpect2hmarginpickupmktsharegainbuy",
        "JPMorgan|261028|TVS Motor|firsttake2qfy27broadbasedbeatledbystrongerasp",
+       "Jefferies|261028|TVS Motor|strongperformancedespitecostpressures",
        "Kotak|261028|TVS Motor|continuestodeliver",
        "MorganStanley|261028|TVS Motor|anotherstrongquarterremainow"
       ],
-      "runs": 1,
+      "runs": 2,
       "mined": "2026-10-29"
-     }
+     },
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue of Rs171.0bn grew 44% YoY and 23% QoQ, 5% above Bloomberg consensus (Rs162.2bn) and 3% above GS's estimate. Volumes rose 27% YoY to 1.92mn and ASP rose 13% YoY to Rs89k, 5% above GS's estimate (GS, JP).",
+     "ebitdaNote": "EBITDA of Rs22.2bn grew 47% YoY and was 7% above consensus (Rs20.7bn). The margin was 13.0%, up 17bps QoQ and 20bps ahead of consensus, helped by price hikes, operating leverage and cost optimisation, despite staff costs 33% higher YoY (GS, JP, CLSA).",
+     "revCons": 162167,
+     "ebitdaCons": 20716
     },
     "2Q26": {
      "abs": {
@@ -1424,7 +1425,7 @@
        "GoldmanSachs|261028|Hyundai Motor India|2qinlinebayonnewevlaunchestodrive2hgrowthpickup",
        "JPMorgan|261028|Hyundai Motor India|firsttake2qfy27broadlyinlineresultsweawaitoutlookon2hgrowthandcommodityinflation",
        "JPMorgan|261029|Hyundai Motor India|marketshareimpactofnewlaunchestodrivestockperformanceinthenearterm",
-       "Jefferies|261028|Hyundai India|sepqmissunconvincingproductstrategy",
+       "Jefferies|261028|Hyundai Motor India|sepqmissunconvincingproductstrategy",
        "Kotak|261028|Hyundai Motor India|inlinequarter",
        "MorganStanley|261028|Hyundai Motor India|goldenproductcycletohelphmioutperform"
       ],
@@ -31864,7 +31865,7 @@
    }
   },
   {
-   "name": "Star Health",
+   "name": "Star Health and Allied Insurance",
    "sheetName": "Star Health",
    "sector": "Insurance",
    "ticker": "",
@@ -31883,14 +31884,14 @@
      "abs": {
       "wb_rev": 43364,
       "rev": {
-       "key": "Jefferies|260729|Star Health|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
+       "key": "Jefferies|260729|Star Health and Allied Insurance|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
        "broker": "Jefferies",
        "date": "260729",
        "role": "yearAgo"
       },
       "wb_ebitda": 2878,
       "ebitda": {
-       "key": "Jefferies|260729|Star Health|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
+       "key": "Jefferies|260729|Star Health and Allied Insurance|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
        "broker": "Jefferies",
        "date": "260729",
        "role": "yearAgo"
@@ -31903,14 +31904,14 @@
      "abs": {
       "wb_rev": 46711,
       "rev": {
-       "key": "Jefferies|260729|Star Health|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
+       "key": "Jefferies|260729|Star Health and Allied Insurance|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
        "broker": "Jefferies",
        "date": "260729",
        "role": "prevQ"
       },
       "wb_ebitda": 5046,
       "ebitda": {
-       "key": "Jefferies|260729|Star Health|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
+       "key": "Jefferies|260729|Star Health and Allied Insurance|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
        "broker": "Jefferies",
        "date": "260729",
        "role": "prevQ"
@@ -31926,15 +31927,15 @@
       "kind": "pdf",
       "broker": "Jefferies",
       "date": "260729",
-      "key": "Jefferies|260729|Star Health|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
+      "key": "Jefferies|260729|Star Health and Allied Insurance|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
       "unit": "INR mn",
       "model": "sonnet",
       "considered": [
-       "GoldmanSachs|260730|Star Health|1q27aboveprofitabilitymomentumtosustaininfy27buy",
-       "Jefferies|260729|Star Health|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
-       "Jefferies|260731|Star Health|jun26qtrresultsstillrepresentsvaluemaintainbuy",
-       "Kotak|260730|Star Health|ontherighttrack",
-       "Nomura|260730|Star Health|healthyandhappybetterthanexpecteddeliveryoncombinedinsuranceserviceratiolifttptoinr700maintainbuy"
+       "GoldmanSachs|260730|Star Health and Allied Insurance|1q27aboveprofitabilitymomentumtosustaininfy27buy",
+       "Jefferies|260729|Star Health and Allied Insurance|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
+       "Jefferies|260731|Star Health and Allied Insurance|jun26qtrresultsstillrepresentsvaluemaintainbuy",
+       "Kotak|260730|Star Health and Allied Insurance|ontherighttrack",
+       "Nomura|260730|Star Health and Allied Insurance|healthyandhappybetterthanexpecteddeliveryoncombinedinsuranceserviceratiolifttptoinr700maintainbuy"
       ],
       "runs": 1,
       "mined": "2026-10-20"
@@ -31942,14 +31943,14 @@
      "abs": {
       "wb_rev": 49172,
       "rev": {
-       "key": "Jefferies|260729|Star Health|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
+       "key": "Jefferies|260729|Star Health and Allied Insurance|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
        "broker": "Jefferies",
        "date": "260729",
        "role": "own"
       },
       "wb_ebitda": 4251,
       "ebitda": {
-       "key": "Jefferies|260729|Star Health|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
+       "key": "Jefferies|260729|Star Health and Allied Insurance|jun26qtrfirstcutfourthconsecutiveqtroflossratio",
        "broker": "Jefferies",
        "date": "260729",
        "role": "own"
@@ -31961,36 +31962,12 @@
      "revNote": "IFRS insurance revenue of Rs49.2bn grew 13% YoY, 1% below Jefferies' estimate of Rs49.8bn. GS separately put GDPI growth at about 19% YoY, in line with its estimate, with retail GWP up 23% on volume growth and new-to-insurance customers (Jeff, GS).",
      "ebitdaNote": "Insurance service result of Rs4.25bn rose 48% YoY and was 18% above Jefferies' estimate. The loss ratio improved to 67.5% (-104bps YoY, 72bps better than expected) for the fourth consecutive quarter of improvement, and the combined ratio came in at 97.1%, 89bps ahead of the estimate (Jeff, GS).",
      "vsBasis": "broker estimate (Jefferies)"
-    }
-   },
-   "sym": "STARHEALTH",
-   "outlook": {
-    "call": "positive",
-    "note": "Jefferies sees another c.100bps of loss-ratio improvement by FY28e from price hikes, fresh-policy growth and telemedicine/home care. It expects GWP growth to slow to about 14% in 2HFY27 on a high base but sees tailwinds from 4Q price hikes. It raised FY27-29e EPS by 1-2% and its PT to Rs725 (Buy). GS raised FY27-29E EPS by up to 6% and its PT to Rs645 (Buy), expecting profitability momentum to continue in FY27 (Jeff, GS).",
-    "broker": "Jefferies",
-    "date": "260731",
-    "quarter": "1Q27"
-   }
-  },
-  {
-   "name": "Star Health and Allied Insurance",
-   "sector": "Insurance",
-   "ticker": "",
-   "sym": "STARHEALTH",
-   "basis": "",
-   "note": "",
-   "unit": "INR mn",
-   "revUnit": null,
-   "metrics": {
-    "rev": "GWP",
-    "ebitda": "PBT"
-   },
-   "q": {
+    },
     "2Q27": {
      "abs": {
       "rev": {
-       "key": "Kotak|261028|Star Health and Allied Insurance|anotherstrongquarter",
-       "broker": "Kotak",
+       "key": "GoldmanSachs|261028|Star Health and Allied Insurance|2q27inlinecontinuestosurpriseonprofitabilitybuy",
+       "broker": "Goldman Sachs",
        "date": "261028",
        "role": "own"
       },
@@ -32001,30 +31978,32 @@
        "role": "own"
       }
      },
-     "rev": 54980,
+     "rev": 52750,
      "ebitda": 3516,
-     "revYoY": 0.1283,
-     "ebitdaYoY": 2.1505,
-     "revVs": null,
-     "ebitdaVs": "beat",
-     "overall": "beat",
-     "revNote": "GWP rose 13% yoy to Rs55.0 bn (22% qoq). On a 1/n basis GWP grew 19% yoy, helped by new business up ~35% (D2C +142%, partnerships +33%, agency +26%). Insurance revenue of Rs50.7 bn was up 15% yoy and in line with Kotak's estimate (Kotak).",
-     "ebitdaNote": "PBT of Rs3.5 bn was about 2x Kotak's estimate of Rs1.75 bn and up 215% yoy. PBT before MTM gain was Rs4.1 bn, up 87% yoy and 26% above the estimate. The claims ratio fell ~110 bps vs the estimate to 68.9% (down ~250 bps yoy), and the combined ratio including reinsurance was 98.2%. A weaker investment yield (4.8%, with an MTM hit on equities) partly offset this (Kotak).",
-     "vsBasis": "broker estimate (Kotak)",
-     "ebitdaCons": 1751,
+     "revYoY": 0.182,
+     "ebitdaYoY": null,
      "src": {
       "kind": "pdf",
-      "broker": "Kotak",
+      "broker": "Goldman Sachs",
       "date": "261028",
-      "key": "Kotak|261028|Star Health and Allied Insurance|anotherstrongquarter",
+      "key": "GoldmanSachs|261028|Star Health and Allied Insurance|2q27inlinecontinuestosurpriseonprofitabilitybuy",
       "unit": "INR mn",
       "model": "sonnet",
       "considered": [
+       "GoldmanSachs|261028|Star Health and Allied Insurance|2q27inlinecontinuestosurpriseonprofitabilitybuy",
+       "Jefferies|261027|Star Health and Allied Insurance|sep26qtrfirstcutanotherallaroundbeat",
+       "Jefferies|261028|Star Health and Allied Insurance|sep26qtrresultswhywedonotagreewiththesharepric",
        "Kotak|261028|Star Health and Allied Insurance|anotherstrongquarter"
       ],
-      "runs": 1,
+      "runs": 2,
       "mined": "2026-10-29"
-     }
+     },
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "GDPI of Rs52.75bn was +18% yoy and 1.3% below GSe (Rs53.45bn), so broadly in line; retail GWP grew 21% yoy, while group fell 35% yoy. Management expects headline growth to moderate as the GST-led base effect enters from Q3. (GS)",
+     "ebitdaNote": "No report prints PBT. Profitability beat on the broker's own estimates: combined ratio 98.0% vs 102.6% GSe, and loss ratio 69.0% vs 70.8% GSe. Jefferies shows IFRS insurance service result of Rs3,831mn, 18% above JEFe, and IFRS PAT of Rs2,648mn vs Rs1,134mn JEFe. (GS, Jeff)",
+     "vsBasis": "broker estimate (GS/Jeff)"
     },
     "2Q26": {
      "abs": {
@@ -32043,34 +32022,17 @@
      },
      "rev": 48730,
      "ebitda": 1116
-    },
-    "1Q27": {
-     "abs": {
-      "rev": {
-       "key": "Kotak|261028|Star Health and Allied Insurance|anotherstrongquarter",
-       "broker": "Kotak",
-       "date": "261028",
-       "role": "prevQ"
-      },
-      "ebitda": {
-       "key": "Kotak|261028|Star Health and Allied Insurance|anotherstrongquarter",
-       "broker": "Kotak",
-       "date": "261028",
-       "role": "prevQ"
-      }
-     },
-     "rev": 45110,
-     "ebitda": 7417
     }
    },
-   "added": "pdf",
+   "sym": "STARHEALTH",
    "outlook": {
     "call": "neutral",
     "note": "Management aims for fresh-business growth of 20% or more in FY2027, but headline growth should normalise as the GST-led base effect builds. Kotak expects 11-12% GWP growth in FY28-29E, with new distribution norms cutting commissions and causing price deflation. It cut estimates by 0-5% for lower growth and investment yield, and trimmed FV to Rs650 from Rs675. It still expects the claims ratio to improve to 67.7% in FY27E and RoE to rise to 16-17%, and upgraded the rating to BUY from ADD (Kotak).",
     "broker": "Kotak",
     "date": "261028",
     "quarter": "2Q27"
-   }
+   },
+   "formerName": "Star Health"
   },
   {
    "name": "Amagi Media Labs",
@@ -37054,15 +37016,72 @@
      },
      "rev": 5337,
      "ebitda": 1177
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|261028|Gateway Distriparks|inlinequarter",
+       "broker": "Jefferies",
+       "date": "261028",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Jefferies|261028|Gateway Distriparks|inlinequarter",
+       "broker": "Jefferies",
+       "date": "261028",
+       "role": "own"
+      }
+     },
+     "rev": 5801,
+     "ebitda": 1261,
+     "revYoY": 0.0226,
+     "ebitdaYoY": 0.0482,
+     "revVs": "inline",
+     "ebitdaVs": "miss",
+     "overall": "inline",
+     "revNote": "Sales of Rs 5,801 mn (+2.3% YoY) were 1.1% below JEFe of Rs 5,863 mn. Volumes fell 3% YoY on an 8% decline in CFS volumes, offset by a 4% rise in blended realisations. Rail volumes rose 2% YoY in TEU terms. (Jeff)",
+     "ebitdaNote": "EBITDA of Rs 1,261 mn (+4.8% YoY) was 3.1% below JEFe of Rs 1,300 mn, and margin of 21.7% compared with 22.2% expected. The shortfall was due to weak CFS volumes. EBITDA/TEU rose 6% YoY. Jefferies called the quarter broadly inline. (Jeff)",
+     "vsBasis": "broker estimate (Jefferies)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Jefferies",
+      "date": "261028",
+      "key": "Jefferies|261028|Gateway Distriparks|inlinequarter",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|261028|Gateway Distriparks|inlinequarter"
+      ],
+      "runs": 1,
+      "mined": "2026-10-29"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|261028|Gateway Distriparks|inlinequarter",
+       "broker": "Jefferies",
+       "date": "261028",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Jefferies|261028|Gateway Distriparks|inlinequarter",
+       "broker": "Jefferies",
+       "date": "261028",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 5673,
+     "ebitda": 1203
     }
    },
    "added": "pdf",
    "outlook": {
-    "call": "negative",
-    "note": "Kotak cut estimates by 6% on lower volumes and EBITDA per TEU, and cut fair value to Rs75 from Rs82. Management expects margins to improve in both segments as the West Asia effect recedes and CFS pricing rises. Catalysts are the full WDFC commissioning to JNPT, the Ankleshwar and Indore ICD starts and the Jaipur ICD ruling due in September 2026. Kotak keeps BUY (Kotak).",
-    "broker": "Kotak",
-    "date": "260804",
-    "quarter": "1Q27"
+    "call": "neutral",
+    "note": "Near-term remains volatile due to ME tensions. Capacity additions give visibility into management's double-digit medium-term rail growth target: EXIM operations at the Ankleshwar MMLP start from Dec-26Q and the Indore ICD from Dec-27. Jefferies cut FY27/FY28 revenue by 2%/2% and EPS by 2%/9%, and cut its PT to Rs 63 from Rs 74 (6.5x Sep'28E EV/EBITDA vs 7x earlier), citing rising competitive intensity. Rating stays Buy. (Jeff)",
+    "broker": "Jefferies",
+    "date": "261028",
+    "quarter": "2Q27"
    },
    "mcap": 2297,
    "mcapAsOf": "2026-10-29"
@@ -58508,105 +58527,6 @@
    "added": "folder"
   },
   {
-   "name": "SAIL",
-   "sector": "Steel",
-   "ticker": "",
-   "sym": "",
-   "basis": "",
-   "note": "",
-   "unit": "INR mn",
-   "revUnit": null,
-   "metrics": {
-    "rev": "Net sales",
-    "ebitda": "EBITDA"
-   },
-   "q": {
-    "2Q27": {
-     "abs": {
-      "rev": {
-       "key": "Kotak|261028|SAIL|softquartermarginssettorecoverin2hfy27",
-       "broker": "Kotak",
-       "date": "261028",
-       "role": "own"
-      },
-      "ebitda": {
-       "key": "Kotak|261028|SAIL|softquartermarginssettorecoverin2hfy27",
-       "broker": "Kotak",
-       "date": "261028",
-       "role": "own"
-      }
-     },
-     "rev": 319975,
-     "ebitda": 42199,
-     "revYoY": 0.1982,
-     "ebitdaYoY": 0.6709,
-     "revVs": "inline",
-     "ebitdaVs": "miss",
-     "overall": "miss",
-     "revNote": "Net sales of Rs320 bn were 1.5% above Kotak's estimate, up 20% yoy and 20% qoq. Volumes (adjusted for RINL sales) rose 10% yoy and 25% qoq to ~5.07 mn tons, helped by inventory liquidation, while blended realization fell 3.5% qoq to Rs63,087/ton. (Kotak)",
-     "ebitdaNote": "Adjusted EBITDA of Rs42.2 bn was 9.2% below Kotak's estimate (+67% yoy, -5.4% qoq) on lower realizations amid seasonal weakness in long steel prices, partly offset by higher volumes. EBITDA/ton was Rs8,320 versus Kotak's Rs9,419 estimate. (Kotak)",
-     "vsBasis": "broker estimate (Kotak)",
-     "src": {
-      "kind": "pdf",
-      "broker": "Kotak",
-      "date": "261028",
-      "key": "Kotak|261028|SAIL|softquartermarginssettorecoverin2hfy27",
-      "unit": "INR mn",
-      "model": "sonnet",
-      "considered": [
-       "Kotak|261028|SAIL|softquartermarginssettorecoverin2hfy27"
-      ],
-      "runs": 1,
-      "mined": "2026-10-29"
-     }
-    },
-    "2Q26": {
-     "abs": {
-      "rev": {
-       "key": "Kotak|261028|SAIL|softquartermarginssettorecoverin2hfy27",
-       "broker": "Kotak",
-       "date": "261028",
-       "role": "yearAgo"
-      },
-      "ebitda": {
-       "key": "Kotak|261028|SAIL|softquartermarginssettorecoverin2hfy27",
-       "broker": "Kotak",
-       "date": "261028",
-       "role": "yearAgo"
-      }
-     },
-     "rev": 267039,
-     "ebitda": 25256
-    },
-    "1Q27": {
-     "abs": {
-      "rev": {
-       "key": "Kotak|261028|SAIL|softquartermarginssettorecoverin2hfy27",
-       "broker": "Kotak",
-       "date": "261028",
-       "role": "prevQ"
-      },
-      "ebitda": {
-       "key": "Kotak|261028|SAIL|softquartermarginssettorecoverin2hfy27",
-       "broker": "Kotak",
-       "date": "261028",
-       "role": "prevQ"
-      }
-     },
-     "rev": 265547,
-     "ebitda": 44611
-    }
-   },
-   "added": "pdf",
-   "outlook": {
-    "call": "positive",
-    "note": "Management cut FY27 volume guidance to 21 mn tons (from 22) but kept capex guidance at Rs150/200/250 bn for FY27/28/29E. October NSR is up ~Rs4,000/ton, spot rebar is ~20% above 2QFY27 averages and HRC ~7% higher, and coking coal cost is ~Rs24,100/ton. Kotak sees margins having bottomed in 2Q, raises FY27-29 EBITDA estimates by 12-16%, lifts fair value to Rs200 (from Rs170) and upgrades to BUY. (Kotak)",
-    "broker": "Kotak",
-    "date": "261028",
-    "quarter": "2Q27"
-   }
-  },
-  {
    "name": "Shyam Metalics and Energy",
    "sheetName": "Shyam Metalics & Energy",
    "sector": "Steel",
@@ -63650,12 +63570,6 @@
     "Nomura|261026|Cipla|2qfy27mutedgrowthbutqqmarginrecovery"
    ],
    "reason": "Nomura 261026 is a results preview ('We expect CIPLA to report a steady 2QFY27'). The 2QFY27 column in its tables is marked 'F' for Nomura forecast, so it holds no reported actuals."
-  },
-  "Star Health|2Q27": {
-   "considered": [
-    "Jefferies|261027|Star Health|sep26qtrfirstcutanotherallaroundbeat"
-   ],
-   "reason": "The only report is a Jefferies first-cut flash note (27 Oct 2026). Its one results table is on IFRS basis and shows insurance revenue and PAT. It prints no GWP and no PBT, which are the metrics this r"
   },
   "GE Vernova T&D India|2Q27": {
    "considered": [

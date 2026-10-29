@@ -22,6 +22,12 @@ const FOLDER_ALIAS = {
   "IndiGo":                       "InterGlobe Aviation",
   "Rainbow Children's Medicare":  "Rainbow Children's Hospitals",
   "UNICOM":                       "Unicommerce eSolutions",
+  "Star Health":                  "Star Health and Allied Insurance",
+  "Star Health & Allied Insurance": "Star Health and Allied Insurance",
+  "SAIL":                         "Steel Authority of India",
+  "Gateway":                      "Gateway Distriparks",
+  "TVS":                          "TVS Motor",
+  "Hyundai India":                "Hyundai Motor India",
 };
 
 const map = {};
