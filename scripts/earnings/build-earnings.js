@@ -99,6 +99,7 @@ const norm = s => String(s || '').toLowerCase().replace(/\[.*?\]|\(.*?\)/g, ' ')
   .replace(/\b(ltd|limited|the|india|co|company|corporation|corp|industries|of)\b/g, ' ').replace(/[^a-z0-9]/g, '');
 // Library folders that hold the same company under another name.
 const FOLDER_ALIAS = {
+  'Amara Raja Batteries': 'Amara Raja Energy and Mobility', 'Brookfield India Real Estate Trust': 'Brookfield India REIT', 'Cholamandalam Inv. and Fin. Co': 'Cholamandalam', 'Embassy REIT': 'Embassy Office Parks REIT', 'Emcure Pharma': 'Emcure Pharmaceuticals', 'Hindustan Petro': 'Hindustan Petroleum', 'NSE': 'National Stock Exchange of India', 'Syrma SGS': 'Syrma SGS Technology', 'Tata Consumer': 'Tata Consumer Products', 'Torrent Pharma': 'Torrent Pharmaceuticals', 'Union Bank': 'Union Bank of India', 'Westlife': 'Westlife Foodworld', 'Sona Comstar': 'Sona BLW', 'UNSP': 'United Spirits',
   'Star Health': 'Star Health and Allied Insurance', 'Star Health & Allied Insurance': 'Star Health and Allied Insurance', 'SAIL': 'Steel Authority of India', 'Gateway': 'Gateway Distriparks', 'TVS': 'TVS Motor', 'Hyundai India': 'Hyundai Motor India',
   'UNICOM': 'Unicommerce eSolutions', 'Unicommerce': 'Unicommerce eSolutions', 'HDFC Asset Management': 'HDFC AMC', 'ICICI Prudential Asset Management': 'ICICI Prudential AMC',
   'ICICI Prudential Asset Management Company Limited': 'ICICI Prudential AMC', 'ICICI Prudential Life': 'ICICI Prudential Life Insurance',

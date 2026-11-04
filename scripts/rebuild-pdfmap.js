@@ -28,6 +28,20 @@ const FOLDER_ALIAS = {
   "Gateway":                      "Gateway Distriparks",
   "TVS":                          "TVS Motor",
   "Hyundai India":                "Hyundai Motor India",
+  "Amara Raja Batteries": "Amara Raja Energy and Mobility",
+  "Brookfield India Real Estate Trust": "Brookfield India REIT",
+  "Cholamandalam Inv. and Fin. Co": "Cholamandalam",
+  "Embassy REIT": "Embassy Office Parks REIT",
+  "Emcure Pharma": "Emcure Pharmaceuticals",
+  "Hindustan Petro": "Hindustan Petroleum",
+  "NSE": "National Stock Exchange of India",
+  "Syrma SGS": "Syrma SGS Technology",
+  "Tata Consumer": "Tata Consumer Products",
+  "Torrent Pharma": "Torrent Pharmaceuticals",
+  "Union Bank": "Union Bank of India",
+  "Westlife": "Westlife Foodworld",
+  "Sona Comstar": "Sona BLW",
+  "UNSP": "United Spirits",
 };
 
 const map = {};
