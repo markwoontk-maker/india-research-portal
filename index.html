@@ -4555,16 +4555,86 @@ function wlLoadQuotes(force){
   return wlQuotesLoading;
 }
 function wlApplyQuotes(){
-  if(!wlQuotes||!wlQuotes.q) return;
-  Object.keys(wlQuotes.q).forEach(function(sym){ const q=wlQuotes.q[sym], o=wlMap[sym]||(wlMap[sym]={}), qf=o._qf||(o._qf={});
-    ['p','d1','w1','m1','ytd'].forEach(function(f){ if((o[f]==null||qf[f]) && q[f]!=null){ o[f]=q[f]; qf[f]=1; } }); });
-  if(wlQuotes.idx && (!wlIdxHist || !wlIdxHist.dates || !wlIdxHist.dates.length || wlIdxHist._q)){
-    const ds=Object.keys(wlQuotes.idx).sort(), cl=ds.map(function(d){ return wlQuotes.idx[d]; });
-    wlIdxHist={dates:ds, close:cl, open:cl, _q:1};
+  if(wlQuotes&&wlQuotes.q){
+    Object.keys(wlQuotes.q).forEach(function(sym){ const q=wlQuotes.q[sym], o=wlMap[sym]||(wlMap[sym]={}), qf=o._qf||(o._qf={});
+      ['p','d1','w1','m1','ytd'].forEach(function(f){ if((o[f]==null||qf[f]) && q[f]!=null){ o[f]=q[f]; qf[f]=1; } });
+      if((o.pc==null||qf.pc) && q.p!=null && q.d1!=null){ o.pc=q.p/(1+q.d1/100); qf.pc=1; } });
+    if(wlQuotes.idx && (!wlIdxHist || !wlIdxHist.dates || !wlIdxHist.dates.length || wlIdxHist._q)){
+      const ds=Object.keys(wlQuotes.idx).sort(), cl=ds.map(function(d){ return wlQuotes.idx[d]; });
+      wlIdxHist={dates:ds, close:cl, open:cl, _q:1};
+    }
   }
-  const t=wlQuotes.updated?new Date(wlQuotes.updated):null;
-  const lbl='Prices · NSE'+(t?(' · as of '+t.toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Kolkata'})+' IST'):'');
+  wlApplyLive();
+}
+// Live price layer, polled every minute while the Watchlist tab is open in NSE hours. The browser
+// can't reach Yahoo, so scripts/refresh-wl-live.js pushes real-time prices to the live-quotes
+// branch every 2 min (read through the GitHub contents API: CORS-ok, 60s cache, no Pages build).
+// TradingView's public screener IS callable from the browser but runs 15 min behind, so it is the
+// fallback when that feed goes stale (PC off, Yahoo down) and covers names outside its universe.
+const WL_LIVE_URL='https://api.github.com/repos/markwoontk-maker/india-research-portal/contents/live.json?ref=live-quotes';
+const WL_LIVE_FRESH_MS=15*60*1000;   // older than this and TradingView's delayed price is the fresher one
+let wlLiveBranch=null, wlLiveTV=null, wlLive=null, wlLivePolling=false;
+function wlFetchJSON(url,init){
+  const ac=new AbortController(), to=setTimeout(function(){ ac.abort(); },8000);
+  return fetch(url,Object.assign({signal:ac.signal},init)).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; }).then(function(j){ clearTimeout(to); return j; });
+}
+function wlFetchLiveBranch(){
+  return wlFetchJSON(WL_LIVE_URL,{headers:{Accept:'application/vnd.github.raw+json'}}).then(function(j){ if(j&&j.q&&j.updated) wlLiveBranch=j; });
+}
+function wlFetchLiveTV(){
+  const toSym={'NSE:CNX500':'^CRSLDX'};
+  const add=function(sy){ String(sy).split('|').forEach(function(c){ const m=c.match(/^(.+)\.(NS|BO)$/i); if(m) toSym[(m[2].toUpperCase()==='BO'?'BSE:':'NSE:')+m[1].toUpperCase()]=c; }); };
+  [].concat(WL.hold,WL.cov,WL.watch).forEach(function(r){ add(r[1]); });
+  wlTxns.forEach(function(t){ if(t.sym) add(t.sym); });
+  return wlFetchJSON('https://scanner.tradingview.com/india/scan',{method:'POST',body:JSON.stringify({symbols:{tickers:Object.keys(toSym),query:{types:[]}},columns:['close','change_abs','time']})}).then(function(j){
+    if(!j||!j.data||!j.data.length) return;
+    const q={}; let d='';
+    j.data.forEach(function(x){ const sym=toSym[x.s], v=x.d; if(!sym||!v||v[0]==null||v[1]==null) return; q[sym]=[v[0],v[0]-v[1]];
+      if(v[2]){ const dd=new Date((v[2]+19800)*1000).toISOString().slice(0,10); if(dd>d) d=dd; } });   // bar open = session date, so a holiday can't pose as today
+    wlLiveTV={q:q,d:d,at:Date.now()};
+  });
+}
+// Overlay live prices on wlMap (real-time beats delayed), rescaling 1W/1M/YTD off the same bases.
+function wlApplyLive(){
+  const bFresh=wlLiveBranch&&(Date.now()-Date.parse(wlLiveBranch.updated))<=WL_LIVE_FRESH_MS;
+  [wlLiveTV, bFresh?wlLiveBranch:null].forEach(function(l){ if(!l) return;
+    Object.keys(l.q).forEach(function(sym){ const p=l.q[sym][0], pc=l.q[sym][1]; if(!(p>0)||!(pc>0)) return;
+      const o=wlMap[sym]||(wlMap[sym]={}), qf=o._qf||(o._qf={}), q=wlQuotes&&wlQuotes.q&&wlQuotes.q[sym];
+      o.p=p; o.pc=pc; o.d1=(p/pc-1)*100; qf.p=qf.pc=qf.d1=1;
+      ['w1','m1','ytd'].forEach(function(f){ if(q&&q[f]!=null&&q.p>0){ o[f]=(p/(q.p/(1+q[f]/100))-1)*100; qf[f]=1; } }); }); });
+  const asOf=function(ms){ return new Date(ms).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Kolkata'})+' IST'; };
+  let lbl='Prices · NSE';
+  if(bFresh){ wlLive={d:wlLiveBranch.d,src:'live'}; lbl+=' · live · '+asOf(Date.parse(wlLiveBranch.updated)); }
+  else if(wlLiveTV){ wlLive={d:wlLiveTV.d,src:'delayed'}; lbl+=' · delayed 15 min · '+asOf(wlLiveTV.at); }
+  else if(wlQuotes){ wlLive={d:wlQuotes.asOf,src:'snapshot'}; if(wlQuotes.updated) lbl+=' · as of '+asOf(Date.parse(wlQuotes.updated)); }
   document.querySelectorAll('.wl-px-sub').forEach(function(el){ el.textContent=lbl; });
+}
+function wlMarketHours(){ const t=new Date(Date.now()+19800000), m=t.getUTCHours()*60+t.getUTCMinutes(), w=t.getUTCDay(); return w>=1&&w<=5&&m>=550&&m<=945; }   // 09:10-15:45 IST
+// Today's running return from the latest prices, through the same ledger maths as a settled day.
+// Never stored: it is shown only until the settled NSE close for that date arrives.
+function wlLiveReturn(){
+  const D=wlLive&&wlLive.d; if(!D||!wlRet||!wlRet.dates||wlDailyReturns[D]) return null;
+  const last=Object.keys(wlRet.dates).sort().pop(); if(last&&D<=last) return null;
+  const c={}, pc={};
+  const add=function(sy){ const hit=String(sy).split('|').find(function(x){ return wlMap[x]&&wlMap[x].p!=null&&wlMap[x].pc!=null; }); if(!hit) return; const nse=wlNseSym(sy); c[nse]=wlMap[hit].p; pc[nse]=wlMap[hit].pc; };
+  WL.hold.forEach(function(r){ add(r[1]); }); wlTxns.forEach(function(t){ if(t.sym) add(t.sym); });
+  const r=wlPortfolioReturnOn(D,{liveDay:{c:c,r:{},pc:pc}}); if(!r) return null;
+  const ix=wlMap['^CRSLDX'];
+  return {d:D,p:r.p,i:(ix&&ix.d1!=null)?ix.d1:null};
+}
+function wlLiveRepaint(){
+  const a=document.activeElement;   // never rebuild the tables under someone typing into them
+  if(!(a&&/^(INPUT|SELECT)$/.test(a.tagName)&&a.closest&&a.closest('#viewWatchlist'))){
+    wlRender(true);
+    if(typeof wlTxnsRender==='function') wlTxnsRender();
+    if(typeof wlTradesRender==='function') wlTradesRender();
+  }
+  wlDailyQuiet=true; try{ wlRenderDaily(); }finally{ wlDailyQuiet=false; }
+}
+function wlLivePoll(){
+  if(wlLivePolling) return Promise.resolve();
+  wlLivePolling=true;
+  return Promise.all([wlFetchLiveBranch(),wlFetchLiveTV()]).then(function(){ wlApplyLive(); wlLiveRepaint(); }).catch(function(){}).then(function(){ wlLivePolling=false; });
 }
 function wlHoldD1(sy){ const cands=String(sy).split('|'); const hit=cands.find(function(c){return wlMap[c]&&wlMap[c].p!=null;})||cands.find(function(c){return wlMap[c];}); return (hit&&wlMap[hit]&&wlMap[hit].d1!=null)?wlMap[hit].d1:null; }
 function wlPortfolioDailyReturn(){
@@ -4575,7 +4645,7 @@ function wlPortfolioDailyReturn(){
   let n=0,s=0; WL.hold.forEach(function(row){ const d1=wlHoldD1(row[1]); if(d1!=null){ s+=d1; n++; } });
   return n>0?s/n:null;
 }
-let wlDailyChart=null;
+let wlDailyChart=null, wlDailyQuiet=false;
 // Toggleable check-box legend for the Portfolio Daily Return chart (per-series on/off, persisted).
 const WL_DAILY_VIS_LS='irp_daily_vis_v1';
 function wlDailyVisLoad(){ try{ return JSON.parse(localStorage.getItem(WL_DAILY_VIS_LS))||{}; }catch(e){ return {}; } }
@@ -4588,7 +4658,7 @@ function wlBuildDailyLegend(chart){
     const vis=wlDailyVis[ds.label]!==false;
     const lab=document.createElement('label'); lab.className='wl-leg-item'+(vis?'':' off');
     const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=vis;
-    const sw=document.createElement('span'); sw.className='wl-leg-sw'; sw.style.background=(ds.type==='line')?ds.borderColor:ds.backgroundColor;
+    const sw=document.createElement('span'); sw.className='wl-leg-sw'; sw.style.background=(ds.type==='line')?ds.borderColor:(ds.swatch||ds.backgroundColor);
     const txt=document.createElement('span'); txt.className='wl-leg-txt'; txt.textContent=ds.label;
     cb.addEventListener('change',function(){
       wlDailyVis[ds.label]=cb.checked; wlDailyVisSave();
@@ -4635,23 +4705,31 @@ function wlRenderDaily(){
     const ax=function(e){ const bel=Math.max(0,-e.mn)*1.08, abv=Math.max(0,e.mx)*1.08; const step=Math.max(bel/below,abv/above)||1; return {min:-below*step, max:above*step, step:step}; };
     return {y:ax(e1), y1:ax(e2)};
   };
-  const zal=zAxisAlign(pVals.concat(iVals), cumVals.concat(cumRelVals,cumExVals), 8);
   const f=function(x){ return x==null?'—':((x>=0?'+':'')+x.toFixed(2)+'%'); };
-  if(sub){ sub.textContent = dates.length
-    ? ('Current Holdings vs Nifty 500 · '+wlDailyPeriod+' · '+dates.length+' day'+(dates.length>1?'s':'')+' · cum WR '+f(cumVals[cumVals.length-1])+' · cum rel '+f(cumRelVals[cumRelVals.length-1]))
+  const nSettled=dates.length, cumLast=cumVals[cumVals.length-1], relLast=cumRelVals[cumRelVals.length-1];
+  // Provisional column for the running session: bars only (the cumulative lines stay settled-only),
+  // translucent + outlined so it reads as not yet final.
+  const live=wlLiveReturn(), liveIdx=live?nSettled:-1;
+  if(live){ const lp=live.d.split('-'); dates.push(live.d); labels.push(lp[2]+'/'+lp[1]+' live'); pVals.push(live.p); iVals.push(live.i); cumVals.push(null); cumRelVals.push(null); cumExVals.push(null); }
+  const zal=zAxisAlign(pVals.concat(iVals), cumVals.concat(cumRelVals,cumExVals), 8);
+  const barFill=function(solid,soft){ return dates.map(function(d,i){ return i===liveIdx?soft:solid; }); };
+  const barLine=dates.map(function(d,i){ return i===liveIdx?1.5:0; });
+  const lastDay=(wlRet&&wlRet.dates)?Object.keys(wlRet.dates).sort().pop():null;
+  if(sub){ sub.textContent = (nSettled||live)
+    ? ('Current Holdings vs Nifty 500 · '+wlDailyPeriod+' · '+nSettled+' day'+(nSettled!==1?'s':'')+' · cum WR '+f(cumLast)+' · cum rel '+f(relLast)+(lastDay?' · settled through '+wlFmtDayMon(lastDay):'')+(live?' · today so far '+f(live.p)+' vs N500 '+f(live.i):''))
     : 'Current Holdings (weighted) vs Nifty 500 · building — check back as trading days close'; }
   if(typeof Chart==='undefined') return;
   if(wlDailyChart){ wlDailyChart.destroy(); wlDailyChart=null; }
   if(!dates.length) return;
   wlDailyChart=new Chart(cv,{type:'bar',
     data:{labels:labels,datasets:[
-      {label:'WR return (daily)',data:pVals,backgroundColor:'#3fc78a',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
-      {label:'Nifty 500 (daily)',data:iVals,backgroundColor:'#6db4b4',borderWidth:0,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
+      {label:'WR return (daily)',data:pVals,swatch:'#3fc78a',backgroundColor:barFill('#3fc78a','rgba(63,199,138,.35)'),borderColor:'#3fc78a',borderWidth:barLine,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
+      {label:'Nifty 500 (daily)',data:iVals,swatch:'#6db4b4',backgroundColor:barFill('#6db4b4','rgba(109,180,180,.35)'),borderColor:'#6db4b4',borderWidth:barLine,barPercentage:1,categoryPercentage:0.7,maxBarThickness:40,order:5,yAxisID:'y'},
       {label:'Cumulative (WR relative, compounded)',type:'line',data:cumRelVals,borderColor:'#b18cff',backgroundColor:'#b18cff',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:false,order:2,yAxisID:'y1',spanGaps:true},
       {label:'Cumulative (WR portfolio, compounded)',type:'line',data:cumVals,borderColor:'#5aa9e6',backgroundColor:'rgba(90,169,230,.08)',borderWidth:1.8,pointRadius:0,pointHoverRadius:4,tension:.18,fill:true,order:1,yAxisID:'y1'},
       {label:'Cumulative (WR portfolio ex-Reliance)',type:'line',data:cumExVals,borderColor:'#e9a23b',backgroundColor:'#e9a23b',borderWidth:1.6,borderDash:[5,3],pointRadius:0,pointHoverRadius:4,tension:.18,fill:false,order:1,yAxisID:'y1',spanGaps:true}
     ]},
-    options:{responsive:true,maintainAspectRatio:false,devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
+    options:{responsive:true,maintainAspectRatio:false,devicePixelRatio:Math.max(2,window.devicePixelRatio||1),animation:wlDailyQuiet?false:undefined,
       plugins:{legend:{display:false},
         tooltip:{backgroundColor:'#11151c',borderColor:'#252c39',borderWidth:1,titleColor:'#646c7c',bodyColor:'#e9e6dd',
           callbacks:{label:function(t){ if(t.parsed.y==null) return ''; return ' '+t.dataset.label+': '+(t.parsed.y>=0?'+':'')+t.parsed.y.toFixed(2)+'%'; },
@@ -4730,10 +4808,10 @@ function wlIndexReturnOn(D){
 // this reduces to (sum MV_today / sum MV_prev - 1) = SUM(start-of-day weight x return), the exact
 // money-return. Contribution (start-value-weighted) is kept in wlContrib[D] for the hover tooltip.
 function wlPortfolioReturnOn(D, opts){
-  opts=opts||{}; const excl=opts.exclude||null;
-  const day=wlRet&&wlRet.dates&&wlRet.dates[D]; if(!day||!day.c||!day.r) return null;
-  const days=Object.keys(wlRet.dates).sort(); const di=days.indexOf(D); const prevDay=(di>0)?wlRet.dates[days[di-1]]:null;
-  const cPrevOf=function(nse,cD,rD){ return prevDay?prevDay.c[nse]:((cD!=null&&rD!=null)?cD/(1+rD/100):null); };
+  opts=opts||{}; const excl=opts.exclude||null, liveDay=opts.liveDay||null;   // liveDay = {c,r,pc}: latest prices, not yet settled
+  const day=liveDay||(wlRet&&wlRet.dates&&wlRet.dates[D]); if(!day||!day.c||!day.r) return null;
+  const days=liveDay?[]:Object.keys(wlRet.dates).sort(); const di=days.indexOf(D); const prevDay=(di>0)?wlRet.dates[days[di-1]]:null;
+  const cPrevOf=function(nse,cD,rD){ if(liveDay) return liveDay.pc[nse]; return prevDay?prevDay.c[nse]:((cD!=null&&rD!=null)?cD/(1+rD/100):null); };
   // Reconstruct qty held at the START of day D from the CURRENT qty by undoing every trade
   // dated on/after D: startQ = current - buys(ed>=D) + sells(xd>=D). Trades ON D then adjust
   // that day's P&L. So the whole history is a pure function of (current quantities + the full
@@ -4827,10 +4905,11 @@ function wlRefreshReturns(){
 function wlAutoRefreshInit(){
   if(wlAutoRefreshInit._done) return; wlAutoRefreshInit._done=true;
   const THROTTLE=60000;
-  const maybe=function(){ if(document.visibilityState==='visible' && Date.now()-wlLastRefresh>THROTTLE) wlRefreshReturns(); };
+  const maybe=function(){ if(document.visibilityState==='visible' && Date.now()-wlLastRefresh>THROTTLE){ wlRefreshReturns(); wlLivePoll(); } };
   document.addEventListener('visibilitychange', maybe);
   window.addEventListener('focus', maybe);
   setInterval(maybe, 300000);
+  setInterval(function(){ const v=document.getElementById('viewWatchlist'); if(document.visibilityState==='visible' && !(v&&v.hidden) && wlMarketHours()) wlLivePoll(); }, 60000);
 }
 // Holding price = live Yahoo LTP when available, else the latest committed NSE
 // close (wl_returns.json). Live quotes are CORS-blocked on the static Pages site,
@@ -4891,7 +4970,7 @@ function wlTradesSave(){ try{ localStorage.setItem(WL_TRADES_LS,JSON.stringify(w
 function wlPcSpan(v){ return (v==null||isNaN(v))?'<span style="color:var(--text-mute)">—</span>':'<span class="'+(v>=0?'up':'down')+'">'+(v>=0?'+':'')+v.toFixed(2)+'%</span>'; }
 function wlLatestClose(sym){ const h=wlPxHist[sym]; if(!h||!h.close||!h.close.length) return null; for(let i=h.close.length-1;i>=0;i--){ if(h.close[i]!=null) return h.close[i]; } return null; }
 function wlLatestOpen(sym){ const h=wlPxHist[sym]; if(!h||!h.open||!h.open.length) return null; for(let i=h.open.length-1;i>=0;i--){ if(h.open[i]!=null) return h.open[i]; } return null; }
-function wlIdxLatest(){ if(!wlIdxHist) return null; const arr=wlIdxHist.open||wlIdxHist.close; if(!arr||!arr.length) return null; for(let i=arr.length-1;i>=0;i--){ if(arr[i]!=null) return arr[i]; } return null; }
+function wlIdxLatest(){ const lv=wlMap['^CRSLDX']; if(lv&&lv.p!=null) return lv.p; if(!wlIdxHist) return null; const arr=wlIdxHist.open||wlIdxHist.close; if(!arr||!arr.length) return null; for(let i=arr.length-1;i>=0;i--){ if(arr[i]!=null) return arr[i]; } return null; }
 // Reliable price source when live Yahoo is CORS-blocked on the static site: the
 // committed NSE closes in wl_returns.json (wlRet). Stock closes drive the trade's
 // Total Return; the daily index %chg is compounded for the Nifty 500 benchmark leg.
@@ -4908,7 +4987,7 @@ function wlTradeCalc(t){
   // Open trade (no exit entered): notional exit = latest stock price / latest index.
   // Live Yahoo is CORS-blocked on the static Pages site, so fall back to the exact
   // committed NSE closes (wl_returns.json) — the same source the daily chart uses.
-  let xp=(t.xp!=null&&t.xp!=='')?+t.xp:(t.sym?(t.xd?wlOpenAt(t.sym,t.xd):wlLatestOpen(t.sym)):null);
+  let xp=(t.xp!=null&&t.xp!=='')?+t.xp:(t.sym?(t.xd?wlOpenAt(t.sym,t.xd):(wlHoldPx(t.sym)??wlLatestOpen(t.sym))):null);
   if(xp==null && t.sym){ xp = t.xd?wlRetCloseAt(t.sym,t.xd):wlRetLatestClose(t.sym); }
   let ret=(ep!=null&&xp!=null&&ep!==0)?(xp/ep-1)*100:null;
   if(ret!=null && t.call==='Sell') ret=-ret;
@@ -5071,7 +5150,7 @@ function wlTxnsRender(){
   if(!order.length){ tb.innerHTML='<tr><td class="pol-empty" colspan="11">No transactions yet — click “+ Add transaction”, then log the stock, weight, entry/exit price and dates.</td></tr>'; return; }
   tb.innerHTML=order.map(function(o){ const t=o.t, i=o.i;
     const qv=(t.qty!=null&&t.qty!=='')?t.qty:'', ep=(t.ep!=null&&t.ep!=='')?t.ep:'', ed=t.ed||'', xp=(t.xp!=null&&t.xp!=='')?t.xp:'', xd=t.xd||'';
-    let autoXp=(xp===''&&t.sym)?(t.xd?wlOpenAt(t.sym,t.xd):wlLatestOpen(t.sym)):null;
+    let autoXp=(xp===''&&t.sym)?(t.xd?wlOpenAt(t.sym,t.xd):(wlHoldPx(t.sym)??wlLatestOpen(t.sym))):null;
     if(autoXp==null && xp==='' && t.sym){ autoXp = t.xd?wlRetCloseAt(t.sym,t.xd):wlRetLatestClose(t.sym); }
     const xpShown=(xp!=='')?xp:(autoXp!=null?autoXp.toFixed(2):''), xpCls=(xp===''&&autoXp!=null)?' wl-xp-auto':'';
     const cc=wlTxnCalc(t), ret=cc.ret, n5=cc.n5, rel=cc.rel;
@@ -5301,7 +5380,7 @@ function wlRenderN500(){
     ${wlPct(d.d1)}${wlPct(d.w1)}${wlPct(d.m1)}${wlPct(d.ytd)}
     <td class="wl-actions"></td></tr>`;
 }
-function wlRender(){
+function wlRender(skipResearch){
   for(const sec in WL_TBODY){
     const tb=document.getElementById(WL_TBODY[sec]);
     if(tb) tb.innerHTML=wlRows(WL[sec],wlMap,sec);
@@ -5312,7 +5391,7 @@ function wlRender(){
   // Weights/returns fall back to committed NSE closes when live quotes are blocked;
   // load that file if we don't have it yet, then re-render so the numbers fill in.
   if(!wlRet && !wlRetLoading){ wlLoadReturns().then(function(){ wlRender(); }).catch(function(){}); }
-  if(typeof wlRenderResearch==='function') wlRenderResearch();
+  if(!skipResearch && typeof wlRenderResearch==='function') wlRenderResearch();
 }
 // Resolve a typed query (company name or ticker) to a [name, "TICKER.NS"] pair.
 // Merge Nifty 500 (NAMES) + research-covered (companies.json) names into the
@@ -5489,7 +5568,7 @@ async function loadWatchlist(){
   // transaction P&L, and don't depend on live quotes — load them FIRST so those render
   // immediately instead of waiting behind the CORS-blocked Yahoo pulls below.
   wlLoadReturns().then(function(){ wlRender(); if(typeof wlTxnsRender==='function') wlTxnsRender(); if(typeof wlCaptureDaily==='function') wlCaptureDaily(); }).catch(function(){});
-  wlLoadQuotes().then(function(){ wlApplyQuotes(); wlRender(); if(typeof wlTxnsRender==='function') wlTxnsRender(); }).catch(function(){});
+  wlLoadQuotes().then(function(){ wlApplyQuotes(); wlRender(); if(typeof wlTxnsRender==='function') wlTxnsRender(); wlLivePoll(); }).catch(function(){});
   const all=[...WL.hold,...WL.cov,...WL.watch];
   const syms=[...new Set([...all.flatMap(x=>x[1].split('|')),'^CRSLDX','INR=X'])];
   const map={};
