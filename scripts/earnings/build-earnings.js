@@ -116,6 +116,7 @@ const NON_COMPANY_RE = /^(India\b|Indian\b|Asia|Global\b|IT Services\b|GDPI|Actu
 
 // ---------- work list ----------
 function buildWorkList(E, { allSeasons }) {
+  const REMINE = new Set((process.env.EARN_REMINE || '').split(';').filter(Boolean));
   const PDFMAP = readJSON(path.join(ROOT, 'data', 'pdfmap.json'), {});
   const COMPANIES = readJSON(path.join(ROOT, 'data', 'companies.json'), {});
   const rows = Object.fromEntries(E.companies.map(c => [c.name, c]));
@@ -155,16 +156,22 @@ function buildWorkList(E, { allSeasons }) {
     const have = row && row.q && row.q[quarter];
     const keys = files.map(f => f.key).sort();
     const isPdf = have && have.src && have.src.kind === 'pdf';
-    const wantOutlook = latestOf[name] === quarter && !(row && row.outlook && row.outlook.quarter === quarter && isPdf);
+    // EARN_REMINE="Name;Name": refresh a mined row's latest season from its newest full notes,
+    // past the MAX_RUNS cap (a row can otherwise stay on an early note once its runs are used up).
+    const remine = REMINE.has(name) && latestOf[name] === quarter;
+    const wantOutlook = latestOf[name] === quarter && (remine || !(row && row.outlook && row.outlook.quarter === quarter && isPdf));
     if (isPdf && !wantOutlook) {
       const fresh = keys.filter(k => !(have.src.considered || []).includes(k));
       if (!fresh.length || (have.src.runs || 1) >= MAX_RUNS) continue;
     }
-    const rank = f => (/consensus|cons|beat|miss|inline|firstcut|firsttake/.test(f.title) ? 2 : 0) + (/firstcut|firsttake/.test(f.title) ? -1 : 0);
-    const pick = files.slice().sort((a, b) => rank(b) - rank(a) || b.date.localeCompare(a.date)).slice(0, MAX_FILES);
+    const firstCut = f => /firstcut|firsttake/.test(f.title);
+    const rank = f => (/consensus|cons|beat|miss|inline|firstcut|firsttake/.test(f.title) ? 2 : 0) + (firstCut(f) ? -1 : 0);
+    const pick = files.slice().sort(remine
+      ? (a, b) => firstCut(a) - firstCut(b) || b.date.localeCompare(a.date)
+      : (a, b) => rank(b) - rank(a) || b.date.localeCompare(a.date)).slice(0, MAX_FILES);
     const co = COMPANIES[name] || {};
     items.push({
-      name, quarter, yearAgoQuarter: yearAgo(quarter), prevQuarter: prevQ(quarter), keys, wantOutlook,
+      name, quarter, yearAgoQuarter: yearAgo(quarter), prevQuarter: prevQ(quarter), keys, wantOutlook, preferNewest: remine || undefined,
       sector: row ? row.sector : '', companySector: co.sector || '', sectorChoices: row ? null : sectors,
       metrics: row && row.metrics, unit: row && row.unit, revUnit: row && row.revUnit, basis: row && row.basis,
       priorQuarters: row ? Object.fromEntries(Object.entries(row.q || {}).filter(([, v]) => v.rev != null || v.ebitda != null)
@@ -198,7 +205,7 @@ function writeItem(it) {
   const parts = [fs.readFileSync(PROMPT, 'utf8'), '\n=== WORK ITEM ===\n',
     JSON.stringify({ name: it.name, quarter: it.quarter, yearAgoQuarter: it.yearAgoQuarter, prevQuarter: it.prevQuarter,
       sector: it.sector || null, companyDescription: it.companySector || null, sectorChoices: it.sectorChoices || undefined,
-      wantOutlook: it.wantOutlook, metrics: it.metrics || null, unit: it.unit || null, revUnit: it.revUnit || null,
+      wantOutlook: it.wantOutlook, preferNewest: it.preferNewest, metrics: it.metrics || null, unit: it.unit || null, revUnit: it.revUnit || null,
       basis: it.basis || null, priorQuarters: it.priorQuarters }, null, 1), '\n\n=== REPORTS ===\n'];
   files.forEach((f, i) => {
     const mine = imgs.filter(p => path.basename(p).startsWith(`r${i + 1}_`));

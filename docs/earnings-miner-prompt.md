@@ -23,6 +23,10 @@ standalone, reported vs adjusted). Re-read the row once before writing each numb
    come from this single report so the row is internally consistent. Prefer the
    report whose table also has a consensus column, and among equals the one with the
    most precise figures (Rs mn / Rs cr rather than Rs bn rounded to one decimal).
+   When the work item has `"preferNewest": true`, this order changes: the primary is the
+   NEWEST report that has the full table described above. Its numbers still all come from
+   that one report; beat/miss calls, notes and outlook may draw on any supplied report, and
+   must name the report they came from. If no supplied report has that table, return `skip`.
 2. **Metric definitions** (keep the work item's `metrics` labels when given):
    - Normal companies: Revenue (net sales / revenue from operations, consolidated) and EBITDA (reported; use adjusted only if that is the only EBITDA the table shows, and say so in `ebitdaNote`).
    - Banks, NBFCs, HFCs, MFIs: Revenue = **Total operating income** (NII + other/non-interest income; "net revenue"/"net total income"), EBITDA = **PPOP** (pre-provision operating profit). Labels `{"rev":"Total op. income","ebitda":"PPOP"}`.
