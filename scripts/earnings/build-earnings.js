@@ -424,8 +424,11 @@ function mergeDir(E) {
   return ok;
 }
 
+// The estimates miner maps library folders to rows with the same rules.
+module.exports = { FOLDER_ALIAS, NON_COMPANY_RE, norm };
+
 // ---------- main ----------
-(async function main() {
+if (require.main === module) (async function main() {
   try {
     const mode = process.argv[2] || '';
     const backfill = mode === '--backfill';

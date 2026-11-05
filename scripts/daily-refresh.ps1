@@ -123,8 +123,7 @@ Step "patch-notes-into-html" { & $node "scripts\patch-notes-into-html.js" }
 
 # 5. Refresh notesExt from Trendlyne (free, no auth -- first batch only).
 #    Trendlyne fetches occasionally 5xx or time out; a network flake here
-#    must not abort the rest of the pipeline (build-theses, financials,
-#    Positioning, git push...). Force success so any transient failure
+#    must not abort the rest of the pipeline (Positioning, earnings, git push...). Force success so any transient failure
 #    is logged but the day still ships. Manual retry will pick it up
 #    tomorrow if the fetch didn't land.
 Step "refresh-trendlyne" {
@@ -132,14 +131,8 @@ Step "refresh-trendlyne" {
   $global:LASTEXITCODE = 0
 }
 
-# 6. Rebuild bull/bear theses (depends on pdfdata.json + notes arrays).
-#    2-year freshness window enforced inside the script.
-Step "build-theses" { & $node "scripts\build-theses.js" }
-
-# 7. Rebuild financial summary (per-broker Revenue/EBITDA/Net Profit).
-#    Re-runs pdftotext on each broker's latest report, so this step is
-#    the slowest -- usually 5-10 min depending on library size.
-Step "build-financials" { & $node "scripts\build-financials.js" }
+# 6 + 7. REMOVED (2026-11-05): build-theses and build-financials only fed the old Company
+#        page, which was replaced by the company list (see 8e3 below for its estimates).
 
 # 8. (Strategy tab moved OUT of the daily pipeline.) It now refreshes WEEKLY via
 #    the standalone "India Research Portal Strategy Weekly" task (Fri 17:00 MYT,
@@ -222,14 +215,8 @@ Step "refresh-sectors" { & $node "scripts\refresh-sectors.js" }
 #   & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-company-qa.ps1"
 # }
 
-# 8e. Generate House-View notes (data/house_view_notes.json): cross-house summary
-#     + per-broker change-vs-prior + the assistant's own view, overlaid on the
-#     House Views card. Pure reasoning over theses.json + pdfdata.json (NO
-#     NotebookLM, not rate-limited); regenerates a company when its houseViews
-#     signature changes. Always exits 0.
-Step "build-house-view-notes" {
-  & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\build-house-view-notes.ps1"
-}
+# 8e. REMOVED (2026-11-05): build-house-view-notes only fed the old Company page's House
+#     Views card, and it spent headless-Claude usage every day.
 
 # 8e2. Earnings tab (data/earnings.json): mine the newest broker post-results notes
 #      in the PDF library for company-quarters not yet in the tab -> revenue/EBITDA (or
@@ -245,6 +232,23 @@ Step "build-earnings" {
   $global:LASTEXITCODE = 0
 }
 
+# 8e3. Company tab (data/estimates.json): read each broker's newest note for FY26-FY29 revenue,
+#      EBITDA and EPS. Only new notes are read, budget $env:EST_BUDGET (default 1200 s). Skips
+#      itself if the backfill is mid-run. Always continues.
+Step "build-estimates" {
+  & $node "scripts\estimates\build-estimates.js" 2>&1 | ForEach-Object { "$_" }
+  $global:LASTEXITCODE = 0
+}
+
+# 8e4. Company tab P/E: fix the day's share prices (data/estimate_prices.json). User rule: P/E is
+#      recalculated once a day, in this task, after the earnings miner is done. It stays here,
+#      after 8e2 (whose last act refreshes the Yahoo prices for names outside the Nifty 500) and
+#      8e3 (new EPS). Needs no lock, so it still runs while a backfill is going.
+Step "refresh-estimate-prices" {
+  & $node "scripts\estimates\build-estimates.js" --prices 2>&1 | ForEach-Object { "$_" }
+  $global:LASTEXITCODE = 0
+}
+
 # 8f. Charts auto-ingest runs as its OWN scheduled weekday task (chained after this
 #     refresh) so the slow headless-Claude vision pass doesn't hold up the refresh.
 #     See scripts/charts/build-charts.ps1 + scripts/charts/install-charts-task.ps1.
@@ -253,12 +257,12 @@ Step "build-earnings" {
 #    Only the pipeline's own outputs are committed (pathspec), so anything else
 #    someone has staged in this working copy is left alone, not swept in.
 $stageList = @('data/pdfdata.json','data/pdfmap.json','data/research.json','data/sector-tps.json',
-  'data/theses.json','data/theses-manual.json','data/financials.json','data/financials-manual.json',
+  'data/estimates.json','data/estimate_prices.json',
   'data/model_portfolios_house.json','data/mf_sectors.json','data/fii_dii.json','data/highs.json',
   'data/movers.json','data/sectors.json','data/wl_returns.json','data/wl_quotes.json',
   'data/earnings_calendar.json',
   'data/company_qa.json','data/company_questions.json',
-  'data/sector_notebooks.json','data/house_view_notes.json','data/earnings.json','index.html',
+  'data/sector_notebooks.json','data/earnings.json','index.html',
   'scripts/notes-recent.txt','scripts/notes-prior.txt')
 Step "git stage" {
   & git add -- $stageList

@@ -635,13 +635,6 @@
   .tp-arrow{margin-left:4px;font-size:10px;vertical-align:baseline}
   .tp-arrow.up{color:var(--up)}
   .tp-arrow.down{color:var(--down)}
-  /* Company tab: chart (left) + compact broker-coverage panel (right) */
-  .c-chart-split{display:flex;gap:18px;align-items:stretch}
-  .c-chart-main{flex:1 1 auto;min-width:0}
-  .cov-side{flex:0 0 232px;display:flex;flex-direction:column;overflow:hidden;
-    border-left:1px solid var(--line-soft);padding-left:16px}
-  .cov-side > #cBrokerNotes{flex:1 1 auto;min-height:0;overflow-y:auto;
-    display:flex;flex-direction:column}
   .bk-row{display:flex;align-items:center;gap:8px;padding:6px 1px;
     border-bottom:1px solid var(--line-soft);font-size:12.5px}
   .bk-row:last-child{border-bottom:none}
@@ -658,11 +651,7 @@
   .bk-arr{flex:0 0 auto;width:11px;text-align:center;font-size:10px}
   .bk-arr.up{color:var(--up)}
   .bk-arr.down{color:var(--down)}
-  @media(max-width:820px){
-    .c-chart-split{flex-direction:column}
-    .cov-side{flex-basis:auto;border-left:none;padding-left:0;
-      border-top:1px solid var(--line-soft);padding-top:12px;margin-top:4px}
-  }
+  
   /* Upgrade / downgrade summary cards at the top of the Research tab.
      Two side-by-side cards (stack on mobile), each lists the names where
      the broker either raised the TP, cut it, upgraded the call, or
@@ -736,158 +725,7 @@
   .news-co.up{background:var(--up-soft);color:var(--up)}
   .news-co.down{background:var(--down-soft);color:var(--down)}
   .news-co.flat{background:rgba(255,255,255,.07);color:var(--text)}
-  /* Screener: paired (label · dropdown · open-button) rows */
-  .scr-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px}
-  .scr-row + .scr-row{margin-top:12px}
-  .scr-lbl{flex:none;width:72px;font-family:'Roboto Mono';font-size:11px;
-    letter-spacing:.06em;text-transform:uppercase;color:var(--text-mute)}
-  .scr-dd{flex:1;min-width:240px;background:var(--panel);color:var(--text);
-    border:1px solid rgba(255,255,255,.14);border-radius:8px;
-    padding:10px 12px;font-size:14px;font-family:inherit;cursor:pointer}
-  .scr-dd:focus{outline:none;border-color:var(--saffron)}
-  .scr-btn{background:var(--saffron-soft);color:var(--saffron);
-    border:1px solid rgba(233,162,59,.22);border-radius:8px;
-    padding:10px 16px;font-size:13px;font-weight:600;text-decoration:none;
-    white-space:nowrap}
-  .scr-btn:hover{background:rgba(233,162,59,.18)}
-  /* Company description block (under the price chart) */
-  .co-desc{font-size:13.5px;line-height:1.7;color:var(--text-dim);margin-top:4px}
-  #cDescTitle a{color:inherit;text-decoration:none;border-bottom:1px dashed var(--text-mute)}
-  #cDescTitle a:hover{color:var(--text);border-bottom-color:var(--text-dim)}
-  .co-desc-src{font-size:11px;color:var(--text-mute);margin-top:12px;
-    padding-top:10px;border-top:1px solid var(--line-soft);font-style:italic}
-  /* Bull / Bear thesis two-column layout + clickable citations */
-  .thesis-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:6px}
-  .thesis-col{padding:14px 16px;border-radius:10px;border:1px solid var(--line-soft);background:var(--ink-2)}
-  .thesis-col h4{font-family:'Fraunces',serif;font-size:14px;font-weight:600;margin-bottom:8px;
-    letter-spacing:.01em}
-  .thesis-col.bull{border-color:rgba(63,199,138,.30)}
-  .thesis-col.bull h4{color:var(--up)}
-  .thesis-col.bear{border-color:rgba(240,106,106,.30)}
-  .thesis-col.bear h4{color:var(--down)}
-  /* Key Questions card — collapsible Q&A by bull / bear / key-debate */
-  /* Upside Opportunity / Downside Risk — statement lists with source tags */
-  .opp-sec{margin-bottom:16px}
-  .opp-sec:last-child{margin-bottom:0}
-  .opp-sec-h{font-size:11px;text-transform:uppercase;letter-spacing:.14em;margin:0 0 8px;display:flex;align-items:center;gap:8px}
-  .opp-sec-h.up{color:var(--up)}
-  .opp-sec-h.down{color:var(--down)}
-  .opp-n{font-size:10px;font-weight:600;color:var(--text-mute);background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:1px 7px;letter-spacing:0}
-  .opp-list{list-style:none;margin:0;padding:0}
-  .opp-list li{position:relative;padding:7px 10px 7px 22px;margin-bottom:5px;background:var(--ink-2);border:1px solid var(--line);border-radius:7px;font-size:12.5px;line-height:1.6;color:var(--text-dim)}
-  .opp-list li:last-child{margin-bottom:0}
-  .opp-sec-h.up + .opp-list li::before{content:"\25B2";position:absolute;left:8px;top:8px;font-size:8px;color:var(--up)}
-  .opp-sec-h.down + .opp-list li::before{content:"\25BC";position:absolute;left:8px;top:8px;font-size:8px;color:var(--down)}
-  .opp-cite{font-size:11px;color:var(--text-mute);white-space:nowrap}
-  a.opp-cite{text-decoration:none}
-  a.opp-cite:hover{color:var(--text-dim)}
-  .opp-cite.claude{color:var(--accent,#c79a3a);font-style:italic}
-  .thesis-col .co-desc{margin:0;font-size:13px;line-height:1.7}
-  .thesis-col .empty{color:var(--text-mute);font-style:italic}
-  .thesis-cite{font-size:11px;color:var(--text-mute);text-decoration:none;
-    margin-left:2px;white-space:nowrap;border-bottom:1px dotted transparent}
-  .thesis-cite:hover{color:var(--text-dim);border-bottom-color:var(--text-mute)}
-  @media (max-width:760px){ .thesis-grid{grid-template-columns:1fr} }
-  /* Stock Drivers list */
-  .driver-list{list-style:none;margin:0;padding:0}
-  .driver-list li{padding:9px 0 9px 18px;border-bottom:1px solid var(--line-soft);
-    font-size:13px;line-height:1.65;color:var(--text-dim);position:relative}
-  .driver-list li:last-child{border-bottom:none}
-  .driver-list li::before{content:"›";position:absolute;left:2px;top:9px;
-    color:var(--text-mute);font-family:'Roboto Mono',monospace;font-size:14px}
-  /* Thesis / House Views paragraphs — each pointer is its own block */
-  .thesis-p{margin:0 0 10px 0;font-size:13px;line-height:1.7;color:var(--text-dim)}
-  .thesis-p:last-child{margin-bottom:0}
-  .thesis-p b{color:var(--text);font-weight:600}
-  .thesis-col .thesis-p{font-size:13px}
-  /* House Views card */
-  .house-view{padding:12px 14px;border-left:3px solid var(--text-mute);
-    margin-bottom:10px;background:var(--ink-2);border-radius:6px}
-  .house-view:last-child{margin-bottom:0}
-  .house-view.bull{border-left-color:var(--up)}
-  .house-view.bear{border-left-color:var(--down)}
-  .house-view.neutral{border-left-color:var(--saffron)}
-  .house-view-h{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
-  .house-view-h b{font-family:'Fraunces',serif;font-size:13.5px;color:var(--text)}
-  .house-view-meta{font-family:'Roboto Mono',monospace;font-size:10.5px;color:var(--text-mute)}
-  .house-view-body{margin:0;font-size:13px;line-height:1.7}
-  .house-view-body b{color:var(--text);font-weight:600}
-  /* House-view overlay: cross-house summary + per-broker change-vs-prior + my view */
-  .hv-summary{padding:11px 14px;margin-bottom:14px;background:rgba(0,0,0,.14);border:1px solid var(--line);border-radius:8px}
-  .hv-summary-h{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--saffron);font-weight:600;margin-bottom:6px}
-  .hv-summary .thesis-p{margin:0 0 8px;font-size:12.5px;line-height:1.72;color:var(--text-dim)}
-  .hv-summary .thesis-p:last-child{margin-bottom:0}
-  .hv-chg{margin-top:8px;font-size:12px;line-height:1.55;color:var(--text-dim)}
-  .hv-chg-lbl{font-weight:600;color:var(--text-mute);font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin-right:6px}
-  .hv-mine{margin-top:7px;padding:8px 11px;border-left:2px solid var(--saffron);background:rgba(0,0,0,.10);border-radius:0 6px 6px 0}
-  .hv-mine-lbl{display:block;font-weight:600;color:var(--saffron);font-size:10px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
-  .hv-mine .thesis-p{margin:0 0 7px;font-size:12px;line-height:1.62;color:var(--text-mute);font-style:italic}
-  .hv-mine .thesis-p:last-child{margin-bottom:0}
-  /* Conflicting Views card */
-  .conf-block{padding:10px 0;border-top:1px solid var(--line-soft)}
-  .conf-block:first-child{border-top:none;padding-top:0}
-  .conf-h{font-family:'Fraunces',serif;font-size:13.5px;font-weight:600;color:var(--text);
-    margin-bottom:8px;display:flex;align-items:baseline;gap:8px}
-  .conf-meta{font-family:'Roboto Mono',monospace;font-size:11px;color:var(--saffron);font-weight:600}
-  .conf-row{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;margin-bottom:6px}
-  .conf-side{font-size:11.5px;color:var(--text-mute);margin-right:4px;font-weight:500}
-  .conf-chip{display:inline-block;font-size:11px;font-weight:600;padding:3px 8px;
-    border-radius:5px;border:1px solid var(--line);background:var(--ink-2);
-    font-family:'Inter',sans-serif;letter-spacing:.01em}
-  .conf-chip.buy{background:var(--up-soft);color:var(--up);border-color:rgba(63,199,138,.30)}
-  .conf-chip.sell{background:var(--down-soft);color:var(--down);border-color:rgba(240,106,106,.30)}
-  .conf-chip.hold,.conf-chip.neutral{background:var(--saffron-soft);color:var(--saffron);border-color:rgba(233,162,59,.30)}
-  .conf-chip-a{text-decoration:none}
-  .conf-chip-a:hover .conf-chip{filter:brightness(1.15)}
-  .conf-note{font-size:11.5px;color:var(--text-mute);margin-top:4px;line-height:1.55}
-  .conf-note b{color:var(--text-dim);font-weight:600}
-  /* Financial summary card — one table per metric, years across the top,
-     research houses down the left. */
-  .fin-section{margin-top:14px}
-  .fin-section:first-child{margin-top:0}
-  .fin-section-h{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--text);
-    margin-bottom:6px}
-  .fin-empty{font-size:12px;color:var(--text-mute);font-style:italic;padding:4px 0 8px}
-  table.fin-tbl{width:100%;border-collapse:collapse;font-family:'Roboto Mono',monospace;
-    font-size:11.5px;table-layout:fixed}
-  table.fin-tbl th,table.fin-tbl td{padding:6px 8px;border-bottom:1px solid var(--line-soft);
-    text-align:right;color:var(--text-dim);white-space:nowrap}
-  table.fin-tbl th{color:var(--text-mute);font-weight:500;letter-spacing:.04em;
-    text-transform:uppercase;font-size:9.5px;border-bottom:1px solid var(--line)}
-  table.fin-tbl th.bk,table.fin-tbl td.bk{text-align:left;width:18%;color:var(--text)}
-  table.fin-tbl td.bk a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--text-mute)}
-  table.fin-tbl td.bk a:hover{border-bottom-color:var(--text)}
-  table.fin-tbl th.src,table.fin-tbl td.src{text-align:right;width:11%;color:var(--text-mute);font-size:10.5px}
-  table.fin-tbl td .muted{color:var(--text-mute)}
-  table.fin-tbl td a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--text-mute)}
-  table.fin-tbl td a:hover{border-bottom-color:var(--text)}
-  table.fin-tbl tr.avg td{font-weight:600;color:var(--text);border-top:1px solid var(--line);
-    border-bottom:none}
-  table.fin-tbl sup.fy-tag-actual{color:var(--up);font-size:9px;margin-left:1px}
-  table.fin-tbl sup.fy-tag-est{color:var(--saffron);font-size:9px;margin-left:1px}
-  /* Standalone vs consolidated basis label above a metrics block */
-  .fin-basis{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:.10em;
-    text-transform:uppercase;color:var(--text-mute);border:1px solid var(--line);
-    border-radius:999px;padding:2px 9px;margin:0 0 4px}
-  .fin-basis-src{font-weight:400;letter-spacing:.02em;text-transform:none;
-    color:var(--text-mute);margin-left:6px}
-  .fin-alt-divider{height:1px;background:var(--line-soft);margin:20px 0 14px}
-  .fin-seg-divider{height:1px;background:var(--line);margin:22px 0 16px}
-  .fin-seg-h{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--text);
-    letter-spacing:.02em;margin-bottom:10px;text-transform:uppercase;font-size:11px;
-    color:var(--text-mute);letter-spacing:.12em}
-  .fin-seg-block{margin-top:14px;padding:12px 14px;border:1px solid var(--line-soft);
-    border-radius:8px;background:var(--ink-2)}
-  .fin-seg-block:first-of-type{margin-top:0}
-  .fin-seg-block-h{font-size:12.5px;color:var(--text-dim);margin-bottom:6px}
-  .fin-seg-block-h b{font-family:'Fraunces',serif;color:var(--text);font-weight:600;font-size:13.5px}
-  .fin-seg-src{font-size:10.5px;color:var(--text-mute);margin-left:6px}
-  .fin-seg-src a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--text-mute)}
-  .fin-seg-src a:hover{border-bottom-color:var(--text-dim)}
-  .fin-seg-metric{margin-top:10px}
-  .fin-seg-metric:first-child{margin-top:4px}
-  .fin-seg-metric-h{font-size:11px;text-transform:uppercase;letter-spacing:.08em;
-    color:var(--text-mute);margin-bottom:4px}
+  
   /* Earnings tab: one row per company; each sub-category (Overall / Rev YoY /
      EBITDA YoY / Revenue / EBITDA) is its own horizontally-scrolling pane whose
      header strip and body scroll together; the whole grid scrolls vertically
@@ -1027,59 +865,47 @@
     .er-tools input{width:100%}
     .er-tools{width:100%}
   }
-  /* Company chart: period return display + abnormal-move markers */
-  .cm-return-row{display:flex;align-items:baseline;gap:12px;margin:4px 0 14px}
-  .cm-return{font-family:'Roboto Mono';font-size:24px;font-weight:600;color:var(--text-mute)}
-  .cm-return.up{color:var(--up)}
-  .cm-return.down{color:var(--down)}
-  .cm-return-meta{font-family:'Roboto Mono';font-size:11px;color:var(--text-mute);
-    letter-spacing:.06em;text-transform:uppercase}
-  .cm-wrap{position:relative}
-  /* Overlay covers the chart-box for positioned markers */
-  .cm-markers{position:absolute;inset:0;pointer-events:none}
-  /* Hover tooltip for the report-publication annotation lines */
-  .rl-tip{position:absolute;z-index:6;pointer-events:none;display:none;
-    font-family:'Roboto Mono',monospace;font-size:10.5px;white-space:nowrap;
-    background:#11151c;border:1px solid #252c39;border-left-width:2px;border-radius:6px;
-    padding:4px 8px;color:var(--text-dim);box-shadow:0 6px 18px rgba(0,0,0,.45)}
-  .rl-tip.show{display:block}
-  .rl-tip.buy{border-left-color:var(--up)}
-  .rl-tip.sell{border-left-color:var(--down)}
-  .rl-tip.hold{border-left-color:var(--text-mute)}
-  .rl-tip .rlt-date{font-size:9px;color:var(--text-mute);letter-spacing:.06em;
-    text-transform:uppercase;margin-bottom:3px}
-  .rl-tip .rlt-row{display:flex;justify-content:space-between;gap:16px;line-height:1.55}
-  .rl-tip .rlt-h{color:var(--text-dim)}
-  .rl-tip .rlt-tp{color:var(--text);font-variant-numeric:tabular-nums}
-  .cm-marker{position:absolute;width:9px;height:9px;border-radius:50%;
-    background:rgba(255,255,255,.4);border:1.5px solid rgba(255,255,255,.95);
-    transform:translate(-50%,-50%);cursor:pointer;pointer-events:auto;
-    transition:transform .15s,background .15s;z-index:2}
-  .cm-marker.up{border-color:var(--up);background:rgba(46,200,128,.4)}
-  .cm-marker.down{border-color:var(--down);background:rgba(232,93,93,.4)}
-  .cm-marker:hover{transform:translate(-50%,-50%) scale(1.5);background:#fff}
-  /* Vertical line from chart top down to the marker — hover only */
-  .cm-line{position:absolute;left:50%;bottom:50%;width:1px;height:0;
-    background:rgba(255,255,255,.55);transform:translateX(-50%);
-    opacity:0;transition:opacity .15s;pointer-events:none}
-  .cm-marker:hover .cm-line{opacity:1}
-  /* Popup with date / move / news — hover only */
-  .cm-pop{position:absolute;z-index:50;display:none;
-    background:var(--panel);color:var(--text);
-    border:1px solid var(--line);border-radius:8px;
-    padding:10px 12px;font-size:12px;line-height:1.5;
-    max-width:340px;box-shadow:0 6px 20px rgba(0,0,0,.55);
-    pointer-events:none}
-  .cm-pop.show{display:block}
-  .cm-pop .cmp-date{font-family:'Roboto Mono';font-size:10px;color:var(--text-mute);
-    text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-  .cm-pop .cmp-move{font-family:'Roboto Mono';font-size:13px;font-weight:600;margin-bottom:6px}
-  .cm-pop .cmp-move.up{color:var(--up)}
-  .cm-pop .cmp-move.down{color:var(--down)}
-  .cm-pop .cmp-news{color:var(--text-dim);font-size:11.5px;line-height:1.5}
-  .cm-pop .cmp-news a{color:var(--saffron);text-decoration:none;pointer-events:auto}
-  .cm-pop .cmp-news a:hover{text-decoration:underline}
-  .cm-pop .cmp-load{color:var(--text-mute);font-style:italic;font-size:11px}
+  /* Company tab: the Earnings tracker's rows on one shared sideways scroll, with star + name
+     pinned, so a row can open to full width and show each broker's estimates beneath it. */
+  .co-grid{max-height:76vh;overflow:auto;border:1px solid var(--line-soft);border-radius:10px;position:relative}
+  .co-head{position:sticky;top:0;z-index:6;background:var(--panel);width:max-content;min-width:100%;border-bottom:1px solid var(--line)}
+  .co-h1,.co-h2{display:flex}
+  .co-pin{position:sticky;left:0;z-index:3;display:flex;flex:none;background:var(--panel);border-right:1px solid var(--line)}
+  .co-head .co-pin{z-index:7}
+  .co-h1 .er-gt{flex:none}
+  .co-h2 button{flex:none}
+  .co-r{width:max-content;min-width:100%}
+  .co-r:hover,.co-r:hover .co-pin,.co-r.open,.co-r.open .co-pin{background:var(--panel-2)}
+  .co-gs{border-left:1px solid var(--line)!important}
+  .co-fy1{border-left:1px dashed var(--line)}
+  body.co-wide .layout{max-width:none}
+  .co-grid .er-c{padding:0 3px;font-size:11px}
+  .co-pin .er-c,.co-grid .er-sc,.co-grid .er-mc,.co-grid .er-ol{padding:0 6px}
+  .co-grid .er-c.ov{font-size:10.5px;letter-spacing:.02em}
+  .co-h2 button{padding:0 2px}
+  .co-grid .er-c.co-one{color:var(--text-mute)}
+  .co-car{display:inline-block;width:12px;color:var(--text-mute);font-size:10px}
+  .co-tl{display:flex;justify-content:space-between;gap:14px;font-family:'Roboto Mono';font-size:11px;margin-top:3px}
+  .co-tl.x{opacity:.5;text-decoration:line-through}
+  .co-detail{position:sticky;left:0;width:var(--co-vw,100%);padding:12px 14px 14px;background:var(--ink-2);border-bottom:1px solid var(--line)}
+  .co-d-h{font-size:12.5px;color:var(--text-dim);margin-bottom:8px}
+  .co-d-h b{color:var(--text)}
+  .co-d-wrap{overflow-x:auto}
+  .co-d-t{border-collapse:collapse;font-family:'Roboto Mono';font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--text-dim)}
+  .co-d-t th,.co-d-t td{padding:5px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line-soft)}
+  .co-d-t th{color:var(--text-mute);font-size:10px;font-weight:600;letter-spacing:.03em}
+  .co-d-t .l{text-align:left}
+  .co-d-t .gs{border-left:1px solid var(--line)}
+  .co-d-t td.x{color:var(--text-mute);text-decoration:line-through;cursor:help}
+  .co-d-t td.na{color:var(--line)}
+  .co-d-t tfoot td{font-weight:700;color:var(--text)}
+  .co-d-t tfoot tr:first-child td{border-top:1px solid var(--line)}
+  .co-d-t tfoot tr.g td{font-weight:500;color:var(--text-dim)}
+  .co-d-t a{color:var(--text);text-decoration:none;border-bottom:1px dotted var(--text-mute)}
+  .co-d-t a:hover{color:var(--saffron);border-bottom-color:var(--saffron)}
+  .co-chk{color:var(--saffron);cursor:help}
+  .co-d-note{font-size:11px;color:var(--text-mute);margin-top:8px;line-height:1.6}
+  @media (max-width:700px){ .co-head .d{display:none} .co-pin .er-nm{flex:0 0 160px} }
   /* Fixed-width numeric cells; mono digits + right align so commas
      and thousands align across rows. */
   .n-tp{flex:none;width:72px;box-sizing:border-box;text-align:right;
@@ -2099,123 +1925,19 @@
     </div>
 
     <div id="viewScreener" hidden>
-      <div class="card reveal">
-        <div class="card-h"><div><h3>Company Selector</h3><p id="nbSub">Pick a company to drive the chart, About-the-Company card and broker coverage</p></div></div>
-        <div class="scr-row">
-          <span class="scr-lbl">Company</span>
-          <select id="nbSelectCo" class="scr-dd">
-            <option value="">Select a company…</option>
-          </select>
-        </div>
-        <p id="nbStatus" style="color:var(--text-mute);font-size:12px;line-height:1.7;margin-top:14px"></p>
-      </div>
-      <div class="card reveal" id="cChartCard">
-        <div class="card-h">
-          <div><h3 id="cChartTitle">Price Chart</h3>
-          <p id="cChartSub">Select a company or sector above to load price history (Yahoo Finance · daily close)</p></div>
-          <div class="seg" id="cRangeSeg">
-            <button data-r="1D">1D</button>
-            <button data-r="1W">1W</button>
-            <button data-r="1M">1M</button>
-            <button data-r="YTD" class="on">YTD</button>
-            <button data-r="1Y">1Y</button>
-            <button data-r="3Y">3Y</button>
-            <button data-r="5Y">5Y</button>
-            <button data-r="10Y">10Y</button>
+      <div class="card">
+        <div class="card-h er-top">
+          <div><h3>Companies</h3>
+          <p id="coSub">Loading…</p></div>
+          <div class="er-tools">
+            <input id="coSearch" type="search" placeholder="Filter company or sector…" aria-label="Filter companies" />
+            <select id="coSector" aria-label="Filter by sector"><option value="">All sectors</option></select>
           </div>
         </div>
-        <div class="c-chart-split">
-          <div class="c-chart-main">
-            <div class="cm-return-row">
-              <span id="cRetPct" class="cm-return">—</span>
-              <span id="cRetMeta" class="cm-return-meta"></span>
-            </div>
-            <div class="cm-wrap">
-              <div class="chart-box"><canvas id="cChart"></canvas></div>
-              <div id="cChartMarkers" class="cm-markers"></div>
-              <div id="cChartPop" class="cm-pop"></div>
-              <div id="cRlTip" class="rl-tip"></div>
-            </div>
-            <p id="cChartMsg" style="color:var(--text-mute);font-size:11px;text-align:center;margin-top:10px;display:none"></p>
-          </div>
-          <aside class="cov-side" id="cCovSide" style="display:none">
-            <div id="cBrokerNotes"></div>
-          </aside>
-        </div>
-      </div>
-      <!-- About the company: 3-4 sentence business description -->
-      <div class="card reveal" id="cDescCard" hidden>
-        <div class="card-h">
-          <div><h3 id="cDescTitle">About the Company</h3>
-          <p id="cDescMeta">Sector · Ticker</p></div>
-        </div>
-        <p id="cDesc" class="co-desc"></p>
-        <p class="co-desc-src">Business profile only — sourced from the company's website and its latest annual report. Click the company name above to open the local offline reports folder.</p>
-      </div>
-      <!-- Upside Opportunity & Downside Risk: per-company statement lists from
-           data/company_qa.json (built by scripts/build-company-qa.ps1). Each
-           statement is sourced to the broker where grounded in a report, else to
-           Claude (the assistant's own point). -->
-      <div class="card reveal" id="cQACard" hidden>
-        <div class="card-h">
-          <div><h3>Upside Opportunity and Downside Risk</h3>
-          <p id="cQASub">Per-company upside opportunities and downside risks, each sourced to a broker or to Claude</p></div>
-        </div>
-        <div id="cQABody"></div>
-        <p class="co-desc-src">Statements grounded in the company's NotebookLM broker-report library carry a <b>(Broker, MM/YY)</b> source; points that are the assistant's own analysis (not stated in a report) are sourced <b>(Claude)</b>. For research context only — not investment advice.</p>
-      </div>
-      <!-- Key drivers: sentences from broker PDFs that explicitly name a
-           lever moving the stock (volumes, margins, capex, regulation,
-           commodity, M&A, etc.). Each carries a clickable citation to
-           the originating PDF. -->
-      <div class="card reveal" id="cDriversCard" hidden>
-        <div class="card-h">
-          <div><h3>Stock Drivers</h3>
-          <p id="cDriversSub">Levers brokers cite as moving the stock — click any citation to open the source PDF</p></div>
-        </div>
-        <ul id="cDriversList" class="driver-list"></ul>
-        <p class="co-desc-src">Surfaces sentences from each broker's PDF body summary that name a driver, catalyst, tailwind or headwind. One sentence per broker-report, deduped across brokers when the wording is near-identical.</p>
-      </div>
-      <!-- House Views: 1 short paragraph per broker, ordered by most-
-           recent report; **bold** key metrics + citation linked to the
-           source PDF (page-anchored). -->
-      <div class="card reveal" id="cHouseViewsCard" hidden>
-        <div class="card-h">
-          <div><h3>House Views</h3>
-          <p id="cHouseViewsSub">Each broker's latest take on the company — one short paragraph apiece</p></div>
-        </div>
-        <div id="cHouseViewsBody"></div>
-        <p class="co-desc-src">A bull / bear / neutral bar on the left of each block reflects the broker's current rating direction. Bold = key metrics surfaced from the PDF body. Citation opens the PDF at the relevant page (where supported by the browser's PDF viewer).</p>
-      </div>
-      <!-- Conflicting Views: surfaces rating divergence and TP spread -->
-      <div class="card reveal" id="cConflictsCard" hidden>
-        <div class="card-h">
-          <div><h3>Conflicting Views</h3>
-          <p>Where the houses disagree — rating direction and target-price spread</p></div>
-        </div>
-        <div id="cConflictsBody"></div>
-        <p class="co-desc-src">Surfaces a "Rating divergence" block when ≥1 broker is bullish AND ≥1 is bearish, and a "Target-price spread" block when the highest TP is ≥1.30× the lowest. Click any chip to open the underlying report.</p>
-      </div>
-      <!-- Financial summary distilled from each broker's latest estimate
-           table — averages plus a click-to-expand per-broker breakdown
-           per fiscal year. -->
-      <div class="card reveal" id="cFinCard" hidden>
-        <div class="card-h">
-          <div><h3>Financial Summary</h3>
-          <p id="cFinSub">Per-broker Revenue / EBITDA / Net Profit by fiscal year — average shown in the bottom row</p></div>
-        </div>
-        <div id="cFinBody"></div>
-        <p class="co-desc-src">Sourced from each broker's most recent report on the company (PDF estimate tables, layout-extracted via pdftotext). Numbers normalised to ₹ million. Where a broker uses a different unit/convention, this normalisation may be off — see the per-broker breakdown for raw values.</p>
-      </div>
-      <!-- Latest news on the selected company: free Google News RSS,
-           same proxy/cache pipeline as the movers "why did it move?" modal. -->
-      <div class="card reveal" id="cNewsCard" hidden>
-        <div class="card-h">
-          <div><h3>Latest News</h3>
-          <p id="cNewsSub">Most recent headlines on the selected company</p></div>
-        </div>
-        <div id="cNewsBody"></div>
-        <p class="co-desc-src">Free Google News (India) feed, refreshed on selection. Headlines link to the source publisher; no key, no paywall. Cached 5 min per company.</p>
+        <div id="coGrid" class="co-grid"></div>
+        <p class="er-legend"><b>Click a company</b> to list each broker's FY27, FY28 and FY29 estimates and P/Es, with the note they came from. <b>Revenue</b>, <b>EBITDA</b> and <b>EPS</b> FY columns are the simple average of brokers' estimates; grey means only one broker so far. <b>P/E</b> = share price ÷ average EPS, recalculated once a day by the 09:30 refresh after the earnings miner, so it doesn't move intraday; NM = average EPS is zero or a loss. <b>FY growth</b> counts only brokers that print both years, so a broker dropping out in a later year can't create a false jump. NM = the base year is zero or a loss.
+        Quarterly cells work as on the Earnings tab: <span class="sw" style="background:rgba(63,199,138,.45)"></span>beat consensus · <span class="sw" style="background:rgba(240,106,106,.45)"></span>missed consensus · uncoloured = in line (or no consensus in the notes) · <span style="color:var(--saffron)">◥</span> corner = explanation, hover or tap any cell to read it. Lenders show Total operating income / PPOP, life insurers APE / VNB, general insurers GWP (or NEP) / PBT. FY figures are in ₹ mn (or US$ mn where shown with $); EPS is in ₹ per share.
+        Estimates come only from broker notes in the PDF library, using each broker's latest note with a forecast table from the last six months. A figure far from the other brokers' is left out of the average and shown struck through in the broker list. A dotted underline or ⚠ marks a figure that failed an automatic size check and is still shown. Click a sector to move a company (saved in this browser, shared with the Earnings tab); click a column header to sort.</p>
       </div>
     </div>
 
@@ -6293,7 +6015,6 @@ fetch('data/research.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(
     notesPrior.length = 0; for(const r of j.prior) notesPrior.push(r);
   }
   renderResearchNotes();
-  if(typeof renderCompanyResearch==='function') renderCompanyResearch();
   if(typeof wlRenderResearch==='function') wlRenderResearch();
 }).catch(()=>{});
 // Extracted broker-stated TP / Call from the PDF body (via pdftotext +
@@ -6306,7 +6027,6 @@ fetch('data/pdfdata.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j
   if(!j||typeof j!=='object') return;
   window.PDFDATA=j;
   renderResearchNotes();
-  if(typeof renderCompanyResearch==='function') renderCompanyResearch();
   if(typeof wlRenderResearch==='function') wlRenderResearch();
 }).catch(()=>{});
 // pdfmap.json: same key scheme, value is the absolute path to the local
@@ -6317,7 +6037,6 @@ fetch('data/pdfmap.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=
   if(!j||typeof j!=='object') return;
   window.PDFMAP=j;
   renderResearchNotes();
-  if(typeof renderCompanyResearch==='function') renderCompanyResearch();
   if(typeof wlRenderResearch==='function') wlRenderResearch();
   linkStrategyHouseHeads();
 }).catch(()=>{});
@@ -6407,170 +6126,7 @@ function linkStrategyHouseHeads(){
     }
   });
 }
-// Trendlyne broker-coverage scrape (scripts/fetch-trendlyne-coverage.js).
-// Schema: { "<NOTEBOOKS company name>": [{broker,date,headline,url,tp,rating}, ...] }
-// Used by renderCompanyResearch to populate the Broker Coverage card for
-// companies that aren't in the local PDF library.
-window.TRENDLYNE_COVERAGE=null;
-fetch('data/trendlyne-coverage.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
-  if(!j||typeof j!=='object') return;
-  window.TRENDLYNE_COVERAGE=j;
-  if(typeof renderCompanyResearch==='function') renderCompanyResearch();
-  if(typeof wlRenderResearch==='function') wlRenderResearch();
-}).catch(()=>{});
-// Per-company bull/bear/key-debate Q&A, built by scripts/build-company-qa.ps1
-// (questioner + answerer agents). Top-level file is {asOf, companies:{}};
-// we keep the companies map on window.COMPANY_QA, keyed by company name.
-window.COMPANY_QA=null;
-fetch('data/company_qa.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
-  if(!j||typeof j!=='object'||!j.companies) return;
-  window.COMPANY_QA=j.companies;
-  if(typeof renderCompanyQA==='function') renderCompanyQA();
-}).catch(()=>{});
-// Bull/Bear theses per company (scripts/build-theses.js). Schema:
-//   { "<Company>": { bull: [{text,broker,date,url}, ...], bear: [...] } }
-// Rendered as two side-by-side paragraphs with clickable (ABBR, MM/YY)
-// citations that open the underlying PDF in a new tab.
-window.THESES=null;
-fetch('data/theses.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
-  if(!j||typeof j!=='object') return;
-  window.THESES=j;
-  if(typeof renderCompanyThesis==='function') renderCompanyThesis();
-  if(typeof renderCompanyDrivers==='function') renderCompanyDrivers();
-  if(typeof renderCompanyQA==='function') renderCompanyQA();
-  if(typeof renderCompanyHouseViews==='function') renderCompanyHouseViews();
-  if(typeof renderCompanyConflicts==='function') renderCompanyConflicts();
-}).catch(()=>{});
-// House-view notes overlay: per-company cross-house summary + per-broker change-
-// vs-prior-report + the assistant's own view, built by scripts/build-house-view-notes.ps1
-// (reasons over theses.json + pdfdata.json; no NotebookLM). Overlaid by renderCompanyHouseViews.
-window.HOUSE_VIEW_NOTES=null;
-fetch('data/house_view_notes.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
-  if(!j||typeof j!=='object'||!j.companies) return;
-  window.HOUSE_VIEW_NOTES=j.companies;
-  if(typeof renderCompanyHouseViews==='function') renderCompanyHouseViews();
-}).catch(()=>{});
-// Financial summary per company (Revenue / EBITDA / Net Profit by FY)
-// built by scripts/build-financials.js from each broker's latest report.
-window.FINANCIALS=null;
-fetch('data/financials.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
-  if(!j||typeof j!=='object') return;
-  window.FINANCIALS=j;
-  if(typeof renderCompanyFinancials==='function') renderCompanyFinancials();
-}).catch(()=>{});
-let screenerLoaded=false;
-// Sector notebooks vs company notebooks — sectors are the "India(n) X"
-// thematic workspaces (Banks, IT, Pharma, etc.). Anything else is a
-// single-company workspace.
-const SECTOR_NAMES=new Set([
-  'Capital Markets','India Autos','India Autos & Shared Mobility',
-  'India Banks','India Economics','India Economics & Strategy',
-  'India Equity Strategy','India Fuel Retailers','India Healthcare',
-  'India Macro','India Materials','India Non-Life Insurance',
-  'India Oil and Gas','India Private Banks','India Property',
-  'India Strategy','India Utilities','India � Non-Lending Financials',
-  'Indian Asset Managers','Indian Autos','Indian Aviation',
-  'Indian Banks','Indian Cement','Indian Chemicals',
-  'Indian Consumer','Indian Consumer Durables','Indian Datacenters',
-  'Indian Financials','Indian Healthcare','Indian Hotels Company',
-  'Indian India Insights','Indian Infra','Indian Insurance',
-  'Indian IT','Indian Jewellery','Indian Metals',
-  'Indian Mortgages','Indian NBFCs','Indian Oil & Gas',
-  'Indian Pharmaceuticals','Indian Pipes','Indian Power',
-  'Indian Power Equipment','Indian Real Estate','Indian Steel',
-  'Indian Telecom','Quant Research'
-]);
-// Yahoo Finance symbol per notebook entry. NSE listings carry the .NS
-// suffix (added at fetch time); US-listed ADRs (MakeMyTrip, ReNew) use
-// the bare NASDAQ symbol; sector notebooks map to the matching index.
-const COMPANY_TICKERS={
-  'AWL Agri Business':'AWL', 'Adani Power':'ADANIPOWER',
-  'Afcons Infrastructure':'AFCONS', 'Amber Enterprises':'AMBER',
-  'Anthem Biosciences':'ANTHEM', 'Astral':'ASTRAL',
-  'Avalon Technologies':'AVALON', 'Avenue Supermarts':'DMART',
-  'Bajaj Finserv':'BAJAJFINSV', 'Bharat Electronics':'BEL',
-  'Bharat Petroleum':'BPCL', 'CMS Info Systems':'CMSINFO',
-  'Carborundum Universal':'CARBORUNIV', 'Chalet Hotels':'CHALET',
-  'Coforge':'COFORGE', 'Deepak Nitrite':'DEEPAKNTR',
-  'Delhivery':'DELHIVERY', 'Devyani International':'DEVYANI',
-  'Fusion Finance':'FUSION', 'GE Vernova T&D India':'GVT&D',
-  'Gland Pharma':'GLAND', 'Global Health (Medanta)':'MEDANTA',
-  'Hindalco':'HINDALCO', 'Hindustan Aeronautics':'HAL',
-  'ICICI Prudential Life Insurance':'ICICIPRULI', 'ITC Hotels':'ITCHOTELS',
-  'Indian Hotels':'INDHOTEL', 'Indian Oil Corporation':'IOC',
-  'Indraprastha Gas':'IGL', 'JSW Energy':'JSWENERGY',
-  'KEC International':'KEC', 'KIMS':'KIMS',
-  'MakeMyTrip':'MMYT', 'Mankind Pharma':'MANKIND',
-  'NHPC':'NHPC', 'Nagarjuna':'NAGAFERT',
-  'Neogen Chemicals':'NEOGEN', 'Orkla India':'ORKLAINDIA',
-  'Power Grid':'POWERGRID', 'Premier Energies':'PREMIERENE',
-  'ReNew':'RNW', 'Restaurant Brands Asia':'RBA',
-  'S H Kelkar and Company':'SHK', 'SJVN':'SJVN',
-  'Siemens Energy India':'SIEMENSENERG', 'Steel Authority of India':'SAIL',
-  'TCS':'TCS', 'Tata Steel':'TATASTEEL',
-  'Timken':'TIMKEN', 'United Spirits':'MCDOWELL-N',
-  'Uno Minda':'UNOMINDA', 'Vodafone Idea':'IDEA',
-  'Zee Entertainment':'ZEEL', 'Zydus Lifesciences':'ZYDUSLIFE'
-};
-const SECTOR_TICKERS={
-  'India Macro':'^NSEI', 'India Strategy':'^CRSLDX',
-  'Indian Banks':'^NSEBANK', 'Indian Cement':'^CRSLDX',
-  'Indian Financials':'^CNXFIN', 'Indian IT':'^CNXIT',
-  'Indian Jewellery':'^CRSLDX', 'Indian Pharmaceuticals':'^CNXPHARMA',
-  'Indian Steel':'^CNXMETAL'
-};
-// Resolve a notebook name to its Yahoo Finance symbol (with .NS for NSE).
-// Resolution order:
-//   1. inline COMPANY_TICKERS / SECTOR_TICKERS (hand-curated common cases)
-//   2. window.COMPANIES[name].ticker from data/companies.json
-//      — tickers there already carry their exchange suffix (e.g. ".NS")
-//      so any entry added to companies.json with a ticker field gets a
-//      chart for free, no inline edit required.
-function yahooSymFor(name){
-  let s = COMPANY_TICKERS[name] || SECTOR_TICKERS[name];
-  if(!s){
-    const e = (window.COMPANIES||{})[name];
-    if(e && e.ticker) return e.ticker;
-    return null;
-  }
-  if(s.startsWith('^')) return s;            // ^ prefix → index
-  if(s==='MMYT' || s==='RNW') return s;      // NASDAQ tickers
-  return s + '.NS';                          // default: NSE
-}
-
-// Per-timeframe Yahoo Finance parameters. All charts use 1-day bars
-// except 1D (5-min intraday, since a single daily bar wouldn't be a
-// chart) and 1W (30-min, gives a readable week view).
-const TF_DEF = {
-  '1D' : {days: 1,         interval: '5m'},
-  '1W' : {days: 7,         interval: '30m'},
-  '1M' : {days: 31,        interval: '1d'},
-  'YTD': {ytd: true,       interval: '1d'},
-  '1Y' : {days: 366,       interval: '1d'},
-  '3Y' : {days: 366*3,     interval: '1d'},
-  '5Y' : {days: 366*5,     interval: '1d'},
-  '10Y': {days: 366*10,    interval: '1d'},
-};
-function fmtTickFor(tf){
-  // X-axis label formatter for each timeframe.
-  const IST={timeZone:'Asia/Kolkata'};
-  return t => {
-    const d = new Date(t);
-    if (tf==='1D') return d.toLocaleTimeString('en-IN',{...IST,hour:'2-digit',minute:'2-digit',hour12:false});
-    if (tf==='1W') return d.toLocaleDateString('en-IN',{...IST,weekday:'short'})+' '+
-                          d.toLocaleTimeString('en-IN',{...IST,hour:'2-digit',minute:'2-digit',hour12:false});
-    if (tf==='1M' || tf==='YTD') return d.toLocaleDateString('en-IN',{...IST,day:'numeric',month:'short'});
-    if (tf==='1Y' || tf==='3Y') return d.toLocaleDateString('en-IN',{...IST,month:'short',year:'2-digit'});
-    return d.toLocaleDateString('en-IN',{...IST,month:'short',year:'2-digit'}); // 5Y / 10Y
-  };
-}
-
-let companyChart=null;
-let currentCompany=null;
-let currentTf='YTD';
-// Company profile data — ticker + sector + 3-4 sentence business
-// description sourced from each company's website, latest annual
-// report and the broker reports in its NotebookLM workspace.
+// Company profile data: ticker + sector + description. The Watchlist tab and news tagging read it.
 window.COMPANIES=null;
 fetch('data/companies.json',{cache:'no-store'})
   .then(r=>r.ok?r.json():null)
@@ -6579,1089 +6135,8 @@ fetch('data/companies.json',{cache:'no-store'})
     window.COMPANIES=j;
     if(typeof wlFillDatalist==='function') wlFillDatalist();
     if(typeof wlRenderResearch==='function') wlRenderResearch();
-    updateCoDesc();
-    // If a company was selected before COMPANIES loaded, its chart
-    // might have shown "No Yahoo Finance ticker mapped" because the
-    // fallback lookup needs COMPANIES. Retry now.
-    if (currentCompany && typeof loadCompanyChart==='function') {
-      loadCompanyChart(currentCompany, currentTf);
-    }
   })
   .catch(()=>{});
-function updateCoDesc(){
-  const card=document.getElementById('cDescCard');
-  const title=document.getElementById('cDescTitle');
-  const meta=document.getElementById('cDescMeta');
-  const body=document.getElementById('cDesc');
-  if(!card) return;
-  if(!currentCompany || !window.COMPANIES){ card.hidden=true; return; }
-  const e=window.COMPANIES[currentCompany];
-  if(!e || !e.desc){ card.hidden=true; return; }
-  card.hidden=false;
-  // Link the company name to the local offline-reports folder
-  // (C:\Users\admin\Desktop\India Related Reports\<Company>\). The
-  // folder name matches the NOTEBOOKS entry by convention. Opens in
-  // a new tab; only works when the dashboard itself is opened from
-  // disk — browsers block file:// from https:// origins.
-  const folderUrl = 'file:///C:/Users/admin/Desktop/India%20Related%20Reports/' +
-    encodeURIComponent(currentCompany) + '/';
-  const safeName = currentCompany.replace(/[&<>"]/g,c=>(
-    {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  title.innerHTML = '<a href="'+folderUrl+'" target="_blank" rel="noopener" '+
-    'title="Open offline reports folder">'+safeName+'</a>';
-  meta.textContent=[e.sector, e.ticker].filter(Boolean).join(' · ');
-  body.textContent=e.desc;
-}
-
-// Broker-coverage table for the selected company: one row per research
-// house, latest TP/call + prior TP/call. Reuses the same data sources
-// as the Research Notes tab (NOTES + notesExt + notesPrior + PDFDATA +
-// PDFMAP) but filters down to currentCompany only. Renders into
-// #cBrokerNotes using the same .n-header / .note / .n-tp / .n-call
-// classes so layout matches the Research tab.
-function renderCompanyResearch(){
-  const side=document.getElementById('cCovSide');
-  const el=document.getElementById('cBrokerNotes');
-  if(!el) return;
-  const hideSide=()=>{ if(side) side.style.display='none'; el.innerHTML=''; window._coReportMeta={company:currentCompany||null, rows:[]}; if(typeof companyChart!=='undefined' && companyChart) companyChart.draw(); };
-  if(!currentCompany){ hideSide(); return; }
-  // Sectors have no per-name broker coverage panel.
-  if (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany)){
-    hideSide(); return;
-  }
-  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const fmtD=d=>{ const mm=+d.slice(2,4), dd=+d.slice(4,6); return `${dd} ${MON[mm-1]||''}`; };
-  // Pool current + external + prior reports, keep only this company.
-  const cur=[...(typeof notes==='undefined'?[]:notes),
-             ...(typeof notesExt==='undefined'?[]:notesExt)]
-    .filter(n=>n && n.length>=4)
-    .map(n=>[n[0],n[1],n[2],n[3],n[4]||null]);
-  const pri=(typeof notesPrior==='undefined'?[]:notesPrior)
-    .map(n=>[n[0],n[1],n[2],n[3],null]);
-  const target=currentCompany.toLowerCase();
-  const all=[...cur,...pri].filter(r=>String(r[2]).toLowerCase()===target);
-  // Append Trendlyne per-company broker calls (data/trendlyne-coverage.json).
-  // Format "Rating · TP ₹X — Headline" so the existing TP/call parsers
-  // in renderResearchNotes pick up the rating and target out of the
-  // headline. URL points at Trendlyne's PDF cache endpoint.
-  const TL = (window.TRENDLYNE_COVERAGE||{})[currentCompany];
-  if(Array.isArray(TL)){
-    TL.forEach(r=>{
-      if(!r||!r.broker||!r.date) return;
-      const cap = r.rating ? (r.rating.charAt(0).toUpperCase()+r.rating.slice(1).toLowerCase()) : '';
-      const tpPart = r.tp ? ' · TP ₹'+r.tp : '';
-      const sep = r.headline ? ' — ' : '';
-      const headline = cap ? cap+tpPart+sep+(r.headline||'') : (r.headline||'');
-      all.push([r.broker, r.date, currentCompany, headline, r.url||null]);
-    });
-  }
-  if(!all.length){ hideSide(); return; }
-  // Dedupe + sort newest-first, then group by house (each house keeps
-  // its full sorted list so we can find a prior report for the latest).
-  const normT=t=>String(t).replace(/\s*\(\d+\)\s*$/,'').trim().toLowerCase();
-  all.sort((a,b)=>b[1].localeCompare(a[1]));
-  const seen=new Set();
-  const byHouse={};
-  all.forEach(r=>{
-    const k=r[0]+'|'+r[1]+'|'+normT(r[3]);
-    if(seen.has(k)) return; seen.add(k);
-    (byHouse[r[0]]=byHouse[r[0]]||[]).push(r);
-  });
-  const houses=Object.keys(byHouse)
-    .sort((a,b)=>byHouse[b][0][1].localeCompare(byHouse[a][0][1]));
-  // --- helpers (mirror renderResearchNotes so behaviour stays in sync) -
-  const TP_RE=/(?:TP\s*)?(?:₹|Rs\.?|INR)\s*([\d,]+(?:\.\d+)?)/i;
-  const TP_RE2=/TP\s*to\s*Rs\s*([\d,]+)/i;
-  const tpOf=s=>{ if(!s) return null; let m=s.match(TP_RE2)||s.match(TP_RE); return m?'₹'+m[1]:null; };
-  const NEG=/\b(miss|misses|missed|weak|weakening|headwinds?|lacklustre|lackluster|soft(?:er)?|concerns?|pressure|hazy|delays?|cautious|defensive|impacted|pares)\b|not out of the woods|may not last/i;
-  const POS=/\b(beat|beats|upgrade|outperform|strong|robust|relief|blockbuster|exemplary|positive|improving|improved|improvement|accelerate|accelerating|tailwind|momentum|ahead|exceeded|retained)\b|stay ow|turn positive|higher than/i;
-  const clause=s=>NEG.test(s)?'sell':POS.test(s)?'buy':'hold';
-  const tag=title=>{
-    const parts=title.split(/\b(?:but|however|although|though|despite)\b/i);
-    if(parts.length>1){ const t=clause(parts[parts.length-1]); if(t!=='hold') return t; }
-    return clause(title);
-  };
-  const CALL_RE=/\b(?:stay(?:s|ing)?|upgrade(?:s|d)? to|downgrade(?:s|d)? to|reiterate(?:s|d)?|maintain(?:s|ed)?|initiate(?:s|d)?(?:\s+with)?)\s+(BUY|SELL|HOLD|OW|UW|EW|NEUTRAL|OVERWEIGHT|UNDERWEIGHT|EQUAL[- ]?WEIGHT|OUTPERFORM|UNDERPERFORM|ADD|REDUCE|ACCUMULATE)\b/i;
-  const BARE_RE=/\b(OW|UW|EW|BUY|SELL|HOLD|NEUTRAL|OUTPERFORM|UNDERPERFORM|ADD|REDUCE|ACCUMULATE|OVERWEIGHT|UNDERWEIGHT)\b/i;
-  const normCall=c=>({OVERWEIGHT:'OW',UNDERWEIGHT:'UW','EQUAL-WEIGHT':'EW','EQUAL WEIGHT':'EW',OUTPERFORM:'OP',UNDERPERFORM:'UP'})[c]||c;
-  const CT={BUY:'buy',OP:'buy',OW:'buy',ADD:'buy',ACCUMULATE:'buy',SELL:'sell',UP:'sell',UW:'sell',REDUCE:'sell',HOLD:'hold',NEUTRAL:'hold',EW:'hold',MP:'hold'};
-  const callOf=title=>{
-    let m=title.match(CALL_RE)||title.match(BARE_RE);
-    if(m){ const c=normCall((m[1]||m[0]).toUpperCase()); return {label:c, cls:CT[c]||tag(title)}; }
-    const t=tag(title);
-    return {label:t==='buy'?'Positive':t==='sell'?'Negative':'Neutral', cls:t};
-  };
-  const PD=(typeof PDFDATA==='undefined'||!PDFDATA)?null:PDFDATA;
-  const PM=(typeof PDFMAP==='undefined'||!PDFMAP)?null:PDFMAP;
-  const pdKey=(h,d,co,ti)=>`${h}|${d}|${co}|${String(ti).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'')}`;
-  // See fileUrl() in renderResearchNotes — local PDFs are served via
-  // http://127.0.0.1:8788 (scripts/pdf-server.js) so clicks work even on
-  // the live HTTPS site. Falls back to file:// only when the dashboard
-  // itself is loaded from disk and the file is outside the served root.
-  const PDF_DISK_ROOT_2 = 'C:/Users/admin/Desktop/India Related Reports/';
-  const PDF_HTTP_ROOT_2 = 'http://127.0.0.1:8788/';
-  const onFileOrigin_2  = (typeof location!=='undefined') && location.protocol==='file:';
-  const fileUrl=p=>{
-    const norm=String(p).replace(/\\/g,'/');
-    if (norm.toLowerCase().startsWith(PDF_DISK_ROOT_2.toLowerCase())) {
-      return PDF_HTTP_ROOT_2 + norm.slice(PDF_DISK_ROOT_2.length).split('/').map(encodeURIComponent).join('/');
-    }
-    if (onFileOrigin_2) return 'file:///'+norm.split('/').map(encodeURIComponent).join('/');
-    return null;
-  };
-  const NB={}; (typeof NOTEBOOKS==='undefined'?[]:NOTEBOOKS).forEach(n=>{ if(n&&n.url) NB[n.name]=n.url; });
-  // Title link → local PDF via PDFMAP (served by the localhost PDF
-  // server). NotebookLM is NOT used as a fallback.
-  const urlFor=(folder,h,ti,d,u)=>{
-    if(u) return u;
-    if(PM){
-      const tk=String(ti).replace(/\s*\(\d+\)\s*$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
-      const p=PM[`${h}|${d}|${folder}|${tk}`];
-      if(p){ const url = fileUrl(p); if(url) return url; }
-    }
-    return 'https://www.google.com/search?q='+encodeURIComponent(`${h} ${folder} ${ti}`);
-  };
-  const tpNum=s=>{ if(!s) return null; const m=String(s).replace(/[,₹\s]/g,'').match(/^([\d.]+)/); return m?parseFloat(m[1]):null; };
-  // ---- render: compact panel — broker · current TP · upgrade/downgrade -
-  // The arrow flags a RATING change (current call vs the broker's prior
-  // call): green ▲ upgrade, red ▼ downgrade. Only fires when both calls are
-  // explicit ratings (sentiment-derived labels don't rank, so no false arrow).
-  const CALL_RANK={BUY:3,OP:3,OW:3,ADD:3,ACCUMULATE:3,HOLD:2,NEUTRAL:2,EW:2,MP:2,REDUCE:1,SELL:0,UW:0,UP:0};
-  const rankOf=lbl=>{ if(lbl==null) return null; const r=CALL_RANK[String(lbl).toUpperCase()]; return r==null?null:r; };
-  const lineAgg={};   // per report-date: brokers + a buy/sell score for the chart-line colour
-  const rows=houses.map(h=>{
-    const arr=byHouse[h];                 // newest-first
-    const latest=arr[0];
-    const prior =arr.find(r=>r[1]<latest[1])||null;
-    const d=latest[1], co=latest[2], ti=latest[3], u=latest[4];
-    const href=urlFor(co,h,ti,d,u);
-    const pd=PD?PD[pdKey(h,d,co,ti)]:null;
-    const currTP=(pd&&pd.currTP)||tpOf(ti);
-    const callObj=(pd&&pd.currCall)?{label:pd.currCall, cls:CT[String(pd.currCall).toUpperCase()]||'hold'}:callOf(ti);
-    const currCall=callObj.label;
-    const ag=(lineAgg[d]=lineAgg[d]||{score:0, items:[]});
-    ag.score += (callObj.cls==='buy'?1:callObj.cls==='sell'?-1:0);
-    const priorPd=(PD&&prior)?PD[pdKey(prior[0],prior[1],prior[2],prior[3])]:null;
-    const prevCall=(pd&&pd.prevCall)||(priorPd&&priorPd.currCall)||(prior?callOf(prior[3]).label:null);
-    const cR=rankOf(currCall), pR=rankOf(prevCall);
-    const upd=(cR!=null&&pR!=null&&cR!==pR)
-      ? (cR>pR ? `<span class="bk-arr up" title="Upgraded: ${esc(prevCall)} → ${esc(currCall)}">▲</span>`
-               : `<span class="bk-arr down" title="Downgraded: ${esc(prevCall)} → ${esc(currCall)}">▼</span>`)
-      : `<span class="bk-arr"></span>`;
-    // Normalise TP to thousands grouping when it's a clean number (source
-    // strings are mixed: "5046" vs "5,882"); fall back to raw otherwise.
-    const tpRaw = currTP ? String(currTP).replace(/^₹/,'').trim() : null;
-    const tpN = tpRaw ? Number(tpRaw.replace(/,/g,'')) : null;
-    const tp = (tpN!=null && isFinite(tpN) && tpRaw!=='')
-      ? '₹'+tpN.toLocaleString('en-US')
-      : (tpRaw ? '₹'+esc(tpRaw) : '—');
-    ag.items.push({house:h, tp});           // for the on-chart hover popup (house + TP)
-    const dateLab = fmtD(d)+" '"+d.slice(0,2);
-    return `<div class="bk-row">`+
-      `<span class="bk-id">`+
-        `<a class="bk-name" href="${esc(href)}" target="_blank" rel="noopener"`+
-          (pd && pd.summary ? ` data-summary="${esc(pd.summary)}"` : '')+
-          ` title="${esc(h)} — ${esc(ti)}">${esc(h)}</a>`+
-        `<span class="bk-date">${dateLab}</span>`+
-      `</span>`+
-      `<span class="bk-tp${currTP?'':' muted'}">${tp}</span>`+
-      upd+
-    `</div>`;
-  }).join('');
-  // Per-date metadata for the on-chart annotation lines (reportLinePlugin):
-  // net call colour (buy/sell/hold) + per-broker {house, TP} for the hover popup.
-  const MONr=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  window._coReportMeta={ company: currentCompany, rows: Object.keys(lineAgg).sort().map(d=>{
-    const a=lineAgg[d];
-    const cls=a.score>0?'buy':a.score<0?'sell':'hold';
-    const dateLabel=(+d.slice(4,6))+' '+MONr[(+d.slice(2,4))-1]+" '"+d.slice(0,2);
-    return {d, cls, dateLabel, items:a.items};
-  }) };
-  if(typeof companyChart!=='undefined' && companyChart) companyChart.draw();
-  if(side) side.style.display='';
-  el.innerHTML=rows;
-}
-
-// Latest-news segment for the selected company. Reuses newsViaProxy
-// (Google News RSS via free CORS proxy, cached + throttled). A request
-// token guards against a stale fetch overwriting a newer selection.
-let _coNewsReq=0;
-async function renderCompanyNews(name){
-  const card=document.getElementById('cNewsCard');
-  const body=document.getElementById('cNewsBody');
-  const sub=document.getElementById('cNewsSub');
-  if(!card || !body) return;
-  if(!name){ card.hidden=true; return; }
-  const my=++_coNewsReq;
-  card.hidden=false;
-  if(sub) sub.textContent='Most recent headlines on '+name;
-  body.innerHTML='<div class="nm-empty">Fetching latest headlines…</div>';
-  // The shared newsViaProxy queue can stall on a slow free proxy (no
-  // network timeout in that pipeline), so cap the wait — the card must
-  // settle into a message rather than hang on "Fetching…".
-  const withTimeout=(p,ms)=>Promise.race([p,new Promise(r=>setTimeout(()=>r('__timeout'),ms))]);
-  try{
-    const q=`"${name}" (share OR stock OR results OR order OR profit)`;
-    let items=await withTimeout(newsViaProxy(q+' when:7d'),11000);
-    if(items!=='__timeout' && (!items||!items.length)) items=await withTimeout(newsViaProxy(q),9000);
-    if(my!==_coNewsReq) return;                              // a newer selection won
-    if(items==='__timeout'){
-      body.innerHTML='<div class="nm-empty">The free news feed is slow right now. Reselect the company in a moment to retry.</div>';
-      return;
-    }
-    if(!items||!items.length){
-      body.innerHTML='<div class="nm-empty">No recent company-specific headlines on the free feed. Try again shortly, or check the Broker Coverage above.</div>';
-      return;
-    }
-    body.innerHTML=items.slice(0,8).map(it=>{
-      const title=String(it.title||'').replace(/\s+-\s+[^-]+$/,'').replace(/</g,'&lt;');
-      const tm=it.pubDate?relTime(Date.parse(it.pubDate)/1000):'';
-      const src=it.source?(' · '+String(it.source).replace(/</g,'&lt;')):'';
-      return `<a class="nm-item" href="${it.link||'#'}" target="_blank" rel="noopener">
-        <h4>${title}</h4><div class="meta">${tm}${src}</div></a>`;
-    }).join('');
-  }catch(e){
-    if(my!==_coNewsReq) return;
-    body.innerHTML='<div class="nm-empty">Couldn’t load headlines (free news feed unreachable). Try again shortly.</div>';
-  }
-}
-
-
-// Bull/Bear thesis paragraphs for the selected company. Sentences come
-// from data/theses.json (built by scripts/build-theses.js) and each
-// ends with a clickable (ABBR, MM/YY) citation that opens the broker's
-// PDF in a new tab.
-// Helpers shared across the new Bull/Bear paragraph, House Views and
-// Conflicting Views renderers.
-const THESIS_ESC = s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-function thesisCite(broker, date, url, page){
-  const d=String(date||'');
-  if(d.length<6) return '';
-  const yy=d.slice(0,2), mm=d.slice(2,4);
-  const label=`(${broker||'?'}, ${mm}/${yy})`;
-  if(url){
-    // page-anchor (#page=N) jumps the PDF viewer to that page; most
-    // browsers (Chrome, Edge, Firefox built-in viewer) and Adobe
-    // Acrobat respect it. Falls back gracefully when ignored.
-    const href = page ? url + '#page=' + page : url;
-    return `<a class="thesis-cite" href="${THESIS_ESC(href)}" target="_blank" rel="noopener" title="${THESIS_ESC(broker||'')} · ${THESIS_ESC(d)} · open at page ${page||1}">${THESIS_ESC(label)}</a>`;
-  }
-  return `<span class="thesis-cite">${THESIS_ESC(label)}</span>`;
-}
-
-// Turn a paragraph-block string containing **bold** markers and
-// [CITE:Broker|Date|EncodedURL|Page] markers into HTML. Paragraph
-// boundaries are signalled by "\n\n"; each chunk becomes its own
-// <p class="thesis-p"> so each pointer reads as a distinct point.
-function renderParagraphMarkup(text){
-  if(!text) return '<p class="empty">No reports captured for this side.</p>';
-  const blocks = String(text).split(/\n{2,}/).map(s => s.trim()).filter(Boolean);
-  if(!blocks.length) return '<p class="empty">No reports captured for this side.</p>';
-  return blocks.map(chunk => {
-    let html = THESIS_ESC(chunk);
-    html = html.replace(/\*\*(.+?)\*\*/g, (m, inner) => '<b>'+inner+'</b>');
-    html = html.replace(/\[CITE:([^|\]]*)\|([^|\]]*)\|([^|\]]*)\|([^\]]*)\]/g, (m, broker, date, encUrl, page) => {
-      try {
-        const url = encUrl ? decodeURIComponent(encUrl) : '';
-        return thesisCite(broker, date, url, +page||1);
-      } catch { return m; }
-    });
-    return '<p class="thesis-p">' + html + '</p>';
-  }).join('');
-}
-
-function renderCompanyThesis(){
-  const card=document.getElementById('cThesisCard');
-  const bullEl=document.getElementById('cBull');
-  const bearEl=document.getElementById('cBear');
-  const subEl=document.getElementById('cThesisSub');
-  if(!card || !bullEl || !bearEl) return;
-  // Hide for sectors and when there's no selection / no data.
-  if(!currentCompany ||
-     (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany))){
-    card.hidden=true; return;
-  }
-  const T=(window.THESES||{})[currentCompany];
-  if(!T){ card.hidden=true; return; }
-  const hasBull = T.bullParagraph || (Array.isArray(T.bull) && T.bull.length);
-  const hasBear = T.bearParagraph || (Array.isArray(T.bear) && T.bear.length);
-  if (!hasBull && !hasBear){ card.hidden=true; return; }
-  card.hidden=false;
-  // New schema (bullParagraph/bearParagraph) is preferred. Fall back to
-  // the legacy `bull`/`bear` arrays when the paragraph form isn't present.
-  function renderSide(paragraph, list){
-    if(paragraph) return renderParagraphMarkup(paragraph);
-    if(!list || !list.length) return '<span class="empty">No reports captured for this side.</span>';
-    return list.map(item=>{
-      const text=THESIS_ESC(item.text||'').replace(/\s*[.!?…]\s*$/,'.');
-      const cite=thesisCite(item.broker, item.date, item.url, item.page||1);
-      return text + (cite ? ' '+cite : '');
-    }).join(' ');
-  }
-  bullEl.innerHTML=renderSide(T.bullParagraph, T.bull);
-  bearEl.innerHTML=renderSide(T.bearParagraph, T.bear);
-  if(subEl){
-    const nB=(T.bull||[]).length, nb=(T.bear||[]).length;
-    subEl.textContent=`Distilled from ${nB+nb} broker report${nB+nb===1?'':'s'} — bold = key metrics · citations link to the source PDF (page-anchored)`;
-  }
-}
-
-// House Views card — one short paragraph per broker, ordered by most-
-// recent report. Each broker's paragraph is distilled from their PDF
-// body summary, with **bold** key metrics and a clickable citation
-// linking to the source PDF.
-function renderCompanyHouseViews(){
-  const card=document.getElementById('cHouseViewsCard');
-  const body=document.getElementById('cHouseViewsBody');
-  const sub=document.getElementById('cHouseViewsSub');
-  if(!card||!body) return;
-  if(!currentCompany ||
-     (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany))){
-    card.hidden=true; return;
-  }
-  const T=(window.THESES||{})[currentCompany];
-  const views = (T && Array.isArray(T.houseViews)) ? T.houseViews : [];
-  if(!views.length){ card.hidden=true; return; }
-  card.hidden=false;
-  const notes=(window.HOUSE_VIEW_NOTES||{})[currentCompany]||{};
-  const nb=notes.brokers||{};
-  // multi-paragraph markup: blank-line-separated paragraphs, each with **bold** support
-  const mlMarkup=t=>String(t||'').split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean).map(p=>renderParagraphMarkup(p)).join('');
-  let html='';
-  if(notes.summary){
-    html += `<div class="hv-summary"><div class="hv-summary-h">How the houses differ — my read</div>${mlMarkup(notes.summary)}</div>`;
-  }
-  html += views.map(v=>{
-    const para = renderParagraphMarkup(v.paragraph||'');
-    const yy = (v.date||'').slice(0,2);
-    const mm = (v.date||'').slice(2,4);
-    const cite = thesisCite(v.broker, v.date, v.url, v.page||1);
-    const dirCls = v.direction==='bull' ? 'bull' : v.direction==='bear' ? 'bear' : 'neutral';
-    const n = nb[`${v.broker}|${v.date}`] || {};
-    const chg = n.change ? `<div class="hv-chg"><span class="hv-chg-lbl">Δ vs prior</span> ${THESIS_ESC(n.change)}</div>` : '';
-    const mine = n.view ? `<div class="hv-mine"><div class="hv-mine-lbl">⚖ My view</div>${mlMarkup(n.view)}</div>` : '';
-    return `<div class="house-view ${dirCls}">
-      <div class="house-view-h"><b>${THESIS_ESC(v.brokerFull||v.broker)}</b>
-        <span class="house-view-meta">${mm}/${yy}</span></div>
-      <p class="co-desc house-view-body">${para} ${cite}</p>${chg}${mine}
-    </div>`;
-  }).join('');
-  body.innerHTML = html;
-  if(sub){
-    sub.textContent = `${views.length} broker${views.length===1?'':'s'} covering this name · most-recent first · Δ vs prior report and ⚖ My view shown where available`;
-  }
-}
-
-// Conflicting Views card — surfaces rating divergence (bullish vs
-// bearish brokers) and material TP spread when present.
-function renderCompanyConflicts(){
-  const card=document.getElementById('cConflictsCard');
-  const body=document.getElementById('cConflictsBody');
-  if(!card||!body) return;
-  if(!currentCompany ||
-     (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany))){
-    card.hidden=true; return;
-  }
-  const T=(window.THESES||{})[currentCompany];
-  const conflicts = (T && Array.isArray(T.conflicts)) ? T.conflicts : [];
-  if(!conflicts.length){ card.hidden=true; return; }
-  card.hidden=false;
-  function chip(broker, label, url, dir){
-    const cls = dir==='bull'?'buy':dir==='bear'?'sell':'hold';
-    const inner = `<span class="conf-chip ${cls}">${THESIS_ESC(broker)} · ${THESIS_ESC(label||'')}</span>`;
-    return url ? `<a href="${THESIS_ESC(url)}" target="_blank" rel="noopener" class="conf-chip-a">${inner}</a>` : inner;
-  }
-  const fmtCurr = v => '₹' + Number(v).toLocaleString('en-US');
-  const blocks = conflicts.map(c=>{
-    if(c.topic==='Rating'){
-      const bullish = (c.bullish||[]).map(b => chip(b.broker, b.label, b.url, 'bull')).join(' ');
-      const bearish = (c.bearish||[]).map(b => chip(b.broker, b.label, b.url, 'bear')).join(' ');
-      return `<div class="conf-block">
-        <div class="conf-h">Rating divergence</div>
-        <div class="conf-row"><span class="conf-side">Bullish:</span> ${bullish}</div>
-        <div class="conf-row"><span class="conf-side">Bearish:</span> ${bearish}</div>
-        <p class="conf-note">${(c.bullish||[]).length} broker${(c.bullish||[]).length===1?'':'s'} positive vs ${(c.bearish||[]).length} negative — click a chip to open the source report.</p>
-      </div>`;
-    }
-    if(c.topic==='TP'){
-      const allChips = (c.all||[]).map(t => {
-        const url = t.url ? (t.url + '#page=1') : '';
-        const inner = `<span class="conf-chip neutral">${THESIS_ESC(t.broker)} ${fmtCurr(t.tp)}</span>`;
-        return url ? `<a href="${THESIS_ESC(url)}" target="_blank" rel="noopener" class="conf-chip-a">${inner}</a>` : inner;
-      }).join(' ');
-      return `<div class="conf-block">
-        <div class="conf-h">Target-price spread <span class="conf-meta">${THESIS_ESC(c.spread||'')}</span></div>
-        <div class="conf-row">${allChips}</div>
-        <p class="conf-note">Highest TP <b>${THESIS_ESC(c.high?.broker||'?')} ${fmtCurr(c.high?.tp)}</b> vs lowest <b>${THESIS_ESC(c.low?.broker||'?')} ${fmtCurr(c.low?.tp)}</b> — a ${THESIS_ESC(c.spread||'')} spread suggests genuine disagreement on the story.</p>
-      </div>`;
-    }
-    return '';
-  }).join('');
-  body.innerHTML = blocks;
-}
-
-// Stock Drivers card — bullet list of sentences from broker PDFs that
-// explicitly name a lever moving the stock (catalyst / tailwind /
-// headwind / volume growth / margin lever / etc.). Source from the
-// same data/theses.json file, populated by scripts/build-theses.js.
-function renderCompanyDrivers(){
-  const card=document.getElementById('cDriversCard');
-  const list=document.getElementById('cDriversList');
-  const sub=document.getElementById('cDriversSub');
-  if(!card||!list) return;
-  if(!currentCompany ||
-     (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany))){
-    card.hidden=true; return;
-  }
-  const T=(window.THESES||{})[currentCompany];
-  const drivers = (T && Array.isArray(T.drivers)) ? T.drivers : [];
-  if(!drivers.length){ card.hidden=true; return; }
-  card.hidden=false;
-  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  function fmtCite(item){
-    const d=String(item.date||'');
-    if(d.length<6) return '';
-    const yy=d.slice(0,2), mm=d.slice(2,4);
-    const label=`(${item.broker||'?'}, ${mm}/${yy})`;
-    if(item.url){
-      return `<a class="thesis-cite" href="${esc(item.url)}" target="_blank" rel="noopener" title="${esc(item.broker||'')} · ${esc(d)}">${esc(label)}</a>`;
-    }
-    return `<span class="thesis-cite">${esc(label)}</span>`;
-  }
-  list.innerHTML = drivers.map(d=>{
-    const text = esc(d.text||'').replace(/\s*[.!?…]\s*$/,'.');
-    return `<li>${text} ${fmtCite(d)}</li>`;
-  }).join('');
-  if(sub){
-    sub.textContent=`${drivers.length} driver${drivers.length===1?'':'s'} surfaced — click any (Broker, MM/YY) to open the source PDF`;
-  }
-}
-
-// Upside Opportunity & Downside Risk card — per-company statement lists for the
-// selected company. Each statement carries a source: a broker (with date) where
-// grounded in a report, else "Claude" (the assistant's own point). Keyed on
-// currentCompany; hidden for sectors / no entry. Data from window.COMPANY_QA.
-function renderCompanyQA(){
-  const card=document.getElementById('cQACard');
-  const body=document.getElementById('cQABody');
-  const sub=document.getElementById('cQASub');
-  if(!card||!body) return;
-  if(!currentCompany ||
-     (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany))){
-    card.hidden=true; return;
-  }
-  const Q=(window.COMPANY_QA||{})[currentCompany];
-  if(!Q){ card.hidden=true; return; }
-  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  function fmtCite(it){
-    const src=String(it.source||'').trim();
-    if(!src) return '';
-    if(src.toLowerCase()==='claude') return `<span class="opp-cite claude">(Claude)</span>`;
-    const d=String(it.date||'');
-    const label=(d.length>=6) ? `${src}, ${d.slice(2,4)}/${d.slice(0,2)}` : src;
-    if(it.url){
-      return `<a class="opp-cite" href="${esc(it.url)}" target="_blank" rel="noopener" title="${esc(src)} · ${esc(d)}">(${esc(label)})</a>`;
-    }
-    return `<span class="opp-cite">(${esc(label)})</span>`;
-  }
-  const sections=[['upside','Upside Opportunity','up'],['downside','Downside Risk','down']];
-  let total=0, html='';
-  sections.forEach(([key,label,cls])=>{
-    const items=Array.isArray(Q[key])?Q[key]:[];
-    const clean=items.filter(it=>(it.s||it.text||'').trim());
-    if(!clean.length) return;
-    total+=clean.length;
-    html+=`<div class="opp-sec"><h4 class="opp-sec-h ${cls}">${esc(label)} <span class="opp-n">${clean.length}</span></h4><ul class="opp-list">`;
-    html+=clean.map(it=>{
-      const s=esc(it.s||it.text||'').replace(/\s*$/,'');
-      return `<li>${s} ${fmtCite(it)}</li>`;
-    }).join('');
-    html+='</ul></div>';
-  });
-  if(!total){ card.hidden=true; return; }
-  card.hidden=false;
-  body.innerHTML=html;
-  if(sub){
-    sub.textContent=`${total} point${total===1?'':'s'} · sourced to the broker where grounded, else to Claude`;
-  }
-}
-
-// Financial Summary card — Revenue / EBITDA / Net Profit by FY,
-// each row expandable to a per-broker breakdown table. Data comes
-// from data/financials.json (scripts/build-financials.js).
-function renderCompanyFinancials(){
-  const card=document.getElementById('cFinCard');
-  const body=document.getElementById('cFinBody');
-  const sub=document.getElementById('cFinSub');
-  if(!card||!body) return;
-  if(!currentCompany ||
-     (typeof SECTOR_NAMES!=='undefined' && SECTOR_NAMES.has(currentCompany))){
-    card.hidden=true; return;
-  }
-  const F=(window.FINANCIALS||{})[currentCompany];
-  if(!F || !F.metrics){ card.hidden=true; return; }
-  // Hide the card entirely if nothing parseable.
-  const hasAny=Object.values(F.metrics).some(o=>Object.keys(o).length);
-  if(!hasAny){ card.hidden=true; return; }
-  card.hidden=false;
-  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  // Number formatter: ₹ mn with international (thousands) comma grouping.
-  // Examples: 537,815 → "537,815"   1,015,142 → "1,015,142"
-  // For very small absolute values (< 100 mn = < 10 cr) keep one decimal.
-  const fmt=v=>{
-    if(v==null) return '—';
-    const abs=Math.abs(v);
-    if(abs>=100) return Math.round(v).toLocaleString('en-US');
-    return v.toFixed(1);
-  };
-  const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const fmtD=d=>{ const yy=d.slice(0,2), mm=+d.slice(2,4), dd=+d.slice(4,6); return `${dd} ${MON[mm-1]||''} '${yy}`; };
-  const METRICS=[
-    {key:'revenue',  label:'Revenue'},
-    {key:'ebitda',   label:'EBITDA'},
-    {key:'netProfit',label:'Net Profit'},
-  ];
-  // Year columns for a given metrics block — anchor on FY25..FY29 plus any
-  // actually-captured FY in FY24..FY30 (sliding window so the table grows
-  // when newer data lands). Computed per-block so a primary (standalone) and
-  // an alternate (consolidated) block can span different years.
-  function yearsFor(MM){
-    const seen=new Set();
-    Object.values(MM||{}).forEach(o=>Object.keys(o||{}).forEach(fy=>seen.add(fy)));
-    const baseYears=['FY25','FY26','FY27','FY28','FY29'];
-    const extra=[...seen].filter(fy=>!baseYears.includes(fy))
-      .filter(fy=>{ const n=+fy.slice(2); return n>=24 && n<=30; });
-    return [...baseYears,...extra].sort((a,b)=>(+a.slice(2))-(+b.slice(2)));
-  }
-  // Dominant tag per FY (A across metrics → actual, otherwise estimate).
-  function tagForIn(MM,fy){
-    let A=0,E=0;
-    for(const m of Object.values(MM||{})){
-      const o=m[fy]; if(!o) continue;
-      if(o.tag==='A') A++; else if(o.tag==='E') E++;
-    }
-    return A>=E ? (A?'A':(E?'E':'')) : 'E';
-  }
-  function fyHeaderIn(MM,fy){
-    const t=tagForIn(MM,fy);
-    const tagHtml=t?`<sup class="fy-tag-${t==='A'?'actual':'est'}">${t}</sup>`:'';
-    return `${esc(fy)}${tagHtml}`;
-  }
-  // Render the three metric sections (Revenue / EBITDA / Net Profit) for one
-  // basis block (the primary F.metrics, or an alternate F.alt.metrics).
-  function sectionsFor(MM){
-    const FYS=yearsFor(MM);
-    return METRICS.map(MET=>{
-      const fyMap=(MM&&MM[MET.key])||{};
-      if(!Object.keys(fyMap).length){
-        return `<div class="fin-section">
-          <div class="fin-section-h">${esc(MET.label)}</div>
-          <div class="fin-empty">No estimates captured for this metric.</div>
-        </div>`;
-      }
-      // Build {broker: {date, url, vals:{fy:value}}}.
-      const brokers={};
-      FYS.forEach(fy=>{
-        const o=fyMap[fy]; if(!o) return;
-        o.brokers.forEach(b=>{
-          if(!brokers[b.name]) brokers[b.name]={date:b.date,url:b.url,vals:{}};
-          if(b.date>brokers[b.name].date){ brokers[b.name].date=b.date; brokers[b.name].url=b.url; }
-          brokers[b.name].vals[fy]=b.value;
-        });
-      });
-      // Sort brokers most-recent-first so freshest numbers sit at the top.
-      const sortedBrokers=Object.keys(brokers).sort((a,b)=>brokers[b].date.localeCompare(brokers[a].date));
-      const head=`<tr><th class="bk">Research house</th>${FYS.map(fy=>`<th>${fyHeaderIn(MM,fy)}</th>`).join('')}<th class="src">Source</th></tr>`;
-      const rows=sortedBrokers.map(b=>{
-        const info=brokers[b];
-        const cells=FYS.map(fy=>{
-          const v=info.vals[fy];
-          return `<td>${v==null?'<span class="muted">—</span>':esc(fmt(v))}</td>`;
-        }).join('');
-        const link=info.url
-          ? `<a href="${esc(info.url)}" target="_blank" rel="noopener">${esc(fmtD(info.date))}</a>`
-          : esc(fmtD(info.date));
-        // Broker name itself is a link to the source PDF too — same target
-        // as the Source-date cell, lets you jump straight from the row label.
-        const brokerCell = info.url
-          ? `<a href="${esc(info.url)}" target="_blank" rel="noopener" title="Open ${esc(b)} report">${esc(b)}</a>`
-          : esc(b);
-        return `<tr><td class="bk">${brokerCell}</td>${cells}<td class="src">${link}</td></tr>`;
-      }).join('');
-      // Average row: only show a cell where we actually have data for that FY.
-      const avgRow=`<tr class="avg"><td class="bk">Average</td>${FYS.map(fy=>{
-        const o=fyMap[fy];
-        return `<td>${o ? esc(fmt(o.avg)) : '<span class="muted">—</span>'}</td>`;
-      }).join('')}<td class="src"></td></tr>`;
-      return `<div class="fin-section">
-        <div class="fin-section-h">${esc(MET.label)}</div>
-        <table class="fin-tbl">
-          <thead>${head}</thead>
-          <tbody>${rows}${avgRow}</tbody>
-        </table>
-      </div>`;
-    }).join('');
-  }
-  // Small pill label naming the basis of the block beneath it.
-  function basisBar(label, src){
-    if(!label && !src) return '';
-    const s = src ? ` <span class="fin-basis-src">${esc(src)}</span>` : '';
-    return `<div class="fin-basis">${esc(label||'')}${s}</div>`;
-  }
-  // Primary block (standalone-first), then optional alternate-basis block.
-  let finHtml = basisBar(F.basis || '');
-  finHtml += sectionsFor(F.metrics);
-  if (F.alt && F.alt.metrics && Object.values(F.alt.metrics).some(o=>Object.keys(o||{}).length)){
-    finHtml += `<div class="fin-alt-divider"></div>`;
-    finHtml += basisBar((F.alt.basis||'Consolidated')+' (alternate basis)', F.alt.source||'');
-    finHtml += sectionsFor(F.alt.metrics);
-  }
-  body.innerHTML = finHtml;
-
-  // Segment breakdown (optional): when a broker's report carries a
-  // segment-wise revenue / EBITDA / PAT table, F.segments[brokerName]
-  // holds it. Render one block per broker (in order of newest report),
-  // each block containing one table per metric (rows = segments,
-  // columns = the same FY range as the main tables).
-  if (F.segments && Object.keys(F.segments).length){
-    const segBrokers = Object.keys(F.segments).sort((a,b)=>String(F.segments[b].date||'').localeCompare(String(F.segments[a].date||'')));
-    const segBlocks = segBrokers.map(broker=>{
-      const block = F.segments[broker];
-      const metricBlocks = Object.entries(block.metrics||{}).map(([mk, segMap])=>{
-        const mLabel = mk==='revenue' ? 'Revenue' :
-                       mk==='ebitda'  ? 'EBITDA'  :
-                       mk==='profit'  ? 'Segment Profit (PBIT)' :
-                       mk==='netProfit' ? 'Net Profit' : mk;
-        // Year columns derived from THIS segment block (screener / annual-report
-        // segmentals may carry historical FYs outside the broker-estimate window).
-        const segFYs = [...new Set(
-          Object.values(segMap||{}).flatMap(row =>
-            Object.keys(row||{}).filter(fy => /^FY\d{2}$/.test(fy) && row[fy]!=null))
-        )].sort((a,b)=>(+a.slice(2))-(+b.slice(2)));
-        if (!segFYs.length) return '';
-        const segHead = `<tr><th class="bk">Segment</th>${segFYs.map(fy=>`<th>${esc(fy)}</th>`).join('')}</tr>`;
-        const segRows = Object.entries(segMap).map(([seg, vals])=>{
-          const isTotal = /total/i.test(seg);
-          const cells = segFYs.map(fy=>{
-            const v = vals && vals[fy];
-            return `<td>${v==null ? '<span class="muted">—</span>' : esc(fmt(v))}</td>`;
-          }).join('');
-          return `<tr${isTotal?' class="avg"':''}><td class="bk">${esc(seg)}</td>${cells}</tr>`;
-        }).join('');
-        return `<div class="fin-seg-metric">
-          <div class="fin-seg-metric-h">${esc(mLabel)}</div>
-          <table class="fin-tbl">
-            <thead>${segHead}</thead>
-            <tbody>${segRows}</tbody>
-          </table>
-        </div>`;
-      }).join('');
-      const link = block.url
-        ? `<a href="${esc(block.url)}" target="_blank" rel="noopener">${esc(block.date?fmtD(block.date):broker)}</a>`
-        : esc(block.date?fmtD(block.date):broker);
-      const srcLabel = block.source ? ` · ${esc(block.source)}` : '';
-      return `<div class="fin-seg-block">
-        <div class="fin-seg-block-h"><b>${esc(broker)}</b> — segment breakdown <span class="fin-seg-src">${link}${srcLabel}</span></div>
-        ${metricBlocks}
-      </div>`;
-    }).join('');
-    body.insertAdjacentHTML('beforeend', `
-      <div class="fin-seg-divider"></div>
-      <div class="fin-seg-h">Segment-wise Breakdown</div>
-      ${segBlocks}
-    `);
-  }
-
-  if(sub){
-    const brokerCount=new Set();
-    Object.values(F.metrics).forEach(o=>Object.values(o).forEach(fy=>(fy.brokers||[]).forEach(b=>brokerCount.add(b.name))));
-    if(F.alt&&F.alt.metrics) Object.values(F.alt.metrics).forEach(o=>Object.values(o).forEach(fy=>(fy.brokers||[]).forEach(b=>brokerCount.add(b.name))));
-    const segCount=F.segments?Object.keys(F.segments).length:0;
-    const basisTxt=F.basis?`${F.basis} basis${F.alt?' (+ consolidated)':''} · `:'';
-    sub.textContent=`${basisTxt}${brokerCount.size} broker${brokerCount.size===1?'':'s'} parsed · figures in ${F.currency||'₹ mn'} · superscript A = actual, E = estimate${segCount?` · ${segCount} source${segCount===1?'':'s'} provide segment breakdown`:''} · click a Source date to open the PDF`;
-  }
-}
-
-async function loadCompanyChart(name, tf){
-  if (name) currentCompany = name;
-  if (tf) currentTf = tf;
-  // The Company tab is now companies-only — sectors are handled by the
-  // dedicated Sector tab. Defensive: if a sector name somehow lands here
-  // (e.g. an old bookmark), hide the chart and bail without a Yahoo hit.
-  const isSector = currentCompany && (typeof SECTOR_NAMES!=='undefined') && SECTOR_NAMES.has(currentCompany);
-  const chartCard = document.getElementById('cChartCard');
-  if (chartCard) chartCard.hidden = !!isSector;
-  if (name) { updateCoDesc(); renderCompanyResearch(); renderCompanyNews(name); renderCompanyThesis(); renderCompanyDrivers(); renderCompanyQA(); renderCompanyHouseViews(); renderCompanyConflicts(); renderCompanyFinancials(); }
-  if (isSector) return;
-  // Sync the segmented control highlight to the current timeframe.
-  document.querySelectorAll('#cRangeSeg button').forEach(b=>{
-    b.classList.toggle('on', b.dataset.r===currentTf);
-  });
-  const msgEl = document.getElementById('cChartMsg');
-  const titleEl = document.getElementById('cChartTitle');
-  const subEl = document.getElementById('cChartSub');
-  if(!currentCompany){
-    msgEl.style.display='block';
-    msgEl.textContent = 'Select a company or sector above to load the chart.';
-    return;
-  }
-  const sym = yahooSymFor(currentCompany);
-  if(!sym){
-    titleEl.textContent = currentCompany;
-    subEl.textContent = 'No Yahoo Finance ticker mapped for this notebook';
-    if(companyChart){ companyChart.data.labels=[]; companyChart.data.datasets[0].data=[]; companyChart.update(); }
-    msgEl.style.display='none';
-    return;
-  }
-  const def = TF_DEF[currentTf] || TF_DEF['YTD'];
-  const intervalLabel = def.interval==='1d' ? 'daily close' : def.interval+' intraday';
-  titleEl.textContent = `${currentCompany} — ${currentTf}`;
-  subEl.textContent = `Yahoo Finance · ${sym} · ${intervalLabel}`;
-  msgEl.style.display='none';
-  // Build period1 / period2 in unix seconds so we cover the exact window
-  // (Yahoo's named ranges don't include 3Y).
-  const now = Math.floor(Date.now()/1000);
-  const start = def.ytd
-    ? Math.floor(new Date(new Date().getFullYear(),0,1).getTime()/1000)
-    : now - def.days*86400;
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}`+
-    `?period1=${start}&period2=${now}&interval=${def.interval}`;
-  try{
-    const j = await getJSON(url);
-    const res = j && j.chart && j.chart.result && j.chart.result[0];
-    const cl = res && res.indicators && res.indicators.quote && res.indicators.quote[0] && res.indicators.quote[0].close;
-    const ts = res && res.timestamp;
-    if(!cl || !ts || !ts.length) throw new Error('no data');
-    const pairs = cl.map((v,i)=>({v, t: ts[i]*1000})).filter(p=>p.v!=null);
-    if(!pairs.length) throw new Error('no data');
-    renderCompanyChart(pairs.map(p=>p.v), pairs.map(p=>p.t), sym, currentTf);
-  }catch(e){
-    if(companyChart){ companyChart.data.labels=[]; companyChart.data.datasets[0].data=[]; companyChart.update(); }
-    msgEl.style.display='block';
-    msgEl.textContent = `Couldn't fetch ${sym} from Yahoo (symbol may not exist or proxy is rate-limited).`;
-  }
-}
-
-// Chart.js plugin — dashed vertical lines at each broker report's publication
-// date (matches the coverage panel: latest report per house, deduped by date).
-// Drawn on-canvas in afterDatasetsDraw, so it stays correct through the entry
-// animation, range changes and resizes with no overlay-timing issues.
-const reportLinePlugin = {
-  id:'reportLines',
-  afterDatasetsDraw(chart){
-    if(!chart.canvas || chart.canvas.id!=='cChart') return;
-    chart._reportLines=[];                       // recomputed each draw, for hover hit-testing
-    const meta=window._coReportMeta, times=chart._times;
-    // Only draw when the metadata matches the company whose data is on screen.
-    if(!meta || meta.company!==chart._company || !meta.rows || !meta.rows.length) return;
-    if(!times || !times.length) return;
-    const ctx=chart.ctx, ca=chart.chartArea, x=chart.scales.x, y=chart.scales.y;
-    if(!ca || !x) return;
-    const data=chart._data||[];
-    const t0=times[0], t1=times[times.length-1], tol=3*864e5;
-    const COL={buy:'rgba(46,160,67,.62)', sell:'rgba(248,81,73,.62)', hold:'rgba(150,160,176,.5)'};
-    ctx.save();
-    ctx.lineWidth=1; ctx.setLineDash([3,4]);
-    meta.rows.forEach(r=>{
-      const ts=new Date(2000+ +r.d.slice(0,2), +r.d.slice(2,4)-1, +r.d.slice(4,6), 12).getTime();
-      if(ts < t0-tol || ts > t1+tol) return;
-      let bi=0, bd=Infinity;
-      for(let i=0;i<times.length;i++){ const df=Math.abs(times[i]-ts); if(df<bd){bd=df;bi=i;} }
-      const px=x.getPixelForValue(bi);
-      if(!isFinite(px)) return;
-      // Draw only ABOVE the price line: chart top down to the price at that date.
-      let yEnd=ca.bottom;
-      const val=data[bi];
-      if(val!=null && y){ const yp=y.getPixelForValue(val); if(isFinite(yp)) yEnd=yp; }
-      ctx.strokeStyle=COL[r.cls]||COL.hold;
-      ctx.beginPath(); ctx.moveTo(px, ca.top); ctx.lineTo(px, yEnd); ctx.stroke();
-      // Hover hit-area spans the full chart height at this x (hover the date anywhere).
-      chart._reportLines.push({x:px, top:ca.top, bottom:ca.bottom, cls:r.cls, dateLabel:r.dateLabel, items:r.items});
-    });
-    ctx.restore();
-  }
-};
-
-function renderCompanyChart(data, times, sym, tf){
-  const c = document.getElementById('cChart');
-  if(!c) return;
-  const ccy = (sym==='MMYT' || sym==='RNW') ? '$' : '₹';
-  if(!companyChart){
-    const gc = c.getContext('2d').createLinearGradient(0,0,0,300);
-    gc.addColorStop(0,'rgba(233,162,59,.32)');
-    gc.addColorStop(1,'rgba(233,162,59,0)');
-    companyChart = new Chart(c, {
-      type:'line',
-      plugins:[reportLinePlugin],
-      data:{labels:[], datasets:[{data:[], borderColor:'#e9a23b', borderWidth:1.5,
-        fill:true, backgroundColor:gc, tension:.18, pointRadius:0, pointHoverRadius:5,
-        pointHoverBackgroundColor:'#e9a23b', borderJoinStyle:'round'}]},
-      options:{responsive:true, maintainAspectRatio:false,
-        devicePixelRatio:Math.max(2,window.devicePixelRatio||1),
-        plugins:{legend:{display:false},
-          tooltip:{backgroundColor:'#11151c', borderColor:'#252c39', borderWidth:1,
-            titleColor:'#646c7c', bodyColor:'#e9e6dd', padding:11, displayColors:false,
-            // Tooltip title reads the full timestamp (day + month + year,
-            // plus HH:mm on intraday timeframes) from the parallel _times
-            // array — the x-axis labels are sparse "May '26" style which
-            // wouldn't tell you the exact date on a 10Y chart.
-            callbacks:{title:items=>{
-                if(!items||!items[0]) return '';
-                const t = companyChart._times && companyChart._times[items[0].dataIndex];
-                if(!t) return items[0].label||'';
-                const d=new Date(t), IST={timeZone:'Asia/Kolkata'};
-                const date=d.toLocaleDateString('en-IN',{...IST,day:'numeric',month:'short',year:'numeric'});
-                if(companyChart._intraday){
-                  const time=d.toLocaleTimeString('en-IN',{...IST,hour:'2-digit',minute:'2-digit',hour12:false});
-                  return date+' · '+time;
-                }
-                return date;
-              },
-              label:cc=>'  '+companyChart._ccy+cc.parsed.y.toFixed(2)}}},
-        scales:{x:{display:true, grid:{display:false}, border:{display:false},
-          ticks:{color:'#646c7c', font:{family:'Roboto Mono',size:10},
-            maxRotation:0, autoSkip:true, maxTicksLimit:10}},
-          // Y-axis auto-scales to the data range with a 5% grace —
-          // don't pin to zero (a stock at ₹2,000 with min:0 makes
-          // daily moves look flat).
-          y:{position:'right', grid:{color:'#1f2530'}, border:{display:false},
-            beginAtZero:false, grace:'5%',
-            ticks:{color:'#646c7c', font:{family:'Roboto Mono',size:10}}}},
-        interaction:{intersect:false, mode:'index'}}
-    });
-  }
-  companyChart._ccy = ccy;
-  companyChart._times = times;
-  companyChart._company = currentCompany;       // which company's data this is (for reportLinePlugin)
-  companyChart._intraday = (tf==='1D' || tf==='1W');
-  companyChart._data = data;
-  const fmt = fmtTickFor(tf);
-  companyChart.data.labels = times.map(fmt);
-  companyChart.data.datasets[0].data = data;
-  companyChart.update();
-  // Period return + abnormal-move markers — run after chart paints.
-  requestAnimationFrame(()=>{ updateChartReturn(data, ccy, tf); paintMarkers(data, times, currentCompany, tf); });
-}
-
-// === Period-return label + abnormal-move markers ===================
-
-function updateChartReturn(data, ccy, tf){
-  const elPct = document.getElementById('cRetPct');
-  const elMeta = document.getElementById('cRetMeta');
-  if(!elPct || !elMeta || !data || data.length < 2){ if(elPct) elPct.textContent='—'; return; }
-  const first = data[0], last = data[data.length-1];
-  const pct = (last/first - 1) * 100;
-  const abs = last - first;
-  const cls = pct >= 0 ? 'up' : 'down';
-  const sign = pct >= 0 ? '+' : '−';
-  elPct.className = 'cm-return '+cls;
-  elPct.textContent = sign + Math.abs(pct).toFixed(2) + '%';
-  const fmtN = n => Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
-  elMeta.textContent = `${tf} · ${ccy}${fmtN(first)} → ${ccy}${fmtN(last)}  (${sign}${ccy}${fmtN(Math.abs(abs))})`;
-}
-
-// Cache: "company|YYYY-MM-DD" → array of news items (or null)
-const newsByDate = {};
-async function fetchNewsForDate(name, ts){
-  const d = new Date(ts);
-  const key = `${name}|${d.toISOString().slice(0,10)}`;
-  if(newsByDate[key] !== undefined) return newsByDate[key];
-  // Google News RSS only reliably returns results from the last ~14
-  // days. The after:/before: operators return a 500 through rss2json,
-  // so we use when:Nd (which works) and filter client-side by pubDate.
-  const daysAgo = Math.ceil((Date.now() - ts) / 864e5);
-  if(daysAgo > 14 || daysAgo < 0){ newsByDate[key] = null; return null; }
-  const win = Math.max(2, daysAgo + 1);
-  const q = `"${name}" (share OR stock OR results OR profit OR order OR deal OR guidance) when:${win}d`;
-  try{
-    const items = await newsViaProxy(q);
-    if(!items || !items.length){ newsByDate[key] = []; return []; }
-    // Keep items pub-dated within ±2 days of the target marker.
-    const filtered = items.filter(it => {
-      const ms = Date.parse(it.pubDate);
-      return !isNaN(ms) && Math.abs(ms - ts) <= 2*864e5;
-    });
-    newsByDate[key] = filtered.slice(0,3);
-    return newsByDate[key];
-  }catch(e){ newsByDate[key] = null; return null; }
-}
-
-function findAbnormalMoves(data, times, threshold){
-  const moves = [];
-  for(let i=1; i<data.length; i++){
-    if(data[i]==null || data[i-1]==null) continue;
-    const pct = data[i]/data[i-1] - 1;
-    if(Math.abs(pct) >= threshold) moves.push({idx:i, value:data[i], t:times[i], pct:pct*100});
-  }
-  // Keep the top-10 by absolute magnitude (avoid clutter on 5Y/10Y).
-  moves.sort((a,b)=>Math.abs(b.pct)-Math.abs(a.pct));
-  return moves.slice(0,10);
-}
-
-let lastMarkerCtx = null;  // remember the inputs so we can re-place on resize
-
-function paintMarkers(data, times, name, tf){
-  const wrap = document.getElementById('cChartMarkers');
-  if(!wrap || !companyChart || !companyChart.chartArea) { lastMarkerCtx = {data, times, name, tf}; return; }
-  wrap.innerHTML = '';
-  // Threshold scales with timeframe — daily moves above this stand out.
-  const threshold = (tf==='1D' || tf==='1W') ? 0.02
-                  : (tf==='1M' || tf==='YTD' || tf==='1Y') ? 0.05
-                  : 0.07;
-  const moves = findAbnormalMoves(data, times, threshold);
-  const ca = companyChart.chartArea, xs = companyChart.scales.x, ys = companyChart.scales.y;
-  // Align overlay to the canvas position inside .cm-wrap.
-  const canvas = document.getElementById('cChart');
-  const wrapRect = wrap.parentElement.getBoundingClientRect();
-  const canvRect = canvas.getBoundingClientRect();
-  const offX = canvRect.left - wrapRect.left;
-  const offY = canvRect.top  - wrapRect.top;
-  moves.forEach(p => {
-    const xPix = offX + xs.getPixelForValue(p.idx);
-    const yPix = offY + ys.getPixelForValue(p.value);
-    if(!isFinite(xPix) || !isFinite(yPix)) return;
-    const m = document.createElement('div');
-    m.className = 'cm-marker '+(p.pct >= 0 ? 'up' : 'down');
-    m.style.left = xPix + 'px';
-    m.style.top  = yPix + 'px';
-    const lineH = Math.max(0, yPix - (offY + ca.top));
-    m.innerHTML = `<div class="cm-line" style="height:${lineH}px"></div>`;
-    m.dataset.pct = p.pct.toFixed(2);
-    m.dataset.t   = p.t;
-    m.addEventListener('mouseenter', () => showMarkerPop(m, name, p));
-    m.addEventListener('mouseleave', hideMarkerPop);
-    wrap.appendChild(m);
-  });
-  lastMarkerCtx = {data, times, name, tf};
-}
-
-let popHideTimer = null;
-function showMarkerPop(markerEl, name, p){
-  const pop = document.getElementById('cChartPop');
-  if(!pop) return;
-  clearTimeout(popHideTimer);
-  const d = new Date(p.t);
-  const IST = {timeZone:'Asia/Kolkata'};
-  const dateStr = d.toLocaleDateString('en-IN',{...IST,day:'numeric',month:'short',year:'numeric'});
-  const cls = p.pct >= 0 ? 'up' : 'down';
-  const sign = p.pct >= 0 ? '▲' : '▼';
-  pop.innerHTML = `<div class="cmp-date">${dateStr}</div>`+
-    `<div class="cmp-move ${cls}">${sign} ${Math.abs(p.pct).toFixed(2)}%</div>`+
-    `<div class="cmp-news cmp-load">Looking for news…</div>`;
-  // Position popup above the marker; flip below if it would clip.
-  const wrap = document.getElementById('cChartMarkers').parentElement;
-  const mx = parseFloat(markerEl.style.left);
-  const my = parseFloat(markerEl.style.top);
-  pop.classList.add('show');
-  // Measure then position
-  requestAnimationFrame(()=>{
-    const pw = pop.offsetWidth, ph = pop.offsetHeight;
-    const ww = wrap.clientWidth, wh = wrap.clientHeight;
-    let left = Math.max(8, Math.min(ww - pw - 8, mx - pw/2));
-    let top  = my - ph - 14;
-    if (top < 8) top = my + 14;
-    pop.style.left = left + 'px';
-    pop.style.top  = top  + 'px';
-  });
-  // Fetch news async; update only if popup still showing this marker.
-  pop.dataset.markerT = p.t;
-  fetchNewsForDate(name, p.t).then(items => {
-    if(pop.dataset.markerT != p.t) return;
-    const newsEl = pop.querySelector('.cmp-news');
-    if(!newsEl) return;
-    newsEl.classList.remove('cmp-load');
-    if(items === null){
-      // Date is older than the ~14-day Google News window — no free
-      // historical news source is available from a browser.
-      newsEl.textContent = 'Older than the live-news window (last 14 days).';
-    } else if(items.length){
-      // One clean sentence — strip publisher suffix and entity-decode.
-      let s = String(items[0].title||'').replace(/\s+-\s+[^-]+$/,'').trim()
-        .replace(/&amp;/g,'&').replace(/&#39;|&apos;/g,"'").replace(/&quot;/g,'"');
-      if(s && !/[.!?]$/.test(s)) s += '.';
-      newsEl.textContent = s;
-    } else {
-      newsEl.textContent = 'No company-specific headlines on this date.';
-    }
-  });
-}
-function hideMarkerPop(){
-  const pop = document.getElementById('cChartPop');
-  if(!pop) return;
-  popHideTimer = setTimeout(()=>{ pop.classList.remove('show'); pop.dataset.markerT=''; }, 80);
-}
-
-// Reposition abnormal-move markers when the window resizes (chart re-lays-out).
-// (Report lines are drawn by reportLinePlugin and need no manual reposition.)
-window.addEventListener('resize', ()=>{
-  if(lastMarkerCtx) requestAnimationFrame(()=>paintMarkers(lastMarkerCtx.data, lastMarkerCtx.times, lastMarkerCtx.name, lastMarkerCtx.tf));
-});
-
-// Hover the chart at a report date → popup box listing each research house
-// and its target price. Hit-tests the cursor x against the line x-positions
-// the plugin recorded (full chart height, so any y at that date triggers).
-(function(){
-  const wrap=document.querySelector('#cChartCard .cm-wrap');
-  const tip=document.getElementById('cRlTip');
-  if(!wrap || !tip) return;
-  const escH=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  let shown=false;
-  const hide=()=>{ if(shown){ tip.classList.remove('show'); shown=false; } };
-  wrap.addEventListener('mousemove', e=>{
-    const lines=(typeof companyChart!=='undefined' && companyChart) ? companyChart._reportLines : null;
-    if(!lines || !lines.length){ hide(); return; }
-    const canvas=document.getElementById('cChart');
-    if(!canvas){ hide(); return; }
-    const cr=canvas.getBoundingClientRect(), wr=wrap.getBoundingClientRect();
-    const xRel=e.clientX-cr.left, yRel=e.clientY-cr.top;
-    let hit=null, best=6;
-    for(const l of lines){
-      if(yRel < l.top-6 || yRel > l.bottom+6) continue;
-      const dx=Math.abs(l.x-xRel);
-      if(dx<best){ best=dx; hit=l; }
-    }
-    if(!hit){ hide(); return; }
-    const rowsHtml=(hit.items||[]).map(it=>
-      `<div class="rlt-row"><span class="rlt-h">${escH(it.house)}</span><span class="rlt-tp">${escH(it.tp)}</span></div>`).join('');
-    tip.innerHTML=`<div class="rlt-date">${escH(hit.dateLabel||'')}</div>${rowsHtml}`;
-    tip.className='rl-tip show '+(hit.cls||'hold');
-    const offX=cr.left-wr.left;
-    const tw=tip.offsetWidth;
-    let left=Math.max(4, Math.min(wr.width-tw-4, offX+hit.x-tw/2));
-    tip.style.left=left+'px';
-    tip.style.top=(hit.top+4)+'px';
-    shown=true;
-  });
-  wrap.addEventListener('mouseleave', hide);
-})();
-
-// Wire the segmented timeframe selector. Each click re-fetches at the
-// new range while keeping the currently-selected company.
-(function(){
-  document.querySelectorAll('#cRangeSeg button').forEach(b=>{
-    b.addEventListener('click', ()=>loadCompanyChart(null, b.dataset.r));
-  });
-})();
-
-// Company tab: companies-only dropdown. Sectors moved to the Sector tab.
-function loadScreener(){
-  const status=document.getElementById('nbStatus');
-  const coSel  = document.getElementById('nbSelectCo');
-  const companies=[];
-  NOTEBOOKS.forEach(n=>{ if(!SECTOR_NAMES.has(n.name)) companies.push(n); });
-  companies.sort((a,b)=>a.name.localeCompare(b.name));
-  companies.forEach((n,i)=>{
-    const o=document.createElement('option');
-    o.value=String(i); o.textContent=n.name;
-    coSel.appendChild(o);
-  });
-  coSel.addEventListener('change',()=>{
-    const i=coSel.value, n=i===''?null:companies[+i];
-    if(n) loadCompanyChart(n.name);
-  });
-  status.textContent=`${companies.length} companies in coverage`;
-}
 
 /* ---------- Earnings tab ----------
    data/earnings.json (seeded from the analyst workbook, re-derived and extended from
@@ -7691,17 +6166,27 @@ const ER_MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov',
 const erDate=d=>d&&d.length===6?`${+d.slice(4,6)} ${ER_MON[+d.slice(2,4)-1]||''} 20${d.slice(0,2)}`:'';
 const erHouse=b=>ER_HOUSE[b]||b||'';
 
+// Shared by the Earnings and Company tabs: loads once, whichever tab opens first.
+let erDataP=null, erEarningsShown=false;
+function erLoadData(){
+  if(!erDataP) erDataP=(async()=>{
+    let e=null;
+    try{ const r=await fetch('data/earnings.json',{cache:'no-store'}); if(r.ok) e=await r.json(); }catch(err){}
+    const s=await loadSectorsData();
+    if(!e||!Array.isArray(e.companies)) return;
+    const q=(s&&s.q)||{};
+    const fx=s&&s.desk&&s.desk['INR=X']&&s.desk['INR=X'].p; ER_FX=fx>0?fx:null;
+    e.companies.forEach(c=>{ const x=c.sym&&q[c.sym]; c._mc=(x&&x.mc)||c.mcap||null; c._usd=c._mc&&ER_FX?c._mc*1e7/ER_FX/1e9:null; });
+    ER=e;
+    erApplySectors();
+  })();
+  return erDataP;
+}
 async function loadEarnings(){
   const sub=document.getElementById('erSub');
-  let e=null;
-  try{ const r=await fetch('data/earnings.json',{cache:'no-store'}); if(r.ok) e=await r.json(); }catch(err){}
-  const s=await loadSectorsData();
-  if(!e||!Array.isArray(e.companies)){ if(sub) sub.textContent='Earnings data unavailable — data/earnings.json could not be loaded.'; return; }
-  const q=(s&&s.q)||{};
-  const fx=s&&s.desk&&s.desk['INR=X']&&s.desk['INR=X'].p; ER_FX=fx>0?fx:null;
-  e.companies.forEach(c=>{ const x=c.sym&&q[c.sym]; c._mc=(x&&x.mc)||c.mcap||null; c._usd=c._mc&&ER_FX?c._mc*1e7/ER_FX/1e9:null; });
-  ER=e;
-  erApplySectors();
+  await erLoadData();
+  if(!ER){ if(sub) sub.textContent='Earnings data unavailable — data/earnings.json could not be loaded.'; return; }
+  erEarningsShown=true;
   erFillSectorFilter();
   erRender();
   esInit();
@@ -7736,8 +6221,9 @@ function erSetSector(name,sector){
   const c=ER&&ER.companies.find(x=>x.name===name); if(!c) return;
   const ov=erSecOv(); sector=String(sector||'').trim().slice(0,40);
   if(!sector||sector===c._origSector) delete ov[name]; else ov[name]=sector;
-  erSecSave(ov); erApplySectors(); erFillSectorFilter(); erRender(); esRender();
+  erSecSave(ov); erApplySectors(); erFillSectorFilter(); coFillSectorFilter(); erRedraw(); if(erEarningsShown) esRender();
 }
+function erRedraw(){ if(erEarningsShown) erRender(); if(coReady) coRender(); }
 function erOpenSecEditor(cell){
   const name=cell.dataset.secEdit, c=ER.companies.find(x=>x.name===name); if(!c) return;
   const edited=c.sector!==c._origSector;
@@ -7746,11 +6232,11 @@ function erOpenSecEditor(cell){
   }<option value="__new">＋ New sector…</option>${edited?`<option value="__reset">↺ Reset to ${erEsc(c._origSector)}</option>`:''}</select>`;
   const sel=cell.querySelector('select'); let done=false;
   sel.addEventListener('change',()=>{ done=true; let v=sel.value;
-    if(v==='__new'){ v=window.prompt(`New sector for ${name}:`,''); if(v==null||!v.trim()){ erRender(); return; } }
+    if(v==='__new'){ v=window.prompt(`New sector for ${name}:`,''); if(v==null||!v.trim()){ erRedraw(); return; } }
     if(v==='__reset') v=c._origSector;
     erSetSector(name,v); });
-  sel.addEventListener('blur',()=>{ if(!done) erRender(); });
-  sel.addEventListener('keydown',e=>{ if(e.key==='Escape'){ done=true; erRender(); } });
+  sel.addEventListener('blur',()=>{ if(!done) erRedraw(); });
+  sel.addEventListener('keydown',e=>{ if(e.key==='Escape'){ done=true; erRedraw(); } });
   sel.focus();
 }
 
@@ -7908,8 +6394,8 @@ function erRender(){
     h.addEventListener('scroll',sync(h,b),{passive:true}); b.addEventListener('scroll',sync(b,h),{passive:true});
   });
 }
-function erPopShow(el){
-  const pop=document.getElementById('erPop'); const t=erTips[+el.dataset.tip]; if(!pop||!t) return;
+function erPopShow(el,tips){
+  const pop=document.getElementById('erPop'); const t=(tips||erTips)[+el.dataset.tip]; if(!pop||!t) return;
   pop.className='show '+(t.cls||'');
   pop.innerHTML=`<div class="h">${t.h}</div><div>${t.t||''}</div>${t.s?`<div class="s">${erEsc(t.s)}</div>`:''}`;
   const r=el.getBoundingClientRect(), pw=Math.min(360,window.innerWidth-16);
@@ -7919,12 +6405,6 @@ function erPopShow(el){
   pop.style.top=Math.max(8,y)+'px';
 }
 function erPopHide(){ const p=document.getElementById('erPop'); if(p) p.className=''; }
-function erOpenCompany(name){
-  const coSel=document.getElementById('nbSelectCo');
-  if(coSel) for(const opt of coSel.options){ if(opt.textContent===name){ coSel.value=opt.value; break; } }
-  if(typeof loadCompanyChart==='function') loadCompanyChart(name);
-  const nav=document.querySelector('.nav-item[data-view="screener"]'); if(nav) nav.click();
-}
 (function erWire(){
   const grid=document.getElementById('erGrid'); if(!grid) return;
   if(!document.getElementById('erPop')){ const p=document.createElement('div'); p.id='erPop'; document.body.appendChild(p); }
@@ -7961,6 +6441,238 @@ function erOpenCompany(name){
   let rt=null; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ const v=document.getElementById('viewEarnings'); if(ER&&v&&!v.hidden){ erRender(); esRender(); } },200); });
   const s=document.getElementById('erSearch'); if(s) s.addEventListener('input',()=>{ erState.q=s.value; erRender(); });
   const sel=document.getElementById('erSector'); if(sel) sel.addEventListener('change',()=>{ erState.sec=sel.value; erRender(); });
+})();
+
+/* ---------- Company tab ----------
+   One row per company, the same rows as the Earnings tab: data/earnings.json gives sector,
+   market cap, outlook, beat/miss calls, quarterly YoY and their pop-ups. data/estimates.json
+   (scripts/estimates/build-estimates.js) gives each broker's FY26-FY29 revenue and EBITDA,
+   the averages and like-for-like growth. Click a company to list its brokers' estimates. */
+const CO_LS='irp_co_view_v1';
+const CO_FYS=['FY27','FY28','FY29'];
+const CO_PREV={FY27:'FY26',FY28:'FY27',FY29:'FY28'};
+const CO_GROUPS=[
+  {id:'ov', title:'Overall Earnings', kind:'ov',  w:62},
+  {id:'ry', title:'Revenue YoY',      kind:'yoy', m:'rev',    w:56},
+  {id:'ey', title:'EBITDA YoY',       kind:'yoy', m:'ebitda', w:56},
+  {id:'ra', title:'Revenue',          kind:'fy',  m:'rev',    w:80},
+  {id:'ea', title:'EBITDA',           kind:'fy',  m:'ebitda', w:80},
+  {id:'ep', title:'EPS',              kind:'fy',  m:'eps',    w:58},
+  {id:'pe', title:'P/E',              kind:'pe',              w:52},
+];
+const CO_PIN_W=186, CO_INFO_W=232;
+let EST=null, EST_AT=0, EST_PX=null, coReady=false, coTips=[], coScrollTo=false;
+let coState={sort:null, dir:-1, q:'', sec:'', open:null};
+try{ const v=JSON.parse(localStorage.getItem(CO_LS)||'null'); if(v&&typeof v==='object') Object.assign(coState,{sort:v.sort||null,dir:v.dir||-1}); }catch(e){}
+function coSave(){ try{ localStorage.setItem(CO_LS,JSON.stringify({sort:coState.sort,dir:coState.dir})); }catch(e){} }
+async function coLoadEst(){
+  try{ const r=await fetch('data/estimates.json',{cache:'no-store'}); if(r.ok){ EST=await r.json(); EST_AT=Date.now(); } }catch(e){}
+  // Prices are fixed once a day by the 09:30 refresh, so P/Es don't move intraday.
+  try{ const r=await fetch('data/estimate_prices.json',{cache:'no-store'}); if(r.ok) EST_PX=await r.json(); }catch(e){}
+}
+const coPx=c=>(EST_PX&&EST_PX.px&&EST_PX.px[c.name])||null;
+function coPe(px,eps){ if(!px||eps==null) return null; return eps>0?px/eps:'NM'; }
+const coPeTxt=v=>v==null?'·':v==='NM'?'NM':v>=1000?'>999x':v.toFixed(1)+'x';
+async function coOnShow(){
+  const sub=document.getElementById('coSub');
+  await erLoadData();
+  if(!ER){ if(sub) sub.textContent='Company data unavailable: data/earnings.json could not be loaded.'; return; }
+  if(Date.now()-EST_AT>300000) await coLoadEst();     // the backfill keeps adding to this file
+  if(!coReady){ coReady=true; coFillSectorFilter(); }
+  coRender();
+}
+function coFillSectorFilter(){
+  const sel=document.getElementById('coSector'); if(!sel||!ER) return;
+  const secs=erAllSectors();
+  if(coState.sec&&!secs.includes(coState.sec)) coState.sec='';
+  sel.innerHTML='<option value="">All sectors</option>'+secs.map(x=>`<option${x===coState.sec?' selected':''}>${erEsc(x)}</option>`).join('');
+}
+// The three latest quarters with results, oldest on the left.
+function coQuarters(){
+  const set=new Set();
+  ER.companies.forEach(c=>Object.entries(c.q||{}).forEach(([qt,d])=>{ if(d.overall||d.revYoY!=null||d.ebitdaYoY!=null) set.add(qt); }));
+  return [...set].sort((a,b)=>erQIdx(a)-erQIdx(b)).slice(-3);
+}
+function coCols(g,qs){ return g.kind==='ov'?qs:g.kind==='yoy'?qs.concat(CO_FYS):CO_FYS; }
+const coEst=c=>(EST&&EST.companies&&EST.companies[c.name])||null;
+const coNum=(v,unit)=>unit==='INR'?(+v).toFixed(1):(unit==='US$ mn'?'$':'')+erNum(v);
+function coVal(c,k){
+  const g=CO_GROUPS.find(x=>x.id===k.split(':')[0]);
+  if(!g) return erVal(c,k);
+  const col=k.split(':')[1], e=coEst(c);
+  if(col.startsWith('FY')){
+    if(!e) return null;
+    if(g.kind==='pe'){ const v=coPe(coPx(c),e.avg&&e.avg.eps&&e.avg.eps[col]); return typeof v==='number'?v:null; }
+    if(g.kind==='yoy'){ const v=e.growth&&e.growth[g.m]&&e.growth[g.m][col]; return v==null?null:v; }
+    const v=e.avg&&e.avg[g.m]&&e.avg[g.m][col];
+    if(v==null) return null;
+    return e.unit&&e.unit[g.m]==='US$ mn'&&ER_FX?v*ER_FX:v;    // sort IT's US$ rows alongside the rupee rows
+  }
+  const d=(c.q||{})[col]||{};
+  if(g.kind==='ov') return d.overall?{beat:2,inline:1,miss:0}[d.overall]:null;
+  return d[g.m+'YoY'];
+}
+function coRows(){
+  const q=coState.q.trim().toLowerCase(), sec=coState.sec;
+  let rows=ER.companies.filter(c=>(!sec||c.sector===sec)&&(!q||c.name.toLowerCase().includes(q)||(c.sector||'').toLowerCase().includes(q)));
+  const k=coState.sort;
+  if(k) rows=rows.slice().sort((a,b)=>{
+    const va=coVal(a,k), vb=coVal(b,k);
+    if(va==null&&vb==null) return a.name.localeCompare(b.name);
+    if(va==null) return 1; if(vb==null) return -1;
+    const r=typeof va==='string'?va.localeCompare(vb):va-vb;
+    return (r||a.name.localeCompare(b.name)*-coState.dir)*coState.dir;
+  });
+  return rows;
+}
+// One broker's figures for a line: the series in the row's shown unit, or its own unit if it can't be averaged in.
+function coSeries(e,b,m){
+  const r=e.brokers[b], how=e.used&&e.used[m]&&e.used[m][b];
+  if(m==='rev'&&how==='alt') return {s:r.revAlt, unit:r.revAltUnit};
+  return {s:r[m], unit:r[m+'Unit']};
+}
+const coBrokerNames=e=>Object.keys((e&&e.brokers)||{}).sort((a,b)=>e.brokers[b].date.localeCompare(e.brokers[a].date)||a.localeCompare(b));
+const coOut=(e,m,b)=>e.excluded&&e.excluded[m]&&e.excluded[m][b];
+const coLab=(c,m)=>m==='eps'?'EPS':(c.metrics||{})[m]||(m==='rev'?'Revenue':'EBITDA');
+function coHasCheck(e,m,fy){ return coBrokerNames(e).some(b=>{ const x=coSeries(e,b,m); return e.brokers[b].check&&x.s&&x.s[fy]!=null&&!coOut(e,m,b); }); }
+function coFyCell(c,g,fy,first){
+  const e=coEst(c), m=g.m, w=g.w, gs=first?' co-gs':'';
+  if(!e||!e.avg||!e.avg[m]||e.avg[m][fy]==null) return `<div class="er-c na${gs}" style="width:${w}px">·</div>`;
+  const v=e.avg[m][fy], unit=e.unit[m], n=e.n[m][fy];
+  const lines=coBrokerNames(e).map(b=>{ const x=coSeries(e,b,m), bv=x.s&&x.s[fy]; if(bv==null) return '';
+    return `<div class="co-tl${coOut(e,m,b)?' x':''}"><span>${erEsc(erHouse(b))}</span><span>${coNum(bv,x.unit)}</span></div>`; }).join('');
+  const i=erTips.push({cls:'',h:`${erEsc(c.name)} · ${fy} ${erEsc(coLab(c,m))}: ${coNum(v,unit)}`,
+    t:`Average of ${n} broker${n>1?'s':''} (${erEsc(unit)})${lines}`,s:'Source: each broker\'s latest note with a forecast table. Click the company for dates and links.'})-1;
+  return `<div class="er-c abs${gs}${n===1?' co-one':''}${coHasCheck(e,m,fy)?' chk':''}" style="width:${w}px" data-tip="${i}">${coNum(v,unit)}</div>`;
+}
+function coPeCell(c,g,fy,first){
+  const e=coEst(c), w=g.w, gs=first?' co-gs':'', px=coPx(c), eps=e&&e.avg&&e.avg.eps?e.avg.eps[fy]:null, v=coPe(px,eps);
+  if(v==null) return `<div class="er-c na${gs}" style="width:${w}px">·</div>`;
+  const lines=coBrokerNames(e).map(b=>{ if(coOut(e,'eps',b)) return ''; const r=e.brokers[b]; if(!r.eps||r.eps[fy]==null) return '';
+    return `<div class="co-tl"><span>${erEsc(erHouse(b))}</span><span>${coPeTxt(coPe(px,r.eps[fy]))}</span></div>`; }).join('');
+  const i=erTips.push({cls:'',h:`${erEsc(c.name)} · ${fy} P/E ${coPeTxt(v)}`,
+    t:(v==='NM'?`Average ${fy} EPS is zero or a loss, so P/E isn't meaningful.`:`Price ₹${px.toLocaleString('en-IN')} ÷ average ${fy} EPS ₹${(+eps).toFixed(1)}`)+lines,
+    s:`Price as of ${EST_PX&&EST_PX.asOf||'the last daily refresh'}, set once a day by the 09:30 refresh.`})-1;
+  return `<div class="er-c abs${gs}${e.n.eps[fy]===1?' co-one':''}" style="width:${w}px" data-tip="${i}">${coPeTxt(v)}</div>`;
+}
+function coGrowthCell(c,g,fy,first){
+  const e=coEst(c), m=g.m, w=g.w, cls=first?' co-fy1':'', prev=CO_PREV[fy];
+  const v=e&&e.growth&&e.growth[m]?e.growth[m][fy]:null, nm=e&&e.nm&&e.nm[m]&&e.nm[m][fy];
+  if(v==null&&!nm) return `<div class="er-c na${cls}" style="width:${w}px">·</div>`;
+  const lines=coBrokerNames(e).map(b=>{ if(coOut(e,m,b)) return ''; const x=coSeries(e,b,m); if(!x.s||x.s[fy]==null||x.s[prev]==null) return '';
+    return `<div class="co-tl"><span>${erEsc(erHouse(b))}</span><span>${x.s[prev]>0?erPct(x.s[fy]/x.s[prev]-1):'NM'}</span></div>`; }).join('');
+  const i=erTips.push({cls:'',h:`${erEsc(c.name)} · ${fy} ${erEsc(coLab(c,m))} YoY ${nm?'NM':erPct(v)}`,
+    t:(nm?`${prev} base is zero or a loss, so growth isn't meaningful.`:`Broker average, counting only brokers that print both ${prev} and ${fy}.`)+lines,s:'Source: each broker\'s latest note with a forecast table.'})-1;
+  return `<div class="er-c abs${cls}" style="width:${w}px" data-tip="${i}">${nm?'NM':erPct(v)}</div>`;
+}
+function coNoteHref(r){
+  const p=window.PDFMAP&&window.PDFMAP[r.key]; if(!p) return null;
+  const norm=String(p).replace(/\\/g,'/'), root='C:/Users/admin/Desktop/India Related Reports/';
+  if(!norm.toLowerCase().startsWith(root.toLowerCase())) return null;
+  return 'http://127.0.0.1:8788/'+norm.slice(root.length).split('/').map(encodeURIComponent).join('/')+(r.page?'#page='+r.page:'');
+}
+function coDetail(c){
+  const e=coEst(c), names=coBrokerNames(e), lr=coLab(c,'rev'), le=coLab(c,'ebitda'), px=coPx(c);
+  const left=[];
+  if(e&&e.pending&&e.pending.length) left.push(`Still to read: ${e.pending.map(erHouse).map(erEsc).join(', ')}.`);
+  if(e&&e.noTable&&e.noTable.length) left.push(`No forecast table in recent notes: ${e.noTable.map(erHouse).map(erEsc).join(', ')}.`);
+  if(!names.length) return `<div class="co-detail"><div class="co-d-h"><b>${erEsc(c.name)}</b></div><p class="co-d-note">No broker estimates read yet.${left.length?' '+left.join(' '):' No broker notes in the library from the last six months.'}</p></div>`;
+  const cell=(b,m,fy,gs)=>{ const x=coSeries(e,b,m), v=x.s&&x.s[fy]; if(v==null) return `<td class="${gs?'gs ':''}na">·</td>`;
+    const out=coOut(e,m,b); return `<td class="${gs?'gs ':''}${out?'x':''}"${out?` title="${erEsc(out)}"`:''}>${coNum(v,x.unit)}</td>`; };
+  const fyCells=(f,mk)=>CO_FYS.map((fy,i)=>f(mk,fy,i===0)).join('');
+  const body=names.map(b=>{ const r=e.brokers[b], href=coNoteHref(r), d=erDate(r.date);
+    const info=[r.revLabel&&r.ebitdaLabel?`${r.revLabel} / ${r.ebitdaLabel}`:(r.revLabel||r.ebitdaLabel||''),r.basis||'',r.calcNote||''].filter(Boolean).join(' · ');
+    return `<tr><td class="l">${erEsc(erHouse(b))}${r.check?` <span class="co-chk" title="${erEsc('Auto-check: '+r.check)}">⚠</span>`:''}</td>
+      <td class="l">${href?`<a href="${href}" target="_blank" rel="noopener" title="${erEsc(info)}">${d}</a>`:`<span title="${erEsc(info)}">${d}</span>`}</td>
+      ${fyCells((m,fy,gs)=>cell(b,m,fy,gs),'rev')}${fyCells((m,fy,gs)=>cell(b,m,fy,gs),'ebitda')}${fyCells((m,fy,gs)=>cell(b,m,fy,gs),'eps')}${CO_FYS.map((fy,i)=>{ const v=coPe(px,r.eps&&r.eps[fy]), out=coOut(e,'eps',b); return `<td class="${i?'':'gs '}${v==null?'na':out?'x':''}">${coPeTxt(v)}</td>`; }).join('')}</tr>`; }).join('');
+  const avg=(m,fy,gs)=>{ const v=e.avg&&e.avg[m]?e.avg[m][fy]:null; return `<td class="${gs?'gs':''}">${v==null?'·':coNum(v,e.unit[m])}</td>`; };
+  const gr=(m,fy,gs)=>{ const v=e.growth&&e.growth[m]?e.growth[m][fy]:null, nm=e.nm&&e.nm[m]&&e.nm[m][fy]; return `<td class="${gs?'gs':''}">${nm?'NM':v==null?'·':erPct(v)}</td>`; };
+  const peRow=CO_FYS.map((fy,i)=>`<td class="${i?'':'gs'}">${coPeTxt(coPe(px,e.avg&&e.avg.eps?e.avg.eps[fy]:null))}</td>`).join('');
+  const fye=[...new Set(names.map(b=>e.brokers[b].fye).filter(x=>x&&x!=='Mar'))];
+  const notes=[...left];
+  if(fye.length) notes.push(`${fye.join('/')} year-end: FY27 means the year ending in 2027.`);
+  if(px) notes.push(`P/E uses a price of ₹${px.toLocaleString('en-IN')} (${EST_PX&&EST_PX.asOf||'last daily refresh'}).`);
+  if(names.some(b=>coOut(e,'rev',b)||coOut(e,'ebitda',b)||coOut(e,'eps',b))) notes.push('Struck-through figures are left out of the average (hover for why).');
+  return `<div class="co-detail"><div class="co-d-h"><b>${erEsc(c.name)}</b> · broker estimates</div><div class="co-d-wrap"><table class="co-d-t"><thead>
+    <tr><th rowspan="2" class="l">Broker</th><th rowspan="2" class="l">Note</th><th colspan="3" class="gs">${erEsc(lr)} (${erEsc(e.unit.rev||'')})</th><th colspan="3" class="gs">${erEsc(le)} (${erEsc(e.unit.ebitda||'')})</th><th colspan="3" class="gs">EPS (INR)</th><th colspan="3" class="gs">P/E</th></tr>
+    <tr>${[0,1,2,3].map(()=>CO_FYS.map((f,i)=>`<th class="${i?'':'gs'}">${f}</th>`).join('')).join('')}</tr></thead>
+    <tbody>${body}</tbody><tfoot><tr><td class="l" colspan="2">Average</td>${fyCells(avg,'rev')}${fyCells(avg,'ebitda')}${fyCells(avg,'eps')}${peRow}</tr>
+    <tr class="g"><td class="l" colspan="2">YoY growth</td>${fyCells(gr,'rev')}${fyCells(gr,'ebitda')}${fyCells(gr,'eps')}<td class="gs" colspan="3"></td></tr></tfoot></table></div>${notes.length?`<p class="co-d-note">${notes.join(' ')}</p>`:''}</div>`;
+}
+const coArrow=k=>coState.sort===k?(coState.dir<0?'▼':'▲'):'';
+function coRender(){
+  const grid=document.getElementById('coGrid'); if(!grid||!ER) return;
+  const keep=erTips; erTips=[];
+  const rows=coRows(), qs=coQuarters(), stars=erStars();
+  const p=EST&&EST.progress, sub=document.getElementById('coSub');
+  if(sub){
+    const est=!p?'broker estimates loading':p.pairsLeft?`broker estimates for ${p.withEstimates} so far, ${p.pairsLeft} company-broker notes still to read`:`broker estimates for ${p.withEstimates}`;
+    sub.textContent=`${rows.length} of ${ER.companies.length} companies · ${est}${EST&&EST.updated?' · updated '+EST.updated:''}`;
+  }
+  const gw=g=>coCols(g,qs).length*g.w;
+  const head=`<div class="co-head"><div class="co-h1"><div class="co-pin er-gt" style="width:${CO_PIN_W}px">Company</div><div class="er-gt d" style="width:${CO_INFO_W}px"></div>${
+      CO_GROUPS.map(g=>`<div class="er-gt co-gs" style="width:${gw(g)}px"><span class="tt">${g.title}</span></div>`).join('')}</div>
+    <div class="co-h2 er-sh"><div class="co-pin"><button type="button" data-sort="star" style="width:26px;padding:0" title="Companies you like · click to sort">★${coArrow('star')}</button>
+      <button type="button" data-sort="name" style="width:160px;justify-content:flex-start;padding:0 10px">Name ${coArrow('name')}</button></div>
+      <button type="button" class="d" data-sort="sector" style="width:74px;justify-content:flex-start;padding:0 10px">Sector ${coArrow('sector')}</button>
+      <button type="button" class="d" data-sort="mcap" style="width:70px;justify-content:flex-end;padding:0 10px" title="Full market cap, US$ bn">Mkt cap ${coArrow('mcap')}</button>
+      <button type="button" class="d" data-sort="outlook" style="width:88px" title="Latest outlook from the newest results notes">Outlook ${coArrow('outlook')}</button>${
+      CO_GROUPS.map(g=>coCols(g,qs).map((col,i)=>{ const k=g.id+':'+col, cls=i===0?' class="co-gs"':(g.kind==='yoy'&&col===CO_FYS[0])?' class="co-fy1"':'';
+        return `<button type="button"${cls} data-sort="${k}" style="width:${g.w}px" title="Sort by ${g.title} ${col}">${col} ${coArrow(k)}</button>`; }).join('')).join('')}</div></div>`;
+  const rowHtml=(c)=>{ const open=coState.open===c.name, on=stars.has(c.name);
+    const m=c.metrics||{}; const mt=(m.rev&&m.rev!=='Revenue')||(m.ebitda&&m.ebitda!=='EBITDA')||c.revUnit?`${c.revUnit==='US$ mn'?'US$ ':''}${m.rev||'Revenue'} / ${m.ebitda||'EBITDA'}`:'';
+    const ol=c.outlook?` · <span class="ol-${c.outlook.call}">${ER_OUTLOOK[c.outlook.call]}</span>`:'', edited=c.sector!==c._origSector;
+    const cells=CO_GROUPS.map(g=>coCols(g,qs).map((col,i)=>{
+      if(g.kind==='fy') return coFyCell(c,g,col,i===0);
+      if(g.kind==='pe') return coPeCell(c,g,col,i===0);
+      if(col.startsWith('FY')) return coGrowthCell(c,g,col,col===CO_FYS[0]);
+      const html=erCell(c,g,col);
+      return i===0?html.replace('class="er-c','class="er-c co-gs'):html;
+    }).join('')).join('');
+    return `<div class="er-r co-r${open?' open':''}"><div class="co-pin">
+        <div class="er-c er-st"><button type="button" class="er-star${on?' on':''}" data-star="${erEsc(c.name)}" aria-pressed="${on}" title="${on?'Unstar':'Star'} ${erEsc(c.name)}">${on?'★':'☆'}</button></div>
+        <div class="er-c er-nm"><button type="button" data-co="${erEsc(c.name)}" aria-expanded="${open}" title="${erEsc(c.name)}: click for each broker's estimates"><span class="co-car">${open?'▾':'▸'}</span>${erEsc(c.name)}</button><span class="sub">${erEsc(c.sector||'')} · ${erUsd(c._usd)}${ol}</span></div></div>
+      <div class="er-c er-sc${edited?' edited':''}" data-sec-edit="${erEsc(c.name)}" title="Click to change sector${edited?' (originally '+erEsc(c._origSector)+')':''}"><span>${erEsc(c.sector||'—')}${edited?' ✎':''}</span>${mt?`<span class="mt" title="Metrics used for this company">${erEsc(mt)}</span>`:''}</div>
+      <div class="er-c er-mc" title="${c._mc?'₹'+Math.round(c._mc).toLocaleString('en-IN')+' Cr'+(ER_FX?' at ₹'+ER_FX.toFixed(2)+'/US$':''):''}${c.sym?' · '+erEsc(c.sym):''}">${erUsd(c._usd)}</div>
+      ${erOutlookCell(c)}${cells}</div>${open?coDetail(c):''}`; };
+  const st=grid.scrollTop, sl=grid.scrollLeft;
+  grid.innerHTML=head+(rows.length?rows.map(rowHtml).join(''):'<div class="er-empty">No companies match the filter.</div>');
+  grid.style.setProperty('--co-vw',grid.clientWidth+'px');
+  grid.scrollTop=st; grid.scrollLeft=sl;
+  if(coScrollTo){ coScrollTo=false; const r=grid.querySelector('.co-r.open'); if(r){ grid.scrollLeft=0; grid.scrollTop=Math.max(0,r.offsetTop-64); } }
+  coTips=erTips; erTips=keep;
+}
+// Open a company on this tab from elsewhere (Earnings tracker and Earnings Summary links).
+function erOpenCompany(name){
+  coState.open=name; coState.q=''; coState.sec=''; coScrollTo=true;
+  const s=document.getElementById('coSearch'), sel=document.getElementById('coSector');
+  if(s) s.value=''; if(sel) sel.value='';
+  const nav=document.querySelector('.nav-item[data-view="screener"]'); if(nav) nav.click();
+}
+(function coWire(){
+  const grid=document.getElementById('coGrid'); if(!grid) return;
+  if(!document.getElementById('erPop')){ const p=document.createElement('div'); p.id='erPop'; document.body.appendChild(p); }
+  grid.addEventListener('mouseover',e=>{ const c=e.target.closest('[data-tip]'); if(c) erPopShow(c,coTips); });
+  grid.addEventListener('mouseout',e=>{ if(e.target.closest('[data-tip]')&&!(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest('[data-tip]'))) erPopHide(); });
+  grid.addEventListener('scroll',erPopHide,{passive:true});
+  grid.addEventListener('click',e=>{
+    if(e.target.closest('select')||e.target.closest('a')) return;
+    const st=e.target.closest('[data-star]');
+    if(st){ erToggleStar(st.dataset.star); coRender(); if(erEarningsShown) erRender(); return; }
+    const co=e.target.closest('[data-co]');
+    if(co){ coState.open=coState.open===co.dataset.co?null:co.dataset.co; erPopHide(); coRender(); return; }
+    const se=e.target.closest('[data-sec-edit]'); if(se){ erOpenSecEditor(se); return; }
+    const so=e.target.closest('[data-sort]');
+    if(so){ const k=so.dataset.sort, asc=(k==='name'||k==='sector');
+      if(coState.sort!==k){ coState.sort=k; coState.dir=asc?1:-1; }
+      else if(coState.dir===(asc?1:-1)) coState.dir*=-1;
+      else coState.sort=null;
+      coSave(); coRender(); return; }
+    const tip=e.target.closest('[data-tip]'); if(tip) erPopShow(tip,coTips);
+  });
+  const s=document.getElementById('coSearch'); if(s) s.addEventListener('input',()=>{ coState.q=s.value; coRender(); });
+  const sel=document.getElementById('coSector'); if(sel) sel.addEventListener('change',()=>{ coState.sec=sel.value; coRender(); });
+  let rt=null; window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ const v=document.getElementById('viewScreener'); if(ER&&coReady&&v&&!v.hidden) coRender(); },200); });
 })();
 
 /* ----- Earnings Summary: per-sector bars + sector table -----
@@ -8877,7 +7589,8 @@ async function loadModelPortfolios(){
     vS.hidden=v!=='soon';
     if(v==='positioning' && !positioningLoaded){ positioningLoaded=true; loadPositioning(); }
     if(v==='soon') document.getElementById('soonTitle').textContent=label;
-    if(v==='screener' && !screenerLoaded){ screenerLoaded=true; loadScreener(); }
+    document.body.classList.toggle('co-wide',v==='screener');
+    if(v==='screener') coOnShow();
     if(v==='earnings' && !earningsLoaded){ earningsLoaded=true; loadEarnings(); }
     if(v==='markets' && !marketsLoaded){
       marketsLoaded=true;

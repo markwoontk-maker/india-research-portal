@@ -103,7 +103,8 @@ for (const c of E.companies) {
 const need = E.companies.filter(c => c.sym && !(S.q[c.sym] && S.q[c.sym].mc)).map(c => c.sym);
 const caps = need.length ? await marketCaps([...new Set(need)]) : {};
 for (const c of E.companies) {
-  if (caps[c.sym]) { c.mcap = caps[c.sym]; c.mcapAsOf = new Date().toISOString().slice(0, 10); hit++; }
+  if (caps[c.sym]) { c.mcap = caps[c.sym].mcap; c.mcapAsOf = new Date().toISOString().slice(0, 10); hit++; }
+  if (caps[c.sym] && caps[c.sym].price) c.price = caps[c.sym].price;   // Company tab P/E for names outside the Nifty 500
 }
 fs.writeFileSync(OUT, JSON.stringify(E, null, 1));
 console.log(`market cap for ${hit}/${E.companies.length} rows (${Object.keys(caps).length} via Yahoo fallback); none: ${miss.filter(m => !Object.keys(caps).some(k => m.includes('[' + k + ']'))).join('; ')}`);
@@ -118,7 +119,7 @@ function getRaw(url, headers = {}) {
     req.on('error', () => resolve({ status: 0, headers: {}, body: '' }));
   });
 }
-// Full market caps (INR cr) keyed by bare NSE symbol; {} on any failure.
+// Full market cap (INR cr) and last price (INR), keyed by bare NSE symbol; {} on any failure.
 async function marketCaps(syms) {
   const out = {};
   const c = await getRaw('https://fc.yahoo.com/');
@@ -129,9 +130,9 @@ async function marketCaps(syms) {
   if (cr.status !== 200 || !crumb || crumb.length > 40 || /[<s]/.test(crumb)) return out;
   for (let i = 0; i < syms.length; i += 50) {
     const url = 'https://query1.finance.yahoo.com/v7/finance/quote?symbols=' +
-      encodeURIComponent(syms.slice(i, i + 50).map((x) => x + '.NS').join(',')) + '&fields=marketCap&crumb=' + encodeURIComponent(crumb);
+      encodeURIComponent(syms.slice(i, i + 50).map((x) => x + '.NS').join(',')) + '&fields=marketCap,regularMarketPrice&crumb=' + encodeURIComponent(crumb);
     const r = await getRaw(url, { Cookie: cookie });
-    try { for (const x of JSON.parse(r.body).quoteResponse.result) if (x.marketCap > 0) out[x.symbol.replace(/.NS$/, '')] = Math.round(x.marketCap / 1e7); } catch (e) {}
+    try { for (const x of JSON.parse(r.body).quoteResponse.result) if (x.marketCap > 0) out[x.symbol.replace(/.NS$/, '')] = { mcap: Math.round(x.marketCap / 1e7), price: x.regularMarketPrice > 0 ? x.regularMarketPrice : null }; } catch (e) {}
   }
   return out;
 }

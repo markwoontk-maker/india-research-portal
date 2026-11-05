@@ -1,0 +1,309 @@
+// Company tab: broker FY26-FY29 revenue, EBITDA and EPS estimates -> data/estimates.json.
+//
+//   node scripts/estimates/build-estimates.js              daily: new notes, budget EST_BUDGET (default 1200 s)
+//   node scripts/estimates/build-estimates.js --backfill   same work list, no default budget (see backfill.ps1)
+//   node scripts/estimates/build-estimates.js --count      prints what is left to read, mines nothing
+//   node scripts/estimates/build-estimates.js --aggregate  recomputes averages and growth from stored records
+//   node scripts/estimates/build-estimates.js --prices     writes the day's prices for the P/E columns (data/estimate_prices.json)
+//   EST_ONLY="Maruti Suzuki;HDFC Bank"                     limits a run to those companies
+//
+// One company-broker pair = the newest note from that broker on that company within the last
+// EST_MAX_AGE_DAYS (185). pdftotext finds the pages that look like a forecast table, pymupdf
+// renders them, and headless claude reads the images per docs/estimates-miner-prompt.md. A
+// note with no table falls back to that broker's next-newest note (up to 3). A broker's newer
+// note replaces its older figures. Every finished pair is written at once, so a run can stop
+// anywhere and resume. Exit code 3 = stopped by a claude limit or auth failure, for backfill.ps1.
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const { execFileSync, spawn } = require('child_process');
+const L = require('./lib');
+const { FOLDER_ALIAS, NON_COMPANY_RE, norm } = require('../earnings/build-earnings.js');
+
+const ROOT = path.join(__dirname, '..', '..');
+const OUT = path.join(ROOT, 'data', 'estimates.json');
+const PRICES = path.join(ROOT, 'data', 'estimate_prices.json');
+const WORK = path.join(ROOT, 'scripts', '.estimates-work');
+const STATE = path.join(WORK, 'state.json');
+// The run writes to this git-ignored copy after every note and publishes to data/estimates.json
+// only when it ends. Every other local pusher runs `git pull --rebase --autostash`; a tracked file
+// rewritten every few seconds could change under that stash, the pop would fail, and any other
+// uncommitted work in the checkout would be left stranded in the stash.
+const LIVE = path.join(WORK, 'estimates.live.json');
+const AUDIT = path.join(WORK, 'audit.jsonl');
+const PROMPT = path.join(ROOT, 'docs', 'estimates-miner-prompt.md');
+const CLAUDE = process.env.CLAUDE_EXE || 'C:\\Users\\admin\\.local\\bin\\claude.exe';
+const UV = process.env.UV_EXE || 'C:\\Users\\admin\\.local\\bin\\uv.exe';
+const PDFTOTEXT = process.env.PDFTOTEXT_EXE || ['C:\\Program Files\\Git\\mingw64\\bin\\pdftotext.exe', 'C:\\Program Files (x86)\\Git\\mingw64\\bin\\pdftotext.exe'].find(p => fs.existsSync(p)) || 'pdftotext';
+const MODEL = process.env.EST_MODEL || 'sonnet';
+const CHECK_MODEL = process.env.EST_CHECK_MODEL || 'opus';
+const CALL_TIMEOUT_S = 360;
+const MAX_AGE_DAYS = +(process.env.EST_MAX_AGE_DAYS || 185);
+const MAX_PAGES = 3, MAX_TRIES = 3;
+// Run claude outside the repo so each of ~1,500 calls doesn't load the project's long CLAUDE.md.
+const CALL_CWD = path.join(os.tmpdir(), 'irp-estimates');
+const FATAL_RE = /OAuth|Failed to authenticate|Not logged in|session limit|hit your|usage limit|rate limit/i;
+
+const log = (...a) => console.log('[build-estimates]', ...a);
+const readJSON = (p, d) => { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) { return d; } };
+const audit = o => { try { fs.appendFileSync(AUDIT, JSON.stringify({ t: new Date().toISOString(), ...o }) + '\n'); } catch (e) {} };
+const yymmdd = d => d.toISOString().slice(2, 10).replace(/-/g, '');
+const floorDate = () => yymmdd(new Date(Date.now() - MAX_AGE_DAYS * 864e5));
+const pairId = (name, broker) => name + '|' + broker;
+
+// ---------- universe ----------
+function loadRows() {
+  const E = readJSON(path.join(ROOT, 'data', 'earnings.json'), null);
+  if (!E || !Array.isArray(E.companies)) return null;
+  const S = readJSON(path.join(ROOT, 'data', 'sectors.json'), {}) || {};
+  const q = S.q || {};
+  const rows = {};
+  for (const c of E.companies) rows[c.name] = Object.assign(c, { _mc: (c.sym && q[c.sym] && q[c.sym].mc) || c.mcap || 0, _px: (c.sym && q[c.sym] && q[c.sym].p) || c.price || 0 });
+  return rows;
+}
+function notesByPair(rows) {
+  const PDFMAP = readJSON(path.join(ROOT, 'data', 'pdfmap.json'), {});
+  const byNorm = {};
+  for (const c of Object.values(rows)) for (const n of [c.name, c.sheetName, c.formerName]) if (n) byNorm[norm(n)] = c.name;
+  const folderToRow = f => {
+    if (FOLDER_ALIAS[f] && rows[FOLDER_ALIAS[f]]) return FOLDER_ALIAS[f];
+    if (rows[f]) return f;
+    if (NON_COMPANY_RE.test(f)) return null;
+    return byNorm[norm(f)] || null;
+  };
+  const floor = floorDate(), pairs = {};
+  for (const [key, p] of Object.entries(PDFMAP)) {
+    const [broker, date, folder, title] = key.split('|');
+    if (!broker || !date || !folder || broker === 'Unknown' || date < floor) continue;
+    const name = folderToRow(folder);
+    if (!name) continue;
+    const b = L.canonBroker(broker);
+    ((pairs[name] = pairs[name] || {})[b] = pairs[name][b] || []).push({ key, path: p, date, title: title || '' });
+  }
+  for (const co of Object.values(pairs)) for (const list of Object.values(co)) list.sort((a, b) => b.date.localeCompare(a.date) || a.key.localeCompare(b.key));
+  return pairs;
+}
+
+// ---------- output ----------
+function loadOut() {
+  const o = readJSON(fs.existsSync(LIVE) ? LIVE : OUT, null);
+  return o && o.companies ? o : { updated: null, companies: {} };
+}
+function refreshCompany(out, name, row, notes, state) {
+  const prev = out.companies[name] || {};
+  const brokers = prev.brokers || {};
+  const floor = floorDate();
+  for (const [b, rec] of Object.entries(brokers)) if (rec.date < floor) delete brokers[b];   // too old to average in
+  const pending = [], noTable = [];
+  for (const [b, list] of Object.entries(notes || {})) {
+    const next = L.nextNote(list, state.tried[pairId(name, b)], brokers[b], MAX_TRIES);
+    if (brokers[b]) continue;
+    if (next) pending.push(b); else noTable.push(b);
+  }
+  const agg = L.aggregate(brokers, row);
+  out.companies[name] = { unit: agg.unit, avg: agg.avg, n: agg.n, growth: agg.growth, nm: agg.nm, used: agg.used, excluded: agg.excluded, brokers, pending: pending.sort(), noTable: noTable.sort() };
+}
+function writeOut(out, rows, pairs, state) {
+  const names = Object.keys(rows).sort();
+  let withEst = 0, read = 0, left = 0;
+  for (const name of names) {
+    refreshCompany(out, name, rows[name], pairs[name], state);
+    const c = out.companies[name];
+    if (Object.keys(c.brokers).length) withEst++;
+    read += Object.keys(c.brokers).length + c.noTable.length;
+    left += c.pending.length;
+  }
+  out.updated = new Date().toISOString().slice(0, 10);
+  out.from = floorDate();
+  out.progress = { companies: names.length, withEstimates: withEst, pairsRead: read, pairsLeft: left };
+  const head = ['updated', 'from', 'progress'].map(k => `${JSON.stringify(k)}:${JSON.stringify(out[k])}`).join(',');
+  const lines = names.map(n => JSON.stringify(n) + ':' + JSON.stringify(out.companies[n]));
+  const tmp = LIVE + '.tmp';
+  fs.writeFileSync(tmp, `{${head},"companies":{\n${lines.join(',\n')}\n}}\n`);
+  fs.renameSync(tmp, LIVE);
+  fs.writeFileSync(STATE, JSON.stringify(state));
+}
+function publish() {
+  const tmp = OUT + '.tmp';
+  fs.copyFileSync(LIVE, tmp);
+  fs.renameSync(tmp, OUT);
+}
+
+// ---------- reading one note ----------
+// Text per PDF page. Asked for one page at a time because splitting a whole-document dump on
+// form feeds gives wrong page numbers: CLSA notes carry extra form feeds inside their pages, so
+// the miner was shown the page after the forecast table. The form-feed count is only an upper
+// bound on the page count: this pdftotext returns empty text past the last page, not an error.
+const MAX_SCAN_PAGES = 150;
+function pdfPages(p) {
+  const run = args => execFileSync(PDFTOTEXT, ['-layout', ...args, p, '-'], { maxBuffer: 1 << 28, timeout: 90000, stdio: ['ignore', 'pipe', 'ignore'] }).toString();
+  try {
+    const bound = Math.min(run([]).split('\f').length - 1, MAX_SCAN_PAGES);
+    const pages = [];
+    for (let i = 1; i <= bound; i++) pages.push(run(['-f', String(i), '-l', String(i)]));
+    return pages;
+  } catch (e) { return null; }
+}
+function renderPages(note, dir, pages) {
+  return execFileSync(UV, ['run', '--quiet', '--python', '3.12', '--with', 'pymupdf', 'python', '-I', path.join(__dirname, 'render_note.py'), dir, note.path, ...pages.map(String)],
+    { timeout: 120000, maxBuffer: 8 << 20 }).toString().split(/\r?\n/).filter(Boolean);
+}
+function runClaude(promptFile, model) {
+  return new Promise(resolve => {
+    fs.mkdirSync(CALL_CWD, { recursive: true });
+    const p = spawn(CLAUDE, ['-p', '--model', model, '--output-format', 'text', '--permission-mode', 'bypassPermissions', '--tools', 'Read', '--allowedTools', 'Read',
+      '--strict-mcp-config', '--disable-slash-commands', '--no-session-persistence'], { cwd: CALL_CWD, windowsHide: true });
+    let out = '', err = '';
+    const timer = setTimeout(() => { try { p.kill(); } catch (e) {} }, CALL_TIMEOUT_S * 1000);
+    p.stdout.on('data', d => out += d); p.stderr.on('data', d => err += d);
+    p.on('error', e => { clearTimeout(timer); resolve({ out: '', err: String(e) }); });
+    p.on('close', () => { clearTimeout(timer); resolve({ out, err }); });
+    p.stdin.end(fs.readFileSync(promptFile));
+  });
+}
+function parseResult(txt) {
+  if (!txt) return null;
+  const s = txt.indexOf('{'), e = txt.lastIndexOf('}');
+  if (s < 0 || e < s) return null;
+  try { return JSON.parse(txt.slice(s, e + 1)); } catch (err) { return null; }
+}
+const issuesOf = (r, row) => (r && r.found !== false ? L.checkResult(r, row) : []);
+
+// Returns {res:'ok'|'none'|'failed'|'fatal', rec?, why?}
+async function mineNote(name, row, broker, note, slot) {
+  if (!fs.existsSync(note.path)) return { res: 'none', why: 'file missing' };
+  const texts = pdfPages(note.path);
+  if (!texts) return { res: 'failed', why: 'pdftotext failed' };
+  const pages = L.pickPages(texts, MAX_PAGES);
+  if (!pages.length) return { res: 'none', why: 'no forecast table in the text' };
+  const dir = path.join(WORK, 'w' + slot);
+  try { fs.rmSync(dir, { recursive: true, force: true }); } catch (e) {}
+  let imgs = [];
+  try { imgs = renderPages(note, dir, pages); } catch (e) { return { res: 'failed', why: 'render: ' + String(e.message).slice(0, 100) }; }
+  if (!imgs.length) return { res: 'failed', why: 'render gave no images' };
+  const item = { company: name, sector: row.sector || null, broker, date: note.date, metrics: row.metrics || null, unit: row.unit || null, revUnit: row.revUnit || null, basis: row.basis || null };
+  const pf = path.join(dir, 'prompt.txt');
+  fs.writeFileSync(pf, [fs.readFileSync(PROMPT, 'utf8'), '\n=== WORK ITEM ===\n', JSON.stringify(item, null, 1), '\n\n=== PAGES ===\n',
+    ...imgs.map(p => `PDF page ${path.basename(p).replace(/\D/g, '')}: ${p}\n`)].join(''));
+  const first = await runClaude(pf, MODEL);
+  let r = parseResult(first.out), model = MODEL, issues = issuesOf(r, row);
+  if (!r && FATAL_RE.test(first.out.slice(0, 400) + first.err.slice(0, 400))) return { res: 'fatal', why: (first.out + first.err).trim().slice(0, 160) };
+  if (!r || issues.length) {                                // second opinion on a stronger model
+    const second = await runClaude(pf, CHECK_MODEL);
+    const r2 = parseResult(second.out);
+    if (r2) {
+      const issues2 = issuesOf(r2, row);
+      if (!r || issues2.length <= issues.length) { r = r2; issues = issues2; model = CHECK_MODEL; }
+    }
+  }
+  if (!r) return { res: 'failed', why: 'no JSON back' };
+  if (r.found === false || !L.hasNumbers(r)) return { res: 'none', why: String(r.reason || 'no usable table').slice(0, 160) };
+  const extra = { model, mined: new Date().toISOString().slice(0, 10) };
+  if (issues.length) extra.check = issues.join('; ').slice(0, 240);
+  if (r.calcNote) extra.calcNote = String(r.calcNote).slice(0, 160);
+  return { res: 'ok', rec: L.toRecord(r, note, extra) };
+}
+const lineCount = rec => (rec.rev ? 1 : 0) + (rec.ebitda ? 1 : 0) + (rec.eps ? 1 : 0);
+
+// The P/E columns divide these prices by the average EPS. Written once a day (daily-refresh.ps1,
+// after the earnings miner) so P/Es hold still between runs, whatever the intraday price feeds do.
+// Needs no lock: it only reads the estimates file and replaces its own file in one step.
+function writePrices(rows) {
+  const S = readJSON(path.join(ROOT, 'data', 'sectors.json'), {}) || {};
+  const px = {};
+  for (const name of Object.keys(rows).sort()) if (rows[name]._px > 0) px[name] = rows[name]._px;
+  const tmp = PRICES + '.tmp';
+  fs.writeFileSync(tmp, JSON.stringify({ asOf: S.asOf || new Date().toISOString().slice(0, 10), updated: new Date().toISOString(), px }));
+  fs.renameSync(tmp, PRICES);
+  log(`prices for ${Object.keys(px).length}/${Object.keys(rows).length} companies, as of ${S.asOf || 'today'}.`);
+}
+
+// ---------- main ----------
+(async function main() {
+  const mode = process.argv[2] || '';
+  const rows = loadRows();
+  if (!rows) { log('data/earnings.json missing or invalid - skipping.'); return; }
+  if (mode === '--prices') { writePrices(rows); return; }
+  fs.mkdirSync(WORK, { recursive: true });
+  const state = Object.assign({ tried: {} }, readJSON(STATE, {}));
+  const out = loadOut();
+  const pairs = notesByPair(rows);
+  const only = process.env.EST_ONLY ? new Set(process.env.EST_ONLY.split(';')) : null;
+
+  // Biggest companies first, so the names you look at most fill in earliest.
+  const queue = [];
+  for (const name of Object.keys(pairs).sort((a, b) => rows[b]._mc - rows[a]._mc || a.localeCompare(b))) {
+    if (only && !only.has(name)) continue;
+    for (const broker of Object.keys(pairs[name]).sort()) {
+      const have = ((out.companies[name] || {}).brokers || {})[broker];
+      if (L.nextNote(pairs[name][broker], state.tried[pairId(name, broker)], have, MAX_TRIES)) queue.push({ name, broker });
+    }
+  }
+  if (mode === '--count') { log(`${queue.length} company-broker pair(s) left to read; first: ${queue.slice(0, 5).map(q => q.name + '/' + q.broker).join(', ')}`); console.log('LEFT=' + queue.length); return; }
+
+  const LOCK = path.join(WORK, 'run.lock');
+  const held = readJSON(LOCK, null);
+  let alive = false;
+  if (held && held.pid && held.pid !== process.pid) { try { process.kill(held.pid, 0); alive = true; } catch (e) {} }
+  if (alive) { log(`another estimates run (pid ${held.pid}, since ${held.t}) is in progress - skipping.`); return; }
+  fs.writeFileSync(LOCK, JSON.stringify({ pid: process.pid, t: new Date().toISOString(), mode }));
+  process.on('exit', () => { try { if ((readJSON(LOCK, {}) || {}).pid === process.pid) fs.unlinkSync(LOCK); } catch (e) {} });
+
+  if (mode === '--aggregate') { writeOut(out, rows, pairs, state); publish(); log('recomputed.', JSON.stringify(out.progress)); return; }
+  if (!fs.existsSync(CLAUDE)) { log('claude CLI not found - skipping.'); return; }
+
+  const budgetS = +(process.env.EST_BUDGET || (mode === '--backfill' ? 0 : 1200));
+  const deadline = budgetS ? Date.now() + budgetS * 1000 : Infinity;
+  const workers = +(process.env.EST_WORKERS || 3);
+  log(`${queue.length} pair(s) to read, ${workers} workers, budget ${budgetS || 'none'}.`);
+  let cursor = 0, done = 0, failsInRow = 0, stop = false, fatal = false;
+
+  async function onePair(job, slot) {
+    const { name, broker } = job, row = rows[name], list = pairs[name][broker], id = pairId(name, broker);
+    const co = out.companies[name] = out.companies[name] || { brokers: {} };
+    co.brokers = co.brokers || {};
+    for (;;) {
+      if (stop || Date.now() >= deadline) return;
+      const tried = state.tried[id] = state.tried[id] || [];
+      const note = L.nextNote(list, tried, co.brokers[broker], MAX_TRIES);
+      if (!note) return;
+      const t0 = Date.now();
+      const m = await mineNote(name, row, broker, note, slot);
+      const secs = Math.round((Date.now() - t0) / 1000);
+      if (m.res === 'fatal') { log('claude unavailable: ' + m.why); stop = true; fatal = true; return; }
+      if (m.res === 'failed') {
+        audit({ type: 'failed', name, broker, key: note.key, why: m.why });
+        log(`${name} / ${broker} ${note.date}: FAILED ${m.why} (${secs}s)`);
+        if (++failsInRow >= 6) { log('6 failures in a row - stopping.'); stop = true; }
+        return;                                            // not marked tried: the next run retries it
+      }
+      failsInRow = 0;
+      tried.push(note.key);
+      if (m.res === 'none') {
+        log(`${name} / ${broker} ${note.date}: no table (${m.why}) (${secs}s)`);
+        audit({ type: 'none', name, broker, key: note.key, why: m.why });
+        writeOut(out, rows, pairs, state);
+        continue;                                          // try this broker's next-newest note
+      }
+      const had = co.brokers[broker];
+      if (!had || lineCount(m.rec) >= lineCount(had)) co.brokers[broker] = m.rec;
+      done++;
+      log(`${name} / ${broker} ${note.date}: ok p${m.rec.page}${m.rec.model !== MODEL ? ' [' + m.rec.model + ']' : ''}${m.rec.check ? ' CHECK ' + m.rec.check : ''} (${secs}s)`);
+      if (m.rec.check) audit({ type: 'check', name, broker, key: note.key, check: m.rec.check });
+      writeOut(out, rows, pairs, state);
+      return;
+    }
+  }
+  async function worker(slot) {
+    while (!stop && cursor < queue.length && Date.now() < deadline) {
+      const job = queue[cursor++];
+      try { await onePair(job, slot); } catch (e) { log(`${job.name} / ${job.broker}: error ${e && e.message}`); }
+    }
+  }
+  await Promise.all(Array.from({ length: workers }, (_, i) => worker(i)));
+  writeOut(out, rows, pairs, state);
+  publish();
+  log(`read ${done} pair(s) this run; ${out.progress.withEstimates}/${out.progress.companies} companies have estimates; ${out.progress.pairsLeft} pair(s) left.`);
+  for (let i = 0; i < workers; i++) try { fs.rmSync(path.join(WORK, 'w' + i), { recursive: true, force: true }); } catch (e) {}
+  if (fatal) process.exitCode = 3;
+})().catch(e => { log('error: ' + (e && e.stack || e)); });
