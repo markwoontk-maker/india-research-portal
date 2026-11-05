@@ -40,7 +40,12 @@ const CHECK_MODEL = process.env.EST_CHECK_MODEL || 'opus';
 const CALL_TIMEOUT_S = 360;
 const MAX_AGE_DAYS = +(process.env.EST_MAX_AGE_DAYS || 185);
 const MAX_PAGES = 3, MAX_TRIES = 3;
-// Run claude outside the repo so each of ~1,500 calls doesn't load the project's long CLAUDE.md.
+// Run claude outside the repo so each of ~1,500 calls doesn't load the project's long CLAUDE.md, and
+// keep each call to a single message: the images go inline, with no tools and a short system prompt.
+// Measured on one note: same figures, 8 s not 18 s, about a third less usage than reading images
+// with the Read tool, which re-sends the conversation on every turn. The first full run hit the
+// subscription's session limit after 185 notes.
+const SYSTEM_PROMPT = 'You read broker research notes and return one JSON object only, exactly as the user message specifies.';
 const CALL_CWD = path.join(os.tmpdir(), 'irp-estimates');
 const FATAL_RE = /OAuth|Failed to authenticate|Not logged in|session limit|hit your|usage limit|rate limit/i;
 
@@ -151,17 +156,24 @@ function renderPages(note, dir, pages) {
   return execFileSync(UV, ['run', '--quiet', '--python', '3.12', '--with', 'pymupdf', 'python', '-I', path.join(__dirname, 'render_note.py'), dir, note.path, ...pages.map(String)],
     { timeout: 120000, maxBuffer: 8 << 20 }).toString().split(/\r?\n/).filter(Boolean);
 }
-function runClaude(promptFile, model) {
+function runClaude(message, model) {
   return new Promise(resolve => {
     fs.mkdirSync(CALL_CWD, { recursive: true });
-    const p = spawn(CLAUDE, ['-p', '--model', model, '--output-format', 'text', '--permission-mode', 'bypassPermissions', '--tools', 'Read', '--allowedTools', 'Read',
-      '--strict-mcp-config', '--disable-slash-commands', '--no-session-persistence'], { cwd: CALL_CWD, windowsHide: true });
-    let out = '', err = '';
+    const p = spawn(CLAUDE, ['-p', '--model', model, '--input-format', 'stream-json', '--output-format', 'stream-json', '--verbose', '--tools', '', '--system-prompt', SYSTEM_PROMPT,
+      '--setting-sources', '', '--strict-mcp-config', '--disable-slash-commands', '--no-session-persistence'], { cwd: CALL_CWD, windowsHide: true });
+    let raw = '', err = '';
     const timer = setTimeout(() => { try { p.kill(); } catch (e) {} }, CALL_TIMEOUT_S * 1000);
-    p.stdout.on('data', d => out += d); p.stderr.on('data', d => err += d);
+    p.stdout.on('data', d => raw += d); p.stderr.on('data', d => err += d);
     p.on('error', e => { clearTimeout(timer); resolve({ out: '', err: String(e) }); });
-    p.on('close', () => { clearTimeout(timer); resolve({ out, err }); });
-    p.stdin.end(fs.readFileSync(promptFile));
+    p.on('close', () => {
+      clearTimeout(timer);
+      // The reply is the "result" line of the stream; a usage limit arrives there as an error result.
+      let res = null;
+      for (const line of raw.split(/\r?\n/).reverse()) { try { const j = JSON.parse(line); if (j.type === 'result') { res = j; break; } } catch (e) {} }
+      if (!res) return resolve({ out: '', err: (err + ' ' + raw.slice(-400)).trim() });
+      resolve(res.is_error ? { out: '', err: String(res.result || 'error result') } : { out: String(res.result || ''), err });
+    });
+    p.stdin.end(message);
   });
 }
 function parseResult(txt) {
@@ -187,9 +199,11 @@ async function mineNote(name, row, broker, note, slot, needTp) {
   try { imgs = renderPages(note, dir, pages); } catch (e) { return { res: 'failed', why: 'render: ' + String(e.message).slice(0, 100) }; }
   if (!imgs.length) return { res: 'failed', why: 'render gave no images' };
   const item = { company: name, sector: row.sector || null, broker, date: note.date, metrics: row.metrics || null, unit: row.unit || null, revUnit: row.revUnit || null, basis: row.basis || null, priceCurrency: row._pxCur === 'US$' ? 'US$' : undefined };
-  const pf = path.join(dir, 'prompt.txt');
-  fs.writeFileSync(pf, [fs.readFileSync(PROMPT, 'utf8'), '\n=== WORK ITEM ===\n', JSON.stringify(item, null, 1), '\n\n=== PAGES ===\n',
-    ...imgs.map(p => `PDF page ${path.basename(p).replace(/\D/g, '')}: ${p}\n`)].join(''));
+  const pageNos = imgs.map(p => path.basename(p).replace(/\D/g, ''));
+  const pf = JSON.stringify({ type: 'user', message: { role: 'user', content: [
+    { type: 'text', text: [fs.readFileSync(PROMPT, 'utf8'), '\n=== WORK ITEM ===\n', JSON.stringify(item, null, 1), '\n\n=== PAGES ===\nThe attached images are PDF pages ', pageNos.join(', '), ', in that order.\n'].join('') },
+    ...imgs.map(p => ({ type: 'image', source: { type: 'base64', media_type: 'image/png', data: fs.readFileSync(p).toString('base64') } })),
+  ] } }) + '\n';
   const first = await runClaude(pf, MODEL);
   let r = parseResult(first.out), model = MODEL, issues = issuesOf(r, row);
   if (!r && FATAL_RE.test(first.out.slice(0, 400) + first.err.slice(0, 400))) return { res: 'fatal', why: (first.out + first.err).trim().slice(0, 160) };

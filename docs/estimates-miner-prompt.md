@@ -1,9 +1,8 @@
 # Estimates miner: one broker note on one company
 
 You are reading one broker note for the research portal's **Company** tab. Below the line
-`=== WORK ITEM ===` you get a JSON work item, then under `=== PAGES ===` a list of page
-images (PNG) from that note. **Open each page image with the Read tool** and stop once you
-have the numbers. Page 1 is always included for the target price and rating; the other pages were
+`=== WORK ITEM ===` you get a JSON work item. `=== PAGES ===` says which PDF pages the attached
+images are, in order. Page 1 is always included for the target price and rating; the other pages were
 picked because they look like they hold the forecast table.
 
 **Accuracy matters more than speed.** Use ONLY numbers printed in these pages. Never use

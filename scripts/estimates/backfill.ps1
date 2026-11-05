@@ -23,6 +23,11 @@ $subset = [bool]$env:EST_ONLY
 New-Item -ItemType Directory -Force -Path (Join-Path $repo "scripts\logs") | Out-Null
 $log = Join-Path $repo ("scripts\logs\estimates-backfill-" + (Get-Date -f "yyyyMMdd-HHmmss") + ".log")
 $stopFile = Join-Path $repo "scripts\.estimates-work\STOP"
+# Keep Windows awake while this loop runs. This PC uses Modern Standby, which starts when the screen
+# times out (it froze the loop at 20:33 on 2026-11-05), so the screen has to stay on too. Not a settings
+# change: the request ends when this process ends. Closing the lid still pauses the run.
+Add-Type -Namespace IRP -Name Power -MemberDefinition '[DllImport("kernel32.dll")] public static extern uint SetThreadExecutionState(uint esFlags);'
+[void][IRP.Power]::SetThreadExecutionState([uint32]'0x80000003')   # ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED
 function Say($m) { $l = "[" + (Get-Date -f "yyyy-MM-dd HH:mm:ss") + "] " + $m; Write-Output $l; Add-Content -Path $log -Value $l -Encoding UTF8 }
 
 while ($true) {
