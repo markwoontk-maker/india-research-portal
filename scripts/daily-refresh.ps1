@@ -249,6 +249,12 @@ Step "refresh-estimate-prices" {
   $global:LASTEXITCODE = 0
 }
 
+# 8e5. Company tab stock chart: recent closes for every company, plus a few history files a day.
+Step "refresh-px" {
+  & $node "scripts\estimates\refresh-px.js" 2>&1 | ForEach-Object { "$_" }
+  $global:LASTEXITCODE = 0
+}
+
 # 8f. Charts auto-ingest runs as its OWN scheduled weekday task (chained after this
 #     refresh) so the slow headless-Claude vision pass doesn't hold up the refresh.
 #     See scripts/charts/build-charts.ps1 + scripts/charts/install-charts-task.ps1.
@@ -257,7 +263,7 @@ Step "refresh-estimate-prices" {
 #    Only the pipeline's own outputs are committed (pathspec), so anything else
 #    someone has staged in this working copy is left alone, not swept in.
 $stageList = @('data/pdfdata.json','data/pdfmap.json','data/research.json','data/sector-tps.json',
-  'data/estimates.json','data/estimate_prices.json',
+  'data/estimates.json','data/estimate_prices.json','data/px_recent.json','data/px',
   'data/model_portfolios_house.json','data/mf_sectors.json','data/fii_dii.json','data/highs.json',
   'data/movers.json','data/sectors.json','data/wl_returns.json','data/wl_quotes.json',
   'data/earnings_calendar.json',

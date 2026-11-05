@@ -112,6 +112,9 @@ function checkResult(r, row) {
     const pe = px / eps.values.FY27;
     if (pe < 2 || pe > 1500) issues.push(`FY27 EPS ${eps.values.FY27} gives a P/E of ${pe.toFixed(1)} at price ${px}`);
   }
+  // A target price far from the share price usually means the wrong number on the front page.
+  const tp = tpOf(r, {});
+  if (tp && px > 0 && tp.cur === ((row && row._pxCur) || 'INR') && (tp.tp / px < 0.3 || tp.tp / px > 3.5)) issues.push(`target price ${tp.tp} is far from the share price ${px}`);
   return issues;
 }
 // A note counts as read only if it has revenue or EBITDA: an EPS-only summary box shouldn't stop
@@ -198,6 +201,25 @@ function aggregate(brokers, row) {
   return out;
 }
 
+// ---------- target prices ----------
+// The broker's current TP and rating from a mined result, or null if the note prints neither.
+function tpOf(r, note) {
+  const tp = typeof r.targetPrice === 'number' && isFinite(r.targetPrice) && r.targetPrice > 0 ? +r.targetPrice.toFixed(2) : null;
+  const rating = r.rating ? String(r.rating).trim().slice(0, 24) : null;
+  if (tp == null && !rating) return null;
+  const cur = /us\$|usd|\$/i.test(String(r.tpCurrency || '')) ? 'US$' : 'INR';
+  return { tp, cur, rating, date: note.date, key: note.key };
+}
+// Average TP in the currency most brokers use; a TP in the other currency isn't averaged in.
+function aggregateTp(tps) {
+  const count = {};
+  for (const t of Object.values(tps)) if (t.tp != null) count[t.cur] = (count[t.cur] || 0) + 1;
+  const cur = Object.keys(count).sort((a, b) => count[b] - count[a] || (b === 'INR') - (a === 'INR'))[0];
+  if (!cur) return { avg: null, n: 0, cur: null };
+  const vals = Object.values(tps).filter(t => t.tp != null && t.cur === cur).map(t => t.tp);
+  return { avg: +(vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2), n: vals.length, cur };
+}
+
 // ---------- which note to read next for a company-broker pair ----------
 // Notes newest first. Returns the first note not tried yet, unless the pair already holds
 // an estimate from a note at least as new as every untried one (older notes add nothing),
@@ -214,4 +236,4 @@ function nextNote(notes, state, have, maxTries = 3) {
   return untried[0];
 }
 
-module.exports = { FYS, SHOW_FYS, canonBroker, parseUnit, scaleSeries, yearsInLine, scorePage, pickPages, annualRef, checkResult, hasNumbers, epsSeries, toRecord, aggregate, nextNote, median };
+module.exports = { tpOf, aggregateTp, FYS, SHOW_FYS, canonBroker, parseUnit, scaleSeries, yearsInLine, scorePage, pickPages, annualRef, checkResult, hasNumbers, epsSeries, toRecord, aggregate, nextNote, median };

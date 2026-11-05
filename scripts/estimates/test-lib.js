@@ -141,4 +141,18 @@ t('EPS: kept when far from the others, and checked against the price', () => {
   assert.strictEqual(L.hasNumbers({ eps: { FY27: 50 }, epsUnit: 'INR' }), false, 'EPS alone does not end the search');
 });
 
+t('target price: read from a result, sanity-checked, averaged per currency', () => {
+  const note = { date: '261010', key: 'k' };
+  assert.deepStrictEqual(L.tpOf({ targetPrice: 1250, tpCurrency: 'INR', rating: 'Buy' }, note), { tp: 1250, cur: 'INR', rating: 'Buy', date: '261010', key: 'k' });
+  assert.strictEqual(L.tpOf({ targetPrice: 80, tpCurrency: 'US$', rating: 'Hold' }, note).cur, 'US$');
+  assert.strictEqual(L.tpOf({ targetPrice: null, rating: 'Hold' }, note).tp, null, 'a rating with no TP still counts');
+  assert.strictEqual(L.tpOf({ found: false }, note), null);
+  assert.ok(L.checkResult({ targetPrice: 15, rating: 'Buy' }, { _px: 388 }).some(i => /target price/.test(i)));
+  assert.deepStrictEqual(L.checkResult({ targetPrice: 450, rating: 'Buy' }, { _px: 388 }), []);
+  assert.deepStrictEqual(L.checkResult({ targetPrice: 80, tpCurrency: 'US$' }, { _px: 6000 }), [], 'other currency is not compared');
+  const a = L.aggregateTp({ A: { tp: 100, cur: 'INR' }, B: { tp: 120, cur: 'INR' }, C: { tp: null, cur: 'INR' }, D: { tp: 5, cur: 'US$' } });
+  assert.deepStrictEqual(a, { avg: 110, n: 2, cur: 'INR' });
+  assert.deepStrictEqual(L.aggregateTp({}), { avg: null, n: 0, cur: null });
+});
+
 console.log(`\n${n} tests passed`);

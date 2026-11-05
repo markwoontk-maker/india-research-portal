@@ -888,25 +888,33 @@
   .co-car{display:inline-block;width:12px;color:var(--text-mute);font-size:10px}
   .co-tl{display:flex;justify-content:space-between;gap:14px;font-family:'Roboto Mono';font-size:11px;margin-top:3px}
   .co-tl.x{opacity:.5;text-decoration:line-through}
-  .co-detail{position:sticky;left:0;width:var(--co-vw,100%);padding:12px 14px 14px;background:var(--ink-2);border-bottom:1px solid var(--line)}
-  .co-d-h{font-size:12.5px;color:var(--text-dim);margin-bottom:8px}
-  .co-d-h b{color:var(--text)}
-  .co-d-wrap{overflow-x:auto}
-  .co-d-t{border-collapse:collapse;font-family:'Roboto Mono';font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--text-dim)}
-  .co-d-t th,.co-d-t td{padding:5px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line-soft)}
-  .co-d-t th{color:var(--text-mute);font-size:10px;font-weight:600;letter-spacing:.03em}
-  .co-d-t .l{text-align:left}
-  .co-d-t .gs{border-left:1px solid var(--line)}
-  .co-d-t td.x{color:var(--text-mute);text-decoration:line-through;cursor:help}
-  .co-d-t td.na{color:var(--line)}
-  .co-d-t tfoot td{font-weight:700;color:var(--text)}
-  .co-d-t tfoot tr:first-child td{border-top:1px solid var(--line)}
-  .co-d-t tfoot tr.g td{font-weight:500;color:var(--text-dim)}
-  .co-d-t a{color:var(--text);text-decoration:none;border-bottom:1px dotted var(--text-mute)}
-  .co-d-t a:hover{color:var(--saffron);border-bottom-color:var(--saffron)}
+  .co-detail{display:flex;width:max-content;min-width:100%;background:var(--ink-2);border-bottom:1px solid var(--line)}
+  .co-d-left{flex:none;width:var(--w);padding:8px 10px;box-sizing:border-box}
+  .co-chart{display:flex;flex-direction:column;gap:6px}
+  .co-chart-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .co-chart .seg button{padding:2px 9px;font-size:10.5px}
+  .co-chart-ret{font-family:'Roboto Mono';font-size:11px}
+  .co-chart-box{position:relative;flex:1;min-height:0}
+  .co-chart-msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-mute)}
+  .co-chart-msg[hidden]{display:none}
+  .co-d-right{flex:none}
+  .co-d-r{display:flex;height:38px;border-bottom:1px solid var(--line-soft)}
+  .co-d-r:last-child{border-bottom:none}
+  .co-d-r.h{height:30px}
+  .co-d-r.h .er-c{font-size:10px;font-weight:600;color:var(--text-mute);letter-spacing:.03em}
+  .co-d-r.f .er-c{font-weight:700;color:var(--text)}
+  .co-d-r.f .ol-positive{color:var(--up)} .co-d-r.f .ol-negative{color:var(--down)}
+  .co-d-r.f .er-c.co-cnt{font-family:'Manrope';font-size:9.5px;font-weight:700;gap:4px}
+  .co-grid .er-c.co-x{color:var(--text-mute);text-decoration:line-through;cursor:help}
+  .co-nt{justify-content:flex-start;font-family:'Manrope';overflow:hidden}
+  .co-nt a{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .co-lnk{color:inherit;text-decoration:none;border-bottom:1px dotted var(--text-mute)}
+  .co-lnk:hover{color:var(--saffron);border-bottom-color:var(--saffron)}
+  .co-up{flex:0 0 70px;justify-content:flex-end;font-weight:600}
+  .co-uph span{display:block;font-size:9px;line-height:1.1;text-align:center}
   .co-chk{color:var(--saffron);cursor:help}
   .co-d-note{font-size:11px;color:var(--text-mute);margin-top:8px;line-height:1.6}
-  @media (max-width:700px){ .co-head .d{display:none} .co-pin .er-nm{flex:0 0 160px} }
+  @media (max-width:700px){ .co-head .d,.co-up{display:none} .co-pin .er-nm{flex:0 0 160px} .co-d-left{width:calc(var(--w) - 302px)} }
   /* Fixed-width numeric cells; mono digits + right align so commas
      and thousands align across rows. */
   .n-tp{flex:none;width:72px;box-sizing:border-box;text-align:right;
@@ -1936,9 +1944,9 @@
           </div>
         </div>
         <div id="coGrid" class="co-grid"></div>
-        <p class="er-legend"><b>Click a company</b> to list each broker's FY27, FY28 and FY29 estimates and P/Es, with the note they came from. <b>Revenue</b>, <b>EBITDA</b> and <b>EPS</b> FY columns are the simple average of brokers' estimates; grey means only one broker so far. <b>P/E</b> = share price ÷ average EPS (US-listed names use their US price), recalculated once a day by the 09:30 refresh after the earnings miner, so it doesn't move intraday; NM = average EPS is zero or a loss. <b>FY growth</b> counts only brokers that print both years, so a broker dropping out in a later year can't create a false jump. NM = the base year is zero or a loss.
+        <p class="er-legend"><b>Click a company</b> to open its share price chart, broker target prices and each broker's FY27, FY28 and FY29 estimates, lined up under the columns above. In the broker rows, <span style="color:#86e6b7">green</span> is above the average and <span style="color:#ffa3a3">red</span> below it, for P/E as well. <b>Upside/Downside</b> = average broker target price against the latest share price, which updates during market hours. <b>Revenue</b>, <b>EBITDA</b> and <b>EPS</b> FY columns are the simple average of brokers' estimates; grey means only one broker so far. <b>P/E</b> = share price ÷ average EPS (US-listed names use their US price), recalculated once a day by the 09:30 refresh after the earnings miner, so it doesn't move intraday; NM = average EPS is zero or a loss. <b>FY growth</b> counts only brokers that print both years, so a broker dropping out in a later year can't create a false jump. NM = the base year is zero or a loss.
         Quarterly cells work as on the Earnings tab: <span class="sw" style="background:rgba(63,199,138,.45)"></span>beat consensus · <span class="sw" style="background:rgba(240,106,106,.45)"></span>missed consensus · uncoloured = in line (or no consensus in the notes) · <span style="color:var(--saffron)">◥</span> corner = explanation, hover or tap any cell to read it. Lenders show Total operating income / PPOP, life insurers APE / VNB, general insurers GWP (or NEP) / PBT. FY figures are in ₹ mn (or US$ mn where shown with $); EPS is in ₹ per share.
-        Estimates come only from broker notes in the PDF library, using each broker's latest note with a forecast table from the last six months. Every broker counts in the average. A dotted underline or ⚠ marks a figure that failed an automatic size check and is still shown. Click a sector to move a company (saved in this browser, shared with the Earnings tab); click a column header to sort.</p>
+        Estimates come only from broker notes in the PDF library, using each broker's latest note with a forecast table from the last six months. Every broker counts in the average, however far from the others. A dotted underline or ⚠ marks a figure that failed an automatic size check and is still shown. Click a sector to move a company (saved in this browser, shared with the Earnings tab); click a column header to sort.</p>
       </div>
     </div>
 
@@ -6168,7 +6176,7 @@ const erDate=d=>d&&d.length===6?`${+d.slice(4,6)} ${ER_MON[+d.slice(2,4)-1]||''}
 const erHouse=b=>ER_HOUSE[b]||b||'';
 
 // Shared by the Earnings and Company tabs: loads once, whichever tab opens first.
-let erDataP=null, erEarningsShown=false;
+let erDataP=null, erEarningsShown=false, ER_PX_DAY=null;
 function erLoadData(){
   if(!erDataP) erDataP=(async()=>{
     let e=null;
@@ -6177,8 +6185,9 @@ function erLoadData(){
     if(!e||!Array.isArray(e.companies)) return;
     const q=(s&&s.q)||{};
     const fx=s&&s.desk&&s.desk['INR=X']&&s.desk['INR=X'].p; ER_FX=fx>0?fx:null;
-    e.companies.forEach(c=>{ const x=c.sym&&q[c.sym]; c._mc=(x&&x.mc)||c.mcap||null; c._usd=c._mc&&ER_FX?c._mc*1e7/ER_FX/1e9:null; });
+    e.companies.forEach(c=>{ const x=c.sym&&q[c.sym]; c._mc=(x&&x.mc)||c.mcap||null; c._pxNow=(x&&x.p)||null; c._usd=c._mc&&ER_FX?c._mc*1e7/ER_FX/1e9:null; });
     ER=e;
+    ER_PX_DAY=s&&s.asOf?Math.floor(Date.parse(s.asOf)/864e5):null;
     erApplySectors();
   })();
   return erDataP;
@@ -6281,7 +6290,7 @@ function erRows(){
   return rows;
 }
 function erPct(v){ if(v==null||!isFinite(v)) return '—'; if(v<-1) return 'NM'; const p=v*100; if(Math.abs(p)>=1000) return (p>0?'>+':'<-')+'999%'; return (p>0?'+':'')+p.toFixed(1)+'%'; }
-function erNum(v){ if(v==null) return '—'; return Math.abs(v)>=1000?Math.round(v).toLocaleString('en-IN'):(+v.toFixed(1)).toLocaleString('en-IN'); }
+function erNum(v){ if(v==null) return '—'; return Math.abs(v)>=1000?Math.round(v).toLocaleString('en-US'):(+v.toFixed(1)).toLocaleString('en-US'); }
 function erUsd(b){ if(b==null) return '—'; return '$'+(b>=100?b.toFixed(0):b>=10?b.toFixed(1):b.toFixed(2))+'bn'; }
 // Source line for a quarter: the specific broker report it was taken from.
 function erSrc(d){
@@ -6376,7 +6385,7 @@ function erRender(){
         <div class="er-c er-st"><button type="button" class="er-star${stars.has(c.name)?' on':''}" data-star="${erEsc(c.name)}" aria-pressed="${stars.has(c.name)}" title="${stars.has(c.name)?'Unstar':'Star'} ${erEsc(c.name)}">${stars.has(c.name)?'★':'☆'}</button></div>
         <div class="er-c er-nm"><button type="button" data-co="${erEsc(c.name)}" title="${erEsc(c.name)}${c.note?' — '+erEsc(c.note):''}">${erEsc(c.name)}</button><span class="sub">${erEsc(c.sector||'')} · ${erUsd(c._usd)}${ol}</span></div>
         <div class="er-c er-sc${c.sector!==c._origSector?' edited':''}" data-sec-edit="${erEsc(c.name)}" title="Click to change sector${c.sector!==c._origSector?' (originally '+erEsc(c._origSector)+')':''}"><span>${erEsc(c.sector||'—')}${c.sector!==c._origSector?' ✎':''}</span>${mt?`<span class="mt" title="Metrics used for this company">${erEsc(mt)}</span>`:''}</div>
-        <div class="er-c er-mc" title="${c._mc?'₹'+Math.round(c._mc).toLocaleString('en-IN')+' Cr'+(ER_FX?' at ₹'+ER_FX.toFixed(2)+'/US$':''):''}${c.sym?' · '+erEsc(c.sym):''}">${erUsd(c._usd)}</div>
+        <div class="er-c er-mc" title="${c._mc?'₹'+Math.round(c._mc).toLocaleString('en-US')+' Cr'+(ER_FX?' at ₹'+ER_FX.toFixed(2)+'/US$':''):''}${c.sym?' · '+erEsc(c.sym):''}">${erUsd(c._usd)}</div>
         ${erOutlookCell(c)}</div>`;
     }).join('')}</div>`;
     const bodies=groups.map(x=>`<div class="er-pane" ${paneAttrs(x)}><div class="er-scroll er-bs" data-g="${x.g.id}"><div style="width:${paneW(x)}px">${
@@ -6461,11 +6470,11 @@ const CO_GROUPS=[
   {id:'ep', title:'EPS',              kind:'fy',  m:'eps',    w:58},
   {id:'pe', title:'P/E',              kind:'pe',              w:52},
 ];
-const CO_PIN_W=186, CO_INFO_W=232;
+const CO_PIN_W=187, CO_UP_W=70, CO_INFO_W=74+70+CO_UP_W+88;   // sector, market cap, upside/downside, outlook
 let EST=null, EST_AT=0, EST_PX=null, coReady=false, coTips=[], coScrollTo=false;
-let coState={sort:null, dir:-1, q:'', sec:'', open:null};
-try{ const v=JSON.parse(localStorage.getItem(CO_LS)||'null'); if(v&&typeof v==='object') Object.assign(coState,{sort:v.sort||null,dir:v.dir||-1}); }catch(e){}
-function coSave(){ try{ localStorage.setItem(CO_LS,JSON.stringify({sort:coState.sort,dir:coState.dir})); }catch(e){} }
+let coState={sort:null, dir:-1, q:'', sec:'', open:null, range:'1Y'};
+try{ const v=JSON.parse(localStorage.getItem(CO_LS)||'null'); if(v&&typeof v==='object') Object.assign(coState,{sort:v.sort||null,dir:v.dir||-1,range:v.range||'1Y'}); }catch(e){}
+function coSave(){ try{ localStorage.setItem(CO_LS,JSON.stringify({sort:coState.sort,dir:coState.dir,range:coState.range})); }catch(e){} }
 async function coLoadEst(){
   try{ const r=await fetch('data/estimates.json',{cache:'no-store'}); if(r.ok){ EST=await r.json(); EST_AT=Date.now(); } }catch(e){}
   // Prices are fixed once a day by the 09:30 refresh, so P/Es don't move intraday.
@@ -6500,6 +6509,7 @@ function coCols(g,qs){ return g.kind==='ov'?qs:g.kind==='yoy'?qs.concat(CO_FYS):
 const coEst=c=>(EST&&EST.companies&&EST.companies[c.name])||null;
 const coNum=(v,unit)=>unit==='INR'?(+v).toFixed(1):unit==='US$'?'$'+(+v).toFixed(2):(unit==='US$ mn'?'$':'')+erNum(v);
 function coVal(c,k){
+  if(k==='upside') return coUp(c);
   const g=CO_GROUPS.find(x=>x.id===k.split(':')[0]);
   if(!g) return erVal(c,k);
   const col=k.split(':')[1], e=coEst(c);
@@ -6554,7 +6564,7 @@ function coPeCell(c,g,fy,first){
   const lines=coBrokerNames(e).map(b=>{ if(coOut(e,'eps',b)) return ''; const r=e.brokers[b]; if(!r.eps||r.eps[fy]==null) return '';
     return `<div class="co-tl"><span>${erEsc(erHouse(b))}</span><span>${coPeTxt(coPe(px,r.eps[fy]))}</span></div>`; }).join('');
   const i=erTips.push({cls:'',h:`${erEsc(c.name)} · ${fy} P/E ${coPeTxt(v)}`,
-    t:(v==='NM'?`Average ${fy} EPS is zero or a loss, so P/E isn't meaningful.`:`Price ${coCcy(eu)}${px.toLocaleString('en-IN',{maximumFractionDigits:2})} ÷ average ${fy} EPS ${coCcy(eu)}${(+eps).toFixed(2)}`)+lines,
+    t:(v==='NM'?`Average ${fy} EPS is zero or a loss, so P/E isn't meaningful.`:`Price ${coCcy(eu)}${px.toLocaleString('en-US',{maximumFractionDigits:2})} ÷ average ${fy} EPS ${coCcy(eu)}${(+eps).toFixed(2)}`)+lines,
     s:`Price as of ${EST_PX&&EST_PX.asOf||'the last daily refresh'}, set once a day by the 09:30 refresh.`})-1;
   return `<div class="er-c abs${gs}${e.n.eps[fy]===1?' co-one':''}" style="width:${w}px" data-tip="${i}">${coPeTxt(v)}</div>`;
 }
@@ -6574,33 +6584,150 @@ function coNoteHref(r){
   if(!norm.toLowerCase().startsWith(root.toLowerCase())) return null;
   return 'http://127.0.0.1:8788/'+norm.slice(root.length).split('/').map(encodeURIComponent).join('/')+(r.page?'#page='+r.page:'');
 }
+// Latest share price for Upside/Downside: refreshed during market hours, unlike the once-a-day P/E price.
+function coNow(c,unit){
+  const live=c._pxNow, p=live||(EST_PX&&EST_PX.px&&EST_PX.px[c.name]); if(!p) return null;
+  const cur=live?'INR':((EST_PX&&EST_PX.cur&&EST_PX.cur[c.name])||'INR'), u=unit||cur;
+  if(u===cur) return p;
+  const fx=EST_PX&&EST_PX.fx; return fx?(cur==='US$'?p*fx:p/fx):null;
+}
+const coFmt=(v,d=0)=>(+v).toLocaleString('en-US',{maximumFractionDigits:d});
+const coTpFmt=v=>coFmt(v,Math.abs(v)>=100?0:2);
+function coUp(c){ const e=coEst(c); if(!e||e.tpAvg==null) return null; const px=coNow(c,e.tpCur); return px?e.tpAvg/px-1:null; }
+function coRate(r){
+  const s=String(r||'').toLowerCase().replace(/[^a-z]/g,''); if(!s) return null;
+  if(/^(buy|add|overweight|outperform|accumulate|strongbuy|attractive|positive|ow|op)$/.test(s)||/^(overweight|outperform)/.test(s)) return 'buy';
+  if(/^(sell|reduce|underweight|underperform|negative|cautious|uw|up)$/.test(s)||/^(underweight|underperform)/.test(s)) return 'sell';
+  return 'hold';
+}
+const CO_RATE_CLS={buy:'ol-positive',hold:'ol-neutral',sell:'ol-negative'};
+const coTpNames=e=>Object.keys((e&&e.tps)||{}).filter(b=>e.tps[b].tp!=null).sort((a,b)=>e.tps[b].date.localeCompare(e.tps[a].date)||a.localeCompare(b));
+function coUpCell(c){
+  const v=coUp(c), e=coEst(c);
+  if(v==null) return `<div class="er-c co-up na">·</div>`;
+  const px=coNow(c,e.tpCur), ccy=coCcy(e.tpCur);
+  const lines=coTpNames(e).map(b=>`<div class="co-tl"><span>${erEsc(erHouse(b))}</span><span>${ccy}${coTpFmt(e.tps[b].tp)}</span></div>`).join('');
+  const i=erTips.push({cls:v>=0?'beat':'miss',h:`${erEsc(c.name)} · Upside/downside ${erPct(v)}`,
+    t:`Average target ${ccy}${coTpFmt(e.tpAvg)} from ${e.tpN} broker${e.tpN>1?'s':''}, against a share price of ${ccy}${coFmt(px,2)}${lines}`,s:'Source: each broker\'s latest note. Click the company for the full table.'})-1;
+  return `<div class="er-c co-up ${v>=0?'ol-positive':'ol-negative'}" data-tip="${i}">${erPct(v)}</div>`;
+}
+function coNoteTitle(key){
+  const p=window.PDFMAP&&window.PDFMAP[key]; if(!p) return '';
+  const f=String(p).split(/[\\/]/).pop().replace(/\.pdf$/i,''), i=f.indexOf(' - ');
+  return i>=0?f.slice(i+3):f;
+}
+// Highlight a broker's figure against the average; a rounding-sized gap counts as equal.
+function coHiLo(v,a){ if(v==null||a==null) return ''; const tol=Math.abs(a)*0.0005; return v>a+tol?' beat':v<a-tol?' miss':''; }
+const CO_LBL=`justify-content:flex-start;font-family:'Manrope'`;
 function coDetail(c){
-  const e=coEst(c), names=coBrokerNames(e), lr=coLab(c,'rev'), le=coLab(c,'ebitda'), eu=e&&e.unit&&e.unit.eps, px=coPx(c,eu);
-  const left=[];
-  if(e&&e.pending&&e.pending.length) left.push(`Still to read: ${e.pending.map(erHouse).map(erEsc).join(', ')}.`);
-  if(e&&e.noTable&&e.noTable.length) left.push(`No forecast table in recent notes: ${e.noTable.map(erHouse).map(erEsc).join(', ')}.`);
-  if(!names.length) return `<div class="co-detail"><div class="co-d-h"><b>${erEsc(c.name)}</b></div><p class="co-d-note">No broker estimates read yet.${left.length?' '+left.join(' '):' No broker notes in the library from the last six months.'}</p></div>`;
-  const cell=(b,m,fy,gs)=>{ const x=coSeries(e,b,m), v=x.s&&x.s[fy]; if(v==null) return `<td class="${gs?'gs ':''}na">·</td>`;
-    const out=coOut(e,m,b); return `<td class="${gs?'gs ':''}${out?'x':''}"${out?` title="${erEsc(out)}"`:''}>${coNum(v,x.unit)}</td>`; };
-  const fyCells=(f,mk)=>CO_FYS.map((fy,i)=>f(mk,fy,i===0)).join('');
-  const body=names.map(b=>{ const r=e.brokers[b], href=coNoteHref(r), d=erDate(r.date);
-    const info=[r.revLabel&&r.ebitdaLabel?`${r.revLabel} / ${r.ebitdaLabel}`:(r.revLabel||r.ebitdaLabel||''),r.basis||'',r.calcNote||''].filter(Boolean).join(' · ');
-    return `<tr><td class="l">${erEsc(erHouse(b))}${r.check?` <span class="co-chk" title="${erEsc('Auto-check: '+r.check)}">⚠</span>`:''}</td>
-      <td class="l">${href?`<a href="${href}" target="_blank" rel="noopener" title="${erEsc(info)}">${d}</a>`:`<span title="${erEsc(info)}">${d}</span>`}</td>
-      ${fyCells((m,fy,gs)=>cell(b,m,fy,gs),'rev')}${fyCells((m,fy,gs)=>cell(b,m,fy,gs),'ebitda')}${fyCells((m,fy,gs)=>cell(b,m,fy,gs),'eps')}${CO_FYS.map((fy,i)=>{ const v=coPe(coPx(c,r.epsUnit),r.eps&&r.eps[fy]), out=coOut(e,'eps',b); return `<td class="${i?'':'gs '}${v==null?'na':out?'x':''}">${coPeTxt(v)}</td>`; }).join('')}</tr>`; }).join('');
-  const avg=(m,fy,gs)=>{ const v=e.avg&&e.avg[m]?e.avg[m][fy]:null; return `<td class="${gs?'gs':''}">${v==null?'·':coNum(v,e.unit[m])}</td>`; };
-  const gr=(m,fy,gs)=>{ const v=e.growth&&e.growth[m]?e.growth[m][fy]:null, nm=e.nm&&e.nm[m]&&e.nm[m][fy]; return `<td class="${gs?'gs':''}">${nm?'NM':v==null?'·':erPct(v)}</td>`; };
-  const peRow=CO_FYS.map((fy,i)=>`<td class="${i?'':'gs'}">${coPeTxt(coPe(px,e.avg&&e.avg.eps?e.avg.eps[fy]:null))}</td>`).join('');
-  const fye=[...new Set(names.map(b=>e.brokers[b].fye).filter(x=>x&&x!=='Mar'))];
-  const notes=[...left];
+  const e=coEst(c)||{}, qs=coQuarters(), eb=e.brokers||{}, tps=e.tps||{};
+  const G=id=>CO_GROUPS.find(x=>x.id===id), gw=id=>coCols(G(id),qs).length*G(id).w;
+  const chartW=CO_PIN_W+CO_INFO_W+gw('ov');
+  const dateOf=b=>(eb[b]&&eb[b].date)||(tps[b]&&tps[b].date)||'';
+  const names=[...new Set([...Object.keys(eb),...Object.keys(tps)])].sort((a,b)=>dateOf(b).localeCompare(dateOf(a))||a.localeCompare(b));
+  const eu=e.unit&&e.unit.eps, px=coPx(c,eu);
+  const na=(w,gs)=>`<div class="er-c na${gs}" style="width:${w}px">·</div>`;
+  const num=(b,id,fy,i)=>{ const g=G(id), m=g.m, gs=i===0?' co-gs':'', r=eb[b]; if(!r) return na(g.w,gs);
+    const x=coSeries(e,b,m), v=x.s&&x.s[fy]; if(v==null) return na(g.w,gs);
+    const out=coOut(e,m,b), hl=out?' co-x':coHiLo(v,e.avg&&e.avg[m]?e.avg[m][fy]:null);
+    return `<div class="er-c abs${gs}${hl}" style="width:${g.w}px"${out?` title="${erEsc(out)}"`:''}>${coNum(v,x.unit)}</div>`; };
+  const pe=(b,fy,i)=>{ const g=G('pe'), gs=i===0?' co-gs':'', r=eb[b]; if(!r||!r.eps||r.eps[fy]==null) return na(g.w,gs);
+    const v=coPe(coPx(c,r.epsUnit),r.eps[fy]), a=coPe(px,e.avg&&e.avg.eps?e.avg.eps[fy]:null), out=coOut(e,'eps',b);
+    if(v==null) return na(g.w,gs);
+    const hl=out?' co-x':(typeof v==='number'&&typeof a==='number')?coHiLo(v,a):'';
+    return `<div class="er-c abs${gs}${hl}" style="width:${g.w}px">${coPeTxt(v)}</div>`; };
+  const nums=b=>['ra','ea','ep'].map(id=>CO_FYS.map((fy,i)=>num(b,id,fy,i)).join('')).join('')+CO_FYS.map((fy,i)=>pe(b,fy,i)).join('');
+  // Target price table, under the Revenue YoY column.
+  const TP=[92,104,70,70];
+  const tpCells=b=>{ const t=tps[b];
+    if(!t) return `<div class="er-c co-gs" style="width:${TP[0]}px;${CO_LBL}">${erEsc(erHouse(b))}</div><div class="er-c na" style="width:${TP[1]}px">·</div><div class="er-c na" style="width:${TP[2]}px">·</div><div class="er-c na" style="width:${TP[3]}px">·</div>`;
+    const rb=coRate(t.rating), now=t.tp!=null?coNow(c,t.cur):null, u=now?t.tp/now-1:null, href=coNoteHref(t);
+    const val=t.tp==null?'·':(t.cur==='US$'?'$':'')+coTpFmt(t.tp), info=`${erHouse(b)} note, ${erDate(t.date)}${t.check?' · Auto-check: '+t.check:''}`;
+    return `<div class="er-c co-gs" style="width:${TP[0]}px;${CO_LBL}">${erEsc(erHouse(b))}</div>
+      <div class="er-c ${rb?CO_RATE_CLS[rb]:'na'}" style="width:${TP[1]}px;font-family:'Manrope';font-weight:700;font-size:10.5px">${erEsc(t.rating||'·')}</div>
+      <div class="er-c${t.check?' chk':''}" style="width:${TP[2]}px;justify-content:flex-end" title="${erEsc(info)}">${href&&t.tp!=null?`<a class="co-lnk" href="${href}" target="_blank" rel="noopener">${val}</a>`:val}</div>
+      <div class="er-c ${u==null?'na':u>=0?'ol-positive':'ol-negative'}" style="width:${TP[3]}px;justify-content:flex-end">${u==null?'·':erPct(u)}</div>`; };
+  // Broker, date and note, under the EBITDA YoY column.
+  const NM=[92,84,160];
+  const nmCells=b=>{ const r=eb[b]||tps[b], href=coNoteHref(r), title=coNoteTitle(r.key), info=[title,r.basis||'',r.calcNote||'',r.check?'Auto-check: '+r.check:''].filter(Boolean).join(' · ');
+    return `<div class="er-c co-gs" style="width:${NM[0]}px;${CO_LBL};color:var(--text)">${erEsc(erHouse(b))}${r.check?` <span class="co-chk" title="${erEsc('Auto-check: '+r.check)}">⚠</span>`:''}</div>
+      <div class="er-c" style="width:${NM[1]}px;justify-content:flex-start">${erDate(r.date)}</div>
+      <div class="er-c co-nt" style="width:${NM[2]}px" title="${erEsc(info)}">${href?`<a class="co-lnk" href="${href}" target="_blank" rel="noopener">${erEsc(title||'Open note')}</a>`:erEsc(title)}</div>`; };
+  const body=names.map(b=>`<div class="co-d-r">${tpCells(b)}${nmCells(b)}${nums(b)}</div>`).join('');
+  const tc=e.tpCur||'INR', up=coUp(c), cnt={buy:0,hold:0,sell:0};
+  Object.values(tps).forEach(t=>{ const k=coRate(t.rating); if(k) cnt[k]++; });
+  const cntTxt=cnt.buy+cnt.hold+cnt.sell?`<span class="ol-positive">${cnt.buy} Buy</span> <span class="ol-neutral">${cnt.hold} Hold</span> <span class="ol-negative">${cnt.sell} Sell</span>`:'·';
+  const total=['ra','ea','ep'].map(id=>{ const g=G(id), a=e.avg&&e.avg[g.m]; return CO_FYS.map((fy,i)=>`<div class="er-c abs${i===0?' co-gs':''}" style="width:${g.w}px">${a&&a[fy]!=null?coNum(a[fy],e.unit[g.m]):'·'}</div>`).join(''); }).join('');
+  const peAvg=CO_FYS.map((fy,i)=>`<div class="er-c abs${i===0?' co-gs':''}" style="width:${G('pe').w}px">${coPeTxt(coPe(px,e.avg&&e.avg.eps?e.avg.eps[fy]:null))}</div>`).join('');
+  const growth=['ra','ea','ep'].map(id=>{ const g=G(id), m=g.m; return CO_FYS.map((fy,i)=>{ const v=e.growth&&e.growth[m]?e.growth[m][fy]:null, nm=e.nm&&e.nm[m]&&e.nm[m][fy]; return `<div class="er-c abs${i===0?' co-gs':''}" style="width:${g.w}px">${nm?'NM':v==null?'·':erPct(v)}</div>`; }).join(''); }).join('');
+  const head=`<div class="co-d-r h"><div class="er-c co-gs" style="width:${TP[0]}px;${CO_LBL}">Broker</div><div class="er-c" style="width:${TP[1]}px">Rating</div><div class="er-c" style="width:${TP[2]}px;justify-content:flex-end">TP (${erEsc(tc)})</div><div class="er-c" style="width:${TP[3]}px;justify-content:flex-end">Up/Down</div>
+      <div class="er-c co-gs" style="width:${NM[0]}px;${CO_LBL}">Broker</div><div class="er-c" style="width:${NM[1]}px;justify-content:flex-start">Date</div><div class="er-c" style="width:${NM[2]}px;justify-content:flex-start">Note</div>
+      <div class="er-c co-gs" style="width:${gw('ra')}px">${erEsc(coLab(c,'rev'))} (${erEsc((e.unit&&e.unit.rev)||'INR mn')})</div><div class="er-c co-gs" style="width:${gw('ea')}px">${erEsc(coLab(c,'ebitda'))} (${erEsc((e.unit&&e.unit.ebitda)||'INR mn')})</div><div class="er-c co-gs" style="width:${gw('ep')}px">EPS (${erEsc(eu||'INR')})</div><div class="er-c co-gs" style="width:${gw('pe')}px">P/E</div></div>`;
+  const foot=names.length?`<div class="co-d-r f"><div class="er-c co-gs" style="width:${TP[0]}px;${CO_LBL}">Average</div><div class="er-c co-cnt" style="width:${TP[1]}px">${cntTxt}</div><div class="er-c" style="width:${TP[2]}px;justify-content:flex-end">${e.tpAvg!=null?(tc==='US$'?'$':'')+coTpFmt(e.tpAvg):'·'}</div><div class="er-c ${up==null?'na':up>=0?'ol-positive':'ol-negative'}" style="width:${TP[3]}px;justify-content:flex-end">${up==null?'·':erPct(up)}</div>
+      <div class="er-c co-gs" style="width:${gw('ey')}px;${CO_LBL}">Average</div>${total}${peAvg}</div>
+    <div class="co-d-r g"><div class="er-c co-gs" style="width:${gw('ry')}px"></div><div class="er-c co-gs" style="width:${gw('ey')}px;${CO_LBL}">YoY growth</div>${growth}<div class="er-c co-gs" style="width:${gw('pe')}px"></div></div>`:'';
+  const notes=[];
+  if(e.pending&&e.pending.length) notes.push(`Still to read: ${e.pending.map(erHouse).map(erEsc).join(', ')}.`);
+  if(e.noTable&&e.noTable.length) notes.push(`No forecast table in recent notes: ${e.noTable.map(erHouse).map(erEsc).join(', ')}.`);
+  if(!names.length&&!notes.length) notes.push('No broker notes in the library from the last six months.');
+  const fye=[...new Set(Object.values(eb).map(r=>r.fye).filter(x=>x&&x!=='Mar'))];
   if(fye.length) notes.push(`${fye.join('/')} year-end: FY27 means the year ending in 2027.`);
-  if(px) notes.push(`P/E uses a price of ${coCcy(eu)}${px.toLocaleString('en-IN',{maximumFractionDigits:2})} (${EST_PX&&EST_PX.asOf||'last daily refresh'}).`);
+  if(px) notes.push(`P/E uses a price of ${coCcy(eu)}${coFmt(px,2)} (${EST_PX&&EST_PX.asOf||'last daily refresh'}).`);
   if(names.some(b=>coOut(e,'rev',b)||coOut(e,'ebitda',b)||coOut(e,'eps',b))) notes.push('Struck-through figures are in another currency, so left out of the average.');
-  return `<div class="co-detail"><div class="co-d-h"><b>${erEsc(c.name)}</b> · broker estimates</div><div class="co-d-wrap"><table class="co-d-t"><thead>
-    <tr><th rowspan="2" class="l">Broker</th><th rowspan="2" class="l">Note</th><th colspan="3" class="gs">${erEsc(lr)} (${erEsc(e.unit.rev||'')})</th><th colspan="3" class="gs">${erEsc(le)} (${erEsc(e.unit.ebitda||'')})</th><th colspan="3" class="gs">EPS (${erEsc(e.unit.eps||'INR')})</th><th colspan="3" class="gs">P/E</th></tr>
-    <tr>${[0,1,2,3].map(()=>CO_FYS.map((f,i)=>`<th class="${i?'':'gs'}">${f}</th>`).join('')).join('')}</tr></thead>
-    <tbody>${body}</tbody><tfoot><tr><td class="l" colspan="2">Average</td>${fyCells(avg,'rev')}${fyCells(avg,'ebitda')}${fyCells(avg,'eps')}${peRow}</tr>
-    <tr class="g"><td class="l" colspan="2">YoY growth</td>${fyCells(gr,'rev')}${fyCells(gr,'ebitda')}${fyCells(gr,'eps')}<td class="gs" colspan="3"></td></tr></tfoot></table></div>${notes.length?`<p class="co-d-note">${notes.join(' ')}</p>`:''}</div>`;
+  return `<div class="co-detail"><div class="co-d-left" style="--w:${chartW}px">
+      <div class="co-chart" style="height:${CO_CHART_ROWS*CO_ROW_H}px"><div class="co-chart-h"><div class="seg">${CO_RANGES.map(r=>`<button type="button" data-px-range="${r}" class="${r===coState.range?'on':''}">${r}</button>`).join('')}</div><span id="coChartRet" class="co-chart-ret"></span></div>
+        <div class="co-chart-box"><canvas id="coChart" role="img" aria-label="${erEsc(c.name)} share price"></canvas><p id="coChartMsg" class="co-chart-msg" hidden></p></div></div>
+      ${notes.length?`<p class="co-d-note">${notes.join(' ')}</p>`:''}</div>
+    <div class="co-d-right">${head}${body}${foot}</div></div>`;
+}
+// Stock chart: committed 10-year history (data/px/<sym>.json) + recent closes + the latest price.
+const CO_RANGES=['YTD','1Y','3Y','5Y','10Y'], CO_ROW_H=38, CO_CHART_ROWS=6;
+const CO_RANGE_DAYS={'1Y':365,'3Y':1096,'5Y':1827,'10Y':3653};
+let coChartInst=null, EST_RECENT=null, coPxCache={};
+const coDayDate=d=>new Date(d*864e5);
+async function coLoadPx(c){
+  const s=c.yf||(c.sym?c.sym+'.NS':null); if(!s) return null;
+  if(coPxCache[s]!==undefined) return coPxCache[s];
+  let h=null;
+  try{ const r=await fetch('data/px/'+encodeURIComponent(s)+'.json'); if(r.ok) h=await r.json(); }catch(e){}
+  if(!EST_RECENT){ try{ const r=await fetch('data/px_recent.json',{cache:'no-store'}); if(r.ok) EST_RECENT=await r.json(); }catch(e){} }
+  const t=h?h.t.slice():[], v=h?h.c.slice():[], rec=EST_RECENT&&EST_RECENT.c&&EST_RECENT.c[s];
+  if(rec){ const last=t.length?t[t.length-1]:-1; EST_RECENT.days.forEach((d,i)=>{ if(d>last&&rec[i]!=null){ t.push(d); v.push(rec[i]); } }); }
+  if(c._pxNow&&ER_PX_DAY&&(!t.length||ER_PX_DAY>t[t.length-1])){ t.push(ER_PX_DAY); v.push(c._pxNow); }
+  return coPxCache[s]=t.length>1?{t,v,cur:(h&&h.cur)||'INR'}:null;
+}
+function coChartClear(){ if(coChartInst){ coChartInst.destroy(); coChartInst=null; } }
+const coCrosshair={id:'coCrosshair',afterDatasetsDraw(ch){
+  const a=ch.tooltip&&ch.tooltip.getActiveElements&&ch.tooltip.getActiveElements(); if(!a||!a.length) return;
+  const x=a[0].element.x, s=ch.scales.y, g=ch.ctx; g.save(); g.strokeStyle='rgba(255,255,255,.28)'; g.lineWidth=1; g.beginPath(); g.moveTo(x,s.top); g.lineTo(x,s.bottom); g.stroke(); g.restore(); }};
+async function coDrawChart(){
+  const name=coState.open, c=ER&&ER.companies.find(x=>x.name===name); if(!c) return;
+  const d=await coLoadPx(c);
+  const cv=document.getElementById('coChart'), msg=document.getElementById('coChartMsg'), ret=document.getElementById('coChartRet');
+  if(coState.open!==name||!cv) return;
+  coChartClear();
+  const say=t=>{ if(msg){ msg.textContent=t; msg.hidden=false; } if(ret) ret.textContent=''; cv.style.display='none'; };
+  if(!d) return say('No share price history for this company.');
+  if(typeof Chart==='undefined') return say('Chart library did not load.');
+  const last=d.t[d.t.length-1], lastDate=coDayDate(last), r=coState.range;
+  const from=r==='YTD'?Date.UTC(lastDate.getUTCFullYear(),0,1)/864e5:last-CO_RANGE_DAYS[r];
+  const pts=[]; d.t.forEach((x,i)=>{ if(x>=from) pts.push({x,y:d.v[i]}); });
+  if(pts.length<2) return say('Not enough share price history for this period.');
+  if(msg) msg.hidden=true; cv.style.display='';
+  const chg=pts[pts.length-1].y/pts[0].y-1, ccy=coCcy(d.cur), since=pts[0].x>from+45;
+  if(ret){ ret.textContent=`${erPct(chg)} ${since?'since '+coDayDate(pts[0].x).toLocaleDateString('en-GB',{month:'short',year:'numeric',timeZone:'UTC'}):r}`; ret.className='co-chart-ret '+(chg>=0?'ol-positive':'ol-negative'); }
+  const css=getComputedStyle(document.documentElement), col=css.getPropertyValue('--saffron').trim()||'#f0a53a', mute=css.getPropertyValue('--text-mute').trim()||'#7f8894', surf=css.getPropertyValue('--ink-2').trim()||'#11151c';
+  const long=pts[pts.length-1].x-pts[0].x>800;
+  coChartInst=new Chart(cv,{type:'line',plugins:[coCrosshair],
+    data:{datasets:[{data:pts,borderColor:col,borderWidth:2,pointRadius:0,pointHitRadius:12,pointHoverRadius:4,pointHoverBackgroundColor:col,pointHoverBorderColor:surf,pointHoverBorderWidth:2,tension:0,fill:false}]},
+    options:{responsive:true,maintainAspectRatio:false,animation:false,parsing:false,normalized:true,interaction:{mode:'nearest',axis:'x',intersect:false},
+      layout:{padding:{right:2}},
+      plugins:{legend:{display:false},tooltip:{displayColors:false,callbacks:{
+        title:i=>coDayDate(i[0].parsed.x).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}),
+        label:i=>ccy+coFmt(i.parsed.y,2)}}},
+      scales:{x:{type:'linear',min:pts[0].x,max:pts[pts.length-1].x,grid:{display:false},border:{color:'rgba(255,255,255,.14)'},
+          ticks:{color:mute,font:{family:'Roboto Mono',size:10},maxRotation:0,maxTicksLimit:long?7:6,callback:v=>coDayDate(v).toLocaleDateString('en-GB',long?{year:'numeric',timeZone:'UTC'}:{month:'short',year:'2-digit',timeZone:'UTC'})}},
+        y:{position:'right',grid:{color:'rgba(255,255,255,.06)'},border:{display:false},ticks:{color:mute,font:{family:'Roboto Mono',size:10},maxTicksLimit:5,callback:v=>coFmt(v,0)}}}}});
 }
 const coArrow=k=>coState.sort===k?(coState.dir<0?'▼':'▲'):'';
 function coRender(){
@@ -6619,6 +6746,7 @@ function coRender(){
       <button type="button" data-sort="name" style="width:160px;justify-content:flex-start;padding:0 10px">Name ${coArrow('name')}</button></div>
       <button type="button" class="d" data-sort="sector" style="width:74px;justify-content:flex-start;padding:0 10px">Sector ${coArrow('sector')}</button>
       <button type="button" class="d" data-sort="mcap" style="width:70px;justify-content:flex-end;padding:0 10px" title="Full market cap, US$ bn">Mkt cap ${coArrow('mcap')}</button>
+      <button type="button" class="d co-uph" data-sort="upside" style="width:${CO_UP_W}px" title="Average broker target price against the latest share price"><span>Upside/<br>Downside ${coArrow('upside')}</span></button>
       <button type="button" class="d" data-sort="outlook" style="width:88px" title="Latest outlook from the newest results notes">Outlook ${coArrow('outlook')}</button>${
       CO_GROUPS.map(g=>coCols(g,qs).map((col,i)=>{ const k=g.id+':'+col, cls=i===0?' class="co-gs"':(g.kind==='yoy'&&col===CO_FYS[0])?' class="co-fy1"':'';
         return `<button type="button"${cls} data-sort="${k}" style="width:${g.w}px" title="Sort by ${g.title} ${col}">${col} ${coArrow(k)}</button>`; }).join('')).join('')}</div></div>`;
@@ -6636,14 +6764,15 @@ function coRender(){
         <div class="er-c er-st"><button type="button" class="er-star${on?' on':''}" data-star="${erEsc(c.name)}" aria-pressed="${on}" title="${on?'Unstar':'Star'} ${erEsc(c.name)}">${on?'★':'☆'}</button></div>
         <div class="er-c er-nm"><button type="button" data-co="${erEsc(c.name)}" aria-expanded="${open}" title="${erEsc(c.name)}: click for each broker's estimates"><span class="co-car">${open?'▾':'▸'}</span>${erEsc(c.name)}</button><span class="sub">${erEsc(c.sector||'')} · ${erUsd(c._usd)}${ol}</span></div></div>
       <div class="er-c er-sc${edited?' edited':''}" data-sec-edit="${erEsc(c.name)}" title="Click to change sector${edited?' (originally '+erEsc(c._origSector)+')':''}"><span>${erEsc(c.sector||'—')}${edited?' ✎':''}</span>${mt?`<span class="mt" title="Metrics used for this company">${erEsc(mt)}</span>`:''}</div>
-      <div class="er-c er-mc" title="${c._mc?'₹'+Math.round(c._mc).toLocaleString('en-IN')+' Cr'+(ER_FX?' at ₹'+ER_FX.toFixed(2)+'/US$':''):''}${c.sym?' · '+erEsc(c.sym):''}">${erUsd(c._usd)}</div>
-      ${erOutlookCell(c)}${cells}</div>${open?coDetail(c):''}`; };
+      <div class="er-c er-mc" title="${c._mc?'₹'+Math.round(c._mc).toLocaleString('en-US')+' Cr'+(ER_FX?' at ₹'+ER_FX.toFixed(2)+'/US$':''):''}${c.sym?' · '+erEsc(c.sym):''}">${erUsd(c._usd)}</div>
+      ${coUpCell(c)}${erOutlookCell(c)}${cells}</div>${open?coDetail(c):''}`; };
   const st=grid.scrollTop, sl=grid.scrollLeft;
+  coChartClear();
   grid.innerHTML=head+(rows.length?rows.map(rowHtml).join(''):'<div class="er-empty">No companies match the filter.</div>');
-  grid.style.setProperty('--co-vw',grid.clientWidth+'px');
   grid.scrollTop=st; grid.scrollLeft=sl;
   if(coScrollTo){ coScrollTo=false; const r=grid.querySelector('.co-r.open'); if(r){ grid.scrollLeft=0; grid.scrollTop=Math.max(0,r.offsetTop-64); } }
   coTips=erTips; erTips=keep;
+  if(coState.open) coDrawChart();
 }
 // Open a company on this tab from elsewhere (Earnings tracker and Earnings Summary links).
 function erOpenCompany(name){
@@ -6660,6 +6789,8 @@ function erOpenCompany(name){
   grid.addEventListener('scroll',erPopHide,{passive:true});
   grid.addEventListener('click',e=>{
     if(e.target.closest('select')||e.target.closest('a')) return;
+    const pr=e.target.closest('[data-px-range]');
+    if(pr){ coState.range=pr.dataset.pxRange; coSave(); grid.querySelectorAll('[data-px-range]').forEach(b=>b.classList.toggle('on',b===pr)); coDrawChart(); return; }
     const st=e.target.closest('[data-star]');
     if(st){ erToggleStar(st.dataset.star); coRender(); if(erEarningsShown) erRender(); return; }
     const co=e.target.closest('[data-co]');

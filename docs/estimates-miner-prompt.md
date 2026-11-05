@@ -3,7 +3,8 @@
 You are reading one broker note for the research portal's **Company** tab. Below the line
 `=== WORK ITEM ===` you get a JSON work item, then under `=== PAGES ===` a list of page
 images (PNG) from that note. **Open each page image with the Read tool** and stop once you
-have the numbers. The pages were picked because they look like they hold the forecast table.
+have the numbers. Page 1 is always included for the target price and rating; the other pages were
+picked because they look like they hold the forecast table.
 
 **Accuracy matters more than speed.** Use ONLY numbers printed in these pages. Never use
 memory, the web or guesses. If a figure is not printed, return `null`. Never calculate a
@@ -60,10 +61,23 @@ in the work item (`metrics.rev` and `metrics.ebitda`), and **EPS**.
       values the stock on), otherwise reported diluted EPS. Write the printed label in `epsLabel`.
     - EPS may be in a different table or on a different page from revenue. Take it from any of the
       pages supplied, so long as it is this broker's current estimate.
-    - Don't take `Consensus EPS`, `Prior EPS` or `Old` columns, EPS growth rows, or EVPS/DPS/BVPS.
+    - Don't take `Consensus EPS`, `Prior EPS` or `Old` columns, EPS growth rows, or EVPS/DPS/BVPS. A
+      footnote like `Based on consensus methodology` describes how the broker's own EPS is defined, so
+      that row is still the broker's estimate and should be used.
     - If EPS is only printed per ADR or in US$, set `epsUnit` to `US$`. Otherwise `epsUnit` is `INR`.
     - If the work item says `priceCurrency: US$`, the stock trades in the US: take the US$ EPS when printed.
     - If no EPS is printed, leave `eps` null. This does not make the result `found: false`.
+
+13. **Target price and rating.** Usually in the box on page 1. These are separate from the
+    forecast table: fill them whether or not the note has one, even when `found` is `false`.
+    - `targetPrice`: the broker's current target per share (`TP`, `PT`, `Price target`, `Fair value`),
+      as a plain number. Not the previous target, the share price, a consensus figure, or a bull or
+      bear scenario price.
+    - `tpCurrency`: `INR` or `US$`.
+    - `rating`: the current rating, written out: `Buy`, `Add`, `Hold`, `Reduce`, `Sell`, `Overweight`,
+      `Equal-weight`, `Underweight`, `Outperform`, `Market-perform`, `Neutral`, `Underperform`. CLSA's
+      `O-PF` is `Outperform` and `U-PF` is `Underperform`. Not the previous rating or an industry view.
+    - If a figure is not printed, or is masked or restricted, return `null` for it.
 
 ## If there is no usable forecast table
 
@@ -94,7 +108,10 @@ Return one JSON object and nothing else, with no markdown fences:
   "epsLabel": "Adj. EPS",
   "epsUnit": "INR",
   "eps": { "FY26": 466.9, "FY27": 433.48, "FY28": 555.1, "FY29": 640.25 },
-  "calcNote": null
+  "calcNote": null,
+  "targetPrice": 13046,
+  "tpCurrency": "INR",
+  "rating": "Neutral"
 }
 
 `page` is the PDF page number of the table you used, as listed in `=== PAGES ===`. Negative

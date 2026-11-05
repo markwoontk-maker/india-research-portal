@@ -101,7 +101,10 @@ function refreshCompany(out, name, row, notes, state) {
     if (next) pending.push(b); else noTable.push(b);
   }
   const agg = L.aggregate(brokers, row);
-  out.companies[name] = { unit: agg.unit, avg: agg.avg, n: agg.n, growth: agg.growth, nm: agg.nm, used: agg.used, excluded: agg.excluded, brokers, pending: pending.sort(), noTable: noTable.sort() };
+  const tps = prev.tps || {};
+  for (const [b, t] of Object.entries(tps)) if (t.date < floor) delete tps[b];
+  const ta = L.aggregateTp(tps);
+  out.companies[name] = { tps, tpAvg: ta.avg, tpN: ta.n, tpCur: ta.cur, unit: agg.unit, avg: agg.avg, n: agg.n, growth: agg.growth, nm: agg.nm, used: agg.used, excluded: agg.excluded, brokers, pending: pending.sort(), noTable: noTable.sort() };
 }
 function writeOut(out, rows, pairs, state) {
   const names = Object.keys(rows).sort();
@@ -167,15 +170,17 @@ function parseResult(txt) {
   if (s < 0 || e < s) return null;
   try { return JSON.parse(txt.slice(s, e + 1)); } catch (err) { return null; }
 }
-const issuesOf = (r, row) => (r && r.found !== false ? L.checkResult(r, row) : []);
+const issuesOf = (r, row) => (r ? L.checkResult(r, row) : []);
 
 // Returns {res:'ok'|'none'|'failed'|'fatal', rec?, why?}
-async function mineNote(name, row, broker, note, slot) {
+async function mineNote(name, row, broker, note, slot, needTp) {
   if (!fs.existsSync(note.path)) return { res: 'none', why: 'file missing' };
   const texts = pdfPages(note.path);
   if (!texts) return { res: 'failed', why: 'pdftotext failed' };
-  const pages = L.pickPages(texts, MAX_PAGES);
-  if (!pages.length) return { res: 'none', why: 'no forecast table in the text' };
+  const fc = L.pickPages(texts, MAX_PAGES);
+  if (!fc.length && !needTp) return { res: 'none', why: 'no forecast table in the text' };
+  // Page 1 always goes in: that's where the target price and rating are printed.
+  const pages = [...new Set([1, ...fc])].sort((a, b) => a - b);
   const dir = path.join(WORK, 'w' + slot);
   try { fs.rmSync(dir, { recursive: true, force: true }); } catch (e) {}
   let imgs = [];
@@ -197,11 +202,15 @@ async function mineNote(name, row, broker, note, slot) {
     }
   }
   if (!r) return { res: 'failed', why: 'no JSON back' };
-  if (r.found === false || !L.hasNumbers(r)) return { res: 'none', why: String(r.reason || 'no usable table').slice(0, 160) };
+  const tp = L.tpOf(r, note);
+  const tpIssue = issues.filter(i => /target price/.test(i));
+  issues = issues.filter(i => !/target price/.test(i));
+  if (tp) { tp.page = 1; if (tpIssue.length) tp.check = tpIssue.join('; ').slice(0, 160); }
+  if (r.found === false || !L.hasNumbers(r)) return { res: 'none', tp, why: String(r.reason || 'no usable table').slice(0, 160) };
   const extra = { model, mined: new Date().toISOString().slice(0, 10) };
   if (issues.length) extra.check = issues.join('; ').slice(0, 240);
   if (r.calcNote) extra.calcNote = String(r.calcNote).slice(0, 160);
-  return { res: 'ok', rec: L.toRecord(r, note, extra) };
+  return { res: 'ok', rec: L.toRecord(r, note, extra), tp };
 }
 const lineCount = rec => (rec.rev ? 1 : 0) + (rec.ebitda ? 1 : 0) + (rec.eps ? 1 : 0);
 
@@ -255,7 +264,7 @@ function writePrices(rows) {
 
   const budgetS = +(process.env.EST_BUDGET || (mode === '--backfill' ? 0 : 1200));
   const deadline = budgetS ? Date.now() + budgetS * 1000 : Infinity;
-  const workers = +(process.env.EST_WORKERS || 3);
+  const workers = +(process.env.EST_WORKERS || 2);   // leaves room in the subscription for the user's own sessions
   log(`${queue.length} pair(s) to read, ${workers} workers, budget ${budgetS || 'none'}.`);
   let cursor = 0, done = 0, failsInRow = 0, stop = false, fatal = false;
 
@@ -263,13 +272,16 @@ function writePrices(rows) {
     const { name, broker } = job, row = rows[name], list = pairs[name][broker], id = pairId(name, broker);
     const co = out.companies[name] = out.companies[name] || { brokers: {} };
     co.brokers = co.brokers || {};
+    co.tps = co.tps || {};
     for (;;) {
       if (stop || Date.now() >= deadline) return;
       const tried = state.tried[id] = state.tried[id] || [];
       const note = L.nextNote(list, tried, co.brokers[broker], MAX_TRIES);
       if (!note) return;
       const t0 = Date.now();
-      const m = await mineNote(name, row, broker, note, slot);
+      // The TP comes from the newest note that prints one, which may be newer than the newest forecast table.
+      const needTp = !co.tps[broker] || note.date > co.tps[broker].date;
+      const m = await mineNote(name, row, broker, note, slot, needTp);
       const secs = Math.round((Date.now() - t0) / 1000);
       if (m.res === 'fatal') { log('claude unavailable: ' + m.why); stop = true; fatal = true; return; }
       if (m.res === 'failed') {
@@ -280,8 +292,10 @@ function writePrices(rows) {
       }
       failsInRow = 0;
       tried.push(note.key);
+      if (m.tp && needTp) co.tps[broker] = m.tp;
+      const tpLog = m.tp ? ` [TP ${m.tp.tp} ${m.tp.rating || ''}${m.tp.check ? ' CHECK ' + m.tp.check : ''}]` : '';
       if (m.res === 'none') {
-        log(`${name} / ${broker} ${note.date}: no table (${m.why}) (${secs}s)`);
+        log(`${name} / ${broker} ${note.date}: no table (${m.why})${tpLog} (${secs}s)`);
         audit({ type: 'none', name, broker, key: note.key, why: m.why });
         writeOut(out, rows, pairs, state);
         continue;                                          // try this broker's next-newest note
@@ -289,7 +303,7 @@ function writePrices(rows) {
       const had = co.brokers[broker];
       if (!had || lineCount(m.rec) >= lineCount(had)) co.brokers[broker] = m.rec;
       done++;
-      log(`${name} / ${broker} ${note.date}: ok p${m.rec.page}${m.rec.model !== MODEL ? ' [' + m.rec.model + ']' : ''}${m.rec.check ? ' CHECK ' + m.rec.check : ''} (${secs}s)`);
+      log(`${name} / ${broker} ${note.date}: ok p${m.rec.page}${tpLog}${m.rec.model !== MODEL ? ' [' + m.rec.model + ']' : ''}${m.rec.check ? ' CHECK ' + m.rec.check : ''} (${secs}s)`);
       if (m.rec.check) audit({ type: 'check', name, broker, key: note.key, check: m.rec.check });
       writeOut(out, rows, pairs, state);
       return;

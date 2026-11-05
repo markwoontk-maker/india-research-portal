@@ -111,8 +111,8 @@ for (const c of E.companies) {
 const EXTRA = {
   'Cognizant': { px: 'CTSH', cur: 'US$' }, 'MakeMyTrip': { px: 'MMYT', cur: 'US$' }, 'ReNew': { px: 'RNW', cur: 'US$' },
   'Manipal Health': { px: 'MANIPALHOS.NS' }, 'Turtlemint Fintech Solutions': { px: 'TURTLEMINT.NS', cap: 'TURTLEMINT.BO' },
-  'Corona Remedies': { px: 'CORONA.NS', cap: 'CORONA.BO' }, 'Bagmane Prime Office REIT': { px: 'BAGMANE-RR.NS', cap: 'BAGMANE.BO' },
-  'Knowledge Realty Trust': { px: 'KRT-RR.NS', cap: 'KRT.BO' },
+  'Corona Remedies': { px: 'CORONA.NS', cap: 'CORONA.BO' }, 'Bagmane Prime Office REIT': { px: 'BAGMANE-RR.NS', cap: 'BAGMANE.BO', chart: 'BAGMANE.BO' },
+  'Knowledge Realty Trust': { px: 'KRT-RR.NS', cap: 'KRT.BO', chart: 'KRT.BO' },
 };
 const xq = await marketCaps([...new Set(Object.values(EXTRA).flatMap(x => [x.px, x.cap].filter(Boolean)))], '');
 const fxRate = S.desk && S.desk['INR=X'] && S.desk['INR=X'].p;
@@ -120,6 +120,7 @@ for (const c of E.companies) {
   const x = EXTRA[c.name]; if (!x) continue;
   const p = xq[x.px], m = (xq[x.cap || x.px] || {}).mcap;
   if (p && p.price) { c.price = p.price; c.priceCur = x.cur || 'INR'; }
+  c.yf = x.chart || x.px;   // Yahoo symbol for the Company tab's chart history (Yahoo has no history for the REITs' -RR lines)
   // marketCaps divides by 1e7 for rupee crore; a US$ cap needs the rate as well.
   if (m && (x.cur !== 'US$' || fxRate)) { c.mcap = x.cur === 'US$' ? Math.round(m * fxRate) : m; c.mcapAsOf = new Date().toISOString().slice(0, 10); }
 }
