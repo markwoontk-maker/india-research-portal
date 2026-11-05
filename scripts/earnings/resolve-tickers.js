@@ -103,8 +103,25 @@ for (const c of E.companies) {
 const need = E.companies.filter(c => c.sym && !(S.q[c.sym] && S.q[c.sym].mc)).map(c => c.sym);
 const caps = need.length ? await marketCaps([...new Set(need)]) : {};
 for (const c of E.companies) {
-  if (caps[c.sym]) { c.mcap = caps[c.sym].mcap; c.mcapAsOf = new Date().toISOString().slice(0, 10); hit++; }
+  if (caps[c.sym] && caps[c.sym].mcap) { c.mcap = caps[c.sym].mcap; c.mcapAsOf = new Date().toISOString().slice(0, 10); hit++; }
   if (caps[c.sym] && caps[c.sym].price) c.price = caps[c.sym].price;   // Company tab P/E for names outside the Nifty 500
+}
+// Companies with no normal NSE equity line. US-listed names use their US price (user rule). Yahoo's
+// NSE line for a recent listing or a REIT (-RR series) has no market cap, so `cap` names the BSE line.
+const EXTRA = {
+  'Cognizant': { px: 'CTSH', cur: 'US$' }, 'MakeMyTrip': { px: 'MMYT', cur: 'US$' }, 'ReNew': { px: 'RNW', cur: 'US$' },
+  'Manipal Health': { px: 'MANIPALHOS.NS' }, 'Turtlemint Fintech Solutions': { px: 'TURTLEMINT.NS', cap: 'TURTLEMINT.BO' },
+  'Corona Remedies': { px: 'CORONA.NS', cap: 'CORONA.BO' }, 'Bagmane Prime Office REIT': { px: 'BAGMANE-RR.NS', cap: 'BAGMANE.BO' },
+  'Knowledge Realty Trust': { px: 'KRT-RR.NS', cap: 'KRT.BO' },
+};
+const xq = await marketCaps([...new Set(Object.values(EXTRA).flatMap(x => [x.px, x.cap].filter(Boolean)))], '');
+const fxRate = S.desk && S.desk['INR=X'] && S.desk['INR=X'].p;
+for (const c of E.companies) {
+  const x = EXTRA[c.name]; if (!x) continue;
+  const p = xq[x.px], m = (xq[x.cap || x.px] || {}).mcap;
+  if (p && p.price) { c.price = p.price; c.priceCur = x.cur || 'INR'; }
+  // marketCaps divides by 1e7 for rupee crore; a US$ cap needs the rate as well.
+  if (m && (x.cur !== 'US$' || fxRate)) { c.mcap = x.cur === 'US$' ? Math.round(m * fxRate) : m; c.mcapAsOf = new Date().toISOString().slice(0, 10); }
 }
 fs.writeFileSync(OUT, JSON.stringify(E, null, 1));
 console.log(`market cap for ${hit}/${E.companies.length} rows (${Object.keys(caps).length} via Yahoo fallback); none: ${miss.filter(m => !Object.keys(caps).some(k => m.includes('[' + k + ']'))).join('; ')}`);
@@ -120,7 +137,7 @@ function getRaw(url, headers = {}) {
   });
 }
 // Full market cap (INR cr) and last price (INR), keyed by bare NSE symbol; {} on any failure.
-async function marketCaps(syms) {
+async function marketCaps(syms, suffix = '.NS') {
   const out = {};
   const c = await getRaw('https://fc.yahoo.com/');
   const cookie = ((c.headers && c.headers['set-cookie']) || []).map((x) => x.split(';')[0]).join('; ');
@@ -130,9 +147,9 @@ async function marketCaps(syms) {
   if (cr.status !== 200 || !crumb || crumb.length > 40 || /[<s]/.test(crumb)) return out;
   for (let i = 0; i < syms.length; i += 50) {
     const url = 'https://query1.finance.yahoo.com/v7/finance/quote?symbols=' +
-      encodeURIComponent(syms.slice(i, i + 50).map((x) => x + '.NS').join(',')) + '&fields=marketCap,regularMarketPrice&crumb=' + encodeURIComponent(crumb);
+      encodeURIComponent(syms.slice(i, i + 50).map((x) => x + suffix).join(',')) + '&fields=marketCap,regularMarketPrice&crumb=' + encodeURIComponent(crumb);
     const r = await getRaw(url, { Cookie: cookie });
-    try { for (const x of JSON.parse(r.body).quoteResponse.result) if (x.marketCap > 0) out[x.symbol.replace(/.NS$/, '')] = { mcap: Math.round(x.marketCap / 1e7), price: x.regularMarketPrice > 0 ? x.regularMarketPrice : null }; } catch (e) {}
+    try { for (const x of JSON.parse(r.body).quoteResponse.result) if (x.marketCap > 0 || x.regularMarketPrice > 0) out[suffix ? x.symbol.replace(/.NS$/, '') : x.symbol] = { mcap: x.marketCap > 0 ? Math.round(x.marketCap / 1e7) : null, price: x.regularMarketPrice > 0 ? x.regularMarketPrice : null }; } catch (e) {}
   }
   return out;
 }

@@ -1936,9 +1936,9 @@
           </div>
         </div>
         <div id="coGrid" class="co-grid"></div>
-        <p class="er-legend"><b>Click a company</b> to list each broker's FY27, FY28 and FY29 estimates and P/Es, with the note they came from. <b>Revenue</b>, <b>EBITDA</b> and <b>EPS</b> FY columns are the simple average of brokers' estimates; grey means only one broker so far. <b>P/E</b> = share price ÷ average EPS, recalculated once a day by the 09:30 refresh after the earnings miner, so it doesn't move intraday; NM = average EPS is zero or a loss. <b>FY growth</b> counts only brokers that print both years, so a broker dropping out in a later year can't create a false jump. NM = the base year is zero or a loss.
+        <p class="er-legend"><b>Click a company</b> to list each broker's FY27, FY28 and FY29 estimates and P/Es, with the note they came from. <b>Revenue</b>, <b>EBITDA</b> and <b>EPS</b> FY columns are the simple average of brokers' estimates; grey means only one broker so far. <b>P/E</b> = share price ÷ average EPS (US-listed names use their US price), recalculated once a day by the 09:30 refresh after the earnings miner, so it doesn't move intraday; NM = average EPS is zero or a loss. <b>FY growth</b> counts only brokers that print both years, so a broker dropping out in a later year can't create a false jump. NM = the base year is zero or a loss.
         Quarterly cells work as on the Earnings tab: <span class="sw" style="background:rgba(63,199,138,.45)"></span>beat consensus · <span class="sw" style="background:rgba(240,106,106,.45)"></span>missed consensus · uncoloured = in line (or no consensus in the notes) · <span style="color:var(--saffron)">◥</span> corner = explanation, hover or tap any cell to read it. Lenders show Total operating income / PPOP, life insurers APE / VNB, general insurers GWP (or NEP) / PBT. FY figures are in ₹ mn (or US$ mn where shown with $); EPS is in ₹ per share.
-        Estimates come only from broker notes in the PDF library, using each broker's latest note with a forecast table from the last six months. A figure far from the other brokers' is left out of the average and shown struck through in the broker list. A dotted underline or ⚠ marks a figure that failed an automatic size check and is still shown. Click a sector to move a company (saved in this browser, shared with the Earnings tab); click a column header to sort.</p>
+        Estimates come only from broker notes in the PDF library, using each broker's latest note with a forecast table from the last six months. Every broker counts in the average. A dotted underline or ⚠ marks a figure that failed an automatic size check and is still shown. Click a sector to move a company (saved in this browser, shared with the Earnings tab); click a column header to sort.</p>
       </div>
     </div>
 
@@ -6471,7 +6471,9 @@ async function coLoadEst(){
   // Prices are fixed once a day by the 09:30 refresh, so P/Es don't move intraday.
   try{ const r=await fetch('data/estimate_prices.json',{cache:'no-store'}); if(r.ok) EST_PX=await r.json(); }catch(e){}
 }
-const coPx=c=>(EST_PX&&EST_PX.px&&EST_PX.px[c.name])||null;
+// The day's price, converted at the day's rate when the EPS is in the other currency (US-listed names).
+function coPx(c,unit){ const p=EST_PX&&EST_PX.px&&EST_PX.px[c.name]; if(!p) return null; const cur=(EST_PX.cur&&EST_PX.cur[c.name])||'INR', u=unit||cur; if(u===cur) return p; return EST_PX.fx?(cur==='US$'?p*EST_PX.fx:p/EST_PX.fx):null; }
+const coCcy=u=>u==='US$'?'$':'₹';
 function coPe(px,eps){ if(!px||eps==null) return null; return eps>0?px/eps:'NM'; }
 const coPeTxt=v=>v==null?'·':v==='NM'?'NM':v>=1000?'>999x':v.toFixed(1)+'x';
 async function coOnShow(){
@@ -6496,14 +6498,14 @@ function coQuarters(){
 }
 function coCols(g,qs){ return g.kind==='ov'?qs:g.kind==='yoy'?qs.concat(CO_FYS):CO_FYS; }
 const coEst=c=>(EST&&EST.companies&&EST.companies[c.name])||null;
-const coNum=(v,unit)=>unit==='INR'?(+v).toFixed(1):(unit==='US$ mn'?'$':'')+erNum(v);
+const coNum=(v,unit)=>unit==='INR'?(+v).toFixed(1):unit==='US$'?'$'+(+v).toFixed(2):(unit==='US$ mn'?'$':'')+erNum(v);
 function coVal(c,k){
   const g=CO_GROUPS.find(x=>x.id===k.split(':')[0]);
   if(!g) return erVal(c,k);
   const col=k.split(':')[1], e=coEst(c);
   if(col.startsWith('FY')){
     if(!e) return null;
-    if(g.kind==='pe'){ const v=coPe(coPx(c),e.avg&&e.avg.eps&&e.avg.eps[col]); return typeof v==='number'?v:null; }
+    if(g.kind==='pe'){ const v=coPe(coPx(c,e.unit&&e.unit.eps),e.avg&&e.avg.eps&&e.avg.eps[col]); return typeof v==='number'?v:null; }
     if(g.kind==='yoy'){ const v=e.growth&&e.growth[g.m]&&e.growth[g.m][col]; return v==null?null:v; }
     const v=e.avg&&e.avg[g.m]&&e.avg[g.m][col];
     if(v==null) return null;
@@ -6547,12 +6549,12 @@ function coFyCell(c,g,fy,first){
   return `<div class="er-c abs${gs}${n===1?' co-one':''}${coHasCheck(e,m,fy)?' chk':''}" style="width:${w}px" data-tip="${i}">${coNum(v,unit)}</div>`;
 }
 function coPeCell(c,g,fy,first){
-  const e=coEst(c), w=g.w, gs=first?' co-gs':'', px=coPx(c), eps=e&&e.avg&&e.avg.eps?e.avg.eps[fy]:null, v=coPe(px,eps);
+  const e=coEst(c), w=g.w, gs=first?' co-gs':'', eu=e&&e.unit&&e.unit.eps, px=coPx(c,eu), eps=e&&e.avg&&e.avg.eps?e.avg.eps[fy]:null, v=coPe(px,eps);
   if(v==null) return `<div class="er-c na${gs}" style="width:${w}px">·</div>`;
   const lines=coBrokerNames(e).map(b=>{ if(coOut(e,'eps',b)) return ''; const r=e.brokers[b]; if(!r.eps||r.eps[fy]==null) return '';
     return `<div class="co-tl"><span>${erEsc(erHouse(b))}</span><span>${coPeTxt(coPe(px,r.eps[fy]))}</span></div>`; }).join('');
   const i=erTips.push({cls:'',h:`${erEsc(c.name)} · ${fy} P/E ${coPeTxt(v)}`,
-    t:(v==='NM'?`Average ${fy} EPS is zero or a loss, so P/E isn't meaningful.`:`Price ₹${px.toLocaleString('en-IN')} ÷ average ${fy} EPS ₹${(+eps).toFixed(1)}`)+lines,
+    t:(v==='NM'?`Average ${fy} EPS is zero or a loss, so P/E isn't meaningful.`:`Price ${coCcy(eu)}${px.toLocaleString('en-IN',{maximumFractionDigits:2})} ÷ average ${fy} EPS ${coCcy(eu)}${(+eps).toFixed(2)}`)+lines,
     s:`Price as of ${EST_PX&&EST_PX.asOf||'the last daily refresh'}, set once a day by the 09:30 refresh.`})-1;
   return `<div class="er-c abs${gs}${e.n.eps[fy]===1?' co-one':''}" style="width:${w}px" data-tip="${i}">${coPeTxt(v)}</div>`;
 }
@@ -6573,7 +6575,7 @@ function coNoteHref(r){
   return 'http://127.0.0.1:8788/'+norm.slice(root.length).split('/').map(encodeURIComponent).join('/')+(r.page?'#page='+r.page:'');
 }
 function coDetail(c){
-  const e=coEst(c), names=coBrokerNames(e), lr=coLab(c,'rev'), le=coLab(c,'ebitda'), px=coPx(c);
+  const e=coEst(c), names=coBrokerNames(e), lr=coLab(c,'rev'), le=coLab(c,'ebitda'), eu=e&&e.unit&&e.unit.eps, px=coPx(c,eu);
   const left=[];
   if(e&&e.pending&&e.pending.length) left.push(`Still to read: ${e.pending.map(erHouse).map(erEsc).join(', ')}.`);
   if(e&&e.noTable&&e.noTable.length) left.push(`No forecast table in recent notes: ${e.noTable.map(erHouse).map(erEsc).join(', ')}.`);
@@ -6585,17 +6587,17 @@ function coDetail(c){
     const info=[r.revLabel&&r.ebitdaLabel?`${r.revLabel} / ${r.ebitdaLabel}`:(r.revLabel||r.ebitdaLabel||''),r.basis||'',r.calcNote||''].filter(Boolean).join(' · ');
     return `<tr><td class="l">${erEsc(erHouse(b))}${r.check?` <span class="co-chk" title="${erEsc('Auto-check: '+r.check)}">⚠</span>`:''}</td>
       <td class="l">${href?`<a href="${href}" target="_blank" rel="noopener" title="${erEsc(info)}">${d}</a>`:`<span title="${erEsc(info)}">${d}</span>`}</td>
-      ${fyCells((m,fy,gs)=>cell(b,m,fy,gs),'rev')}${fyCells((m,fy,gs)=>cell(b,m,fy,gs),'ebitda')}${fyCells((m,fy,gs)=>cell(b,m,fy,gs),'eps')}${CO_FYS.map((fy,i)=>{ const v=coPe(px,r.eps&&r.eps[fy]), out=coOut(e,'eps',b); return `<td class="${i?'':'gs '}${v==null?'na':out?'x':''}">${coPeTxt(v)}</td>`; }).join('')}</tr>`; }).join('');
+      ${fyCells((m,fy,gs)=>cell(b,m,fy,gs),'rev')}${fyCells((m,fy,gs)=>cell(b,m,fy,gs),'ebitda')}${fyCells((m,fy,gs)=>cell(b,m,fy,gs),'eps')}${CO_FYS.map((fy,i)=>{ const v=coPe(coPx(c,r.epsUnit),r.eps&&r.eps[fy]), out=coOut(e,'eps',b); return `<td class="${i?'':'gs '}${v==null?'na':out?'x':''}">${coPeTxt(v)}</td>`; }).join('')}</tr>`; }).join('');
   const avg=(m,fy,gs)=>{ const v=e.avg&&e.avg[m]?e.avg[m][fy]:null; return `<td class="${gs?'gs':''}">${v==null?'·':coNum(v,e.unit[m])}</td>`; };
   const gr=(m,fy,gs)=>{ const v=e.growth&&e.growth[m]?e.growth[m][fy]:null, nm=e.nm&&e.nm[m]&&e.nm[m][fy]; return `<td class="${gs?'gs':''}">${nm?'NM':v==null?'·':erPct(v)}</td>`; };
   const peRow=CO_FYS.map((fy,i)=>`<td class="${i?'':'gs'}">${coPeTxt(coPe(px,e.avg&&e.avg.eps?e.avg.eps[fy]:null))}</td>`).join('');
   const fye=[...new Set(names.map(b=>e.brokers[b].fye).filter(x=>x&&x!=='Mar'))];
   const notes=[...left];
   if(fye.length) notes.push(`${fye.join('/')} year-end: FY27 means the year ending in 2027.`);
-  if(px) notes.push(`P/E uses a price of ₹${px.toLocaleString('en-IN')} (${EST_PX&&EST_PX.asOf||'last daily refresh'}).`);
-  if(names.some(b=>coOut(e,'rev',b)||coOut(e,'ebitda',b)||coOut(e,'eps',b))) notes.push('Struck-through figures are left out of the average (hover for why).');
+  if(px) notes.push(`P/E uses a price of ${coCcy(eu)}${px.toLocaleString('en-IN',{maximumFractionDigits:2})} (${EST_PX&&EST_PX.asOf||'last daily refresh'}).`);
+  if(names.some(b=>coOut(e,'rev',b)||coOut(e,'ebitda',b)||coOut(e,'eps',b))) notes.push('Struck-through figures are in another currency, so left out of the average.');
   return `<div class="co-detail"><div class="co-d-h"><b>${erEsc(c.name)}</b> · broker estimates</div><div class="co-d-wrap"><table class="co-d-t"><thead>
-    <tr><th rowspan="2" class="l">Broker</th><th rowspan="2" class="l">Note</th><th colspan="3" class="gs">${erEsc(lr)} (${erEsc(e.unit.rev||'')})</th><th colspan="3" class="gs">${erEsc(le)} (${erEsc(e.unit.ebitda||'')})</th><th colspan="3" class="gs">EPS (INR)</th><th colspan="3" class="gs">P/E</th></tr>
+    <tr><th rowspan="2" class="l">Broker</th><th rowspan="2" class="l">Note</th><th colspan="3" class="gs">${erEsc(lr)} (${erEsc(e.unit.rev||'')})</th><th colspan="3" class="gs">${erEsc(le)} (${erEsc(e.unit.ebitda||'')})</th><th colspan="3" class="gs">EPS (${erEsc(e.unit.eps||'INR')})</th><th colspan="3" class="gs">P/E</th></tr>
     <tr>${[0,1,2,3].map(()=>CO_FYS.map((f,i)=>`<th class="${i?'':'gs'}">${f}</th>`).join('')).join('')}</tr></thead>
     <tbody>${body}</tbody><tfoot><tr><td class="l" colspan="2">Average</td>${fyCells(avg,'rev')}${fyCells(avg,'ebitda')}${fyCells(avg,'eps')}${peRow}</tr>
     <tr class="g"><td class="l" colspan="2">YoY growth</td>${fyCells(gr,'rev')}${fyCells(gr,'ebitda')}${fyCells(gr,'eps')}<td class="gs" colspan="3"></td></tr></tfoot></table></div>${notes.length?`<p class="co-d-note">${notes.join(' ')}</p>`:''}</div>`;

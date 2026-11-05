@@ -55,13 +55,14 @@ in the work item (`metrics.rev` and `metrics.ebitda`), and **EPS**.
     December year-end, the year ending December 2027 goes under `FY27`.
 11. **Actuals count.** FY26 is usually an actual (`2026A`, `FY26`). Take it from the same table.
 
-12. **EPS.** Rupees per share, as printed.
+12. **EPS.** Per share, as printed.
     - Prefer adjusted, normalised, recurring or core diluted EPS when printed (the one the broker
       values the stock on), otherwise reported diluted EPS. Write the printed label in `epsLabel`.
     - EPS may be in a different table or on a different page from revenue. Take it from any of the
       pages supplied, so long as it is this broker's current estimate.
     - Don't take `Consensus EPS`, `Prior EPS` or `Old` columns, EPS growth rows, or EVPS/DPS/BVPS.
     - If EPS is only printed per ADR or in US$, set `epsUnit` to `US$`. Otherwise `epsUnit` is `INR`.
+    - If the work item says `priceCurrency: US$`, the stock trades in the US: take the US$ EPS when printed.
     - If no EPS is printed, leave `eps` null. This does not make the result `found: false`.
 
 ## If there is no usable forecast table

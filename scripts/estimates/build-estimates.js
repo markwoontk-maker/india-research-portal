@@ -58,7 +58,7 @@ function loadRows() {
   const S = readJSON(path.join(ROOT, 'data', 'sectors.json'), {}) || {};
   const q = S.q || {};
   const rows = {};
-  for (const c of E.companies) rows[c.name] = Object.assign(c, { _mc: (c.sym && q[c.sym] && q[c.sym].mc) || c.mcap || 0, _px: (c.sym && q[c.sym] && q[c.sym].p) || c.price || 0 });
+  for (const c of E.companies) rows[c.name] = Object.assign(c, { _mc: (c.sym && q[c.sym] && q[c.sym].mc) || c.mcap || 0, _px: (c.sym && q[c.sym] && q[c.sym].p) || c.price || 0, _pxCur: (c.sym && q[c.sym] && q[c.sym].p) ? 'INR' : (c.priceCur || 'INR') });
   return rows;
 }
 function notesByPair(rows) {
@@ -181,7 +181,7 @@ async function mineNote(name, row, broker, note, slot) {
   let imgs = [];
   try { imgs = renderPages(note, dir, pages); } catch (e) { return { res: 'failed', why: 'render: ' + String(e.message).slice(0, 100) }; }
   if (!imgs.length) return { res: 'failed', why: 'render gave no images' };
-  const item = { company: name, sector: row.sector || null, broker, date: note.date, metrics: row.metrics || null, unit: row.unit || null, revUnit: row.revUnit || null, basis: row.basis || null };
+  const item = { company: name, sector: row.sector || null, broker, date: note.date, metrics: row.metrics || null, unit: row.unit || null, revUnit: row.revUnit || null, basis: row.basis || null, priceCurrency: row._pxCur === 'US$' ? 'US$' : undefined };
   const pf = path.join(dir, 'prompt.txt');
   fs.writeFileSync(pf, [fs.readFileSync(PROMPT, 'utf8'), '\n=== WORK ITEM ===\n', JSON.stringify(item, null, 1), '\n\n=== PAGES ===\n',
     ...imgs.map(p => `PDF page ${path.basename(p).replace(/\D/g, '')}: ${p}\n`)].join(''));
@@ -210,10 +210,11 @@ const lineCount = rec => (rec.rev ? 1 : 0) + (rec.ebitda ? 1 : 0) + (rec.eps ? 1
 // Needs no lock: it only reads the estimates file and replaces its own file in one step.
 function writePrices(rows) {
   const S = readJSON(path.join(ROOT, 'data', 'sectors.json'), {}) || {};
-  const px = {};
-  for (const name of Object.keys(rows).sort()) if (rows[name]._px > 0) px[name] = rows[name]._px;
+  const px = {}, cur = {};
+  for (const name of Object.keys(rows).sort()) if (rows[name]._px > 0) { px[name] = rows[name]._px; if (rows[name]._pxCur !== 'INR') cur[name] = rows[name]._pxCur; }
+  const fx = (S.desk && S.desk['INR=X'] && S.desk['INR=X'].p) || null;
   const tmp = PRICES + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify({ asOf: S.asOf || new Date().toISOString().slice(0, 10), updated: new Date().toISOString(), px }));
+  fs.writeFileSync(tmp, JSON.stringify({ asOf: S.asOf || new Date().toISOString().slice(0, 10), updated: new Date().toISOString(), fx, cur, px }));
   fs.renameSync(tmp, PRICES);
   log(`prices for ${Object.keys(px).length}/${Object.keys(rows).length} companies, as of ${S.asOf || 'today'}.`);
 }

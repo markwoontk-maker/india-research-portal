@@ -108,9 +108,9 @@ function checkResult(r, row) {
   }
   // EPS against the share price: a P/E outside this range usually means a wrong row or a per-ADR figure.
   const eps = epsSeries(r), px = row && row._px;
-  if (eps && px > 0 && eps.FY27 > 0) {
-    const pe = px / eps.FY27;
-    if (pe < 2 || pe > 1500) issues.push(`FY27 EPS ${eps.FY27} gives a P/E of ${pe.toFixed(1)} at price ${px}`);
+  if (eps && px > 0 && eps.unit === ((row && row._pxCur) || 'INR') && eps.values.FY27 > 0) {
+    const pe = px / eps.values.FY27;
+    if (pe < 2 || pe > 1500) issues.push(`FY27 EPS ${eps.values.FY27} gives a P/E of ${pe.toFixed(1)} at price ${px}`);
   }
   return issues;
 }
@@ -119,13 +119,15 @@ function checkResult(r, row) {
 function hasNumbers(r) {
   return !!(scaleSeries(r.rev, r.revUnit) || scaleSeries(r.ebitda, r.ebitdaUnit));
 }
-// EPS stays per share and in rupees; a US$ per-ADR series can't be set against the NSE price.
+// EPS stays per share, in rupees or US$ (US-listed names). The page converts the price at the day's rate if they differ.
 function epsSeries(r) {
   if (!r.eps || typeof r.eps !== 'object') return null;
-  if (r.epsUnit && !/inr|rs|₹/i.test(String(r.epsUnit))) return null;
+  const u = String(r.epsUnit || 'INR');
+  const unit = /us\$|usd|\$/i.test(u) ? 'US$' : /inr|rs|₹/i.test(u) ? 'INR' : null;
+  if (!unit) return null;
   const out = {};
   for (const fy of FYS) if (typeof r.eps[fy] === 'number' && isFinite(r.eps[fy])) out[fy] = +r.eps[fy].toFixed(2);
-  return Object.keys(out).length ? out : null;
+  return Object.keys(out).length ? { values: out, unit } : null;
 }
 // A mined result -> the record stored per broker (all values in millions of their currency).
 function toRecord(r, note, extra = {}) {
@@ -137,7 +139,7 @@ function toRecord(r, note, extra = {}) {
   if (eb) { rec.ebitda = eb.values; rec.ebitdaUnit = eb.unit; }
   if (alt && (!rev || alt.unit !== rev.unit)) { rec.revAlt = alt.values; rec.revAltUnit = alt.unit; }
   const eps = epsSeries(r);
-  if (eps) { rec.eps = eps; rec.epsUnit = 'INR'; rec.epsLabel = short(r.epsLabel, 40); }
+  if (eps) { rec.eps = eps.values; rec.epsUnit = eps.unit; rec.epsLabel = short(r.epsLabel, 40); }
   return Object.assign(rec, extra);
 }
 
@@ -165,25 +167,6 @@ function seriesFor(b, m, unit) {
   if (m === 'rev' && b.revAltUnit === unit && b.revUnit !== unit) return b.revAlt;
   return b[m + 'Unit'] === unit ? b[m] : null;
 }
-// Flag brokers on a different basis: FY26 is an actual, so houses should nearly agree on
-// it (a gap means standalone vs consolidated, reported vs adjusted...); FY27 is a forecast
-// and gets more room. Needs 3+ brokers to tell which one is the odd one out.
-const FY26_TOL = { rev: 0.12, ebitda: 0.12, eps: 0.25 }, FY27_TOL = { rev: 0.35, ebitda: 0.6, eps: 0.5 };
-function outliers(list, m) {
-  const out = {};
-  const test = (fy, tol, label) => {
-    const have = list.filter(x => !out[x.broker] && x.s[fy] != null);
-    if (have.length < 3) return;
-    const med = median(have.map(x => x.s[fy]));
-    if (med <= 0) return;
-    for (const x of have) {
-      if (Math.abs(x.s[fy] / med - 1) > tol) out[x.broker] = `${label} ${fy} ${x.s[fy]} is ${Math.round((x.s[fy] / med - 1) * 100)}% from the median of ${have.length} brokers (${Math.round(med)}), left out of the average`;
-    }
-  };
-  test('FY26', FY26_TOL[m], 'Actual');
-  test('FY27', FY27_TOL[m], 'Estimate');
-  return out;
-}
 function aggregate(brokers, row) {
   const out = { unit: {}, avg: {}, n: {}, growth: {}, nm: {}, used: {}, excluded: {} };
   for (const m of ['rev', 'ebitda', 'eps']) {
@@ -196,9 +179,7 @@ function aggregate(brokers, row) {
       if (s) { list.push({ broker, s }); out.used[m][broker] = (m === 'rev' && b.revUnit !== unit) ? 'alt' : 'main'; }
       else if (b[m + 'Unit'] || (m === 'rev' && b.revAltUnit)) out.excluded[m][broker] = `Reported in ${b[m + 'Unit'] || b.revAltUnit}, not ${unit}, so left out of the average`;
     }
-    const bad = outliers(list, m);
-    Object.assign(out.excluded[m], bad);
-    const clean = list.filter(x => !bad[x.broker]);
+    const clean = list;   // user rule: every broker counts, however far from the others
     for (const fy of FYS) {
       const vals = clean.map(x => x.s[fy]).filter(v => v != null);
       if (vals.length) { const mean = vals.reduce((a, b) => a + b, 0) / vals.length; out.avg[m][fy] = m === 'eps' ? +mean.toFixed(2) : round(mean); out.n[m][fy] = vals.length; }

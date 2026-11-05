@@ -78,18 +78,11 @@ t('aggregate marks a loss-making base as not meaningful', () => {
   assert.strictEqual(a.avg.ebitda.FY27, 10);
 });
 
-t('aggregate leaves out a broker on a different basis, only with 3+ brokers', () => {
-  const b = {
-    A: { rev: { FY26: 100, FY27: 110 }, revUnit: 'INR mn' }, B: { rev: { FY26: 101, FY27: 112 }, revUnit: 'INR mn' },
-    C: { rev: { FY26: 60, FY27: 66 }, revUnit: 'INR mn' },
-  };
-  const a = L.aggregate(b, {});
-  assert.ok(a.excluded.rev.C);
-  assert.strictEqual(a.avg.rev.FY27, 111);
-  assert.strictEqual(a.n.rev.FY27, 2);
-  const two = L.aggregate({ A: b.A, C: b.C }, {});
-  assert.deepStrictEqual(two.excluded.rev, {});
-  assert.strictEqual(two.avg.rev.FY27, 88);
+t('aggregate keeps every broker in the average, however far from the others', () => {
+  const a = L.aggregate({ A: { rev: { FY26: 100, FY27: 110 }, revUnit: 'INR mn' }, B: { rev: { FY26: 101, FY27: 112 }, revUnit: 'INR mn' }, C: { rev: { FY26: 60, FY27: 66 }, revUnit: 'INR mn' } }, {});
+  assert.deepStrictEqual(a.excluded.rev, {});
+  assert.strictEqual(a.n.rev.FY27, 3);
+  assert.strictEqual(a.avg.rev.FY27, 96);
 });
 
 t('IT revenue: the currency most brokers can supply wins and alt series are used', () => {
@@ -130,7 +123,7 @@ t('EPS: rupees per share only, averaged and grown like the other lines', () => {
   const rec = L.toRecord({ rev: { FY27: 100 }, revUnit: 'INR mn', eps: { FY26: 40.123, FY27: 50 }, epsUnit: 'INR', epsLabel: 'Adj. EPS' }, { date: '261010', key: 'k' });
   assert.deepStrictEqual(rec.eps, { FY26: 40.12, FY27: 50 });
   assert.strictEqual(rec.epsUnit, 'INR');
-  assert.strictEqual(L.toRecord({ rev: { FY27: 100 }, revUnit: 'INR mn', eps: { FY27: 1.2 }, epsUnit: 'US$' }, { date: '261010', key: 'k' }).eps, undefined);
+  assert.strictEqual(L.toRecord({ rev: { FY27: 100 }, revUnit: 'INR mn', eps: { FY27: 1.2 }, epsUnit: 'US$' }, { date: '261010', key: 'k' }).epsUnit, 'US$');
   const a = L.aggregate({ A: { eps: { FY26: 40, FY27: 50 }, epsUnit: 'INR' }, B: { eps: { FY26: 40, FY27: 60 }, epsUnit: 'INR' } }, {});
   assert.strictEqual(a.avg.eps.FY27, 55);
   assert.strictEqual(a.growth.eps.FY27, 0.375);
@@ -138,11 +131,11 @@ t('EPS: rupees per share only, averaged and grown like the other lines', () => {
   assert.strictEqual(L.aggregate({ A: { eps: { FY27: 466.875 }, epsUnit: 'INR' } }, {}).avg.eps.FY27, 466.88, 'EPS keeps its decimals');
 });
 
-t('EPS: left out when far from the others, and checked against the price', () => {
+t('EPS: kept when far from the others, and checked against the price', () => {
   const b = { A: { eps: { FY26: 40, FY27: 50 }, epsUnit: 'INR' }, B: { eps: { FY26: 41, FY27: 52 }, epsUnit: 'INR' }, C: { eps: { FY26: 400, FY27: 500 }, epsUnit: 'INR' } };
   const a = L.aggregate(b, {});
-  assert.ok(a.excluded.eps.C);
-  assert.strictEqual(a.avg.eps.FY27, 51);
+  assert.deepStrictEqual(a.excluded.eps, {});
+  assert.strictEqual(a.avg.eps.FY27, 200.67);
   assert.ok(L.checkResult({ rev: { FY27: 10 }, revUnit: 'INR mn', eps: { FY27: 900 }, epsUnit: 'INR' }, { _px: 1000 }).some(i => /P\/E/.test(i)));
   assert.deepStrictEqual(L.checkResult({ rev: { FY27: 10 }, revUnit: 'INR mn', eps: { FY27: 50 }, epsUnit: 'INR' }, { _px: 1000 }), []);
   assert.strictEqual(L.hasNumbers({ eps: { FY27: 50 }, epsUnit: 'INR' }), false, 'EPS alone does not end the search');
