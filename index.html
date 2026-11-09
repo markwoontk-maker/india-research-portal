@@ -877,6 +877,17 @@
   .co-r{width:max-content;min-width:100%}
   .co-r:hover,.co-r:hover .co-pin,.co-r.open,.co-r.open .co-pin{background:var(--panel-2)}
   .co-gs{border-left:1px solid var(--line)!important}
+  .co-ol{display:flex;height:20px;background:var(--panel);border-bottom:1px solid var(--line-soft)}
+  .co-ol>div{flex:none;height:20px}
+  .co-ol-lv{gap:4px;align-items:center;padding-left:8px;font-size:0}
+  .co-ol-lv button,.co-olb{width:15px;height:15px;padding:0;border:1px solid var(--text-mute);border-radius:2px;background:var(--panel);color:var(--text-dim);
+    font:700 11px/1 'Roboto Mono';cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:none}
+  .co-ol-lv button:hover,.co-olb:hover{color:var(--saffron);border-color:var(--saffron)}
+  .co-olseg{position:relative;display:flex;align-items:center;justify-content:flex-end;padding-right:2px}
+  .co-olseg.folded{justify-content:center;padding:0}
+  .co-olline{position:absolute;left:6px;right:17px;top:9px;border-top:1.5px solid var(--text-mute)}
+  .co-olline::before{content:'';position:absolute;left:0;top:-1px;height:6px;border-left:1.5px solid var(--text-mute)}
+  .co-stub{flex:none;background:repeating-linear-gradient(90deg,transparent 0 8px,rgba(255,255,255,.035) 8px 10px)}
   .co-fy1{border-left:1px dashed var(--line)}
   body.co-wide .layout{max-width:none}
   .co-grid .er-c{padding:0 3px;font-size:11px}
@@ -1946,7 +1957,7 @@
         <div id="coGrid" class="co-grid"></div>
         <p class="er-legend"><b>Click a company</b> to open its share price chart, broker target prices and each broker's FY27, FY28 and FY29 estimates, lined up under the columns above. In the broker rows, <span style="color:#86e6b7">green</span> is above the average and <span style="color:#ffa3a3">red</span> below it, except P/E, where a higher P/E is red. <b>Upside/Downside</b> = average broker target price against the latest share price, which updates during market hours. <b>Revenue</b>, <b>EBITDA</b> and <b>EPS</b> FY columns are the simple average of brokers' estimates; grey means only one broker so far. <b>P/E</b> = share price ÷ average EPS (US-listed names use their US price), recalculated once a day by the 09:30 refresh after the earnings miner, so it doesn't move intraday; NM = average EPS is zero or a loss. <b>FY growth</b> counts only brokers that print both years, so a broker dropping out in a later year can't create a false jump. NM = the base year is zero or a loss.
         Quarterly cells work as on the Earnings tab: <span class="sw" style="background:rgba(63,199,138,.45)"></span>beat consensus · <span class="sw" style="background:rgba(240,106,106,.45)"></span>missed consensus · uncoloured = in line (or no consensus in the notes) · <span style="color:var(--saffron)">◥</span> corner = explanation, hover or tap any cell to read it. Lenders show Total operating income / PPOP, life insurers APE / VNB, general insurers GWP (or NEP) / PBT. FY figures are in ₹ mn (or US$ mn where shown with $); EPS is in ₹ per share.
-        Estimates come only from broker notes in the PDF library, using each broker's latest note with a forecast table from the last six months. Every broker counts in the average, however far from the others. A dotted underline or ⚠ marks a figure that failed an automatic size check and is still shown. Click a sector to move a company (saved in this browser, shared with the Earnings tab); click a column header to sort.</p>
+        Estimates come only from broker notes in the PDF library, using each broker's latest note with a forecast table from the last six months. Every broker counts in the average, however far from the others. A dotted underline or ⚠ marks a figure that failed an automatic size check and is still shown. Click a sector to move a company (saved in this browser, shared with the Earnings tab); click a column header to sort. The <b>− / +</b> bar above the headers folds and opens column groups, as in Excel: the quarterly columns of Overall Earnings, Revenue YoY and EBITDA YoY, and the Revenue, EBITDA and EPS columns; <b>1</b> folds them all and <b>2</b> opens them all (remembered in this browser).</p>
       </div>
     </div>
 
@@ -6472,9 +6483,9 @@ const CO_GROUPS=[
 ];
 const CO_PIN_W=187, CO_UP_W=70, CO_INFO_W=74+70+CO_UP_W+88;   // sector, market cap, upside/downside, outlook
 let EST=null, EST_AT=0, EST_PX=null, coReady=false, coTips=[], coScrollTo=false;
-let coState={sort:null, dir:-1, q:'', sec:'', open:null, range:'1Y'};
-try{ const v=JSON.parse(localStorage.getItem(CO_LS)||'null'); if(v&&typeof v==='object') Object.assign(coState,{sort:v.sort||null,dir:v.dir||-1,range:v.range||'1Y'}); }catch(e){}
-function coSave(){ try{ localStorage.setItem(CO_LS,JSON.stringify({sort:coState.sort,dir:coState.dir,range:coState.range})); }catch(e){} }
+let coState={sort:null, dir:-1, q:'', sec:'', open:null, range:'1Y', hide:{}};
+try{ const v=JSON.parse(localStorage.getItem(CO_LS)||'null'); if(v&&typeof v==='object') Object.assign(coState,{sort:v.sort||null,dir:v.dir||-1,range:v.range||'1Y',hide:v.hide&&typeof v.hide==='object'?v.hide:{}}); }catch(e){}
+function coSave(){ try{ localStorage.setItem(CO_LS,JSON.stringify({sort:coState.sort,dir:coState.dir,range:coState.range,hide:coState.hide})); }catch(e){} }
 async function coLoadEst(){
   try{ const r=await fetch('data/estimates.json',{cache:'no-store'}); if(r.ok){ EST=await r.json(); EST_AT=Date.now(); } }catch(e){}
   // Prices are fixed once a day by the 09:30 refresh, so P/Es don't move intraday.
@@ -6506,6 +6517,32 @@ function coQuarters(){
   return [...set].sort((a,b)=>erQIdx(a)-erQIdx(b)).slice(-3);
 }
 function coCols(g,qs){ return g.kind==='ov'?qs:g.kind==='yoy'?qs.concat(CO_FYS):CO_FYS; }
+// Excel-style column groups (the +/- bar above the headers). Each segment folds into an
+// 18px strip: the quarterly columns of Overall Earnings, Revenue YoY and EBITDA YoY (their
+// FY growth columns stay), and the FY27-29 columns of Revenue, EBITDA and EPS. P/E never folds.
+const CO_STUB_W=18;
+const CO_SEG={ov:'ov', ry:'ryq', ey:'eyq', ra:'ra', ea:'ea', ep:'ep'};
+const CO_SEG_TITLE={ov:'Overall Earnings quarters', ryq:'Revenue YoY quarters', eyq:'EBITDA YoY quarters', ra:'Revenue FY27-FY29', ea:'EBITDA FY27-FY29', ep:'EPS FY27-FY29'};
+const coFolded=g=>!!(CO_SEG[g.id]&&coState.hide[CO_SEG[g.id]]);
+// The columns a group's bar folds: the quarters of a YoY group, every column of the others.
+const coSegCols=(g,qs)=>{ const all=coCols(g,qs); return g.kind==='yoy'?all.filter(c=>!c.startsWith('FY')):all; };
+// What a group shows now: '~' is the folded strip.
+function coVisCols(g,qs){ const all=coCols(g,qs); return coFolded(g)?['~'].concat(g.kind==='yoy'?all.filter(c=>c.startsWith('FY')):[]):all; }
+const coGW=(g,qs)=>coVisCols(g,qs).reduce((t,c)=>t+(c==='~'?CO_STUB_W:g.w),0);
+const coStubCell=i=>`<div class="er-c co-stub${i===0?' co-gs':''}" style="width:${CO_STUB_W}px"></div>`;
+const coStubHead=(g,i)=>`<div class="co-stub${i===0?' co-gs':''}" style="width:${CO_STUB_W}px" title="${erEsc(CO_SEG_TITLE[CO_SEG[g.id]])} folded: click + above to show"></div>`;
+function coOutline(qs){
+  const segs=CO_GROUPS.map(g=>{
+    const s=CO_SEG[g.id], total=coGW(g,qs);
+    if(!s) return `<div style="width:${total}px"></div>`;
+    const w=coFolded(g)?CO_STUB_W:coSegCols(g,qs).length*g.w, rest=total-w;
+    const bar=coFolded(g)
+      ?`<div class="co-olseg folded" style="width:${w}px"><button type="button" class="co-olb" data-ol-seg="${s}" title="Show ${CO_SEG_TITLE[s]}">+</button></div>`
+      :`<div class="co-olseg" style="width:${w}px"><span class="co-olline"></span><button type="button" class="co-olb" data-ol-seg="${s}" title="Hide ${CO_SEG_TITLE[s]}">−</button></div>`;
+    return bar+(rest?`<div style="width:${rest}px"></div>`:'');
+  }).join('');
+  return `<div class="co-ol"><div class="co-pin co-ol-lv" style="width:${CO_PIN_W}px"><button type="button" data-ol="1" title="Fold every column group">1</button><button type="button" data-ol="2" title="Open every column group">2</button></div><div class="d" style="width:${CO_INFO_W}px"></div>${segs}</div>`;
+}
 const coEst=c=>(EST&&EST.companies&&EST.companies[c.name])||null;
 const coNum=(v,unit)=>unit==='INR'?(+v).toFixed(1):unit==='US$'?'$'+(+v).toFixed(2):(unit==='US$ mn'?'$':'')+erNum(v);
 function coVal(c,k){
@@ -6621,8 +6658,11 @@ function coHiLo(v,a){ if(v==null||a==null) return ''; const tol=Math.abs(a)*0.00
 const CO_LBL=`justify-content:flex-start;font-family:'Manrope'`;
 function coDetail(c){
   const e=coEst(c)||{}, qs=coQuarters(), eb=e.brokers||{}, tps=e.tps||{};
-  const G=id=>CO_GROUPS.find(x=>x.id===id), gw=id=>coCols(G(id),qs).length*G(id).w;
-  const chartW=CO_PIN_W+CO_INFO_W+gw('ov');
+  const G=id=>CO_GROUPS.find(x=>x.id===id), gw=id=>coGW(G(id),qs);
+  // Left of the Revenue column: chart, TP table, broker names. They line up under Overall Earnings,
+  // Revenue YoY and EBITDA YoY, and keep readable minimum widths when those columns are folded.
+  const leftW=CO_PIN_W+CO_INFO_W+gw('ov')+gw('ry')+gw('ey'), tpW=Math.max(gw('ry'),300), nmW=Math.max(gw('ey'),260), chartW=leftW-tpW-nmW;
+  const fit=(arr,W)=>{ const s=arr.reduce((a,b)=>a+b,0), o=arr.map(w=>Math.floor(w*W/s)); o[o.length-1]+=W-o.reduce((a,b)=>a+b,0); return o; };
   const dateOf=b=>(eb[b]&&eb[b].date)||(tps[b]&&tps[b].date)||'';
   const names=[...new Set([...Object.keys(eb),...Object.keys(tps)])].sort((a,b)=>dateOf(b).localeCompare(dateOf(a))||a.localeCompare(b));
   const eu=e.unit&&e.unit.eps, px=coPx(c,eu);
@@ -6637,9 +6677,9 @@ function coDetail(c){
     // User rule: P/E runs the other way round, so a P/E above the average is red and below it green.
     const flip={' beat':' miss',' miss':' beat'}, hl=out?' co-x':(typeof v==='number'&&typeof a==='number')?(flip[coHiLo(v,a)]||''):'';
     return `<div class="er-c abs${gs}${hl}" style="width:${g.w}px">${coPeTxt(v)}</div>`; };
-  const nums=b=>['ra','ea','ep'].map(id=>CO_FYS.map((fy,i)=>num(b,id,fy,i)).join('')).join('')+CO_FYS.map((fy,i)=>pe(b,fy,i)).join('');
+  const nums=b=>['ra','ea','ep'].map(id=>coVisCols(G(id),qs).map((fy,i)=>fy==='~'?coStubCell(i):num(b,id,fy,i)).join('')).join('')+CO_FYS.map((fy,i)=>pe(b,fy,i)).join('');
   // Target price table, under the Revenue YoY column.
-  const TP=[92,104,70,70];
+  const TP=fit([92,104,70,70],tpW);
   const tpCells=b=>{ const t=tps[b];
     if(!t) return `<div class="er-c co-gs" style="width:${TP[0]}px;${CO_LBL}">${erEsc(erHouse(b))}</div><div class="er-c na" style="width:${TP[1]}px">·</div><div class="er-c na" style="width:${TP[2]}px">·</div><div class="er-c na" style="width:${TP[3]}px">·</div>`;
     const rb=coRate(t.rating), now=t.tp!=null?coNow(c,t.cur):null, u=now?t.tp/now-1:null, href=coNoteHref(t);
@@ -6649,7 +6689,7 @@ function coDetail(c){
       <div class="er-c${t.check?' chk':''}" style="width:${TP[2]}px;justify-content:flex-end" title="${erEsc(info)}">${href&&t.tp!=null?`<a class="co-lnk" href="${href}" target="_blank" rel="noopener">${val}</a>`:val}</div>
       <div class="er-c ${u==null?'na':u>=0?'ol-positive':'ol-negative'}" style="width:${TP[3]}px;justify-content:flex-end">${u==null?'·':erPct(u)}</div>`; };
   // Broker, date and note, under the EBITDA YoY column.
-  const NM=[92,84,160];
+  const NM=fit([92,84,160],nmW);
   const nmCells=b=>{ const r=eb[b]||tps[b], href=coNoteHref(r), title=coNoteTitle(r.key), info=[title,r.basis||'',r.calcNote||'',r.check?'Auto-check: '+r.check:''].filter(Boolean).join(' · ');
     return `<div class="er-c co-gs" style="width:${NM[0]}px;${CO_LBL};color:var(--text)">${erEsc(erHouse(b))}${r.check?` <span class="co-chk" title="${erEsc('Auto-check: '+r.check)}">⚠</span>`:''}</div>
       <div class="er-c" style="width:${NM[1]}px;justify-content:flex-start">${erDate(r.date)}</div>
@@ -6658,15 +6698,15 @@ function coDetail(c){
   const tc=e.tpCur||'INR', up=coUp(c), cnt={buy:0,hold:0,sell:0};
   Object.values(tps).forEach(t=>{ const k=coRate(t.rating); if(k) cnt[k]++; });
   const cntTxt=cnt.buy+cnt.hold+cnt.sell?`<span class="ol-positive">${cnt.buy} Buy</span> <span class="ol-neutral">${cnt.hold} Hold</span> <span class="ol-negative">${cnt.sell} Sell</span>`:'·';
-  const total=['ra','ea','ep'].map(id=>{ const g=G(id), a=e.avg&&e.avg[g.m]; return CO_FYS.map((fy,i)=>`<div class="er-c abs${i===0?' co-gs':''}" style="width:${g.w}px">${a&&a[fy]!=null?coNum(a[fy],e.unit[g.m]):'·'}</div>`).join(''); }).join('');
+  const total=['ra','ea','ep'].map(id=>{ const g=G(id), a=e.avg&&e.avg[g.m]; return coVisCols(g,qs).map((fy,i)=>fy==='~'?coStubCell(i):`<div class="er-c abs${i===0?' co-gs':''}" style="width:${g.w}px">${a&&a[fy]!=null?coNum(a[fy],e.unit[g.m]):'·'}</div>`).join(''); }).join('');
   const peAvg=CO_FYS.map((fy,i)=>`<div class="er-c abs${i===0?' co-gs':''}" style="width:${G('pe').w}px">${coPeTxt(coPe(px,e.avg&&e.avg.eps?e.avg.eps[fy]:null))}</div>`).join('');
-  const growth=['ra','ea','ep'].map(id=>{ const g=G(id), m=g.m; return CO_FYS.map((fy,i)=>{ const v=e.growth&&e.growth[m]?e.growth[m][fy]:null, nm=e.nm&&e.nm[m]&&e.nm[m][fy]; return `<div class="er-c abs${i===0?' co-gs':''}" style="width:${g.w}px">${nm?'NM':v==null?'·':erPct(v)}</div>`; }).join(''); }).join('');
+  const growth=['ra','ea','ep'].map(id=>{ const g=G(id), m=g.m; return coVisCols(g,qs).map((fy,i)=>{ if(fy==='~') return coStubCell(i); const v=e.growth&&e.growth[m]?e.growth[m][fy]:null, nm=e.nm&&e.nm[m]&&e.nm[m][fy]; return `<div class="er-c abs${i===0?' co-gs':''}" style="width:${g.w}px">${nm?'NM':v==null?'·':erPct(v)}</div>`; }).join(''); }).join('');
   const head=`<div class="co-d-r h"><div class="er-c co-gs" style="width:${TP[0]}px;${CO_LBL}">Broker</div><div class="er-c" style="width:${TP[1]}px">Rating</div><div class="er-c" style="width:${TP[2]}px;justify-content:flex-end">TP (${erEsc(tc)})</div><div class="er-c" style="width:${TP[3]}px;justify-content:flex-end">Up/Down</div>
       <div class="er-c co-gs" style="width:${NM[0]}px;${CO_LBL}">Broker</div><div class="er-c" style="width:${NM[1]}px;justify-content:flex-start">Date</div><div class="er-c" style="width:${NM[2]}px;justify-content:flex-start">Note</div>
-      <div class="er-c co-gs" style="width:${gw('ra')}px">${erEsc(coLab(c,'rev'))} (${erEsc((e.unit&&e.unit.rev)||'INR mn')})</div><div class="er-c co-gs" style="width:${gw('ea')}px">${erEsc(coLab(c,'ebitda'))} (${erEsc((e.unit&&e.unit.ebitda)||'INR mn')})</div><div class="er-c co-gs" style="width:${gw('ep')}px">EPS (${erEsc(eu||'INR')})</div><div class="er-c co-gs" style="width:${gw('pe')}px">P/E</div></div>`;
+      ${[['ra',`${coLab(c,'rev')} (${(e.unit&&e.unit.rev)||'INR mn'})`],['ea',`${coLab(c,'ebitda')} (${(e.unit&&e.unit.ebitda)||'INR mn'})`],['ep',`EPS (${eu||'INR'})`],['pe','P/E']].map(([id,t])=>`<div class="er-c co-gs" style="width:${gw(id)}px" title="${erEsc(t)}">${coFolded(G(id))?'':erEsc(t)}</div>`).join('')}</div>`;
   const foot=names.length?`<div class="co-d-r f"><div class="er-c co-gs" style="width:${TP[0]}px;${CO_LBL}">Average</div><div class="er-c co-cnt" style="width:${TP[1]}px">${cntTxt}</div><div class="er-c" style="width:${TP[2]}px;justify-content:flex-end">${e.tpAvg!=null?(tc==='US$'?'$':'')+coTpFmt(e.tpAvg):'·'}</div><div class="er-c ${up==null?'na':up>=0?'ol-positive':'ol-negative'}" style="width:${TP[3]}px;justify-content:flex-end">${up==null?'·':erPct(up)}</div>
-      <div class="er-c co-gs" style="width:${gw('ey')}px;${CO_LBL}">Average</div>${total}${peAvg}</div>
-    <div class="co-d-r g"><div class="er-c co-gs" style="width:${gw('ry')}px"></div><div class="er-c co-gs" style="width:${gw('ey')}px;${CO_LBL}">YoY growth</div>${growth}<div class="er-c co-gs" style="width:${gw('pe')}px"></div></div>`:'';
+      <div class="er-c co-gs" style="width:${nmW}px;${CO_LBL}">Average</div>${total}${peAvg}</div>
+    <div class="co-d-r g"><div class="er-c co-gs" style="width:${tpW}px"></div><div class="er-c co-gs" style="width:${nmW}px;${CO_LBL}">YoY growth</div>${growth}<div class="er-c co-gs" style="width:${gw('pe')}px"></div></div>`:'';
   const notes=[];
   if(e.pending&&e.pending.length) notes.push(`Still to read: ${e.pending.map(erHouse).map(erEsc).join(', ')}.`);
   if(e.noTable&&e.noTable.length) notes.push(`No forecast table in recent notes: ${e.noTable.map(erHouse).map(erEsc).join(', ')}.`);
@@ -6740,21 +6780,22 @@ function coRender(){
     const est=!p?'broker estimates loading':p.pairsLeft?`broker estimates for ${p.withEstimates} so far, ${p.pairsLeft} company-broker notes still to read`:`broker estimates for ${p.withEstimates}`;
     sub.textContent=`${rows.length} of ${ER.companies.length} companies · ${est}${EST&&EST.updated?' · updated '+EST.updated:''}`;
   }
-  const gw=g=>coCols(g,qs).length*g.w;
-  const head=`<div class="co-head"><div class="co-h1"><div class="co-pin er-gt" style="width:${CO_PIN_W}px">Company</div><div class="er-gt d" style="width:${CO_INFO_W}px"></div>${
-      CO_GROUPS.map(g=>`<div class="er-gt co-gs" style="width:${gw(g)}px"><span class="tt">${g.title}</span></div>`).join('')}</div>
+  const gw=g=>coGW(g,qs);
+  const head=`<div class="co-head">${coOutline(qs)}<div class="co-h1"><div class="co-pin er-gt" style="width:${CO_PIN_W}px">Company</div><div class="er-gt d" style="width:${CO_INFO_W}px"></div>${
+      CO_GROUPS.map(g=>`<div class="er-gt co-gs" style="width:${gw(g)}px" title="${g.title}"><span class="tt">${g.title}</span></div>`).join('')}</div>
     <div class="co-h2 er-sh"><div class="co-pin"><button type="button" data-sort="star" style="width:26px;padding:0" title="Companies you like · click to sort">★${coArrow('star')}</button>
       <button type="button" data-sort="name" style="width:160px;justify-content:flex-start;padding:0 10px">Name ${coArrow('name')}</button></div>
       <button type="button" class="d" data-sort="sector" style="width:74px;justify-content:flex-start;padding:0 10px">Sector ${coArrow('sector')}</button>
       <button type="button" class="d" data-sort="mcap" style="width:70px;justify-content:flex-end;padding:0 10px" title="Full market cap, US$ bn">Mkt cap ${coArrow('mcap')}</button>
       <button type="button" class="d co-uph" data-sort="upside" style="width:${CO_UP_W}px" title="Average broker target price against the latest share price"><span>Upside/<br>Downside ${coArrow('upside')}</span></button>
       <button type="button" class="d" data-sort="outlook" style="width:88px" title="Latest outlook from the newest results notes">Outlook ${coArrow('outlook')}</button>${
-      CO_GROUPS.map(g=>coCols(g,qs).map((col,i)=>{ const k=g.id+':'+col, cls=i===0?' class="co-gs"':(g.kind==='yoy'&&col===CO_FYS[0])?' class="co-fy1"':'';
+      CO_GROUPS.map(g=>coVisCols(g,qs).map((col,i)=>{ if(col==='~') return coStubHead(g,i); const k=g.id+':'+col, cls=i===0?' class="co-gs"':(g.kind==='yoy'&&col===CO_FYS[0])?' class="co-fy1"':'';
         return `<button type="button"${cls} data-sort="${k}" style="width:${g.w}px" title="Sort by ${g.title} ${col}">${col} ${coArrow(k)}</button>`; }).join('')).join('')}</div></div>`;
   const rowHtml=(c)=>{ const open=coState.open===c.name, on=stars.has(c.name);
     const m=c.metrics||{}; const mt=(m.rev&&m.rev!=='Revenue')||(m.ebitda&&m.ebitda!=='EBITDA')||c.revUnit?`${c.revUnit==='US$ mn'?'US$ ':''}${m.rev||'Revenue'} / ${m.ebitda||'EBITDA'}`:'';
     const ol=c.outlook?` · <span class="ol-${c.outlook.call}">${ER_OUTLOOK[c.outlook.call]}</span>`:'', edited=c.sector!==c._origSector;
-    const cells=CO_GROUPS.map(g=>coCols(g,qs).map((col,i)=>{
+    const cells=CO_GROUPS.map(g=>coVisCols(g,qs).map((col,i)=>{
+      if(col==='~') return coStubCell(i);
       if(g.kind==='fy') return coFyCell(c,g,col,i===0);
       if(g.kind==='pe') return coPeCell(c,g,col,i===0);
       if(col.startsWith('FY')) return coGrowthCell(c,g,col,col===CO_FYS[0]);
@@ -6792,7 +6833,10 @@ function erOpenCompany(name){
     if(e.target.closest('select')||e.target.closest('a')) return;
     const pr=e.target.closest('[data-px-range]');
     if(pr){ coState.range=pr.dataset.pxRange; coSave(); grid.querySelectorAll('[data-px-range]').forEach(b=>b.classList.toggle('on',b===pr)); coDrawChart(); return; }
-    const st=e.target.closest('[data-star]');
+    const ol=e.target.closest('[data-ol-seg],[data-ol]');
+    if(ol){ if(ol.dataset.olSeg){ const s=ol.dataset.olSeg; if(coState.hide[s]) delete coState.hide[s]; else coState.hide[s]=true; }
+      else coState.hide=ol.dataset.ol==='1'?Object.fromEntries(Object.values(CO_SEG).map(s=>[s,true])):{};
+      coSave(); erPopHide(); coRender(); return; }    const st=e.target.closest('[data-star]');
     if(st){ erToggleStar(st.dataset.star); coRender(); if(erEarningsShown) erRender(); return; }
     const co=e.target.closest('[data-co]');
     if(co){ coState.open=coState.open===co.dataset.co?null:co.dataset.co; erPopHide(); coRender(); return; }
