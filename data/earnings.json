@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-09",
+ "updated": "2026-11-10",
  "source": "Analyst workbook (Sheet2) + broker results notes in the PDF library",
  "quarters": [
   "3Q25",
@@ -3237,7 +3237,7 @@
    "q": {},
    "added": "folder",
    "mcap": 1193,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 141.29
   },
   {
@@ -5451,7 +5451,7 @@
    },
    "added": "folder",
    "mcap": 101342,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "neutral",
     "note": "Management expects 50-60% of the incremental costs from senior hiring and technology to recur. Kotak cuts FY27-29 estimates by ~3%, expecting ~5% core earnings growth this year before a 16-17% CAGR in the next two. Jefferies cuts FY27-29 operating profit by 1% and trims its PT to Rs650 from Rs660. Both say fund performance and equity AUM growth are improving. (Kotak, Jeff)",
@@ -5769,18 +5769,77 @@
      },
      "rev": 23737,
      "ebitda": 3087
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261108|Aditya Birla Fashion and Retail|lossesincreasingdebtpilingup",
+       "broker": "Kotak",
+       "date": "261108",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Kotak|261108|Aditya Birla Fashion and Retail|lossesincreasingdebtpilingup",
+       "broker": "Kotak",
+       "date": "261108",
+       "role": "own"
+      }
+     },
+     "rev": 20300,
+     "ebitda": 133,
+     "revYoY": 0.0244,
+     "ebitdaYoY": -0.8067,
+     "revVs": "miss",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Revenue grew only 2.4% YoY to Rs20.3bn, 4.6% below consensus (7.2% below Kotak's estimate). A delayed festive season and a subdued wedding calendar hurt; Pantaloons was flat YoY with LTL of -7% and 12 net store closures. (CLSA, Kotak)",
+     "ebitdaNote": "EBITDA fell 81% YoY to Rs133mn (0.7% margin, down 282bps YoY), with margin 373bps below consensus. Negative operating leverage from the festive shift and the scale-up of newer businesses (OWND, TMRW) drove the miss; other expenses rose to 35.6% of revenue (+491bps YoY). (CLSA, Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "261108",
+      "key": "Kotak|261108|Aditya Birla Fashion and Retail|lossesincreasingdebtpilingup",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|261107|Aditya Birla Fashion and Retail|growthtakesafestivepause",
+       "Kotak|261108|Aditya Birla Fashion and Retail|lossesincreasingdebtpilingup",
+       "MorganStanley|261105|Aditya Birla Fashion and Retail|2qf27weakset",
+       "MorganStanley|261106|Aditya Birla Fashion and Retail|2qf27offthecallconfidentinstrong2hincreaseincashburnforf27"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261108|Aditya Birla Fashion and Retail|lossesincreasingdebtpilingup",
+       "broker": "Kotak",
+       "date": "261108",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|261108|Aditya Birla Fashion and Retail|lossesincreasingdebtpilingup",
+       "broker": "Kotak",
+       "date": "261108",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 19817,
+     "ebitda": 688
     }
    },
    "added": "pdf",
    "outlook": {
-    "call": "neutral",
-    "note": "Management kept FY27 guidance of high-single-digit Pantaloons LTL growth and 20%+ growth in both Ethnic and TMRW. It expects losses to narrow in FY27 and FY28 and the group to turn profitable by FY29. Inflation of about 4% is expected to pressure gross margin from 2Q, with only half of it passed on. CLSA made small estimate tweaks (FY27 revenue -1.0%) and kept its Rs60 TP and Hold rating. MS kept its Rs127 TP and Overweight rating (CLSA, MS).",
-    "broker": "CLSA",
-    "date": "260811",
-    "quarter": "1Q27"
+    "call": "negative",
+    "note": "Management says festive demand is robust (Onam and Pujo near double-digit SSG), expects margins to improve from next year and needs Rs1-1.5bn of cash next year for the standalone entity. Brokers still cut estimates: CLSA cut FY27-29 EBITDA by 6-7% and its TP from Rs50 to Rs42 (Hold); Kotak trimmed FY27-29 revenue 2-7%, sees net debt rising from Rs12.1bn and downgraded to SELL with FV Rs30. (Kotak, CLSA)",
+    "broker": "Kotak",
+    "date": "261108",
+    "quarter": "2Q27"
    },
    "mcap": 4857,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 39.92
   },
   {
@@ -5943,7 +6002,7 @@
     "quarter": "2Q27"
    },
    "mcap": 9220,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 75.91
   },
   {
@@ -6094,18 +6153,77 @@
      },
      "rev": 5886,
      "ebitda": 1103
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261106|Campus Activewear|toplinebeatmarginmiss",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "CLSA|261106|Campus Activewear|toplinebeatmarginmiss",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "own"
+      }
+     },
+     "rev": 4521,
+     "ebitda": 568,
+     "revYoY": 0.1694,
+     "ebitdaYoY": 0.1383,
+     "revVs": "beat",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Revenue grew 16.9% YoY, 3.9% above Bloomberg consensus. Volume rose 10.2% and ASP 6.1% (about 4% pricing and 2% mix), with trade distribution up 14% and the women's and kids' portfolio growing faster (CLSA, Kotak).",
+     "ebitdaNote": "Core EBITDA rose 13.9% YoY, 1.7% above consensus, but the margin fell 34bps YoY to 12.6%, 27bps below consensus. Gross margin fell 246bps YoY to 50.9%, 182bps below consensus, because price hikes lagged input-cost inflation (CLSA).",
+     "revCons": 4353,
+     "ebitdaCons": 559,
+     "src": {
+      "kind": "pdf",
+      "broker": "CLSA",
+      "date": "261106",
+      "key": "CLSA|261106|Campus Activewear|toplinebeatmarginmiss",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|261106|Campus Activewear|toplinebeatmarginmiss",
+       "Kotak|261105|Campus Activewear|goodtoplinemomentum"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261106|Campus Activewear|toplinebeatmarginmiss",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "CLSA|261106|Campus Activewear|toplinebeatmarginmiss",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 3866,
+     "ebitda": 499
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "neutral",
-    "note": "Management kept its FY27 guidance of mid-double-digit revenue growth (high single-digit volume growth, 6-7% ASP growth) and a 17-19% EBITDA margin. It plans 80-120 new stores and launched the ELAN neo-casual brand. Record distributor orders support the festive season, and ASP and margins are expected to improve from 2Q as the one-offs fade. CLSA cut FY27-29CL estimates by 4-5% and its target price from Rs247 to Rs237 (Hold). Kotak trimmed revenue 1-2%, roughly held EBITDA, and raised its fair value to Rs315 (Buy). (CLSA, Kotak)",
+    "note": "Management kept mid-teens FY27 revenue growth guidance but cut the FY27 EBITDA margin guidance to 17% from 17-19%. It expects margins to recover in 2HFY27 on price hikes, mix and operating leverage, and says no further price hikes are planned. CLSA raised FY27-29 revenue estimates 2-3%, cut margin assumptions, lowered the target price to Rs217 from Rs237 and kept Hold. Kotak raised revenue estimates 2-3%, trimmed EBITDA margin 20-30bps, and raised fair value to Rs300 with Buy (CLSA, Kotak).",
     "broker": "CLSA",
-    "date": "260807",
-    "quarter": "1Q27"
+    "date": "261106",
+    "quarter": "2Q27"
    },
    "mcap": 6056,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 198.13
   },
   {
@@ -6366,7 +6484,7 @@
     "quarter": "2Q27"
    },
    "mcap": 3301,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 541.95
   },
   {
@@ -6470,7 +6588,7 @@
    },
    "sym": "MANYAVAR",
    "mcap": 11597,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "neutral",
     "note": "Management sees low- to mid-teens FY27 revenue growth, led by high-single-digit SSSG, with strength from Nov-27 to Mar-28 on favourable wedding dates but a subdued Sep-Oct-27 (postponed Navratri). Higher store openings are expected in late 2Q/3Q, with net positive additions for the year. MS's FY27 consensus revenue is Rs15,489mn, and Kotak cut its FV to Rs455 from Rs535 while keeping estimates broadly unchanged. Delivery in 2H is seen as the key. (MS, Kotak)",
@@ -6787,18 +6905,75 @@
      },
      "rev": 11471,
      "ebitda": 1333
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261105|ASK Automotive|continuestoshine",
+       "broker": "CLSA",
+       "date": "261105",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "CLSA|261105|ASK Automotive|continuestoshine",
+       "broker": "CLSA",
+       "date": "261105",
+       "role": "own"
+      }
+     },
+     "rev": 15552,
+     "ebitda": 1786,
+     "revYoY": 0.4759,
+     "ebitdaYoY": 0.3027,
+     "revVs": null,
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Total operating income rose 48% YoY and 15% QoQ to Rs15.6bn. Reported revenue was inflated by the 23% YoY jump in aluminium prices, which is passed through. Adjusted for that and the phased-out wheel-assembly business, revenue grew 29.5% (CLSA).",
+     "ebitdaNote": "Ebitda grew 30% YoY to Rs1.79bn, 4% above CLSA's estimate. Margin was 11.5%, down 153bps YoY because the pass-through of commodity prices diluted it. CLSA puts normalised margin at c.13.5%, with the aluminium light-weighting and braking segments driving growth (CLSA).",
+     "vsBasis": "broker estimate (CLSA)",
+     "src": {
+      "kind": "pdf",
+      "broker": "CLSA",
+      "date": "261105",
+      "key": "CLSA|261105|ASK Automotive|continuestoshine",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|261105|ASK Automotive|continuestoshine"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261105|ASK Automotive|continuestoshine",
+       "broker": "CLSA",
+       "date": "261105",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "CLSA|261105|ASK Automotive|continuestoshine",
+       "broker": "CLSA",
+       "date": "261105",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 10537,
+     "ebitda": 1371
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "positive",
-    "note": "Management expects normalised margins of 13.5-14.0% (ex commodity inflation) and is confident of high-teens revenue growth. Supplies of HPDC alloy wheels to a Japanese OEM have started, adding c.Rs2.5bn of aluminium casting revenue by FY28. CLSA raised FY27-28CL EPS by 6-7% and its TP from Rs630 to Rs710, and maintains O-PF. (CLSA)",
+    "note": "Management is confident of high-teens revenue growth in FY27. Alloy wheel supplies to a Japanese OEM have started, worth about Rs2.4bn p.a. CLSA expects normalised Ebitda margin to settle at 13.5-14.0%, raised FY27-28CL EPS by 4-8% and lifted its TP from Rs710 to Rs800 (CLSA).",
     "broker": "CLSA",
-    "date": "260806",
-    "quarter": "1Q27"
+    "date": "261105",
+    "quarter": "2Q27"
    },
    "mcap": 12094,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 613.45
   },
   {
@@ -7053,15 +7228,78 @@
      },
      "rev": 45300,
      "ebitda": 7800
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261105|Bharat Forge|inlinequarter",
+       "broker": "Kotak",
+       "date": "261105",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Kotak|261105|Bharat Forge|inlinequarter",
+       "broker": "Kotak",
+       "date": "261105",
+       "role": "own"
+      }
+     },
+     "rev": 48700,
+     "ebitda": 7677,
+     "revYoY": 0.2079,
+     "ebitdaYoY": 0.0579,
+     "revVs": "beat",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Consolidated revenue of Rs48.7bn (+21% YoY, +5% QoQ) was 3.2% above Kotak's estimate and 5% above JPMorgan's, led by domestic MHCV (+44% YoY) and PV exports. No consensus figure was printed, so the call is against broker estimates. (Kotak, JP)",
+     "ebitdaNote": "Consolidated EBITDA of Rs7.7bn (+5.8% YoY) was 1.7% above Kotak and 3% below JPMorgan, and broadly in line with Bloomberg consensus. Margin fell to 15.8% from 18.0% a year ago on weaker global subsidiaries, with KSSL margin at 10.7% (17.2% in 1Q) and US aluminium losses. Standalone EBITDA of Rs6.5bn was in line with estimates. (Kotak, JP)",
+     "vsBasis": "EBITDA: consensus (JP says broadly in line with Bloomberg); revenue: broker estimate (Kota",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "261105",
+      "key": "Kotak|261105|Bharat Forge|inlinequarter",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|261106|Bharat Forge|taleoftwocities",
+       "GoldmanSachs|261105|Bharat Forge|2qinlineinvestingforthefuturemarginexpectedtoimprovein2h",
+       "JPMorgan|261105|Bharat Forge|firsttakeslight2qfy27missdrivenbyweakermarginsinglobalsubsidiariesanddefencefullyearguidancemaintained",
+       "Jefferies|261106|Bharat Forge|standalonestrongsubsidiariesdrag",
+       "Kotak|261105|Bharat Forge|inlinequarter",
+       "MorganStanley|261105|Bharat Forge|atadweakerthanexpectedf27revenueguidancemaintainedremainow",
+       "Nomura|261105|Bharat Forge|defenseorderexecutionkeymonitorable"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261105|Bharat Forge|inlinequarter",
+       "broker": "Kotak",
+       "date": "261105",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|261105|Bharat Forge|inlinequarter",
+       "broker": "Kotak",
+       "date": "261105",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 40319,
+     "ebitda": 7257
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "neutral",
-    "note": "Management maintained FY27 revenue growth guidance of 20-25% (2H-heavy) and said Q2 should be better than Q1. The manpower situation is almost normalised, KSSL defence margins improved to 17.2% against a 22-23% medium-term target, and a capex raise of up to Rs25bn is planned. Estimates move little: JPM changes are within +/-1-2% and GS FY27-29E EPS changes range from -14% to +5%. Both houses stay Neutral, with JPM's price target at Rs1,870 and GS's at Rs2,120 (JP, GS).",
-    "broker": "JPMorgan",
-    "date": "260811",
-    "quarter": "1Q27"
+    "note": "Management kept FY27 India business revenue growth guidance at 20-25% and said ATAGS revenue recognition starts from 1QFY28 after a small delay. Kotak cut FY27 consolidated EBITDA by 7% and GS cut FY27-29 EPS by 4-6%, with GS expecting 200-250bp of India margin gain going forward and JPMorgan expecting minor downward revisions to FY27 consensus. The overseas business remains weak and is under strategic review. (Kotak, GS, JP)",
+    "broker": "Kotak",
+    "date": "261105",
+    "quarter": "2Q27"
    }
   },
   {
@@ -7154,18 +7392,76 @@
      },
      "rev": 1450,
      "ebitda": 648
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "GoldmanSachs|261104|C.E. Info Systems|2qmissiotmarginsurpriseoffsetbyenterprisebizlumpiness",
+       "broker": "GoldmanSachs",
+       "date": "261104",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "GoldmanSachs|261104|C.E. Info Systems|2qmissiotmarginsurpriseoffsetbyenterprisebizlumpiness",
+       "broker": "GoldmanSachs",
+       "date": "261104",
+       "role": "own"
+      }
+     },
+     "rev": 1317,
+     "ebitda": 450,
+     "revYoY": 0.1573,
+     "ebitdaYoY": 0.6014,
+     "revVs": "miss",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Sales of Rs1,317mn (+16% YoY, -6% QoQ) were 5% below Bloomberg consensus. Automotive and Enterprise grew +52% and +44% YoY, but Govt. fell 38% on a one-off in the base quarter, and the Enterprise business was lumpy QoQ (GS).",
+     "ebitdaNote": "EBITDA of Rs450mn (+60% YoY, -20% QoQ) was 8% below consensus. Margin of 34.1% was 99bps below the 35.1% consensus and down 602bps QoQ, on the revenue softness and a faster-growing but lower-margin IoT mix. Management reiterated its guidance of more than 35% EBITDA margin in FY27E (GS).",
+     "revCons": 1391,
+     "ebitdaCons": 489,
+     "src": {
+      "kind": "pdf",
+      "broker": "GoldmanSachs",
+      "date": "261104",
+      "key": "GoldmanSachs|261104|C.E. Info Systems|2qmissiotmarginsurpriseoffsetbyenterprisebizlumpiness",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "GoldmanSachs|261104|C.E. Info Systems|2qmissiotmarginsurpriseoffsetbyenterprisebizlumpiness"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "GoldmanSachs|261104|C.E. Info Systems|2qmissiotmarginsurpriseoffsetbyenterprisebizlumpiness",
+       "broker": "GoldmanSachs",
+       "date": "261104",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "GoldmanSachs|261104|C.E. Info Systems|2qmissiotmarginsurpriseoffsetbyenterprisebizlumpiness",
+       "broker": "GoldmanSachs",
+       "date": "261104",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 1138,
+     "ebitda": 281
     }
    },
    "added": "pdf",
    "outlook": {
-    "call": "positive",
-    "note": "Management sees steady revenue burn from the Rs17.5bn order book versus an FY26 revenue run rate of Rs3.2bn, and expects an EBITDA margin above c35% in FY27E. Growth potential is seen across enterprise, automotive and public sector, including defense, oil and gas and IoT. GS raised FY27E-FY29E EPS by 5-6% on better Map-led margins and left its Rs1,500 target price unchanged. (GS)",
+    "call": "neutral",
+    "note": "Management reiterated its guidance of more than 35% EBITDA margin in FY27E and sees near-term growth across enterprise, automotive and govt. After the QoQ revenue softness, GS cut its FY27E-FY29E EPS by 6-12% and its 12-month target price to Rs1,290 from Rs1,500 (GS).",
     "broker": "GoldmanSachs",
-    "date": "260804",
-    "quarter": "1Q27"
+    "date": "261104",
+    "quarter": "2Q27"
    },
    "mcap": 4657,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 849.6
   },
   {
@@ -7523,7 +7819,7 @@
    },
    "added": "folder",
    "mcap": 33372,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "positive",
     "note": "Management raised its FY27 revenue growth guidance to 40-45% YoY (from 30%) and kept core EBITDA margin guidance at 15-16%. FY27 capex guidance rose to Rs7.5bn (from Rs5.1bn), with more plants due within 12 months. Jefferies raised FY27-29E EPS by 3-6% and Kotak by 1-6%, and both expect margins to recover as copper pass-throughs come through and ESOP costs normalise. Kotak keeps SELL (FV Rs1,420) on valuation. (Kotak, Jeff)",
@@ -7628,14 +7924,14 @@
     "2Q27": {
      "abs": {
       "rev": {
-       "key": "Kotak|261104|Endurance Technologies|strongtoplineperformancemarginsdisappoint",
-       "broker": "Kotak",
+       "key": "GoldmanSachs|261104|Endurance Technologies|2qinlineexpectmarginpickupinfy28announcednonautoendmkttargets",
+       "broker": "GoldmanSachs",
        "date": "261104",
        "role": "own"
       },
       "ebitda": {
-       "key": "Kotak|261104|Endurance Technologies|strongtoplineperformancemarginsdisappoint",
-       "broker": "Kotak",
+       "key": "GoldmanSachs|261104|Endurance Technologies|2qinlineexpectmarginpickupinfy28announcednonautoendmkttargets",
+       "broker": "GoldmanSachs",
        "date": "261104",
        "role": "own"
       }
@@ -7644,25 +7940,27 @@
      "ebitda": 5590,
      "revYoY": 0.3359,
      "ebitdaYoY": 0.1724,
-     "revVs": "beat",
-     "ebitdaVs": "inline",
-     "overall": "inline",
-     "revNote": "Consolidated revenue rose 34% yoy and was 9.3% above Kotak's estimate. India 2W industry volumes grew 18% yoy with sharper outperformance in scooters and 4W, new orders ramped up, and higher commodity prices lifted realizations. European revenue grew 5.9% yoy in EUR terms (Kotak).",
-     "ebitdaNote": "Consolidated EBITDA of Rs5.59 bn was 0.3% above Kotak's estimate, up 17% yoy. Higher-than-expected revenue was offset by a lower gross margin (36.8% vs 39.1% estimated), as commodity headwinds hit and most OEMs did not compensate for higher conversion costs. EBITDA margin was 11.7% vs 13.3% a year ago (Kotak).",
-     "vsBasis": "broker estimate (Kotak)",
      "src": {
       "kind": "pdf",
-      "broker": "Kotak",
+      "broker": "GoldmanSachs",
       "date": "261104",
-      "key": "Kotak|261104|Endurance Technologies|strongtoplineperformancemarginsdisappoint",
+      "key": "GoldmanSachs|261104|Endurance Technologies|2qinlineexpectmarginpickupinfy28announcednonautoendmkttargets",
       "unit": "INR mn",
       "model": "sonnet",
       "considered": [
+       "GoldmanSachs|261104|Endurance Technologies|2qinlineexpectmarginpickupinfy28announcednonautoendmkttargets",
        "Kotak|261104|Endurance Technologies|strongtoplineperformancemarginsdisappoint"
       ],
-      "runs": 1,
-      "mined": "2026-11-05"
-     }
+      "runs": 2,
+      "mined": "2026-11-10"
+     },
+     "revVs": "beat",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Sales of Rs47.9 bn were 11.3% above Bloomberg consensus (Rs43.0 bn) and 7% above GS's estimate, up 33.6% yoy. Kotak attributes the growth to 18% yoy industry 2W volume growth with outperformance in scooters, new order ramp-ups and higher realizations from commodity prices (GS, Kotak).",
+     "ebitdaNote": "EBITDA of Rs5.59 bn was 0.6% below consensus (Rs5.63 bn), so in line, and up 17.2% yoy. The margin of 11.7% was 140 bps below consensus and down 163 bps yoy, as higher commodity and metal prices squeezed gross margins and offset the revenue upside (GS, Kotak).",
+     "revCons": 43001,
+     "ebitdaCons": 5626
     },
     "2Q26": {
      "abs": {
@@ -8215,7 +8513,7 @@
     "quarter": "1Q27"
    },
    "mcap": 8710,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 714.65
   },
   {
@@ -8746,7 +9044,7 @@
     "quarter": "1Q27"
    },
    "mcap": 6622,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 2052.8
   },
   {
@@ -8848,7 +9146,7 @@
     "quarter": "1Q27"
    },
    "mcap": 7156,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 1447.5
   },
   {
@@ -9611,7 +9909,7 @@
     "quarter": "2Q27"
    },
    "mcap": 12313,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 805.85
   },
   {
@@ -11111,7 +11409,7 @@
     "quarter": "2Q27"
    },
    "mcap": 6778,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 210.33
   },
   {
@@ -11270,7 +11568,7 @@
     "quarter": "2Q27"
    },
    "mcap": 6419,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 56.1
   },
   {
@@ -13431,7 +13729,7 @@
     "quarter": "2Q27"
    },
    "mcap": 11784,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 60.3
   },
   {
@@ -13693,7 +13991,7 @@
     "quarter": "1Q27"
    },
    "mcap": 2132,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 11.98
   },
   {
@@ -14849,7 +15147,7 @@
    },
    "sym": "VGUARD",
    "mcap": 13041,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "positive",
     "note": "Jefferies raises FY27e EPS by 7% (revenue +5%) after the beat and keeps FY28-29e EPS broadly unchanged. Management is taking price hikes to offset cost inflation, and in-house manufacturing is now about 65%, which can support margins. Summer categories (stabilizers, fans, coolers) can see healthy volume growth in FY27e on a low base. Jefferies flags inflationary pressure as a caution for B2C categories. Buy, PT Rs 365 (Jeff).",
@@ -15018,7 +15316,7 @@
     "quarter": "2Q27"
    },
    "mcap": 15468,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 236.2
   },
   {
@@ -15645,13 +15943,6 @@
      "ebitda": 5063,
      "revYoY": 0.0413,
      "ebitdaYoY": -0.2713,
-     "revVs": "miss",
-     "ebitdaVs": "miss",
-     "overall": "miss",
-     "revNote": "Revenue grew an anemic 4% y-y and came in 6% below consensus (8% below Nomura). Exports/domestic rose 2%/4% y-y, both short of expectations. These are standalone figures; the note's table shows no consolidated line. (Nomura)",
-     "ebitdaNote": "EBITDA fell 27% y-y and missed consensus by 25% (Nomura by 29%). Margin contracted 658bp y-y to 15.3%, as higher pig iron prices and an adverse product mix cut gross margin 441bp, while freight costs lifted other expenses 21% and employee costs rose 18%. (Nomura)",
-     "revCons": 35135,
-     "ebitdaCons": 6778,
      "src": {
       "kind": "pdf",
       "broker": "Nomura",
@@ -15660,11 +15951,19 @@
       "unit": "INR mn",
       "model": "sonnet",
       "considered": [
+       "JPMorgan|261105|Cummins India|firsttakeveryweak2qfy27marginscompressfurther",
        "Nomura|261105|Cummins India|weak2qfy27allroundmissonestimates"
       ],
-      "runs": 1,
-      "mined": "2026-11-05"
-     }
+      "runs": 2,
+      "mined": "2026-11-10"
+     },
+     "revVs": "miss",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Revenue grew only 4% y-y and was 6% below consensus (8% below Nomura). Exports grew 2% y-y and domestic 4% y-y (-9% q-q), both muted against estimates (Nomura; JP: domestic -6% q-q was the main negative, exports in line).",
+     "ebitdaNote": "EBITDA fell 27% y-y and missed consensus by 25% (29% below Nomura). Margin was 15.3%, down 658bp y-y and 265bp q-q, because gross margin fell 441bp y-y to 32.1% on pig iron prices and adverse product mix, and other expenses rose 21% y-y on freight costs (Nomura; JP).",
+     "revCons": 35135,
+     "ebitdaCons": 6778
     },
     "2Q26": {
      "abs": {
@@ -15931,7 +16230,7 @@
    "q": {},
    "added": "folder",
    "mcap": 63017,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 1274.4
   },
   {
@@ -16889,7 +17188,7 @@
     "quarter": "2Q27"
    },
    "mcap": 4610,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 250.8
   },
   {
@@ -17915,17 +18214,74 @@
      },
      "rev": 1924,
      "ebitda": 469
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261106|Blue Jet Healthcare|buildingthenextlegofgrowth",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Kotak|261106|Blue Jet Healthcare|buildingthenextlegofgrowth",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "own"
+      }
+     },
+     "rev": 3757,
+     "ebitda": 1188,
+     "revYoY": 1.2701,
+     "ebitdaYoY": 1.1639,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Sales of Rs3.76 bn (+127% yoy, +28% qoq) were 22% above Kotak's estimate of Rs3.07 bn. Contrast media rose 25% qoq, helped by about Rs300 mn of deferred shipments recognised in the quarter. PI&API sales rose 52% qoq. (Kotak)",
+     "ebitdaNote": "EBITDA of Rs1.19 bn was 21% above Kotak's estimate despite gross margin falling 470 bps qoq to 48.5% on an unfavourable mix and higher raw-material costs from the Middle East conflict. EBITDA margin was 31.6% (-190 bps qoq). The higher sales more than offset the lower gross margin. (Kotak)",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "261106",
+      "key": "Kotak|261106|Blue Jet Healthcare|buildingthenextlegofgrowth",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|261106|Blue Jet Healthcare|buildingthenextlegofgrowth"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261106|Blue Jet Healthcare|buildingthenextlegofgrowth",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|261106|Blue Jet Healthcare|buildingthenextlegofgrowth",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 1655,
+     "ebitda": 549
     }
    },
    "sym": "BLUEJET",
    "mcap": 9429,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
-    "call": "neutral",
-    "note": "JPMorgan makes no material estimate changes and keeps UW with a Mar-27 PT of Rs370. Management guided strong order book visibility for at least 3-4 quarters and raised capex estimates. JPMorgan still flags product concentration (two products ~80% of revenue), a flat contrast media run rate and competition for bempedoic acid from Merck's oral PCSK9 (JP).",
-    "broker": "JPMorgan",
-    "date": "260803",
-    "quarter": "1Q27"
+    "call": "positive",
+    "note": "Management expects volume-led growth in flagship iodinated ABA HCl to continue in 2HFY27, and gross margins to improve sequentially from 3QFY27 on price hikes despite continued raw-material inflation. Peptide fragments are expected to turn commercial in 4QFY27. Kotak raised FY2027-29E EPS by 3-4% on higher sales assumptions and expects the commercial benefits of Vizag to come only after FY2029E, with a muted FY2026. It retains ADD with fair value of Rs645. (Kotak)",
+    "broker": "Kotak",
+    "date": "261106",
+    "quarter": "2Q27"
    },
    "price": 543.55
   },
@@ -18018,15 +18374,74 @@
      },
      "rev": 6191,
      "ebitda": 987
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|261108|Cohance Lifesciences|cohancesepqhopingforbetter2h",
+       "broker": "Jefferies",
+       "date": "261108",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Jefferies|261108|Cohance Lifesciences|cohancesepqhopingforbetter2h",
+       "broker": "Jefferies",
+       "date": "261108",
+       "role": "own"
+      }
+     },
+     "rev": 4767,
+     "ebitda": 354,
+     "revYoY": -0.142,
+     "ebitdaYoY": -0.7074,
+     "revVs": "miss",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Revenue of Rs4.8bn fell 14% YoY and rose 13% QoQ, about 3% below consensus per JPMorgan. Jefferies calls it in line with its own estimate (-1%) and GS has it 3% below GSe. Pharma CDMO fell 27% YoY on destocking and Agri & Spec Chem fell 41%, while API+ grew 5% on price hikes. (JP, Jeff)",
+     "ebitdaNote": "EBITDA of Rs354mn fell 71% YoY (margin 7.4% vs 21.8%) and was 27% below Jefferies' estimate. JPMorgan's adjusted EBITDA of Rs423mn missed consensus by 4%. Gross margin fell about 380bps YoY to 70.8% on adverse mix, lower AgChem contribution and raw-material inflation. (Jeff, JP)",
+     "vsBasis": "consensus (JPMorgan)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Jefferies",
+      "date": "261108",
+      "key": "Jefferies|261108|Cohance Lifesciences|cohancesepqhopingforbetter2h",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "GoldmanSachs|261107|Cohance Lifesciences|2q27belowh2recoveryunderwayretainbuy",
+       "JPMorgan|261107|Cohance Lifesciences|improving2hsetupbutwewaitforexecutiontofollowthrough",
+       "Jefferies|261108|Cohance Lifesciences|cohancesepqhopingforbetter2h"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|261108|Cohance Lifesciences|cohancesepqhopingforbetter2h",
+       "broker": "Jefferies",
+       "date": "261108",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Jefferies|261108|Cohance Lifesciences|cohancesepqhopingforbetter2h",
+       "broker": "Jefferies",
+       "date": "261108",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 5556,
+     "ebitda": 1210
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "neutral",
-    "note": "Management says Q1 was the bottom and expects sequential improvement from Q2FY27 and YoY growth from 2HFY27, driven by scheduled CDMO deliveries, restocking orders and a low base. EBITDA margin is guided flat in FY27 and to improve in FY28. Brokers trimmed numbers: GS cut FY28-29 EPS 5-7% (Buy, TP Rs500), Jefferies cut FY27-29 EBITDA 3-10% (Underperform, TP Rs350) (GS, Jeff).",
-    "broker": "Goldman Sachs",
-    "date": "260805",
-    "quarter": "1Q27"
+    "note": "Management guides to YoY revenue and EBITDA growth in 2H on a low base, scheduled small-molecule deliveries, reload orders and Sapala growth. FY27 specialty chemicals revenue is now expected to decline YoY, and the Suryapet closure impact is unquantified. Jefferies cut FY27-29 EPS 4-12% and JPMorgan cut FY27/28/29 earnings by ~8%/24%/4% (PT Rs440, Neutral). Goldman cut EPS by up to 31% but kept Buy at a Rs525 PT. Jefferies stays Underperform at a PT of Rs375. (Jeff, JP, GS)",
+    "broker": "Jefferies",
+    "date": "261108",
+    "quarter": "2Q27"
    }
   },
   {
@@ -18404,15 +18819,74 @@
      },
      "rev": 26040,
      "ebitda": 8900
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|261108|Divi's Laboratories|divissepqanotherstrongbeat",
+       "broker": "Jefferies",
+       "date": "261108",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Jefferies|261108|Divi's Laboratories|divissepqanotherstrongbeat",
+       "broker": "Jefferies",
+       "date": "261108",
+       "role": "own"
+      }
+     },
+     "rev": 36760,
+     "ebitda": 15660,
+     "revYoY": 0.354,
+     "ebitdaYoY": 0.7635,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue of Rs36.8bn (+35% YoY, +19% QoQ) was 15% above consensus (JP); custom synthesis grew 50-54% YoY on validation batches, generics grew 12-18% on higher volumes and nutraceuticals grew 13%. (JP, Jeff)",
+     "ebitdaNote": "EBITDA of Rs15.7bn (+76% YoY) was 33% above consensus (JP). Margin was 42.6% (+990bps YoY), the highest since the Covid era, helped by a richer custom synthesis mix (64% of sales) and backward integration, with gross margin at 67.9%. (JP, Jeff)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Jefferies",
+      "date": "261108",
+      "key": "Jefferies|261108|Divi's Laboratories|divissepqanotherstrongbeat",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "GoldmanSachs|261108|Divi's Laboratories|2q27abovecsoutperformancecontinuesraiseepstpreiteratebuy",
+       "JPMorgan|261108|Divi's Laboratories|amultiyeargrowthopportunityunfolding",
+       "Jefferies|261108|Divi's Laboratories|divissepqanotherstrongbeat",
+       "Kotak|261107|Divi's Laboratories|csmstandstall"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "Jefferies|261108|Divi's Laboratories|divissepqanotherstrongbeat",
+       "broker": "Jefferies",
+       "date": "261108",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Jefferies|261108|Divi's Laboratories|divissepqanotherstrongbeat",
+       "broker": "Jefferies",
+       "date": "261108",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 27150,
+     "ebitda": 8880
     }
    },
    "sym": "DIVISLAB",
    "outlook": {
     "call": "positive",
-    "note": "Brokers upgraded estimates after the beat: GS raised FY27-29E EPS by 3-10% and its TP to Rs9,070. JP raised FY27E/FY28E adj. EBITDA by 11.7%/10.8% and its PT to Rs9,100, and Kotak raised FY27-29E EPS by 10-17%. Management reiterated double-digit growth as custom-synthesis programmes move from validation toward commercial supply, which is subject to customer and regulatory approvals and may be lumpy quarter to quarter. GS expects CS to compound at about 28% over FY26-29E. Kotak flags lower Entresto sales in the EU as a risk (GS, JP, Kotak).",
-    "broker": "GoldmanSachs",
-    "date": "260802",
-    "quarter": "1Q27"
+    "note": "Management says one of three dedicated custom synthesis projects is close to commercialisation, with the other two expected over the next few quarters. It is running 60-70 projects in total, and FY27 capex is guided at about Rs20bn (+/-20%). Brokers raised FY27-29 EPS: Jeff by 17-22%, JP by 18-30%, GS by up to 17%. Target prices rose to Rs12,550 (Jeff), Rs12,500 (JP) and Rs11,700 (GS). (Jeff, JP, GS)",
+    "broker": "Jefferies",
+    "date": "261108",
+    "quarter": "2Q27"
    }
   },
   {
@@ -21502,7 +21976,7 @@
     "quarter": "1Q27"
    },
    "mcap": 15656,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 3483.7
   },
   {
@@ -22292,7 +22766,7 @@
    },
    "sym": "KANSAINER",
    "mcap": 16257,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "neutral",
     "note": "Management retained its FY27 EBITDA margin guidance of 13-14% and expects 2Q margin to be flat YoY. It plans a further 3% price flow-through in Decorative and 3-5% in Industrial, and expects demand to improve with a November Diwali. Competition stays high and KNP is losing market share in decorative paints. Estimate changes were mixed: Kotak raised FY27E EPS by 8% on easier raw-material prices, Nomura trimmed FY27E EPS from 8.66 to 8.56 with its target price unchanged, and MS stays Underweight (MS, Kotak, Nomura).",
@@ -22559,7 +23033,7 @@
    },
    "sym": "NEOGEN",
    "mcap": 8007,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "positive",
     "note": "Management raised FY27 base-business revenue guidance to Rs9.5-10.5 bn (from Rs8.75-9.5 bn). It guides base EBITDA margin at 18% ±1-1.5% for FY27 and 18-20% for FY28, and kept FY27 battery chemicals revenue guidance at Rs3 bn, with most of it in 2HFY27. Kotak raised EBITDA estimates by 11-16% and pulled forward full battery-chemicals utilisation by a year to FY2031. It retained ADD with fair value Rs2,190 (from Rs1,770). (Kotak)",
@@ -22993,7 +23467,7 @@
    },
    "sym": "RALLIS",
    "mcap": 3665,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "negative",
     "note": "Management says Kharif sales returns and provisions are largely accounted for, but the Rabi outlook stays challenging on low reservoir levels, softening herbicide prices and industry oversupply. It expects FY2028 to be significantly better than FY2027 on a normal monsoon, and FY2027 capex remains slightly above Rs500 mn. Kotak cut EPS by 6-9%, cut fair value to Rs220 from Rs260 and kept ADD (Kotak).",
@@ -23220,7 +23694,7 @@
     "quarter": "2Q27"
    },
    "mcap": 1805,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 130.41
   },
   {
@@ -23762,7 +24236,7 @@
     "quarter": "1Q27"
    },
    "mcap": 11073,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 1067.35
   },
   {
@@ -24747,7 +25221,7 @@
    },
    "sym": "BLACKBUCK",
    "mcap": 10220,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "neutral",
     "note": "Management expects Vehicle Finance to break even in F27, UPI MDR impact close to zero, and tolling to pick up in 3Q/4Q after a seasonally weak 2Q. Upfront customer acquisition spend will likely weigh on EBITDA in the near term, and next-12-month consensus EPS is seen revised modestly lower. MS keeps Equal-weight with a Rs650 target. (MS)",
@@ -24856,7 +25330,7 @@
     "quarter": "1Q27"
    },
    "mcap": 7577,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 783.1
   },
   {
@@ -25378,7 +25852,7 @@
     "quarter": "1Q27"
    },
    "mcap": 15758,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 1659.7
   },
   {
@@ -25529,15 +26003,73 @@
      },
      "rev": 1587,
      "ebitda": 622
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "GoldmanSachs|261109|Azad Engineering|q2fy27resultsreviewenteringthenextphaseofgrowthkeepinganeyeontheworkingcapital",
+       "broker": "GoldmanSachs",
+       "date": "261109",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "GoldmanSachs|261109|Azad Engineering|q2fy27resultsreviewenteringthenextphaseofgrowthkeepinganeyeontheworkingcapital",
+       "broker": "GoldmanSachs",
+       "date": "261109",
+       "role": "own"
+      }
+     },
+     "rev": 1909,
+     "ebitda": 723,
+     "revYoY": 0.3111,
+     "ebitdaYoY": 0.3771,
+     "revVs": "inline",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Revenue rose 31% YoY and 11% QoQ to INR 1,909mn, 2% above GS's estimate and in line with Bloomberg consensus of INR 1,913mn, on continued momentum as new capacity ramps up (GS).",
+     "ebitdaNote": "EBITDA rose 38% YoY to INR 723mn, 4% above GS's estimate and 2% above Bloomberg consensus (INR 707mn); margin expanded 177bps YoY to 37.9% on a gross margin gain of 738bps, partly offset by 54% higher employee costs (GS).",
+     "revCons": 1913,
+     "ebitdaCons": 707,
+     "src": {
+      "kind": "pdf",
+      "broker": "GoldmanSachs",
+      "date": "261109",
+      "key": "GoldmanSachs|261109|Azad Engineering|q2fy27resultsreviewenteringthenextphaseofgrowthkeepinganeyeontheworkingcapital",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "GoldmanSachs|261109|Azad Engineering|q2fy27resultsreviewenteringthenextphaseofgrowthkeepinganeyeontheworkingcapital"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "GoldmanSachs|261109|Azad Engineering|q2fy27resultsreviewenteringthenextphaseofgrowthkeepinganeyeontheworkingcapital",
+       "broker": "GoldmanSachs",
+       "date": "261109",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "GoldmanSachs|261109|Azad Engineering|q2fy27resultsreviewenteringthenextphaseofgrowthkeepinganeyeontheworkingcapital",
+       "broker": "GoldmanSachs",
+       "date": "261109",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 1456,
+     "ebitda": 525
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "positive",
-    "note": "Management reiterated 25%+ long-term revenue growth and a 32-35% EBITDA margin guidance. The FY26 expansion is ~80% stabilised, with full closure by Q3FY27 and the ramp-up expected from H2FY27. GS expects earnings growth to accelerate from Q3FY27. It left EBITDA estimates broadly unchanged (+0.6% FY27E) and cut PAT 3.6% for FY27E on higher depreciation and interest. GS raised its TP to INR 3,315 and ICICI upgraded to BUY. Choice raised its TP to INR 2,150 but downgraded to SELL on valuation (GS, ICICI, Choice).",
+    "note": "Management reiterated long-term revenue growth guidance of over 25% annually, with new capacity throughput from 3QFY27 and full ramp-up by 2QFY28. It expects an annualised revenue run-rate above INR 13bn by end-FY28. GS broadly retained its EBITDA estimates through FY29 (FY27E +0.3%, FY28E -0.2%, FY29E +1.5%), but cut EPS 7-17% on higher interest and depreciation and lower other income, and trimmed TP to INR 3,125 from INR 3,315. Working capital stays stretched, with receivables at c.INR 4.0bn and negative operating cash flow (GS).",
     "broker": "GoldmanSachs",
-    "date": "260810",
-    "quarter": "1Q27"
+    "date": "261109",
+    "quarter": "2Q27"
    }
   },
   {
@@ -26012,16 +26544,22 @@
      }
     },
     "2Q26": {
-     "rev": null,
-     "ebitda": null,
+     "rev": 3075,
+     "ebitda": 685,
      "abs": {
       "wb_rev": 3075,
       "rev": {
-       "role": "workbook-dropped"
+       "key": "GoldmanSachs|261109|Data Patterns|q2fy27firsttakeearningsmissonweakexecutionstrongorderinflowsprovidefuturerevenuevisi",
+       "broker": "GoldmanSachs",
+       "date": "261109",
+       "role": "yearAgo"
       },
       "wb_ebitda": 685,
       "ebitda": {
-       "role": "workbook-dropped"
+       "key": "GoldmanSachs|261109|Data Patterns|q2fy27firsttakeearningsmissonweakexecutionstrongorderinflowsprovidefuturerevenuevisi",
+       "broker": "GoldmanSachs",
+       "date": "261109",
+       "role": "yearAgo"
       }
      }
     },
@@ -26101,15 +26639,55 @@
      "ebitdaNote": "EBITDA fell 2% YoY to INR 314mn, 46% below consensus (INR 585mn) and 18% below GS's estimate. Margin was 27% against 32% a year ago, hurt by adverse product mix, employee costs up 17% YoY, higher repair and maintenance costs and a INR 20mn provision for long-pending receivables (GS). Jefferies put EBITDA 9% below its own estimate (GS, Jeff).",
      "revCons": 1688,
      "ebitdaCons": 585
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "GoldmanSachs|261109|Data Patterns|q2fy27firsttakeearningsmissonweakexecutionstrongorderinflowsprovidefuturerevenuevisi",
+       "broker": "GoldmanSachs",
+       "date": "261109",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "GoldmanSachs|261109|Data Patterns|q2fy27firsttakeearningsmissonweakexecutionstrongorderinflowsprovidefuturerevenuevisi",
+       "broker": "GoldmanSachs",
+       "date": "261109",
+       "role": "own"
+      }
+     },
+     "rev": 1333,
+     "ebitda": 314,
+     "revYoY": -0.5665,
+     "ebitdaYoY": -0.5416,
+     "revVs": "miss",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Revenue fell 57% YoY to INR 1.33bn, 49% below Bloomberg consensus and 10% below GS's estimate, although it rose 15% QoQ. Management partly blamed a high base in 2Q26 (GS).",
+     "ebitdaNote": "EBITDA fell 54% YoY to INR 314mn, 63% below consensus and 47% below GS's estimate. Gross margin was 69%, 596bps below GS's estimate, and other expenses rose 37% YoY (103% above GS's estimate). EBITDA margin was 23.5%, down 350bps QoQ but up 126bps YoY (GS).",
+     "revCons": 2597,
+     "ebitdaCons": 854,
+     "src": {
+      "kind": "pdf",
+      "broker": "GoldmanSachs",
+      "date": "261109",
+      "key": "GoldmanSachs|261109|Data Patterns|q2fy27firsttakeearningsmissonweakexecutionstrongorderinflowsprovidefuturerevenuevisi",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "GoldmanSachs|261109|Data Patterns|q2fy27firsttakeearningsmissonweakexecutionstrongorderinflowsprovidefuturerevenuevisi"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
     }
    },
    "sym": "DATAPATTNS",
    "outlook": {
     "call": "neutral",
-    "note": "Management kept FY27 guidance of 20-25% revenue growth and 35-40% EBITDA margins. It expects about INR 20bn of additional order inflow in FY27, on top of the INR 17bn of negotiated orders. The order book is INR 9.3bn, with a pipeline of INR 20-40bn. The Q1 execution and margin miss is the near-term risk. GS kept its Buy and INR 4,165 TP. Jefferies kept FY27-28E earnings unchanged, raised its PT to INR 5,545 from INR 4,875 on a roll-forward, and sits 3% (FY27 revenue) and 3% (FY27 EPS) below consensus (GS, Jeff).",
+    "note": "Management maintained its FY27 guidance of 25% revenue growth and a 35-40% EBITDA margin. That implies c.INR 9.1bn of revenue in 2H27 against INR 2.5bn in 1H27, so it needs a sharp execution ramp-up. Order inflows were strong at INR 9.3bn in 2Q27 (1H27 INR 10.5bn, nearly 3x YoY). The confirmed order book is INR 17.4bn, with a further INR 9.6bn of negotiated orders awaiting formalization. GS keeps its Neutral rating and INR 4,165 TP unchanged, saying risk-reward is balanced (GS).",
     "broker": "GoldmanSachs",
-    "date": "260731",
-    "quarter": "1Q27"
+    "date": "261109",
+    "quarter": "2Q27"
    }
   },
   {
@@ -28243,7 +28821,7 @@
     "quarter": "2Q27"
    },
    "mcap": 950,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "formerName": "UNICOM",
    "price": 84.53
   },
@@ -28888,7 +29466,7 @@
     "quarter": "1Q27"
    },
    "mcap": 12413,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 1855.5
   },
   {
@@ -30378,7 +30956,7 @@
     "quarter": "2Q27"
    },
    "mcap": 6320,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 88.73
   },
   {
@@ -30542,7 +31120,7 @@
    },
    "sym": "SAPPHIRE",
    "mcap": 6732,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "negative",
     "note": "Management says inflation in raw materials, energy and minimum wages should peak in 3Q, and it is prioritising growth through value offers and elevated marketing, so GS expects margins to stay subdued in 2H. GS cut FY27/28 EBITDA (pre-Ind AS 116) by 14.1%/3.5% and raised FY29 by 2.9%. JPM remains Overweight with a Rs 230 target but flags near-term margin pressure (GS, JP).",
@@ -30710,7 +31288,7 @@
     "quarter": "1Q27"
    },
    "mcap": 15698,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 1191.8
   },
   {
@@ -30873,7 +31451,7 @@
    },
    "sym": "WESTLIFE",
    "mcap": 10469,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "positive",
     "note": "Management reiterated 100-150 bps annual margin expansion and 60-65 net store openings for the year, and the guidance holds for the medium term. GS raised FY27-29 adjusted EBITDA estimates by 6-12% on higher SSSG assumptions and lower operating costs, and lifted its target price to Rs560 from Rs500 while keeping a Neutral rating. (GS)",
@@ -30978,43 +31556,44 @@
     "2Q27": {
      "abs": {
       "rev": {
-       "key": "Jefferies|261104|BSE|sep26qtrresultsmodestbeatcautiousviewdoesntchan",
-       "broker": "Jefferies",
-       "date": "261104",
+       "key": "Kotak|261105|BSE|strongquarteronmostmetrics",
+       "broker": "Kotak",
+       "date": "261105",
        "role": "own"
       },
       "ebitda": {
-       "key": "Jefferies|261104|BSE|sep26qtrresultsmodestbeatcautiousviewdoesntchan",
-       "broker": "Jefferies",
-       "date": "261104",
+       "key": "Kotak|261105|BSE|strongquarteronmostmetrics",
+       "broker": "Kotak",
+       "date": "261105",
        "role": "own"
       }
      },
-     "rev": 14326,
+     "rev": 14327,
      "ebitda": 9840,
-     "revYoY": 0.3408,
+     "revYoY": 0.341,
      "ebitdaYoY": 0.4242,
-     "revVs": "inline",
-     "ebitdaVs": "beat",
-     "overall": "beat",
-     "revNote": "Revenue from operations of Rs14.3bn (+34% YoY, -9% QoQ) was about 2% above JEFe. Transaction charges rose 42% YoY to Rs11.3bn, driven by equity derivatives (+52.5% YoY), but fell 15% QoQ as index-options ADTV dropped 24% QoQ. Services to corporates rose 20% YoY and book-building fees grew 83% YoY on elevated IPO activity. StAR MF revenue grew only 4% YoY. No consensus figure is printed, so the call is against the broker estimate (Jeff, JP).",
-     "ebitdaNote": "EBITDA of Rs9.84bn (+42% YoY, -8% QoQ) was 4% ahead of JEFe, with the margin at 68.7% vs 67.1% expected (+402bps YoY). Opex control did the work: slower opex (ex. SGF) growth of 19% YoY lifted margin, and clearing costs fell 11% QoQ. Bernstein said earnings were ahead of expectations on lower SGF contribution. JPM also called it an earnings beat, on cost control. JPM's own EBITDA of Rs9.73bn was about 1% below its estimate, so JPM's beat came from lower costs and other income below the EBITDA line (Jeff, JP, Bern).",
-     "vsBasis": "broker estimate (Jefferies)",
      "src": {
       "kind": "pdf",
-      "broker": "Jefferies",
-      "date": "261104",
-      "key": "Jefferies|261104|BSE|sep26qtrresultsmodestbeatcautiousviewdoesntchan",
+      "broker": "Kotak",
+      "date": "261105",
+      "key": "Kotak|261105|BSE|strongquarteronmostmetrics",
       "unit": "INR mn",
       "model": "sonnet",
       "considered": [
        "Bernstein|261104|BSE|bseq2fy27casandviximpactbehindstrongq3trendscontinuemodelupdate",
        "JPMorgan|261105|BSE|2q27strongcostcontroldrivesearningsbeat",
-       "Jefferies|261104|BSE|sep26qtrresultsmodestbeatcautiousviewdoesntchan"
+       "Jefferies|261104|BSE|sep26qtrresultsmodestbeatcautiousviewdoesntchan",
+       "Kotak|261105|BSE|strongquarteronmostmetrics"
       ],
-      "runs": 1,
-      "mined": "2026-11-05"
-     }
+      "runs": 2,
+      "mined": "2026-11-10"
+     },
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue rose 34% YoY to Rs14.3bn but fell 9% QoQ as equity derivatives revenue dropped 18% QoQ on lower premium ADTO. Corporate services (+65% QoQ) and cash equities (+12% QoQ) partly offset this. It was about 2% below JPMorgan's Rs14.6bn estimate, so broadly in line (Kotak, JP).",
+     "ebitdaNote": "EBITDA before core SGF grew 42% YoY to Rs9.84bn, with the margin up about 400bp YoY to 68% on tight opex, and was 4% ahead of Jefferies' estimate. Volume-linked costs such as clearing and regulatory fees kept falling as a share of revenue. JPMorgan calls it an earnings beat helped by other income (Jeff, JP, Kotak).",
+     "vsBasis": "broker estimate (Jefferies, JPMorgan)"
     },
     "2Q26": {
      "abs": {
@@ -31311,7 +31890,7 @@
     "quarter": "1Q27"
    },
    "mcap": 3452,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 215.64
   },
   {
@@ -31879,15 +32458,78 @@
      },
      "rev": 64774,
      "ebitda": 9653
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|261105|Apollo Hospitals|firsttake2qfy27stronggrowthacrosssegmentscashbreakevenachievedindigitalbusiness",
+       "broker": "JPMorgan",
+       "date": "261105",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "JPMorgan|261105|Apollo Hospitals|firsttake2qfy27stronggrowthacrosssegmentscashbreakevenachievedindigitalbusiness",
+       "broker": "JPMorgan",
+       "date": "261105",
+       "role": "own"
+      }
+     },
+     "rev": 76149,
+     "ebitda": 11908,
+     "revYoY": 0.2304,
+     "ebitdaYoY": 0.2882,
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "inline",
+     "revNote": "Revenue of Rs76.1bn (+23% YoY, +10% QoQ) was about 2% ahead of Bloomberg consensus (Rs74.7bn), which is in line on our 2% threshold. Hospitals grew 23% on occupancy of 73% (+400bps), IP volumes +14% and ARPP +8%. Offline pharmacy grew 24% and AHLL 20%. Figures are restated for the Cradle and Fertility transfer to Kids Clinic India (JP, GS).",
+     "ebitdaNote": "EBITDA of Rs11.9bn (+29% YoY) was about 3% above Bloomberg consensus (Rs11.6bn) and in line with GS's own estimate. Margin rose 70bps YoY to 15.6%. AHLL margin expanded 480bps to 14.3% and the digital health loss narrowed to Rs127mn, reaching cash breakeven. This offset a 60bps YoY fall in hospital margin to 24%, from about Rs350mn of new-unit losses (JP, GS).",
+     "revCons": 74658,
+     "ebitdaCons": 11597,
+     "src": {
+      "kind": "pdf",
+      "broker": "JPMorgan",
+      "date": "261105",
+      "key": "JPMorgan|261105|Apollo Hospitals|firsttake2qfy27stronggrowthacrosssegmentscashbreakevenachievedindigitalbusiness",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "GoldmanSachs|261105|Apollo Hospitals|2q27inlinegoodquarterreiteratebuy",
+       "JPMorgan|261105|Apollo Hospitals|firsttake2qfy27stronggrowthacrosssegmentscashbreakevenachievedindigitalbusiness",
+       "JPMorgan|261106|Apollo Hospitals|stronghospitaldemandwithupsideriskhealthcolistingtounlockvalue",
+       "Jefferies|261105|Apollo Hospitals|strongvolumegrowthinhospitalscontinuesbuy",
+       "Kotak|261106|Apollo Hospitals|executionkeepsrolling",
+       "MorganStanley|261104|Apollo Hospitals|anotherstrongquarterstayow"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|261105|Apollo Hospitals|firsttake2qfy27stronggrowthacrosssegmentscashbreakevenachievedindigitalbusiness",
+       "broker": "JPMorgan",
+       "date": "261105",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "JPMorgan|261105|Apollo Hospitals|firsttake2qfy27stronggrowthacrosssegmentscashbreakevenachievedindigitalbusiness",
+       "broker": "JPMorgan",
+       "date": "261105",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 61888,
+     "ebitda": 9244
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "positive",
-    "note": "Management guides for 20% hospital revenue growth in FY27 (13-14% for established hospitals) and a Rs1.5bn loss from new beds, with breakeven in 2HFY28. It expects online pharmacy breakeven by 2QFY27 and 20%+ diagnostics growth. Jefferies raised FY27 EBITDA by 4% and JPMorgan expects positive consensus revisions. CLSA kept its estimates and raised its target price to Rs9,560 from Rs9,280 (CLSA, Jeff, JP).",
-    "broker": "CLSA",
-    "date": "260814",
-    "quarter": "1Q27"
+    "note": "Management lifted hospital topline growth guidance to about 20% and expects the three remaining greenfield units to break even by year-end. The Healthco demerger is on track for 4QFY27, though the annualised EBITDA margin target is now about 6% (vs 6.5-7% earlier) on integration costs. JP raised FY27-29 EBITDA estimates by 1-4% (FY28E +4.5%) and GS tweaked them by up to ±1%. JP trimmed its PT to Rs10,700 and GS's TP is Rs10,150 (JP, GS).",
+    "broker": "JPMorgan",
+    "date": "261106",
+    "quarter": "2Q27"
    }
   },
   {
@@ -31978,15 +32620,72 @@
      },
      "rev": 11824,
      "ebitda": 2326
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261106|Aster DM Quality Care|apromisingdebutforthemergedentity",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Kotak|261106|Aster DM Quality Care|apromisingdebutforthemergedentity",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "own"
+      }
+     },
+     "rev": 28292,
+     "ebitda": 6634,
+     "revYoY": 1.3632,
+     "ebitdaYoY": 1.6557,
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Net revenues of Rs28.3 bn were 1.9% above Kotak's estimate. The +136% yoy reported jump reflects the QCIL merger effective 1 Jul 2026; on a pro-forma basis sales grew ~19% yoy, led by Kerala and Tamil Nadu (+23% yoy) and occupancy rising to 71% from 66% (Kotak).",
+     "ebitdaNote": "Reported EBITDA of Rs6.6 bn beat Kotak's estimate by 7.8%. Operating EBITDA of Rs6.8 bn (margin 24.0%, +110 bps yoy pro-forma) was 8% above estimate, helped by higher clinical complexity, volume traction and Rs166 mn of merger synergies (Kotak).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "261106",
+      "key": "Kotak|261106|Aster DM Quality Care|apromisingdebutforthemergedentity",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|261106|Aster DM Quality Care|apromisingdebutforthemergedentity"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261106|Aster DM Quality Care|apromisingdebutforthemergedentity",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|261106|Aster DM Quality Care|apromisingdebutforthemergedentity",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 11972,
+     "ebitda": 2498
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "positive",
-    "note": "Management reiterated 10-15% EBITDA synergies (Rs1.5-2 bn) from FY2027E and guides to ~24-25% combined EBITDA margins by FY2028/29E. About 4,200 beds are planned to FY2030E, ~53% brownfield. Kotak raised FY2028-29E EBITDA by 5-6%, rolled its valuation forward to June 2028E and lifted fair value to Rs900 from Rs770 (ADD). Kotak models ~22%/25% pro forma sales/EBITDA CAGR over FY26-29E. (Kotak)",
+    "note": "Management reiterated 24-25% operating EBITDA margin guidance over the next 2-3 years. Synergies are tracking better than expected: Rs166 mn realised in 2QFY27, ~Rs650 mn annualised run-rate, reaching the full ~Rs2 bn run-rate over the next 3-4 quarters. Kotak raised FY27-29E EBITDA by ~2%, lifted fair value to Rs860 from Rs810 and expects 25% pro-forma EBITDA CAGR over FY26-29E, with ~4,230 beds to be added (Kotak).",
     "broker": "Kotak",
-    "date": "260806",
-    "quarter": "1Q27"
+    "date": "261106",
+    "quarter": "2Q27"
    }
   },
   {
@@ -32134,18 +32833,77 @@
      },
      "rev": 5299,
      "ebitda": 1441
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261106|Dr Agarwal's Health Care|scalingupstayingdisciplined",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Kotak|261106|Dr Agarwal's Health Care|scalingupstayingdisciplined",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "own"
+      }
+     },
+     "rev": 6555,
+     "ebitda": 1758,
+     "revYoY": 0.3144,
+     "ebitdaYoY": 0.2917,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue of Rs6.56bn rose 31% YoY and 7% QoQ, 7-8% above broker estimates, on 18.8% same-store sales growth (8% volume, 9.5% value) and 21 centre additions in the quarter, 19 of them greenfield (Kotak, MS, Jeff).",
+     "ebitdaNote": "EBITDA of Rs1.76bn rose 29% YoY, 5-8% above broker estimates, helped by the revenue beat. Margin fell 48bps YoY to 26.8% as new centres ramp up, and came in 26-68bps below estimates (Kotak, MS, Jeff).",
+     "vsBasis": "broker estimate (Morgan Stanley, Jefferies)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "261106",
+      "key": "Kotak|261106|Dr Agarwal's Health Care|scalingupstayingdisciplined",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Jefferies|261105|Dr Agarwal's Health Care|stellarquarterwithhighercenterrolloutsplannedforfy27",
+       "Kotak|261106|Dr Agarwal's Health Care|scalingupstayingdisciplined",
+       "MorganStanley|261105|Dr Agarwal's Health Care|impressivequartersamestoresalesgrowthimproves"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261106|Dr Agarwal's Health Care|scalingupstayingdisciplined",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|261106|Dr Agarwal's Health Care|scalingupstayingdisciplined",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 4987,
+     "ebitda": 1361
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "positive",
-    "note": "Management is on track to add 60 centres in FY27 (about 40 surgical) after 16-18 net additions in 1Q27. Same-store sales growth is expected to normalise over time, though it improved to ~16% in 1Q27. Jefferies raised FY27-29E EBITDA by 3-4%, upgraded to Buy and lifted its PT to INR600. MS trimmed FY28 EPS by 3.5% but raised its PT to Rs576 on higher EBITDA expectations and stayed Overweight. The merger is expected to close by Nov'26. (Jeff, MS)",
-    "broker": "Jefferies",
-    "date": "260804",
-    "quarter": "1Q27"
+    "note": "Management raised its FY27 facility-addition guidance to 65 from 60, with 55 surgical facilities versus 40 before. Kotak expects revenue, EBITDA and EPS CAGRs of 23%, 25% and 52% over FY26-29E. Jefferies raised FY27-29E EBITDA estimates by 2-3% and its PT to Rs640 (from 600). Morgan Stanley raised its PT to Rs652 (from 576) and cut FY27 EPS by about 2%. Kotak re-initiated at ADD with an FV of Rs585 (Kotak, Jeff, MS).",
+    "broker": "Kotak",
+    "date": "261106",
+    "quarter": "2Q27"
    },
    "mcap": 17038,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 537.3
   },
   {
@@ -32246,15 +33004,15 @@
     "2Q27": {
      "abs": {
       "rev": {
-       "key": "CLSA|261105|Dr Lal PathLabs|healthyquarter",
-       "broker": "CLSA",
-       "date": "261105",
+       "key": "GoldmanSachs|261104|Dr Lal PathLabs|2q27inlinedecentquarterretainsellonunfavorableriskreward",
+       "broker": "GoldmanSachs",
+       "date": "261104",
        "role": "own"
       },
       "ebitda": {
-       "key": "CLSA|261105|Dr Lal PathLabs|healthyquarter",
-       "broker": "CLSA",
-       "date": "261105",
+       "key": "GoldmanSachs|261104|Dr Lal PathLabs|2q27inlinedecentquarterretainsellonunfavorableriskreward",
+       "broker": "GoldmanSachs",
+       "date": "261104",
        "role": "own"
       }
      },
@@ -32262,28 +33020,29 @@
      "ebitda": 2802,
      "revYoY": 0.1961,
      "ebitdaYoY": 0.2503,
-     "revVs": "inline",
-     "ebitdaVs": "beat",
-     "overall": "beat",
-     "revNote": "Revenue of Rs8.7bn grew 19.6% YoY and 9.6% QoQ, 2.3% above Bloomberg consensus and 3.5% above CLSA's estimate. Growth came from sample/patient volume up 13%/10% YoY and from higher realisations (about 5.5% per test), helped by 2-3% CGHS/ECHS price hikes and a richer test mix (CLSA, Kotak, Nomura).",
-     "ebitdaNote": "EBITDA grew 25.0% YoY to Rs2.80bn, 5.3% above consensus. Margin was 32.1%, up 139bp YoY and 104bp QoQ, on favourable mix and cost optimisation, with staff costs down to 15.9% of sales from 18.1% (CLSA, Kotak).",
-     "revCons": 8545,
-     "ebitdaCons": 2662,
      "src": {
       "kind": "pdf",
-      "broker": "CLSA",
-      "date": "261105",
-      "key": "CLSA|261105|Dr Lal PathLabs|healthyquarter",
+      "broker": "GoldmanSachs",
+      "date": "261104",
+      "key": "GoldmanSachs|261104|Dr Lal PathLabs|2q27inlinedecentquarterretainsellonunfavorableriskreward",
       "unit": "INR mn",
       "model": "sonnet",
       "considered": [
        "CLSA|261105|Dr Lal PathLabs|healthyquarter",
+       "GoldmanSachs|261104|Dr Lal PathLabs|2q27inlinedecentquarterretainsellonunfavorableriskreward",
        "Kotak|261104|Dr Lal PathLabs|growthgainsbreadth",
        "Nomura|261104|Dr Lal PathLabs|2qfy27anotherstrongquarterestimatesraised"
       ],
-      "runs": 1,
-      "mined": "2026-11-05"
-     }
+      "runs": 2,
+      "mined": "2026-11-10"
+     },
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Sales of Rs8,739mn (+20% YoY, +10% QoQ) were 3% above Bloomberg consensus (Rs8,478mn) and 2% above GS's estimate, driven by realisation per patient (+10% YoY) and patient/sample volume growth of about 10%/13% (GS, CLSA).",
+     "ebitdaNote": "Adjusted EBITDA of Rs2,802mn (+25% YoY) was 8% above Bloomberg consensus (Rs2,589mn) and 1% above GS's estimate. The margin was 32.1% (+139bps YoY), helped by better realisations, gross margins and operating leverage (GS).",
+     "revCons": 8478,
+     "ebitdaCons": 2589
     },
     "2Q26": {
      "abs": {
@@ -32658,7 +33417,7 @@
    "q": {},
    "added": "folder",
    "mcap": 8784,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 588.35
   },
   {
@@ -33224,7 +33983,7 @@
     "quarter": "2Q27"
    },
    "mcap": 12085,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 582.35
   },
   {
@@ -33243,7 +34002,7 @@
    "q": {},
    "added": "folder",
    "mcap": 15396,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 1336
   },
   {
@@ -33622,7 +34381,7 @@
     "quarter": "2Q27"
    },
    "mcap": 6235,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 620.05
   },
   {
@@ -34202,7 +34961,7 @@
    },
    "sym": "GODIGIT",
    "mcap": 23924,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "negative",
     "note": "Management expects growth challenges from motor and fire competition to persist, though it expects motor OD loss ratios to stabilise in 2Q after pricing actions in Feb, Apr and May. Jefferies cut FY27-29e EPS by 5-7% and revenue by 12-13%, and cut its PT to Rs380 from Rs395. MS flagged a meaningful downward revision to next-12-month consensus EPS. The Supreme Court motor TP judgment impact is not quantified and is provided for within reserves. (Jeff, MS)",
@@ -34731,7 +35490,7 @@
    },
    "formerName": "ICICI Prudential Life",
    "mcap": 62529,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 431
   },
   {
@@ -35160,7 +35919,7 @@
    },
    "sym": "NIVABUPA",
    "mcap": 14002,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "positive",
     "note": "Management targets growth 8-10pp above the industry, and momentum held in July 2026. Hospitalization trends in July are in line with expectations. Management retained its FY29 CISR guidance of 99%, which MS says should drive mid-to-high-teens ROE. Jefferies raised FY27-29e Ind AS earnings by 2-9% and lifted its PT to Rs105. Nomura expects a 161bp expense-ratio reduction over FY26-29 as the GST drag fades in 2H. (MS, Jeff, Nomura)",
@@ -35604,18 +36363,76 @@
      },
      "rev": 43,
      "ebitda": 239
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261108|Amagi Media Labs|strongquarterandwellsetforarobust2h",
+       "broker": "Kotak",
+       "date": "261108",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Kotak|261108|Amagi Media Labs|strongquarterandwellsetforarobust2h",
+       "broker": "Kotak",
+       "date": "261108",
+       "role": "own"
+      }
+     },
+     "rev": 49.7,
+     "ebitda": 637,
+     "revYoY": 0.1452,
+     "ebitdaYoY": null,
+     "ebitdaYoYNote": "Year-ago loss (-34) — YoY not meaningful",
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Revenue of US$49.7 mn (+14.7% YoY, +3.6% QoQ) was about 3% above the Bloomberg consensus and ahead of Kotak's US$48.0 mn estimate. Growth was 21% adjusted for revenue accounting in the base quarter. It was led by streaming unification (+21.8% YoY) and monetization & marketplace (+15.5% YoY), while cloud modernization fell 1.8% on a tough base. (GS, Kotak)",
+     "ebitdaNote": "EBITDA of Rs637 mn compared with a loss of Rs34 mn a year ago and was 56% above Kotak's Rs409 mn estimate. Adjusted EBITDA margin was 18.7% (+760 bps YoY), or about 16.7% excluding one-offs, which GS called meaningfully ahead of consensus. Operating leverage and lower G&A drove it, helped by about 220 bps of timing benefits (currency, delayed hiring, reserve releases). (GS, Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "261108",
+      "key": "Kotak|261108|Amagi Media Labs|strongquarterandwellsetforarobust2h",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "GoldmanSachs|261109|Amagi Media Labs|2qfy27reviewanotherstrongquarterdrivingamaterialearningsandtpupgradebuy",
+       "Kotak|261108|Amagi Media Labs|strongquarterandwellsetforarobust2h"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261108|Amagi Media Labs|strongquarterandwellsetforarobust2h",
+       "broker": "Kotak",
+       "date": "261108",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|261108|Amagi Media Labs|strongquarterandwellsetforarobust2h",
+       "broker": "Kotak",
+       "date": "261108",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 43.4,
+     "ebitda": -34
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "positive",
-    "note": "Kotak expects healthy underlying growth, with 1HFY27 at ~46% of FY revenue. It sees streaming unification leading growth, with the cloud modernization base effect fading. Adj. EBITDA margin is guided to ~12.5% in 1HFY27 and 15.1% in FY27E. Kotak raised FY27-29E revenue by 1.7-2.3% and EPS by 2.8-3.4%, and lifted fair value to Rs700 (ADD). Risks are industry consolidation stretching sales cycles and rangebound gross margin (Kotak).",
+    "note": "Management expects 3QFY27 to be another strong quarter with elevated margins, helped by US midterm ad spend and cloud savings, and keeps its 20%+ constant-currency growth base case. GS raised FY27-30E revenue by 4-5% and adjusted EBITDA by 25-30% (37-70% EPS upgrades), with TP to Rs635 from Rs480. Kotak raised FY28-29E EPS by about 3%, lifted FV to Rs715 and upgraded to BUY. (GS, Kotak)",
     "broker": "Kotak",
-    "date": "260814",
-    "quarter": "1Q27"
+    "date": "261108",
+    "quarter": "2Q27"
    },
    "mcap": 11731,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 542.25
   },
   {
@@ -37216,7 +38033,7 @@
     "quarter": "2Q27"
    },
    "mcap": 14801,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 614.6
   },
   {
@@ -37651,7 +38468,7 @@
    },
    "sym": "JUSTDIAL",
    "mcap": 5766,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "positive",
     "note": "Kotak raises revenue estimates by 4-8% over FY2027-29 and broadly maintains EPS. It sees margins as range-bound from here as the new management prioritizes growth, and retains BUY with the fair value raised to Rs1,185 from Rs1,175. Cash balance of Rs61 bn provides downside support, but there is no clarity on how it will be used (Kotak).",
@@ -38416,7 +39233,7 @@
     "quarter": "2Q27"
    },
    "mcap": 6187,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 437.7
   },
   {
@@ -38702,7 +39519,7 @@
     "quarter": "4Q26"
    },
    "mcap": 8309,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 701.3
   },
   {
@@ -39830,7 +40647,7 @@
    },
    "sym": "BLUESTONE",
    "mcap": 11294,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "positive",
     "note": "Management expects the festive-season SSSG shift from 2Q to 3Q to show up in 3QFY27, with underlying trends in line with internal expectations. It reiterated that A&P will fall to 4.5% of sales over four years and has no capital constraint on its Rs120 bn revenue aspiration. Kotak kept FY27-29E pre-Ind AS adjusted EBITDA broadly unchanged (FY27E -0.6%, FY28E flat, FY29E +2.9%). It raised revenue estimates (FY27E +1.4%, FY29E +4.3%) and raised fair value to Rs850 from Rs800 on a roll-over. (Kotak)",
@@ -40977,7 +41794,7 @@
     "quarter": "2Q27"
    },
    "mcap": 2383,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 47.7
   },
   {
@@ -41128,7 +41945,7 @@
    },
    "sym": "SHADOWFAX",
    "mcap": 16777,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "positive",
     "note": "Management retains its 27-30% long-term revenue growth guidance (express 27-28%, quick commerce 30%+) and FY27 capex of 3.8-4.0% of revenue. The sale season moved to October (3Q), so 2Q carried a cost base built ahead of the festival season. Lost-shipment cost is targeted to fall to 4% from 5.0% in a few quarters, and micro-fulfilment centres are planned in 50 cities. MS flags a modest upward revision to next-12-month consensus EPS and a modest upside to results vs consensus, but the 12-month price target is Rs286 against a price of Rs294.35 (MS).",
@@ -41239,7 +42056,7 @@
     "quarter": "1Q27"
    },
    "mcap": 5342,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 390.85
   },
   {
@@ -41398,7 +42215,7 @@
     "quarter": "1Q27"
    },
    "mcap": 1852,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 481.75
   },
   {
@@ -41500,7 +42317,7 @@
     "quarter": "1Q27"
    },
    "mcap": 2746,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 154.04
   },
   {
@@ -41519,7 +42336,7 @@
    "q": {},
    "added": "folder",
    "mcap": 383,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 2.08
   },
   {
@@ -41538,7 +42355,7 @@
    "q": {},
    "added": "folder",
    "mcap": 1458,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 66.98
   },
   {
@@ -41697,7 +42514,7 @@
     "quarter": "2Q27"
    },
    "mcap": 16666,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 407.9
   },
   {
@@ -43325,15 +44142,73 @@
      },
      "rev": 6412,
      "ebitda": 4005
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261106|Aadhar Housing Finance|assteadyasitgets",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Kotak|261106|Aadhar Housing Finance|assteadyasitgets",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "own"
+      }
+     },
+     "rev": 6587,
+     "ebitda": 4212,
+     "revYoY": 0.1858,
+     "ebitdaYoY": 0.1905,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "inline",
+     "revNote": "Net operational income of Rs6.6 bn was up 19% yoy and 4.6% above Kotak's estimate. NII grew 17% yoy and was 4% above estimate, helped by 18% AUM growth and a 29 bps qoq rise in NIM to 8.1%. (Kotak)",
+     "ebitdaNote": "PPOP of Rs4.2 bn rose 19% yoy and was 4.7% above Kotak's estimate, as the NII beat outweighed opex 4.6% above estimate. Cost-to-income was 36.1%, and 33.9% adjusted for ESOP costs. PAT was up 16% yoy, 1% above Kotak's estimate and in line with consensus per Nomura. (Kotak, Nomura)",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "261106",
+      "key": "Kotak|261106|Aadhar Housing Finance|assteadyasitgets",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|261106|Aadhar Housing Finance|assteadyasitgets",
+       "Nomura|261105|Aadhar Housing Finance|comfortablyplacedmanagementfocusedonprotectingspreadslimitedexposuretodroughthitstatesoragricustomersbuy"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261106|Aadhar Housing Finance|assteadyasitgets",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|261106|Aadhar Housing Finance|assteadyasitgets",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 5555,
+     "ebitda": 3538
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "neutral",
-    "note": "Management guides for about 20% AUM and PAT growth in FY27E, more than 20% disbursal growth over the remaining three quarters, spreads above 5.5% and credit cost of about 25bp. Kotak trims estimates by less than 1% and raises FV to Rs640 from Rs630. Nomura makes no estimate changes and flags monsoon as a bigger risk than the West Asia conflict (Kotak, Nomura).",
+    "note": "Management keeps guidance of 20% AUM and PAT growth and 25 bps credit cost. Reported spreads held at 5.7%, above the 5.5% guidance, and about 70% of assets and liabilities are floating-rate, so rate transmission works in its favour. Asset quality weakened modestly: gross stage-2 rose 29 bps qoq to 3.6%. Kotak cut estimates 1-2%, mainly for lower insurance fees, and kept BUY with FV Rs650. Nomura trimmed FY27-29F net profit 1-4% and cut TP to Rs565 from Rs615. (Kotak, Nomura)",
     "broker": "Kotak",
-    "date": "260803",
-    "quarter": "1Q27"
+    "date": "261106",
+    "quarter": "2Q27"
    }
   },
   {
@@ -43766,14 +44641,14 @@
     "2Q27": {
      "abs": {
       "rev": {
-       "key": "Jefferies|261104|Aptus Value Housing Finance|sepqresultsslightprofitmissaumgrowtheasesstress",
-       "broker": "Jefferies",
+       "key": "MorganStanley|261104|Aptus Value Housing Finance|2qfy27steadyquarterow",
+       "broker": "MorganStanley",
        "date": "261104",
        "role": "own"
       },
       "ebitda": {
-       "key": "Jefferies|261104|Aptus Value Housing Finance|sepqresultsslightprofitmissaumgrowtheasesstress",
-       "broker": "Jefferies",
+       "key": "MorganStanley|261104|Aptus Value Housing Finance|2qfy27steadyquarterow",
+       "broker": "MorganStanley",
        "date": "261104",
        "role": "own"
       }
@@ -43782,25 +44657,27 @@
      "ebitda": 3642,
      "revYoY": 0.1917,
      "ebitdaYoY": 0.1658,
-     "revVs": null,
-     "ebitdaVs": null,
-     "overall": "miss",
-     "revNote": "Net revenue (NII plus fees, FV gains and other income) rose 19% YoY and 5% QoQ to Rs4.63bn. NII grew 23% YoY as calculated NIM rose to 10.9% (10.7% in 1Q27), while AUM growth eased to 20% YoY (Jeff).",
-     "ebitdaNote": "PPOP grew 17% YoY and 4% QoQ to Rs3.64bn. Opex rose 30% YoY, led by employee costs up 34%, so growth lagged revenue. Provisions rose 32% YoY, and PAT of Rs2.67bn came in 2% below Jefferies' estimate on higher provisions and opex (Jeff).",
-     "vsBasis": "broker estimate (Jefferies)",
      "src": {
       "kind": "pdf",
-      "broker": "Jefferies",
+      "broker": "MorganStanley",
       "date": "261104",
-      "key": "Jefferies|261104|Aptus Value Housing Finance|sepqresultsslightprofitmissaumgrowtheasesstress",
+      "key": "MorganStanley|261104|Aptus Value Housing Finance|2qfy27steadyquarterow",
       "unit": "INR mn",
       "model": "sonnet",
       "considered": [
-       "Jefferies|261104|Aptus Value Housing Finance|sepqresultsslightprofitmissaumgrowtheasesstress"
+       "Jefferies|261104|Aptus Value Housing Finance|sepqresultsslightprofitmissaumgrowtheasesstress",
+       "Kotak|261105|Aptus Value Housing Finance|challengingtimes",
+       "MorganStanley|261104|Aptus Value Housing Finance|2qfy27steadyquarterow"
       ],
-      "runs": 1,
-      "mined": "2026-11-05"
-     }
+      "runs": 2,
+      "mined": "2026-11-10"
+     },
+     "revVs": "inline",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Total income of Rs4.63bn grew 19% YoY and 5% QoQ, about 2% above MSe (Rs4.53bn), as a 3% NII beat (calculated NIM +37bp QoQ to 11.8%) was partly offset by other income 1% below MSe; AUM grew 20% YoY to Rs141.8bn. (MS)",
+     "ebitdaNote": "PPOP of Rs3.64bn rose 17% YoY and 4% QoQ, 1% above MSe, as the NII beat was largely absorbed by operating costs running 6% above MSe (opex +30% YoY). PAT of Rs2.67bn was in line with Refinitiv consensus. (MS)",
+     "vsBasis": "broker estimate (Morgan Stanley)"
     },
     "2Q26": {
      "abs": {
@@ -44880,7 +45757,7 @@
     "quarter": "2Q27"
    },
    "mcap": 2502,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 155.66
   },
   {
@@ -45311,7 +46188,7 @@
    },
    "added": "folder",
    "mcap": 6894,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "positive",
     "note": "Kotak retains BUY with an unchanged FV of Rs975 and revises estimates by 4-6%, mainly on a better-than-expected margin trajectory despite rising rates. Credit cost estimates go up to 60-65 bps from 50 bps. 30+ dpd rose to 5.2% from 4.0% in 4QFY26, but management expects recoveries to be stronger in 2H and the disbursement dip (-28% on a norm change; 18% growth otherwise) to catch up. Semi-fixed rate loans are due for repricing in 2H. (Kotak)",
@@ -45412,7 +46289,7 @@
    },
    "added": "folder",
    "mcap": 3255,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "neutral",
     "note": "Management expects funding costs to keep falling as c.10.5% borrowings are refinanced, AUM growth to accelerate further, and credit costs to decline in 2HFY27 from 4.6% in 2Q (steady state 2-2.5%). It targets 2% RoA from 2HFY28. CLSA trimmed FY27-29 PAT by 1-3% on higher provisions and cut its target price from Rs310 to Rs300, citing asset quality as the key swing factor (CLSA).",
@@ -46892,7 +47769,7 @@
     "quarter": "1Q27"
    },
    "mcap": 9807,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 88.24
   },
   {
@@ -49739,7 +50616,7 @@
     "quarter": "2Q27"
    },
    "mcap": 7200,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 224.41
   },
   {
@@ -49833,15 +50710,73 @@
      },
      "rev": 28680,
      "ebitda": 4817
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261106|Berger Paints India|weakmarginprint",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Kotak|261106|Berger Paints India|weakmarginprint",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "own"
+      }
+     },
+     "rev": 32004,
+     "ebitda": 3707,
+     "revYoY": 0.1319,
+     "ebitdaYoY": 0.0522,
+     "revVs": "inline",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Consolidated revenue grew 13.2% y-y, in line with expectations. Standalone grew 11.9% on 3% volume and 12% value growth, subsidiaries grew 22%, and festive demand shifted into 3Q and East India was hit by extended rains (Kotak, Nomura).",
+     "ebitdaNote": "EBITDA grew 5.2% y-y but missed Kotak's estimate by 8.3%. Margin fell 90bp y-y to 11.6% (110bp below estimate). Gross margin fell 225bp y-y to 39.3% on high-cost inventory and delayed industrial price hikes, and about Rs220 mn of extra A&P went on the Rang Bana Rahe campaign. Nomura also put the print well below consensus OP growth of c.18%/21% (Kotak, Nomura).",
+     "vsBasis": "consensus (Nomura: sales in line, OP growth c.5% vs c.18%/21% consensus/estimate); Kotak o",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "261106",
+      "key": "Kotak|261106|Berger Paints India|weakmarginprint",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|261106|Berger Paints India|weakmarginprint",
+       "Nomura|261106|Berger Paints India|salesinlinebutmissonebitdaduetohighrmandapspends"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261106|Berger Paints India|weakmarginprint",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|261106|Berger Paints India|weakmarginprint",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 28275,
+     "ebitda": 3523
     }
    },
    "added": "pdf",
    "outlook": {
-    "call": "positive",
-    "note": "Management guides to better 2Q growth as the full impact of price hikes flows through: volume growth of 7.5-8% with pricing of 7.5-8.5%, and a favourable base. FY27 EBITDA margin guidance of 15-17% is maintained, with YoY margin expansion in 2Q although margins dip sequentially on seasonality. Kotak raised FY27-29E EPS by 4-10% and FV to Rs540, and Nomura raised TP to Rs675 (from Rs650). Competitive intensity from Birla Opus has eased but stays elevated, and the MS rating is Underweight (Kotak, Nomura, MS).",
+    "call": "neutral",
+    "note": "Management expects growth to accelerate in 3Q, with October the highest sales growth in 25-30 months, and is confident of EBITDA margin within the 15-17% guidance band in 3Q/4Q, with c.90% of raw-material inflation recovered through price hikes in Oct-Nov. Against that, Kotak cut FY27-29E EPS by 2-7% and fair value to Rs500 (from Rs540). Nomura cut EPS by 6% and its target price to Rs600 (from Rs675) (Kotak, Nomura).",
     "broker": "Kotak",
-    "date": "260805",
-    "quarter": "1Q27"
+    "date": "261106",
+    "quarter": "2Q27"
    }
   },
   {
@@ -50059,7 +50994,7 @@
     "quarter": "2Q27"
    },
    "mcap": 4368,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 915.1
   },
   {
@@ -50149,15 +51084,71 @@
      },
      "rev": 17095,
      "ebitda": 4639
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|261106|Abbott India|broadlyinlinestrongcoreportfoliooffsetsnovoinsulinphaseoutandglp1pressure",
+       "broker": "JPMorgan",
+       "date": "261106",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "JPMorgan|261106|Abbott India|broadlyinlinestrongcoreportfoliooffsetsnovoinsulinphaseoutandglp1pressure",
+       "broker": "JPMorgan",
+       "date": "261106",
+       "role": "own"
+      }
+     },
+     "rev": 19510,
+     "ebitda": 5679,
+     "revYoY": 0.1103,
+     "ebitdaYoY": 0.1308,
+     "revVs": "beat",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Revenue of Rs19.5bn grew 11% YoY and was 3% ahead of consensus and JPMe, helped by the company's own portfolio (ex-Novo) growing about 17% YoY. This offset the Novo insulin phase-out and a roughly 35% decline in Rybelsus in 1H, so overall growth lagged the IPM's 14.7% (JP).",
+     "ebitdaNote": "EBITDA of Rs5.7bn (+13% YoY) was in line with consensus and 2% below JPMe. Margin was 29.1%, up 50bps YoY and 30bps QoQ, but 40bps/90bps below consensus/JPMe. Gross margin expanded 150bps YoY to 48.2% on mix shift, while other expenses ran higher (JP).",
+     "src": {
+      "kind": "pdf",
+      "broker": "JPMorgan",
+      "date": "261106",
+      "key": "JPMorgan|261106|Abbott India|broadlyinlinestrongcoreportfoliooffsetsnovoinsulinphaseoutandglp1pressure",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "JPMorgan|261106|Abbott India|broadlyinlinestrongcoreportfoliooffsetsnovoinsulinphaseoutandglp1pressure"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|261106|Abbott India|broadlyinlinestrongcoreportfoliooffsetsnovoinsulinphaseoutandglp1pressure",
+       "broker": "JPMorgan",
+       "date": "261106",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "JPMorgan|261106|Abbott India|broadlyinlinestrongcoreportfoliooffsetsnovoinsulinphaseoutandglp1pressure",
+       "broker": "JPMorgan",
+       "date": "261106",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 17572,
+     "ebitda": 5022
     }
    },
    "added": "pdf",
    "outlook": {
-    "call": "negative",
-    "note": "JPMorgan expects downward revisions to consensus estimates and a downward stock reaction after the revenue and PAT miss, and keeps a Neutral rating (Mar-27 target Rs27,500). Offsetting positives: underlying portfolio growth of 15% YoY is about 150bps ahead of IPM, and the gross margin mix is improving. (JP)",
+    "call": "neutral",
+    "note": "JPMorgan raised FY28-29 revenue estimates by ~4-5% on better visibility into the own-portfolio trajectory, which lifts FY28E adj. EBITDA 3.4% to Rs25.4bn, and raised its PT to Rs30,800 from Rs29,900. Growth is expected to stay muted near term because of the Novo insulin phase-out, weak Semaglutide (GLP-1) traction in the face of Mounjaro/Yurpeak competition, and no major new launches. Rating stays Neutral (JP).",
     "broker": "JPMorgan",
-    "date": "260813",
-    "quarter": "1Q27"
+    "date": "261106",
+    "quarter": "2Q27"
    }
   },
   {
@@ -50478,7 +51469,7 @@
     "quarter": "2Q27"
    },
    "mcap": 18130,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 1474.4
   },
   {
@@ -50784,15 +51775,74 @@
      },
      "rev": 86459,
      "ebitda": 17733
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261106|Aurobindo Pharma|recordquarter",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "CLSA|261106|Aurobindo Pharma|recordquarter",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "own"
+      }
+     },
+     "rev": 102633,
+     "ebitda": 21558,
+     "revYoY": 0.2387,
+     "ebitdaYoY": 0.2847,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Record quarterly revenue of Rs102.6bn, up 23.9% YoY and 4.5% above Bloomberg consensus, led by the US (+25% YoY, Lannett integration, 10 new launches, higher volumes) and Europe (+27.5%), with growth markets +16% and APIs +21% (CLSA; GS also flags a 4% beat vs consensus).",
+     "ebitdaNote": "EBITDA of Rs21.6bn, up 28.5% YoY and 6.4% above consensus; margin expanded 75bps YoY to 21.0% on gross margin gains (material cost down 149bps to 38.8% of sales), better mix and procurement efficiencies, despite higher input costs (CLSA, GS).",
+     "revCons": 98187,
+     "ebitdaCons": 20255,
+     "src": {
+      "kind": "pdf",
+      "broker": "CLSA",
+      "date": "261106",
+      "key": "CLSA|261106|Aurobindo Pharma|recordquarter",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|261106|Aurobindo Pharma|recordquarter",
+       "GoldmanSachs|261105|Aurobindo Pharma|2q27abovebeatonmultiplefrontsreiteratebuy"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261106|Aurobindo Pharma|recordquarter",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "CLSA|261106|Aurobindo Pharma|recordquarter",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 82857,
+     "ebitda": 16781
     }
    },
    "added": "pdf",
    "outlook": {
-    "call": "neutral",
-    "note": "Management maintained FY27 guidance of double-digit revenue growth, a 21%+ EBITDA margin (Rs80bn+ EBITDA) and R&D of Rs14-15bn. Lannett consolidates from 2QFY27E and is expected to drive a ~9% US sales CAGR over FY26-29E, but Eugia-III regulatory issues persist. Estimate changes were marginal: Kotak FY27-29E EPS ~+1%, CLSA NP +3%, and GS EPS from -3% to +2%. Kotak raised FV to Rs1,535 and CLSA raised TP to Rs1,600 (Kotak, CLSA, GS).",
-    "broker": "Kotak",
-    "date": "260806",
-    "quarter": "1Q27"
+    "call": "positive",
+    "note": "Management reiterated FY27 guidance of double-digit revenue growth, a 21%+ EBITDA margin and absolute EBITDA above Rs80bn, and expects FY28 to be better on a full-year Lannett contribution, China scale-up and biosimilar launches; margin is seen moving to 22% over the mid-term. CLSA raised FY27-29 EPS (net profit +6-9%) and its TP to Rs1,800; GS raised FY27-29E EPS by 5-10% and its TP to Rs2,000 (CLSA, GS).",
+    "broker": "CLSA",
+    "date": "261106",
+    "quarter": "2Q27"
    }
   },
   {
@@ -50889,14 +51939,14 @@
     "2Q27": {
      "abs": {
       "rev": {
-       "key": "Jefferies|261104|Biocon|anotherlacklusterquarteralleyeson2hexecution",
-       "broker": "Jefferies",
+       "key": "GoldmanSachs|261104|Biocon|2q27belowslowertoplinedrivesthemissremainneutral",
+       "broker": "GoldmanSachs",
        "date": "261104",
        "role": "own"
       },
       "ebitda": {
-       "key": "Jefferies|261104|Biocon|anotherlacklusterquarteralleyeson2hexecution",
-       "broker": "Jefferies",
+       "key": "GoldmanSachs|261104|Biocon|2q27belowslowertoplinedrivesthemissremainneutral",
+       "broker": "GoldmanSachs",
        "date": "261104",
        "role": "own"
       }
@@ -50905,25 +51955,25 @@
      "ebitda": 8309,
      "revYoY": 0.0217,
      "ebitdaYoY": -0.0054,
-     "revVs": "miss",
-     "ebitdaVs": "miss",
-     "overall": "miss",
-     "revNote": "Revenue of INR43.9bn (+2% YoY, +1% QoQ) was 3% below Jefferies' estimate. Generics were flat YoY at INR7.7bn (15% miss) and biosimilars grew only 3% YoY (4% miss) as some shipments worth about USD20m were deferred to Dec-Q. Research services fell 9% YoY but beat the estimate by 3%. (Jeff)",
-     "ebitdaNote": "EBITDA of INR8.5bn (-1% YoY, -2% QoQ) was 8% below Jefferies' estimate, with margin at 18.9% (-52bps YoY). Biosimilars EBITDA fell 7% YoY to INR6.2bn on revenue-recognition timing. Generics margin improved about 100bps QoQ to 8% on better capacity utilisation. (Jeff)",
-     "vsBasis": "broker estimate (Jefferies)",
      "src": {
       "kind": "pdf",
-      "broker": "Jefferies",
+      "broker": "GoldmanSachs",
       "date": "261104",
-      "key": "Jefferies|261104|Biocon|anotherlacklusterquarteralleyeson2hexecution",
+      "key": "GoldmanSachs|261104|Biocon|2q27belowslowertoplinedrivesthemissremainneutral",
       "unit": "INR mn",
       "model": "sonnet",
       "considered": [
+       "GoldmanSachs|261104|Biocon|2q27belowslowertoplinedrivesthemissremainneutral",
        "Jefferies|261104|Biocon|anotherlacklusterquarteralleyeson2hexecution"
       ],
-      "runs": 1,
-      "mined": "2026-11-05"
-     }
+      "runs": 2,
+      "mined": "2026-11-10"
+     },
+     "revVs": "miss",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Revenue of Rs43.9bn (+2% YoY, +1% QoQ) was 5% below Bloomberg consensus and 5% below GS estimates; Biopharma grew +5% YoY but Services fell 9% YoY, and Biosimilars (+3% YoY, -2% QoQ) were held back by timing of revenue recognition on certain shipments (GS). Jefferies also called revenue 3% below its estimate, even after adjusting for the USD20m deferment into 3QFY27 (Jeff).",
+     "ebitdaNote": "EBITDA of Rs8.3bn (-1% YoY, -2% QoQ) was 11% below Bloomberg consensus and 8% below GS; margin of 18.9% was 72bps below GS estimates, with Biosimilars margin compressing to ~22% (-240bps YoY) against Generics margin recovering to ~8% and Services to ~21% (GS). Jefferies put EBITDA 8% below its estimate (Jeff)."
     },
     "2Q26": {
      "abs": {
@@ -51798,7 +52848,7 @@
     "quarter": "1Q27"
    },
    "mcap": 9214,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 2114.9
   },
   {
@@ -52718,7 +53768,7 @@
    },
    "sym": "MEDPLUS",
    "mcap": 7158,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "negative",
     "note": "Management cut its FY27E operating EBITDA guidance to INR3.8-4.0bn from INR4.2-4.4bn, on wage hikes in Karnataka and Telangana of about INR800-850mn for the year. It still guides to 800 net store additions in FY27E, meaningfully more in FY28F, and a margin of about 5% by year-end. Nomura cut FY27F/28F operating EBITDA by 15.4%/13.7%, cut its target price to INR915 from INR1,190, and kept Buy (Nomura).",
@@ -54024,7 +55074,7 @@
     "quarter": "1Q27"
    },
    "mcap": 8250,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 170.58
   },
   {
@@ -54585,15 +55635,72 @@
      },
      "rev": 45310,
      "ebitda": 11780
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261106|CESC|mutedquarterhopefulofarecoveryahead",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Kotak|261106|CESC|mutedquarterhopefulofarecoveryahead",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "own"
+      }
+     },
+     "rev": 57060,
+     "ebitda": 11380,
+     "revYoY": 0.0687,
+     "ebitdaYoY": 0.0044,
+     "revVs": null,
+     "ebitdaVs": null,
+     "overall": "inline",
+     "revNote": "Consolidated net sales rose 6.9% YoY and 0.7% QoQ to Rs57.1 bn, helped by 7% higher unit sales at the Kolkata distribution business and higher purchased-power cost pass-through. Neither note prints a consensus or estimate figure for revenue, so no beat/miss call is made. (Kotak)",
+     "ebitdaNote": "EBITDA was Rs11.4 bn, up 0.4% YoY and 5.9% QoQ, with margin at 19.9% against 21.2% a year ago, as power purchase costs rose 11% YoY and personnel costs rose 10%. This is Kotak's reported EBITDA, which includes regulatory income. CLSA's table excludes it and shows Rs10.4 bn (-2% YoY). No consensus is printed, so no beat/miss call is made. (Kotak, CLSA)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "261106",
+      "key": "Kotak|261106|CESC|mutedquarterhopefulofarecoveryahead",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|261106|CESC|curtailmenthurts",
+       "Kotak|261106|CESC|mutedquarterhopefulofarecoveryahead"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261106|CESC|mutedquarterhopefulofarecoveryahead",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|261106|CESC|mutedquarterhopefulofarecoveryahead",
+       "broker": "Kotak",
+       "date": "261106",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 53390,
+     "ebitda": 11330
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "neutral",
-    "note": "CESC plans to double PAT to Rs28bn by FY30 (Rs15.4bn in FY26). It is acquiring a 1.4GWp operating solar portfolio from ReNew at an EV of Rs48.6bn (about 9x EV/EBITDA) and targets 4.8GWp of renewables by FY29E. Execution on organic renewables has been tardy, and Kotak sees valuations as full (13x P/E, 1.6x P/B on FY28E), so it keeps Reduce with an unchanged FV of Rs172 (Kotak). CLSA is more positive: it sees improving earnings quality and keeps its Rs204 target with an Outperform rating (CLSA).",
-    "broker": "Kotak",
-    "date": "260813",
-    "quarter": "1Q27"
+    "note": "Management is targeting 10 GWp of renewables and a doubling of PAT to Rs28 bn by FY30. Start-up costs at the RE IPP and losses at Purvah Green and Malegaon are weighing on near-term earnings, which CLSA expects to ease by mid-2027. CLSA cut its FY27-28CL EPS by 3-5% on curtailment risk and its target price from Rs204 to Rs195. Kotak kept its Rs145 fair value with minor estimate tweaks (CLSA, Kotak).",
+    "broker": "CLSA",
+    "date": "261106",
+    "quarter": "2Q27"
    }
   },
   {
@@ -57968,7 +59075,7 @@
     "quarter": "2Q27"
    },
    "mcap": 22843,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 345.06
   },
   {
@@ -58138,7 +59245,7 @@
    },
    "sym": "NXST",
    "mcap": 22458,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "neutral",
     "note": "Management kept its FY27 guidance of 7% NOI growth to Rs20.5-20.7bn and 9% DPU growth to Rs9.8-10/unit, with 1H DPU tracking ahead. 3Q consumption growth is guided broadly in line with the 1H rate of ~15% (~13% ex-jewellery), even though Diwali falls in 3Q. The acquisition pipeline is progressing: Diamond Plaza Kolkata is due to close in Nov-26, and the Guwahati mall and hotel and Runwal Gardens are on track for 2028. Against that, the rent-to-sales target of 12-14% is pushed out to FY30, and Hyderabad repurposing cut consumption growth by ~130bps. Kotak (ADD, FV Rs180 unchanged), MS (OW, PT Rs180) and JPM (OW, PT Rs180) all left targets unchanged. (Kotak, MS, JP)",
@@ -58922,7 +60029,7 @@
     "quarter": "2Q27"
    },
    "mcap": 5807,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 507.65
   },
   {
@@ -59119,7 +60226,7 @@
    },
    "sym": "SUNTECK",
    "mcap": 4388,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "neutral",
     "note": "Management is confident of 25-30% YoY presales growth in FY27 and has a ~Rs70bn GDV launch pipeline for 2HFY27, but the Rs90bn Dubai project has been pushed to 'upcoming' because of the Middle East conflict. Jefferies cut FY27/28 EPS by 14%/20% and FY28/29 sales by 10%/14%, and lowered its target price to Rs450 from Rs560, with monetisation of the large projects mostly from FY28. CLSA left its estimates and Rs510 target unchanged and expects a stronger 2H. (Jeff, CLSA)",
@@ -59338,7 +60445,7 @@
    },
    "sym": "WEWORK",
    "mcap": 9497,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "positive",
     "note": "Management expects margins to keep expanding as front-loaded capacity additions ramp up. It guides FY28 EBITDA margin to ~22-23% and has already reached the lower end of its 150-155k desk capacity guidance for Mar'27. It targets ~190-200k desks by FY29, backed by 9k desks under signed leases and 38k under LOIs. Jefferies raised FY27/FY28 revenue estimates by 2%/3% and IGAAP EBITDA by 3%/2% (Jeff)",
@@ -59493,15 +60600,73 @@
      },
      "rev": 15415,
      "ebitda": 2373
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261106|Astral|marginsmiss",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "CLSA|261106|Astral|marginsmiss",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "own"
+      }
+     },
+     "rev": 19883,
+     "ebitda": 2605,
+     "revYoY": 0.2605,
+     "ebitdaYoY": 0.0144,
+     "revVs": null,
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Revenue rose 26% YoY to Rs19.9bn (plastics +25%, adhesives +29%) on 19% piping volume growth and price pass-through; no revenue consensus or estimate is printed, so no beat/miss call is made (CLSA, Jeff).",
+     "ebitdaNote": "EBITDA of Rs2.57bn (+1% YoY) was 15% below CLSA's estimate; margin fell 318bps YoY to 13.1% on higher input costs and a lag in passing through PVC/CPVC price hikes, with adhesives EBITDA down 19% (CLSA). Jefferies says PAT missed both its estimate and consensus, with OPM down 320bps (Jeff).",
+     "vsBasis": "broker estimate (CLSA)",
+     "src": {
+      "kind": "pdf",
+      "broker": "CLSA",
+      "date": "261106",
+      "key": "CLSA|261106|Astral|marginsmiss",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|261106|Astral|marginsmiss",
+       "Jefferies|261106|Astral|weakearningsfromastrongfranchise"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261106|Astral|marginsmiss",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "CLSA|261106|Astral|marginsmiss",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 15774,
+     "ebitda": 2568
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "positive",
-    "note": "Management maintained FY27 guidance: double-digit piping volume growth with a 16-18% margin, and adhesives growth of 15-20% with a ~15% margin. July piping volumes were up ~40% YoY after PVC prices stabilised and channels restocked, and August is double-digit so far. Adhesives margins are expected to recover to 15-17% as raw-material costs ease. The 40kt CPVC resin plant is on track for December commissioning. The Pipes/Adhesives demerger has been cancelled. EPS changes are minimal (CLSA -1% to -2%, Jeff <-1%, MS minimal); price targets are Rs1,490 (CLSA), Rs1,650 (Jeff) and Rs1,660 (MS) (CLSA, Jeff, MS)",
-    "broker": "MorganStanley",
-    "date": "260812",
-    "quarter": "1Q27"
+    "note": "Management reiterated FY27 guidance of double-digit piping volume growth (1H: 10%) and a 16-18% margin (1H: 17.4%), called October 'unprecedented', and has taken PVC/CPVC price hikes (+5% CPVC in Oct) that should restore margins in 3Q; CPVC resin backward integration (40kt) is on track for 4QFY27. CLSA cuts FY27-29 EPS by 0-5% and TP to Rs1,460 (Hold); Jefferies makes minor 2-3% cuts to FY28-29e EPS, a sharper FY27e cut, and sets TP at Rs1,555 (Hold) (CLSA, Jeff).",
+    "broker": "CLSA",
+    "date": "261106",
+    "quarter": "2Q27"
    }
   },
   {
@@ -60194,7 +61359,7 @@
     "quarter": "2Q27"
    },
    "mcap": 4298,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 4463.7
   },
   {
@@ -60204,14 +61369,97 @@
    "sym": "BATAINDIA",
    "basis": "",
    "note": "",
-   "unit": null,
+   "unit": "INR mn",
    "revUnit": null,
    "metrics": {
     "rev": "Revenue",
     "ebitda": "EBITDA"
    },
-   "q": {},
-   "added": "folder"
+   "q": {
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "GoldmanSachs|261105|Bata India|2qfy27misscompanysetsambitiousrevenueprofitabilitytargetsundernewmanagementsell",
+       "broker": "GoldmanSachs",
+       "date": "261105",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "GoldmanSachs|261105|Bata India|2qfy27misscompanysetsambitiousrevenueprofitabilitytargetsundernewmanagementsell",
+       "broker": "GoldmanSachs",
+       "date": "261105",
+       "role": "own"
+      }
+     },
+     "rev": 8618,
+     "ebitda": 1439,
+     "revYoY": 0.0755,
+     "ebitdaYoY": -0.0069,
+     "revVs": "inline",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Revenue grew 7.5% yoy to Rs 8,618 mn, 1.3% below GS's estimate of Rs 8,735 mn (GSe was +9% yoy), led by premiumization with 5-6% ASP growth yoy. (GS)",
+     "ebitdaNote": "EBITDA fell 0.8% yoy to Rs 1,439 mn, 8.2% below GS's estimate, as employee costs ran 13% above estimate; EBITDA margin was 16.7% (-140 bps yoy, -130 bps vs GSe). (GS)",
+     "vsBasis": "broker estimate (GS)",
+     "src": {
+      "kind": "pdf",
+      "broker": "GoldmanSachs",
+      "date": "261105",
+      "key": "GoldmanSachs|261105|Bata India|2qfy27misscompanysetsambitiousrevenueprofitabilitytargetsundernewmanagementsell",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "GoldmanSachs|261105|Bata India|2qfy27misscompanysetsambitiousrevenueprofitabilitytargetsundernewmanagementsell"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "GoldmanSachs|261105|Bata India|2qfy27misscompanysetsambitiousrevenueprofitabilitytargetsundernewmanagementsell",
+       "broker": "GoldmanSachs",
+       "date": "261105",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "GoldmanSachs|261105|Bata India|2qfy27misscompanysetsambitiousrevenueprofitabilitytargetsundernewmanagementsell",
+       "broker": "GoldmanSachs",
+       "date": "261105",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 8013,
+     "ebitda": 1449
+    },
+    "1Q27": {
+     "abs": {
+      "rev": {
+       "key": "GoldmanSachs|261105|Bata India|2qfy27misscompanysetsambitiousrevenueprofitabilitytargetsundernewmanagementsell",
+       "broker": "GoldmanSachs",
+       "date": "261105",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "GoldmanSachs|261105|Bata India|2qfy27misscompanysetsambitiousrevenueprofitabilitytargetsundernewmanagementsell",
+       "broker": "GoldmanSachs",
+       "date": "261105",
+       "role": "prevQ"
+      }
+     },
+     "rev": 9789,
+     "ebitda": 2040
+    }
+   },
+   "added": "folder",
+   "outlook": {
+    "call": "neutral",
+    "note": "Management guided to better sales growth in 3Q given the late festive season, but was cautious on 2HFY27 gross margin, expecting it to stay range-bound, and plans a ~mid-single-digit yoy price hike to offset raw-material inflation. The new CEO targets doubling revenue (~15%+ CAGR) and at least doubling PBT by 2030, though GS notes a weak track record (FY19-26 sales CAGR 2.6%) and assumes ~10% yoy revenue growth in FY28-29. GS cut FY28-29 EPS by ~7% and FY27 EBITDA by 3.1%, with FY27 EPS +0.7%; TP unchanged at Rs 710 (Sell). (GS)",
+    "broker": "GoldmanSachs",
+    "date": "261105",
+    "quarter": "2Q27"
+   }
   },
   {
    "name": "Lenskart Solutions",
@@ -60656,7 +61904,7 @@
     "quarter": "2Q27"
    },
    "mcap": 22564,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 827.75
   },
   {
@@ -61480,7 +62728,7 @@
     "quarter": "1Q27"
    },
    "mcap": 1520,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 995.3
   },
   {
@@ -61935,15 +63183,81 @@
      },
      "rev": 47189,
      "ebitda": 8529
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261106|Britannia Industries|toplinebeatmarginunderpressure",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "CLSA|261106|Britannia Industries|toplinebeatmarginunderpressure",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "own"
+      }
+     },
+     "rev": 55978,
+     "ebitda": 10217,
+     "revYoY": 0.1564,
+     "ebitdaYoY": 0.0704,
+     "revVs": "beat",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Net revenue rose 15.6% YoY to Rs56.0bn, 3% above Bloomberg consensus, on +13% domestic volume growth (low base) and ~3.5% pricing, with general trade growing 2.6x FY26 growth (CLSA). Jefferies and MS also call the topline ahead of estimates.",
+     "ebitdaNote": "EBITDA of Rs10.2bn (+7% YoY) was in line with consensus (0%) and 5% above CLSA's estimate, as lower-than-expected employee and other expenses offset a 203bps YoY gross margin contraction from raw-material inflation (milk, laminates, industrial fuel). EBITDA margin was 18.3% vs consensus 18.7% (CLSA).",
+     "revCons": 54434,
+     "ebitdaCons": 10186,
+     "src": {
+      "kind": "pdf",
+      "broker": "CLSA",
+      "date": "261106",
+      "key": "CLSA|261106|Britannia Industries|toplinebeatmarginunderpressure",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|261106|Britannia Industries|toplinebeatmarginunderpressure",
+       "GoldmanSachs|261105|Britannia Industries|2qfy27firsttakerevenuebeatbutmarginpressureshigherthanexpectedneutral",
+       "GoldmanSachs|261106|Britannia Industries|2qfy27marginpressureslikelytoremainelevatedin2hneutral",
+       "JPMorgan|261106|Britannia Industries|firsttakeq2weakgrossmarginmaskshealthyrevenuegrowth",
+       "Jefferies|261106|Britannia Industries|aslightbeatbuttheroadaheadlookstougherdgtohol",
+       "Kotak|261109|Britannia Industries|inflationarypressuresweighonmargins",
+       "MorganStanley|261105|Britannia Industries|f2q27broadlyinlinewithconsensusexpectationsbetterthanmse",
+       "MorganStanley|261106|Britannia Industries|2qf27offthecalloptimisticondemandcautiousoninflation",
+       "Nomura|261106|Britannia Industries|volumeandmarginheadwindsonthehorizon"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261106|Britannia Industries|toplinebeatmarginunderpressure",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "CLSA|261106|Britannia Industries|toplinebeatmarginunderpressure",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 48406,
+     "ebitda": 9545
     }
    },
    "added": "pdf",
    "outlook": {
-    "call": "positive",
-    "note": "Management said most key categories delivered positive sequential momentum and the quarter exited at mid-teens revenue growth, helped by higher marketing spend, e-commerce and quick commerce. International business is recovering as supply chain constraints ease. Offsetting this, the EBITDA margin missed on higher opex. CLSA kept Hold with a Rs5,569 target; MS said its thesis and direction of consensus EPS were largely unchanged (CLSA, MS, GS).",
-    "broker": "CLSA",
-    "date": "260807",
-    "quarter": "1Q27"
+    "call": "negative",
+    "note": "Management plans price hikes (including shrinkage) to offset input-cost inflation, which Jefferies expects to weigh on near-term volumes. Jefferies cut FY27-29E EPS by 3% and downgraded to Hold (PT Rs5,350 from Rs6,750), while CLSA cut FY27 EPS by 3% on lower gross margin but raised FY28-29 EPS by 1-2% and its TP to Rs6,214 (Jeff, CLSA).",
+    "broker": "Jefferies",
+    "date": "261106",
+    "quarter": "2Q27"
    }
   },
   {
@@ -62034,18 +63348,93 @@
      },
      "rev": 5537,
      "ebitda": 1057
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261108|Cello World|persistentmarginheadwinds",
+       "broker": "Kotak",
+       "date": "261108",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Kotak|261108|Cello World|persistentmarginheadwinds",
+       "broker": "Kotak",
+       "date": "261108",
+       "role": "own"
+      }
+     },
+     "rev": 6332,
+     "ebitda": 1218,
+     "revYoY": 0.078,
+     "ebitdaYoY": -0.0462,
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "inline",
+     "revNote": "Revenue grew 7.8% yoy to Rs6.3 bn, in line (+0.7% vs Kotak's estimate). Consumerware fell 1.2% yoy as the festive season shifted into 3Q, while writing instruments grew ~70% yoy on integration of the 'Cello' branded products and moulded furniture fell 6.5% (Kotak).",
+     "ebitdaNote": "EBITDA fell 4.6% yoy to Rs1.22 bn but was 2.7% above Kotak's estimate. Margin fell 250 bps yoy to 19.2% on RM/gas price inflation, adverse operating leverage in steelware/glass and higher staff and other costs, even though gross margin rose 70 bps yoy to 50.2%. PBT and PAT missed the estimate by ~3-4% on lower other income and higher depreciation (Kotak).",
+     "vsBasis": "broker estimate (Kotak)",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "261108",
+      "key": "Kotak|261108|Cello World|persistentmarginheadwinds",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|261108|Cello World|persistentmarginheadwinds"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261108|Cello World|persistentmarginheadwinds",
+       "broker": "Kotak",
+       "date": "261108",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|261108|Cello World|persistentmarginheadwinds",
+       "broker": "Kotak",
+       "date": "261108",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 5874,
+     "ebitda": 1277
+    },
+    "1Q27": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261108|Cello World|persistentmarginheadwinds",
+       "broker": "Kotak",
+       "date": "261108",
+       "role": "prevQ"
+      },
+      "ebitda": {
+       "key": "Kotak|261108|Cello World|persistentmarginheadwinds",
+       "broker": "Kotak",
+       "date": "261108",
+       "role": "prevQ"
+      }
+     },
+     "rev": 5267,
+     "ebitda": 990
     }
    },
    "added": "pdf",
    "outlook": {
-    "call": "negative",
-    "note": "Management guides FY2027E revenue growth of 10-12% and EBITDA margin up 200-250 bps to ~25%, but 1Q27 is expected to be weak (Middle East crisis, cautious channels, volumes hit by 12-20% price hikes). Kotak calls the guidance conservative but cuts FY2027-28E EPS by 2-6% and fair value to Rs550 from Rs640 (Kotak).",
+    "call": "neutral",
+    "note": "Management believes margins bottomed in 2Q and should improve meaningfully from here, and guided for ~10% revenue growth in FY27E, with festive demand deferred into 3Q and October demand good. It gave no margin guidance, and glassware gas costs, steelware ramp-up inefficiencies and Chinese glass imports remain headwinds. Kotak cut FY27-29E revenue by ~3% and FY27E EPS by 3.7%, raised EBITDA margin by 60-120 bps, and cut fair value to Rs520 from Rs550, keeping BUY (Kotak).",
     "broker": "Kotak",
-    "date": "260601",
-    "quarter": "4Q26"
+    "date": "261108",
+    "quarter": "2Q27"
    },
    "mcap": 8237,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 365.2
   },
   {
@@ -62542,15 +63931,15 @@
     "2Q27": {
      "abs": {
       "rev": {
-       "key": "Nomura|261105|Dabur India|salesinlineopmissesglobalceoresignsawaitnewstrategy",
-       "broker": "Nomura",
-       "date": "261105",
+       "key": "CLSA|261106|Dabur India|inlinehealthcarefocusinoutlook",
+       "broker": "CLSA",
+       "date": "261106",
        "role": "own"
       },
       "ebitda": {
-       "key": "Nomura|261105|Dabur India|salesinlineopmissesglobalceoresignsawaitnewstrategy",
-       "broker": "Nomura",
-       "date": "261105",
+       "key": "CLSA|261106|Dabur India|inlinehealthcarefocusinoutlook",
+       "broker": "CLSA",
+       "date": "261106",
        "role": "own"
       }
      },
@@ -62558,27 +63947,31 @@
      "ebitda": 6324,
      "revYoY": 0.1165,
      "ebitdaYoY": 0.0753,
-     "revVs": "inline",
-     "ebitdaVs": "inline",
-     "overall": "inline",
-     "revNote": "Consolidated sales grew 11.6% y/y to INR35.6bn, in line with Bloomberg consensus of INR35.4bn (10.9% y/y). India volume growth was 5.5% y/y, with General Trade back to mid-to-high single-digit growth, and international grew 20% y/y. HPC grew c.11% and F&B 17.4%. (Nomura, JP)",
-     "ebitdaNote": "EBITDA grew 7.5% y/y to INR6.3bn, about 1% below consensus of c.INR6.4bn (8.5% y/y), so roughly in line on the 2% rule. Nomura calls it a miss. Margin fell 70bp y/y to 17.7% (-195bp q/q) as other expenditure rose 23.6% y/y, while gross margin was 48.8% (-59bp y/y, +150bp q/q) and ad spends fell 3%. (Nomura, JP)",
-     "revCons": 35400,
-     "ebitdaCons": 6400,
      "src": {
       "kind": "pdf",
-      "broker": "Nomura",
-      "date": "261105",
-      "key": "Nomura|261105|Dabur India|salesinlineopmissesglobalceoresignsawaitnewstrategy",
+      "broker": "CLSA",
+      "date": "261106",
+      "key": "CLSA|261106|Dabur India|inlinehealthcarefocusinoutlook",
       "unit": "INR mn",
       "model": "sonnet",
       "considered": [
+       "CLSA|261106|Dabur India|inlinehealthcarefocusinoutlook",
+       "GoldmanSachs|261104|Dabur India|2qfy27firsttakeinlineresultneutral",
        "JPMorgan|261105|Dabur India|firsttakeinlineq2awaitingthenewindiaceosstrategicblueprint",
+       "Kotak|261106|Dabur India|portfoliotransformationalongroadahead",
+       "MorganStanley|261104|Dabur India|2qf27inlineglobalceoresigns",
        "Nomura|261105|Dabur India|salesinlineopmissesglobalceoresignsawaitnewstrategy"
       ],
-      "runs": 1,
-      "mined": "2026-11-05"
-     }
+      "runs": 2,
+      "mined": "2026-11-10"
+     },
+     "revVs": "inline",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Consolidated sales grew 11.6% YoY, in line with Bloomberg consensus (0%) and 2% above CLSA's estimate. India FMCG grew 10.7% on 5.5% volume growth, F&B grew 17.4% and international grew 20% helped by currency tailwinds, while Healthcare stayed a drag at +6.9% (CLSA).",
+     "ebitdaNote": "EBITDA grew 7.5% YoY, 1% below consensus and 2% below CLSA's estimate. Margin fell 68bps to 17.7% as gross margin contracted 59bps and other expenses rose 24%, partly offset by a 3% decline in A&P spend (CLSA). Nomura calls it a miss against 8.5% consensus growth.",
+     "revCons": 35534,
+     "ebitdaCons": 6400
     },
     "2Q26": {
      "abs": {
@@ -62753,15 +64146,74 @@
      },
      "rev": 11518,
      "ebitda": 3842
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261107|Emami|toplinebeatbutprofitmiss",
+       "broker": "CLSA",
+       "date": "261107",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "CLSA|261107|Emami|toplinebeatbutprofitmiss",
+       "broker": "CLSA",
+       "date": "261107",
+       "role": "own"
+      }
+     },
+     "rev": 10877,
+     "ebitda": 2223,
+     "revYoY": 0.3622,
+     "ebitdaYoY": 0.2454,
+     "revVs": "beat",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Net sales rose 36% YoY to Rs10.9bn, 11% above the BBG consensus of Rs9.76bn and 9% above CLSA's estimate. Domestic sales grew 32% like-for-like on 26% volume growth, and strategic investments grew 73% like-for-like. A low base from GST de-stocking in 2QFY26 also helped. International sales fell 2% (CLSA, GS).",
+     "ebitdaNote": "EBITDA rose 25% YoY to Rs2.22bn, 8% above the BBG consensus of Rs2.06bn but 11% below CLSA's own estimate. Gross margin fell 520bps YoY to 65.8%, roughly 400bps of it from raw material inflation, and EBITDA margin fell to 20.4% from 22.4% (CLSA, GS).",
+     "revCons": 9757,
+     "ebitdaCons": 2059,
+     "src": {
+      "kind": "pdf",
+      "broker": "CLSA",
+      "date": "261107",
+      "key": "CLSA|261107|Emami|toplinebeatbutprofitmiss",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|261107|Emami|toplinebeatbutprofitmiss",
+       "GoldmanSachs|261105|Emami|2qfy27strongbeatportfoliotransformationalsoprogressingbuy"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261107|Emami|toplinebeatbutprofitmiss",
+       "broker": "CLSA",
+       "date": "261107",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "CLSA|261107|Emami|toplinebeatbutprofitmiss",
+       "broker": "CLSA",
+       "date": "261107",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 7985,
+     "ebitda": 1785
     }
    },
    "added": "pdf",
    "outlook": {
-    "call": "neutral",
-    "note": "Management expects a sequential recovery in international business. It also expects margins to recover as price increases take effect and input costs ease. GS cut FY27/28/29 EPS by ~2% to allow for a higher guided tax rate and cut its target price to Rs625 from Rs655, but kept Buy. GS forecasts FY27 revenue growth of 14.0% and EBITDA growth of 12.7% (GS).",
-    "broker": "GoldmanSachs",
-    "date": "260804",
-    "quarter": "1Q27"
+    "call": "positive",
+    "note": "Management guides 18-20% sales growth in 2HFY27. Strategic investments are expected to deliver over Rs8bn of FY27 revenue, and international sales are recovering, with October growing at a high double-digit rate. Raw material costs stay elevated through 2H, with relief expected in FY28. CLSA raised its FY27-29CL revenue estimates 7-9% but cut PAT 5-15% on a higher tax rate. GS raised FY27-29 EPS 3-4% (CLSA, GS).",
+    "broker": "CLSA",
+    "date": "261107",
+    "quarter": "2Q27"
    }
   },
   {
@@ -62980,7 +64432,7 @@
     "quarter": "2Q27"
    },
    "mcap": 7206,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 372.1
   },
   {
@@ -63844,7 +65296,7 @@
     "quarter": "1Q27"
    },
    "mcap": 7443,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 202.69
   },
   {
@@ -64344,7 +65796,7 @@
    },
    "sym": "ORKLAINDIA",
    "mcap": 7676,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "neutral",
     "note": "Management reiterated its ambition of double-digit growth, with demand commentary constructive. Pricing should keep supporting revenue over the next few quarters, and about 10% price/mix growth is expected to continue. Kerala restructuring runs to March 2027 and will take several quarters to mature. Margins face input-cost and Project Bolt investment pressure. Estimates were nudged up: Kotak raised FY27-29E EPS by 0-2% and JP by 6-7% for FY27-28E. JP cut its price target to Rs680 from Rs710 after lowering the target multiple, and Kotak kept fair value at Rs700 (Kotak, JP).",
@@ -64725,7 +66177,7 @@
     "quarter": "4Q26"
    },
    "mcap": 8280,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 604.5
   },
   {
@@ -66607,15 +68059,80 @@
      },
      "rev": 553832,
      "ebitda": 314916
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261106|Bharti Airtel|beatandreratingahead",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "CLSA|261106|Bharti Airtel|beatandreratingahead",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "own"
+      }
+     },
+     "rev": 608775,
+     "ebitda": 349459,
+     "revYoY": 0.1675,
+     "ebitdaYoY": 0.1821,
+     "revVs": "inline",
+     "ebitdaVs": "beat",
+     "overall": "beat",
+     "revNote": "Consolidated revenue of Rs609bn rose 17% YoY and 4% QoQ, 1% ahead of consensus and 2% ahead of CLSA's estimate. India mobile revenue grew 3% QoQ and 10% YoY, with ARPU up 3% to Rs271, and Africa revenue grew 38% YoY (JP, CLSA).",
+     "ebitdaNote": "Consolidated EBITDA of Rs349bn rose 18% YoY and 5% QoQ, 2% ahead of consensus and 3% ahead of CLSA's estimate, which JP called a beat. Margin rose 51bps QoQ to 57.4%, and India mobile EBITDA rose 11% YoY with a 61% margin (JP, CLSA). GS called the quarter in line (GS).",
+     "src": {
+      "kind": "pdf",
+      "broker": "CLSA",
+      "date": "261106",
+      "key": "CLSA|261106|Bharti Airtel|beatandreratingahead",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|261031|Bharti Airtel|2qairtelafricarevenueebitdaup2629airtelmoneylondonlisting",
+       "CLSA|261106|Bharti Airtel|beatandreratingahead",
+       "GoldmanSachs|261106|Bharti Airtel|inline2qfy27improvingarpuwithsteadydoubledigitebitdaandfasterepsfcfgrowthbuy",
+       "JPMorgan|261106|Bharti Airtel|2q27firstlookarpubeatsbutsubsandcapexmiss",
+       "JPMorgan|261107|Bharti Airtel|conferencecalltakeawaysfiberoverfwadcandcloudfocusareas",
+       "Jefferies|261108|Bharti Airtel|steadygrowthoutlookbuy",
+       "Kotak|261106|Bharti Airtel|beatledbyhigherarpunonwirelesscapexpicksup",
+       "MorganStanley|261105|Bharti Airtel|2qf27coreindianbusinessinlinewithconsensusbutatadsofterthanweexpected",
+       "MorganStanley|261108|Bharti Airtel|focusingonpremiumizationow",
+       "Nomura|261108|Bharti Airtel|2qslightlyaheadonmarginexpansionarpugrowthhealthy"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "CLSA|261106|Bharti Airtel|beatandreratingahead",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "CLSA|261106|Bharti Airtel|beatandreratingahead",
+       "broker": "CLSA",
+       "date": "261106",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 521454,
+     "ebitda": 295614
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "positive",
-    "note": "CLSA lifted its FY27-29CL forecasts by 3-6% and raised its target price from Rs2,310 to Rs2,330, citing strong India and Africa growth, 1QFY27 FCF of Rs165bn after leases, and gearing of only 1.2x EBITDA. JPM expects 10-15% tariff hikes over CY26/28E, deleveraging and higher dividends, but flags that homes net adds slowed to 473K from 1,135K in 4Q26 (CLSA, JP).",
+    "note": "CLSA lifted FY27-29CL forecasts by 2-4% and raised its target price from Rs2,330 to Rs2,765, expecting EBITDA to compound at 10% over FY26-29CL, with an India mobile tariff hike and rising FCF still ahead. GS raised its target from Rs2,180 to Rs2,250 and expects double-digit EBITDA growth and ARPU of Rs295 by Mar-27 on tariff changes. JP flagged soft subscriber adds and capex below expectations but kept OW on tariff-hike and deleveraging catalysts (CLSA, GS, JP).",
     "broker": "CLSA",
-    "date": "260805",
-    "quarter": "1Q27"
+    "date": "261106",
+    "quarter": "2Q27"
    }
   },
   {
@@ -66710,15 +68227,77 @@
      },
      "rev": 24137,
      "ebitda": 12672
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|261106|Bharti Hexacom|firsttakebroadlyinlineresultssofterwirelesssubadds",
+       "broker": "JPMorgan",
+       "date": "261106",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "JPMorgan|261106|Bharti Hexacom|firsttakebroadlyinlineresultssofterwirelesssubadds",
+       "broker": "JPMorgan",
+       "date": "261106",
+       "role": "own"
+      }
+     },
+     "rev": 25818,
+     "ebitda": 13771,
+     "revYoY": 0.1141,
+     "ebitdaYoY": 0.1399,
+     "revVs": "inline",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Revenue of Rs25.8bn was up 3% QoQ and 11% YoY, 0.9% above consensus and 0.5% below JPMorgan's estimate. Mobile ARPU rose 2% QoQ to Rs264, but mobile subscribers fell 16K QoQ (JP, CLSA). Jefferies calls it a miss against its own estimates on lower mobile and home broadband ARPU (Jeff).",
+     "ebitdaNote": "EBITDA of Rs13.8bn was up 4% QoQ and 14% YoY, 1.2% above consensus and 1% below JPMorgan's estimate. Margin was 53.3%, up 120bps YoY, even as network operating costs rose on higher energy costs (JP, Jeff).",
+     "revCons": 25579,
+     "ebitdaCons": 13612,
+     "src": {
+      "kind": "pdf",
+      "broker": "JPMorgan",
+      "date": "261106",
+      "key": "JPMorgan|261106|Bharti Hexacom|firsttakebroadlyinlineresultssofterwirelesssubadds",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "CLSA|261106|Bharti Hexacom|subscribermiss",
+       "JPMorgan|261106|Bharti Hexacom|firsttakebroadlyinlineresultssofterwirelesssubadds",
+       "JPMorgan|261107|Bharti Hexacom|subsshouldcomeback",
+       "Jefferies|261108|Bharti Hexacom|softquarterstronggrowthoutlookbuy",
+       "Nomura|261106|Bharti Hexacom|2qaheadonmarginsmobilenetaddssoftweatherrelatedsubscriberlossinnortheastseenastemporarywhilehomesscalesonfibermaintainbu"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "JPMorgan|261106|Bharti Hexacom|firsttakebroadlyinlineresultssofterwirelesssubadds",
+       "broker": "JPMorgan",
+       "date": "261106",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "JPMorgan|261106|Bharti Hexacom|firsttakebroadlyinlineresultssofterwirelesssubadds",
+       "broker": "JPMorgan",
+       "date": "261106",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 23173,
+     "ebitda": 12081
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "neutral",
-    "note": "JPM expects only minor consensus earnings upgrades after the revenue and EBITDA beat, and expects a positive stock reaction on the ARPU beat. Home broadband additions slowed to 75K versus an average of 141K over the last two quarters, and mobile subscriber adds missed. CLSA retains its forecasts, Hold rating and Rs1,610 target price, with the stock at a ~40% premium to Bharti Airtel consolidated. (JP, CLSA)",
-    "broker": "JPMorgan",
-    "date": "260805",
-    "quarter": "1Q27"
+    "note": "Mixed read. Jefferies cut FY27-29 revenue/EBITDA estimates by up to 5% and EPS by 7-9% after the 2Q miss and a smaller-than-expected tariff-intervention benefit, but still expects 13%/18% revenue/EBITDA CAGR over FY27-29E and FCF to rise sharply from 3Q. CLSA kept its forecasts and raised its TP from Rs1,610 to Rs1,725 on a roll-forward. JPMorgan expects consensus earnings to stay unchanged. (Jeff, CLSA, JP)",
+    "broker": "Jefferies",
+    "date": "261108",
+    "quarter": "2Q27"
    }
   },
   {
@@ -67830,7 +69409,7 @@
    },
    "sym": "CHALET",
    "mcap": 17779,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "neutral",
     "note": "Nomura maintains Neutral with a TP of INR910 and gives no change to guidance. Hotel RevPAR rose ~7%, but MMR occupancy fell on peripheral construction and the Iran war's hit to foreign tourist arrivals. Resorts RevPAR grew ~34%. The pipeline widened to 2,036 keys with two new Athiva projects at Hyderabad and Pune. The stock trades at 16.5x FY28F EV/EBITDA. (Nomura)",
@@ -68237,7 +69816,7 @@
    "q": {},
    "added": "folder",
    "mcap": 4611,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 207.24
   },
   {
@@ -68400,7 +69979,7 @@
    },
    "sym": "THELEELA",
    "mcap": 22050,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "positive",
     "note": "Management expects high-double-digit RevPAR growth in Q3 and high-teens EBITDA growth in H2, which implies mid-20s% growth for FY27 and is ahead of the earlier FY27 guidance. Jefferies raised FY27 EBITDA/PAT estimates by 3-7%, moved its PT to Rs735 from Rs675, and now assumes 17% RevPAR growth for FY27. Kotak raised FY27E/28E EBITDA by 5.2%/2.4% and its fair value to Rs670 from Rs575. MS sees upside risk to the FY27 EBITDA guidance (Jeff, Kotak, MS).",
@@ -68719,7 +70298,7 @@
     "quarter": "2Q27"
    },
    "mcap": 3552,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 159.72
   },
   {
@@ -68880,7 +70459,7 @@
     "quarter": "2Q27"
    },
    "mcap": 12663,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 542.2
   },
   {
@@ -68978,40 +70557,43 @@
     "2Q27": {
      "abs": {
       "rev": {
-       "key": "JPMorgan|261104|Apollo Tyres|firsttake2qfy27earningsmissdrivenbycommodityinflation",
-       "broker": "JPMorgan",
-       "date": "261104",
+       "key": "Kotak|261105|Apollo Tyres|decentindiabusinessperformance",
+       "broker": "Kotak",
+       "date": "261105",
        "role": "own"
       },
       "ebitda": {
-       "key": "JPMorgan|261104|Apollo Tyres|firsttake2qfy27earningsmissdrivenbycommodityinflation",
-       "broker": "JPMorgan",
-       "date": "261104",
+       "key": "Kotak|261105|Apollo Tyres|decentindiabusinessperformance",
+       "broker": "Kotak",
+       "date": "261105",
        "role": "own"
       }
      },
-     "rev": 79700,
-     "ebitda": 8600,
-     "revYoY": 0.1669,
-     "ebitdaYoY": -0.1569,
-     "revVs": "inline",
-     "ebitdaVs": "miss",
-     "overall": "miss",
-     "revNote": "Consolidated revenue of Rs 79.7bn (+17% YoY, +8% QoQ) was 3% below JPMorgan's estimate but broadly in line with Bloomberg consensus. India revenue grew 26% YoY, 4% above JPMorgan's estimate (JP).",
-     "ebitdaNote": "EBITDA of Rs 8.6bn (-16% YoY) came in 13% below JPMorgan's estimate and 6% below consensus. Margin was 10.7% (-421bps YoY, -100bps QoQ), because of commodity inflation and weaker margins in India (11.1%, -93bps QoQ) and Europe. Standalone gross margin fell 245bps QoQ (JP).",
+     "rev": 79682,
+     "ebitda": 8554,
+     "revYoY": 0.1665,
+     "ebitdaYoY": -0.1619,
      "src": {
       "kind": "pdf",
-      "broker": "JPMorgan",
-      "date": "261104",
-      "key": "JPMorgan|261104|Apollo Tyres|firsttake2qfy27earningsmissdrivenbycommodityinflation",
+      "broker": "Kotak",
+      "date": "261105",
+      "key": "Kotak|261105|Apollo Tyres|decentindiabusinessperformance",
       "unit": "INR mn",
       "model": "sonnet",
       "considered": [
-       "JPMorgan|261104|Apollo Tyres|firsttake2qfy27earningsmissdrivenbycommodityinflation"
+       "CLSA|261106|Apollo Tyres|ridingthroughcommodityupcycle",
+       "JPMorgan|261104|Apollo Tyres|firsttake2qfy27earningsmissdrivenbycommodityinflation",
+       "Kotak|261105|Apollo Tyres|decentindiabusinessperformance",
+       "Nomura|261105|Apollo Tyres|growthheadwindsfromrisingcompetition2qfy27ebitdabelowestimatesmarginrecoverydelayedduetoelevatedcostshighcapextokeepfcfsubdu"
       ],
-      "runs": 1,
-      "mined": "2026-11-05"
-     }
+      "runs": 2,
+      "mined": "2026-11-10"
+     },
+     "revVs": "inline",
+     "ebitdaVs": "miss",
+     "overall": "miss",
+     "revNote": "Consolidated revenue of Rs79.7bn (+17% YoY, +7.7% QoQ) was broadly in line with Bloomberg consensus, though 3% below JPMorgan's estimate. India revenue grew 26% YoY on 13% volume growth and 11% higher realisations, while the European business fell 11.5% YoY in EUR terms (JP, Kotak).",
+     "ebitdaNote": "Consolidated EBITDA of Rs8.55bn (-16% YoY) was 6% below consensus and 13% below JPMorgan's estimate, as raw-material inflation (RM basket +12-13% QoQ) cut standalone gross margin by about 250bps QoQ and the European margin was weak. Consolidated margin was 10.7% (-421bps YoY); standalone EBITDA beat on lower staff costs (JP, Kotak)."
     },
     "2Q26": {
      "abs": {
@@ -69129,15 +70711,73 @@
      },
      "rev": 28942,
      "ebitda": 6624
+    },
+    "2Q27": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261105|Balkrishna Industries|abroadlyinlinequarter",
+       "broker": "Kotak",
+       "date": "261105",
+       "role": "own"
+      },
+      "ebitda": {
+       "key": "Kotak|261105|Balkrishna Industries|abroadlyinlinequarter",
+       "broker": "Kotak",
+       "date": "261105",
+       "role": "own"
+      }
+     },
+     "rev": 34495,
+     "ebitda": 6288,
+     "revYoY": 0.4864,
+     "ebitdaYoY": 0.2632,
+     "revVs": "beat",
+     "ebitdaVs": "inline",
+     "overall": "inline",
+     "revNote": "Revenue of Rs34.5 bn (+49% yoy) was ~12% above consensus (Nomura) and 9.8% above Kotak's estimate. Volumes rose 30% yoy to 91.4k tonnes and realisations rose 14% yoy to Rs377/kg, helped by price hikes and a richer mix of OHT and on-highway tyres (Kotak, Nomura).",
+     "ebitdaNote": "EBITDA of Rs6.3 bn (+26% yoy) was 0.7% above Kotak's estimate, but the margin of 18.2% was below Nomura's 18.7% and consensus's 19.8%. Gross margin fell 660 bps qoq as RM costs jumped to 57.5% of sales, partly offset by lower other expenses (Kotak, Nomura).",
+     "vsBasis": "revenue: consensus (Nomura says ~12% above consensus); EBITDA: broker estimate (Kotak), no",
+     "src": {
+      "kind": "pdf",
+      "broker": "Kotak",
+      "date": "261105",
+      "key": "Kotak|261105|Balkrishna Industries|abroadlyinlinequarter",
+      "unit": "INR mn",
+      "model": "sonnet",
+      "considered": [
+       "Kotak|261105|Balkrishna Industries|abroadlyinlinequarter",
+       "Nomura|261105|Balkrishna Industries|riskstorecoveryfromlowerohtdemandandadversemix"
+      ],
+      "runs": 1,
+      "mined": "2026-11-10"
+     }
+    },
+    "2Q26": {
+     "abs": {
+      "rev": {
+       "key": "Kotak|261105|Balkrishna Industries|abroadlyinlinequarter",
+       "broker": "Kotak",
+       "date": "261105",
+       "role": "yearAgo"
+      },
+      "ebitda": {
+       "key": "Kotak|261105|Balkrishna Industries|abroadlyinlinequarter",
+       "broker": "Kotak",
+       "date": "261105",
+       "role": "yearAgo"
+      }
+     },
+     "rev": 23207,
+     "ebitda": 4978
     }
    },
    "added": "pdf",
    "outlook": {
     "call": "neutral",
-    "note": "Management sees stable EU demand and a strong India, but RM prices rose over 10% in 1Q with a further 4-5% expected in 2Q, so it has taken 3-5% price hikes and guides FY27E capex of Rs25-30bn. Kotak expects margins below 23% over FY27-28E on margin-dilutive TBR/PCR/2W expansion and raised FY27-29E EPS 1-3% (FV Rs2,125, SELL). Nomura cut FY27F EPS 3% and its TP to INR2,410 (Neutral) as TBR/PCR share rises (Kotak, Nomura).",
+    "note": "Kotak raised FY27-29 EBITDA by 1-2% on higher volumes, offset by lower margins. It expects margins to stay below 21% on commodity headwinds and the margin-dilutive TBR/PCR/2W push, and it retains SELL with FV Rs2,200. Nomura raised FY27-29 revenue by ~8-9% but cut EBITDA margins by 160-200 bps to 19.5%/20.5%/21%, so EPS moves -1%/-3%/+2%. Management guides to a 20-25% EBITDA margin, and EU agri demand remains subdued (Kotak, Nomura).",
     "broker": "Kotak",
-    "date": "260730",
-    "quarter": "1Q27"
+    "date": "261105",
+    "quarter": "2Q27"
    }
   },
   {
@@ -69995,7 +71635,7 @@
     "quarter": "1Q27"
    },
    "mcap": 21344,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "price": 227.49
   },
   {
@@ -70533,7 +72173,7 @@
    },
    "added": "folder",
    "mcap": 14840,
-   "mcapAsOf": "2026-11-09",
+   "mcapAsOf": "2026-11-10",
    "outlook": {
     "call": "positive",
     "note": "Management targets another ~1 GWp in 2HFY27, taking operational capacity to 3.9 GWp by March 2027, plus BESS of 4.5 GWh by June 2027 and 10 GWh by March 2028. Kotak sees good earnings visibility through FY2028 from 1.7 GW of signed PPA under-construction capacity, with PPAs for the 2.6 GW awarded capacity needed for growth beyond FY2028. It keeps FY2027/28 EBITDA estimates at Rs14/33 bn, BUY and a fair value of Rs320 (Kotak).",
