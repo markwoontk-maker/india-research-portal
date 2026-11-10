@@ -1,6 +1,6 @@
 # Install the Windows Task Scheduler entry that runs daily-refresh.ps1.
 #
-# ONE scheduled task (no chained pair). Fires Mon-Fri 09:45 MYT
+# ONE scheduled task (no chained pair). Fires Mon-Fri 09:30 MYT
 # (local time on this PC = Singapore Standard Time, UTC+08:00) and
 # runs the full pipeline serially -- Step 0 inside daily-refresh.ps1
 # calls the user's existing
@@ -38,7 +38,7 @@ $root = $ts.GetFolder("\")
 
 # Build a fresh task definition.
 $def = $ts.NewTask(0)
-$def.RegistrationInfo.Description = "Single Mon-Fri 09:45 MYT task: runs the sort+rename pipeline (delegated to C:\Users\admin\.claude\sorting-folder-rename\run-rename.ps1) and then the full India research-portal refresh (pdfdata, notes/prior, Trendlyne, theses, financials, FII/DII, highs, positioning, Company QA, House-View notes). Commits + pushes to GitHub Pages at the end."
+$def.RegistrationInfo.Description = "Single Mon-Fri 09:30 MYT task: runs the sort+rename pipeline (delegated to C:\Users\admin\.claude\sorting-folder-rename\run-rename.ps1) and then the full India research-portal refresh (pdfdata, notes/prior, Trendlyne, theses, financials, FII/DII, highs, positioning, Company QA, House-View notes). Commits + pushes to GitHub Pages at the end."
 $def.RegistrationInfo.Author      = $env:USERNAME
 
 # Settings: allow on battery, start when available, generous time limit
@@ -60,12 +60,12 @@ $p.UserId    = "$env:USERDOMAIN\$env:USERNAME"
 $p.LogonType = 3   # TASK_LOGON_INTERACTIVE_TOKEN
 $p.RunLevel  = 0   # TASK_RUNLEVEL_LUA (Limited)
 
-# Weekly trigger: Mon-Fri 09:45 local time.
+# Weekly trigger: Mon-Fri 09:30 local time.
 # TASK_TRIGGER_WEEKLY = 3
 # DaysOfWeek bitmask: Mon=2, Tue=4, Wed=8, Thu=16, Fri=32  -> 62
 $trigger = $def.Triggers.Create(3)
 $trigger.Enabled       = $true
-$trigger.StartBoundary = (Get-Date -Hour 9 -Minute 45 -Second 0).ToString("yyyy-MM-ddTHH:mm:ss")
+$trigger.StartBoundary = (Get-Date -Hour 9 -Minute 30 -Second 0).ToString("yyyy-MM-ddTHH:mm:ss")
 $trigger.DaysOfWeek    = 62
 $trigger.WeeksInterval = 1
 
@@ -79,7 +79,7 @@ $action.WorkingDirectory = $repo
 $null = $root.RegisterTaskDefinition($taskName, $def, 6, $null, $null, 3, $null)
 
 # Disable the previously-separate "Sorting Folder Rename" task so it
-# doesn't fire at 09:45 alongside this merged one. Leave it registered
+# doesn't fire at 09:30 alongside this merged one. Leave it registered
 # (just disabled) so the user can re-enable it if they want to split
 # the pipeline again later.
 $existingRename = Get-ScheduledTask -TaskName $renameTask -ErrorAction SilentlyContinue
@@ -94,7 +94,7 @@ if ($existingRename) {
 
 Write-Host ""
 Write-Host "Task registered: $taskName"
-Write-Host "Schedule:        Mon-Fri 09:45 MYT (Step 0 = rename+sort, then full data refresh)"
+Write-Host "Schedule:        Mon-Fri 09:30 MYT (Step 0 = rename+sort, then full data refresh)"
 Write-Host ""
 Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue |
   ForEach-Object {
