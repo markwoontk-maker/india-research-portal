@@ -1,0 +1,6 @@
+# Live news relay for the India Research Portal News tab. Free Workers plan.
+# Deploy:  cd worker && npx wrangler deploy
+name = "india-news-relay"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true

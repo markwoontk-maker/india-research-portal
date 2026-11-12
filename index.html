@@ -485,27 +485,36 @@
   .ecal-more:hover{color:var(--text);border-color:var(--saffron)}
   .ec-none{font-size:11px;color:var(--text-mute);font-style:italic;text-align:center;padding:10px 0}
 
-  /* News You Need to Know: same list layout as the Indonesia portal */
-  #newsSeg{flex-wrap:wrap}
-  .news-list{list-style:none}
-  /* one headline per row: Type | Title | Source | Time */
-  .news-list li{display:grid;grid-template-columns:96px minmax(0,1fr) 150px 62px;gap:14px;
-    align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line-soft)}
-  .news-list li:last-child{border:none}
-  .news-list li.pol-empty{display:block}
-  .news-list li.news-hd{padding:0 0 6px;border-bottom:1px solid var(--line);font-family:'Roboto Mono';
-    font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-mute)}
-  .news-tag{font-family:'Roboto Mono';font-size:10px;letter-spacing:.06em;color:var(--saffron);text-transform:uppercase;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .news-title{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-    color:var(--text);font-size:13.5px;font-weight:600;text-decoration:none}
-  .news-title:hover{color:var(--saffron);text-decoration:underline}
-  .news-src{font-size:11.5px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .news-time{font-family:'Roboto Mono';font-size:11px;color:var(--text-mute);text-align:right;white-space:nowrap}
-  @media (max-width:640px){
-    .news-list li{grid-template-columns:72px minmax(0,1fr) 52px;gap:10px}
-    .news-src{display:none}
-  }
+  /* News You Need to Know: two live panels (left = markets/policy/economy,
+     right = corporate), wire-feed style like the reference the user shared. */
+  .nw-status{display:inline-flex;align-items:center;gap:7px;font-family:'Roboto Mono';font-size:10.5px;
+    color:var(--text-mute);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .nw-status i{width:7px;height:7px;border-radius:50%;background:var(--text-mute)}
+  .nw-status.live i{background:var(--up);box-shadow:0 0 0 3px rgba(80,200,120,.18)}
+  .nw-status.off i{background:var(--saffron)}
+  .nw-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .nw-panel{border:1px solid var(--line-soft);border-radius:10px;background:var(--ink-2);min-width:0;display:flex;flex-direction:column}
+  .nw-ph{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:10px 14px 8px;
+    border-bottom:1px solid var(--line-soft)}
+  .nw-ph b{font-family:'Manrope';font-size:13px;color:var(--text)}
+  .nw-ph span{font-family:'Roboto Mono';font-size:10.5px;color:var(--text-mute)}
+  .nw-list{list-style:none;margin:0;padding:0;max-height:78vh;overflow-y:auto}
+  .nw-list li.pol-empty{padding:16px 14px}
+  .nw-item{display:grid;grid-template-columns:74px minmax(0,1fr);gap:12px;padding:10px 14px;border-bottom:1px solid var(--line-soft)}
+  .nw-item:last-child{border-bottom:none}
+  .nw-when{display:flex;flex-direction:column;gap:2px;padding-top:1px}
+  .nw-time{font-family:'Roboto Mono';font-size:12px;color:var(--text);font-weight:600}
+  .nw-src{font-size:10px;color:var(--text-mute);line-height:1.25;overflow-wrap:break-word}
+  .nw-body{min-width:0;font-size:13px;line-height:1.55;color:var(--text-dim)}
+  .nw-h{color:var(--saffron);font-weight:700;text-decoration:none;margin-right:6px}
+  .nw-h:hover{text-decoration:underline}
+  .nw-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px;align-items:center}
+  .nw-tag{font-family:'Roboto Mono';font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-mute);
+    border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+  .nw-more{font-size:10.5px;color:var(--text-mute);cursor:help;border-bottom:1px dotted var(--text-mute)}
+  .nw-item.fresh{animation:nwFresh 4s ease-out}
+  @keyframes nwFresh{0%{background:var(--saffron-soft)}100%{background:transparent}}
+  @media (max-width:900px){ .nw-grid{grid-template-columns:1fr} .nw-list{max-height:62vh} }
 
   /* macro momentum heatmaps (CLSA activity indicators) */
   .macro-wrap{overflow:auto;max-height:74vh;border:1px solid var(--line-soft);
@@ -1868,11 +1877,16 @@
     </div>
 
     <div id="viewMarkets" hidden>
-      <div class="card reveal">
+      <div class="card reveal" id="newsCard">
         <div class="card-h"><div><h3>News You Need to Know</h3>
-          <p id="newsSub">Google News · India · last 2 days</p></div>
-          <div class="seg" id="newsSeg"></div></div>
-        <ul class="news-list" id="newsList"><li class="pol-empty">Loading news…</li></ul>
+          <p id="newsSub">19 Indian news feeds · checked every 10 seconds · same story from several outlets shown once · last 48 hours</p></div>
+          <span class="nw-status" id="newsStatus"><i></i><span>Connecting…</span></span></div>
+        <div class="nw-grid">
+          <section class="nw-panel"><div class="nw-ph"><b>Markets · Policy · Economy</b><span id="newsCountL"></span></div>
+            <ol class="nw-list" id="newsL"><li class="pol-empty">Loading news…</li></ol></section>
+          <section class="nw-panel"><div class="nw-ph"><b>Corporate</b><span id="newsCountR"></span></div>
+            <ol class="nw-list" id="newsR"><li class="pol-empty">Loading news…</li></ol></section>
+        </div>
       </div>
       <div class="card reveal">
         <div class="card-h"><div><h3>India Macro Snapshot</h3>
@@ -2040,6 +2054,7 @@
   </div>
 </div>
 
+<script src="news-engine.js?v=2"></script>
 <script>
 /* ---------- Data ---------- */
 const indices = [
@@ -3826,56 +3841,112 @@ function fmtPolItems(items){
 }
 const SOC_RE=/(cricket|\bipl\b|sport|football|hockey|kabaddi|bollywood|\bfilm\b|movie|actor|actress|celebrit|singer|\bott\b|web series|murder|rape|assault|\bcrime\b|accident|road mishap|weather|rainfall|\bflood\b|cyclone|heatwave|festival|temple|mosque|church|religio|wedding|marriage|divorce|viral video|gossip|astrolog|horoscope|entertainment|fashion|recipe|lifestyle|obituary|tribute|birthday|box office)/i;
 /* ---------- News You Need to Know ----------
-   Reads data/news.json, rebuilt every 30 min by GitHub Actions
-   (.github/workflows/news.yml -> scripts/refresh_news.py), the same way the
-   Indonesia portal does it. Layout matches Indonesia too: one filter pill per
-   bucket, a tag column, the headline, then "source · age". The old version
-   fetched Google News in the browser through free CORS proxies; those died and
-   the card was left showing a cached render from June. */
-let newsBucket='ALL', NEWS=null, newsTimer=null;
-function newsAgo(iso){
-  const s=(Date.now()-Date.parse(iso))/1000; if(!isFinite(s)) return '';
-  if(s<3600) return Math.max(1,Math.round(s/60))+'m ago';
-  if(s<86400) return Math.round(s/3600)+'h ago';
-  return Math.round(s/86400)+'d ago';
+   Two live panels: left = markets, policy, economy; right = corporate.
+   Sources:
+   - the live relay (Cloudflare Worker, worker/), polled every 10 s while the
+     News tab is open; it returns only items it hadn't sent before;
+   - data/news.json, the 48-hour snapshot GitHub Actions rebuilds every 30 min
+     (scripts/refresh_news.py), so the record survives reloads, other devices
+     and any relay outage.
+   news-engine.js filters the noise, sorts each story left/right and merges the
+   same story from different outlets into one row (headline + publisher blurb
+   from the first outlet that had a blurb, "+N sources" for the rest). Stories
+   older than 48 h are dropped. */
+const NEWS_RELAY='';            // the deployed worker URL, e.g. https://india-news-relay.<you>.workers.dev
+const NEWS_LS='irp_news_v2';
+let NE=null, newsTimer=null, newsSnapTimer=null, relaySince=0, relayOk=null, relayAt=0;
+function newsEsc(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function newsAgo(ms){
+  const s=(Date.now()-ms)/1000; if(!isFinite(s)) return '';
+  if(s<60) return 'just now'; if(s<3600) return Math.round(s/60)+'m ago';
+  if(s<86400) return Math.round(s/3600)+'h ago'; return Math.round(s/86400)+'d ago';
 }
-function renderNews(){
-  const list=document.getElementById('newsList'), segEl=document.getElementById('newsSeg'), sub=document.getElementById('newsSub');
-  if(!list) return;
-  const n=NEWS;
-  if(!n||!n.b){ list.innerHTML='<li class="pol-empty">News feed unavailable.</li>'; return; }
-  const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  const keys=Object.keys(n.b);
-  if(newsBucket!=='ALL' && !keys.includes(newsBucket)) newsBucket='ALL';
-  segEl.innerHTML=[{k:'ALL',l:'All'},...keys.map(k=>({k,l:(n.labels&&n.labels[k])||k}))]
-    .map(o=>`<button type="button" data-k="${o.k}" class="${o.k===newsBucket?'on':''}">${esc(o.l)}</button>`).join('');
-  // Hold to the 2-day window at render time too, so a stalled feed shows
-  // "nothing recent" instead of quietly serving old headlines.
-  const win=(n.window_h||48)*3600e3, now=Date.now();
-  let items=newsBucket==='ALL' ? keys.flatMap(k=>n.b[k].slice(0,12)) : (n.b[newsBucket]||[]);
-  items=items.filter(x=>now-Date.parse(x.d)<=win).sort((a,b)=>(a.d<b.d?1:-1));
-  const stale=(now-Date.parse(n.updated))>3*3600e3;
-  sub.textContent=`Google News · India · last 2 days · refreshed ${newsAgo(n.updated)} · ${items.length} headlines`+(stale?' · feed behind schedule':'');
-  // One headline per row: Type | Title | Source | Time. The title is cut to one
-  // line with an ellipsis; the full headline is in its tooltip.
-  list.innerHTML=items.length
-    ? '<li class="news-hd"><span>Type</span><span>Title</span><span class="news-src">Source</span><span style="text-align:right">Time</span></li>'+
-      items.map(x=>`<li><span class="news-tag">${esc((n.labels&&n.labels[x.c])||x.c)}</span>`+
-        `<a class="news-title" href="${esc(x.l)}" target="_blank" rel="noopener" title="${esc(x.t)}">${esc(x.t)}</a>`+
-        `<span class="news-src" title="${esc(x.s)}">${esc(x.s)}</span>`+
-        `<span class="news-time">${newsAgo(x.d)}</span></li>`).join('')
-    : '<li class="pol-empty">No headlines in the last 2 days for this bucket.</li>';
+// Clock time for today's stories, "Tue 14:30" for older ones (viewer's local time).
+function newsClock(ms){
+  const d=new Date(ms), now=new Date();
+  const hm=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  return d.toDateString()===now.toDateString()?hm:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+' '+hm;
+}
+function newsSave(){
+  try{ localStorage.setItem(NEWS_LS, JSON.stringify({since:relaySince, items:NE.rawItems()})); }catch(e){}
+}
+function newsRow(c, freshIds){
+  const r=c.rep, others=c.sources.filter(x=>x!==String(r.s||'').replace(/\.com$/i,''));
+  const more=others.length?`<span class="nw-more" title="Also reported by: ${newsEsc(others.join(', '))}">+${others.length} source${others.length>1?'s':''}</span>`:'';
+  return `<li class="nw-item${freshIds&&freshIds.has(c.id)?' fresh':''}">`+
+    `<div class="nw-when"><span class="nw-time" title="${newsEsc(newsAgo(c.p))}">${newsClock(c.p)}</span><span class="nw-src">${newsEsc(r.s)}</span></div>`+
+    `<div class="nw-body"><a class="nw-h" href="${newsEsc(r.l)}" target="_blank" rel="noopener">${newsEsc(r.t)}</a>`+
+    (r.b?` <span class="nw-b">${newsEsc(r.b)}</span>`:'')+
+    `<div class="nw-meta"><span class="nw-tag">${newsEsc(c.tag)}</span>${more}</div></div></li>`;
+}
+function renderNews(freshIds){
+  if(!NE) return;
+  NE.prune(Date.now());
+  for(const side of ['L','R']){
+    const el=document.getElementById('news'+side); if(!el) continue;
+    const list=NE.list(side);
+    const top=el.scrollTop;
+    el.innerHTML=list.length?list.map(c=>newsRow(c,freshIds)).join(''):'<li class="pol-empty">No stories in the last 48 hours yet.</li>';
+    el.scrollTop=top;
+    const cnt=document.getElementById('newsCount'+side); if(cnt) cnt.textContent=list.length+' stories';
+  }
+  newsStatus();
+}
+function newsStatus(){
+  const el=document.getElementById('newsStatus'); if(!el) return;
+  const label=el.querySelector('span');
+  if(!NEWS_RELAY){ el.className='nw-status off'; label.textContent='Saved feed · live relay not set up'; return; }
+  if(relayOk===null){ el.className='nw-status'; label.textContent='Connecting…'; return; }
+  if(relayOk){ el.className='nw-status live'; label.textContent='Live · checked '+newsAgo(relayAt); }
+  else { el.className='nw-status off'; label.textContent='Live feed unreachable · showing saved news'; }
+}
+function newsVisible(){
+  const v=document.getElementById('viewMarkets');
+  return !document.hidden && v && !v.hidden;
+}
+async function newsPoll(force){
+  if(!NEWS_RELAY || !NE || (!force && !newsVisible())) { newsStatus(); return; }
+  const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),8000);
+  try{
+    // 15 s overlap so nothing falls between polls; repeats are ignored by id.
+    const r=await fetch(NEWS_RELAY+'/news?since='+Math.max(0,relaySince-15000),{cache:'no-store',signal:ctl.signal});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    const fresh=NE.add(j.items||[]);
+    relaySince=j.now; relayOk=true; relayAt=Date.now();
+    if(fresh.length){
+      renderNews(new Set(fresh.filter(x=>!x.merged).map(x=>x.c.id)));
+      newsSave();
+    } else newsStatus();
+  }catch(e){ relayOk=false; newsStatus(); }
+  finally{ clearTimeout(t); }
+}
+async function newsLoadSnapshot(){
+  try{
+    const r=await fetch('data/news.json',{cache:'no-store'}); if(!r.ok) return null;
+    const j=await r.json();
+    if(j && Array.isArray(j.items)){ NE.add(j.items); return j; }
+  }catch(e){}
+  return null;
 }
 async function loadNews(){
-  try{ const r=await fetch('data/news.json',{cache:'no-store'}); if(r.ok) NEWS=await r.json(); }catch(e){}
+  if(NE){ renderNews(); newsPoll(true); return; }       // tab re-opened: just refresh
+  if(typeof NewsEngine==='undefined'){ document.getElementById('newsL').innerHTML='<li class="pol-empty">News engine failed to load.</li>'; return; }
+  NE=NewsEngine.create({names:typeof NAMES!=='undefined'?NAMES:{}});
+  let saved=null;
+  try{ saved=JSON.parse(localStorage.getItem(NEWS_LS)||'null'); }catch(e){}
+  if(saved && Array.isArray(saved.items)) NE.add(saved.items);
+  const snap=await newsLoadSnapshot();
+  // Ask the relay only for what we don't have: since our last poll, else since the snapshot.
+  relaySince=(saved&&saved.since)||(snap&&Date.parse(snap.updated)-10*60e3)||(Date.now()-2*3600e3);
   renderNews();
-  // Pick up each 30-min rebuild while the page stays open.
-  if(!newsTimer) newsTimer=setInterval(loadNews,10*60*1000);
+  newsSave();
+  await newsPoll(true);
+  if(!newsTimer) newsTimer=setInterval(()=>newsPoll(false),10*1000);
+  // Re-read the snapshot every 15 min: covers anything missed while the tab was closed or the relay was down.
+  if(!newsSnapTimer) newsSnapTimer=setInterval(async()=>{ const before=NE.stats().items; await newsLoadSnapshot(); if(NE.stats().items!==before){ renderNews(); newsSave(); } },15*60*1000);
+  document.addEventListener('visibilitychange',()=>{ if(newsVisible()) newsPoll(true); });
 }
-(function(){
-  const seg=document.getElementById('newsSeg'); if(!seg) return;
-  seg.addEventListener('click',e=>{ const b=e.target.closest('button[data-k]'); if(!b) return; newsBucket=b.dataset.k; renderNews(); });
-})();
 
 function fmtPeriod(p){
   // "2026-03" -> "Mar ’26"

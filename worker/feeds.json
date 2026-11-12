@@ -1,0 +1,24 @@
+{
+  "_comment": "Feed registry shared by worker/src/index.js (live, every 10 s) and scripts/refresh_news.py (GitHub snapshot). side = which panel the publisher's section points to: L = markets/policy/economy, R = corporate, M = mixed (decided by keywords in the browser). Moneycontrol's RSS stopped updating in 2023 and Financial Express's is malformed XML, so both are left out.",
+  "feeds": [
+    {"key": "et-markets",   "src": "Economic Times",  "side": "L", "url": "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms"},
+    {"key": "et-economy",   "src": "Economic Times",  "side": "L", "url": "https://economictimes.indiatimes.com/news/economy/rssfeeds/1373380680.cms"},
+    {"key": "et-politics",  "src": "Economic Times",  "side": "L", "url": "https://economictimes.indiatimes.com/news/politics-and-nation/rssfeeds/1052732854.cms"},
+    {"key": "et-industry",  "src": "Economic Times",  "side": "R", "url": "https://economictimes.indiatimes.com/industry/rssfeeds/13352306.cms"},
+    {"key": "mint-markets", "src": "Mint",            "side": "L", "url": "https://www.livemint.com/rss/markets"},
+    {"key": "mint-economy", "src": "Mint",            "side": "L", "url": "https://www.livemint.com/rss/economy"},
+    {"key": "mint-politics","src": "Mint",            "side": "L", "url": "https://www.livemint.com/rss/politics"},
+    {"key": "mint-companies","src": "Mint",           "side": "R", "url": "https://www.livemint.com/rss/companies"},
+    {"key": "bs-markets",   "src": "Business Standard","side": "L", "url": "https://www.business-standard.com/rss/markets-106.rss"},
+    {"key": "bs-economy",   "src": "Business Standard","side": "L", "url": "https://www.business-standard.com/rss/economy-102.rss"},
+    {"key": "bs-companies", "src": "Business Standard","side": "R", "url": "https://www.business-standard.com/rss/companies-101.rss"},
+    {"key": "bl-markets",   "src": "BusinessLine",    "side": "L", "url": "https://www.thehindubusinessline.com/markets/feeder/default.rss"},
+    {"key": "bl-economy",   "src": "BusinessLine",    "side": "L", "url": "https://www.thehindubusinessline.com/economy/feeder/default.rss"},
+    {"key": "bl-companies", "src": "BusinessLine",    "side": "R", "url": "https://www.thehindubusinessline.com/companies/feeder/default.rss"},
+    {"key": "cnbc-market",  "src": "CNBC-TV18",       "side": "L", "url": "https://www.cnbctv18.com/commonfeeds/v1/cne/rss/market.xml"},
+    {"key": "cnbc-economy", "src": "CNBC-TV18",       "side": "L", "url": "https://www.cnbctv18.com/commonfeeds/v1/cne/rss/economy.xml"},
+    {"key": "cnbc-business","src": "CNBC-TV18",       "side": "R", "url": "https://www.cnbctv18.com/commonfeeds/v1/cne/rss/business.xml"},
+    {"key": "ndtv-profit",  "src": "NDTV Profit",     "side": "M", "url": "https://feeds.feedburner.com/ndtvprofit-latest"},
+    {"key": "wires",        "src": "",                "side": "M", "url": "https://news.google.com/rss/search?q=%28site%3Areuters.com%20OR%20site%3Abloomberg.com%29%20%28intitle%3AIndia%20OR%20intitle%3AIndian%20OR%20intitle%3Arupee%20OR%20intitle%3ARBI%20OR%20intitle%3ASensex%20OR%20intitle%3ANifty%29%20when%3A2d&hl=en-IN&gl=IN&ceid=IN%3Aen"}
+  ]
+}
