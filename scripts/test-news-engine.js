@@ -68,6 +68,12 @@ const mk = (i, t, b, s, f, side, minsAgo) => ({ i, t, b, s, f, side, l: 'https:/
     { i: 'u9', f: 'mint-companies', side: 'R', s: 'Mint', l: 'https://www.livemint.com/companies/nvidia-india-staff.html',
       t: 'Jensen Huang scandal: Nvidia India staff lose $600 million on paper',
       b: "Nvidia share price has tumbled since Founder CEO Jensen Huang's extramarital affairs have surfaced, eroding the value of employees' stock awards." },
+    { i: 'u10', f: 'mint-markets', side: 'L', s: 'Mint', l: 'https://www.livemint.com/market/index-provider-msci-removes-strategy.html',
+      t: 'Index Provider MSCI Removes Strategy From Equity Benchmark',
+      b: 'MSCI Inc. has dropped Strategy Inc. from its global equity benchmarks, potentially triggering billions of dollars in stock sales and adding fresh pressure to the financing model behind Michael Saylor’s vast Bitcoin holdings.' },
+    { i: 'u11', f: 'et-industry', side: 'R', s: 'Economic Times', l: 'https://economictimes.indiatimes.com/industry/services/education/et-ai-masterclass.cms',
+      t: 'ET AI Business Transformation Masterclass heads to IIM Bangalore to decode enterprise AI adoption',
+      b: 'The AI Business Transformation Masterclass & Awards 2026 at IIM Bangalore will feature leaders from IndusInd Bank, PhonePe, PepsiCo, Shadowfax, Myntra, Shopify, NVIDIA and other organisations.' },
   ].map((x) => Object.assign(x, { p: now - 60e3 }));
   e.add(unwanted);
   const kept = [...e.list('L'), ...e.list('R')].map((c) => c.rep.t);
