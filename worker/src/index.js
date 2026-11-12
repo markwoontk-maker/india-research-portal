@@ -13,7 +13,8 @@
 
 import REGISTRY from "../feeds.json";
 
-const FEEDS = REGISTRY.feeds;
+// relay:false feeds are left to the GitHub snapshot (Google News returns 503 to Cloudflare).
+const FEEDS = REGISTRY.feeds.filter((f) => f.relay !== false);
 const WINDOW_MS = 48 * 3600e3;
 const MAX_REFRESH_PER_CALL = 4;      // keeps parsing well inside the CPU budget
 const BLURB_MAX = 360;

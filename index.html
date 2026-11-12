@@ -3852,7 +3852,7 @@ const SOC_RE=/(cricket|\bipl\b|sport|football|hockey|kabaddi|bollywood|\bfilm\b|
    same story from different outlets into one row (headline + publisher blurb
    from the first outlet that had a blurb, "+N sources" for the rest). Stories
    older than 48 h are dropped. */
-const NEWS_RELAY='';            // the deployed worker URL, e.g. https://india-news-relay.<you>.workers.dev
+const NEWS_RELAY='https://india-news-relay.markworktk.workers.dev';   // Cloudflare Worker (worker/), free plan, account markworktk@gmail.com
 const NEWS_LS='irp_news_v2';
 let NE=null, newsTimer=null, newsSnapTimer=null, relaySince=0, relayOk=null, relayAt=0;
 function newsEsc(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }

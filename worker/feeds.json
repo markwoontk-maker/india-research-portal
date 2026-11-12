@@ -1,5 +1,5 @@
 {
-  "_comment": "Feed registry shared by worker/src/index.js (live, every 10 s) and scripts/refresh_news.py (GitHub snapshot). side = which panel the publisher's section points to: L = markets/policy/economy, R = corporate, M = mixed (decided by keywords in the browser). Moneycontrol's RSS stopped updating in 2023 and Financial Express's is malformed XML, so both are left out.",
+  "_comment": "Feed registry shared by worker/src/index.js (live, every 10 s) and scripts/refresh_news.py (GitHub snapshot). side = which panel the publisher's section points to: L = markets/policy/economy, R = corporate, M = mixed (decided by keywords in the browser). Moneycontrol's RSS stopped updating in 2023 and Financial Express's is malformed XML, so both are left out. relay:false = skipped by the Cloudflare relay (Google News answers Cloudflare's servers with 503) but still fetched by the GitHub snapshot.",
   "feeds": [
     {"key": "et-markets",   "src": "Economic Times",  "side": "L", "url": "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms"},
     {"key": "et-economy",   "src": "Economic Times",  "side": "L", "url": "https://economictimes.indiatimes.com/news/economy/rssfeeds/1373380680.cms"},
@@ -19,6 +19,6 @@
     {"key": "cnbc-economy", "src": "CNBC-TV18",       "side": "L", "url": "https://www.cnbctv18.com/commonfeeds/v1/cne/rss/economy.xml"},
     {"key": "cnbc-business","src": "CNBC-TV18",       "side": "R", "url": "https://www.cnbctv18.com/commonfeeds/v1/cne/rss/business.xml"},
     {"key": "ndtv-profit",  "src": "NDTV Profit",     "side": "M", "url": "https://feeds.feedburner.com/ndtvprofit-latest"},
-    {"key": "wires",        "src": "",                "side": "M", "url": "https://news.google.com/rss/search?q=%28site%3Areuters.com%20OR%20site%3Abloomberg.com%29%20%28intitle%3AIndia%20OR%20intitle%3AIndian%20OR%20intitle%3Arupee%20OR%20intitle%3ARBI%20OR%20intitle%3ASensex%20OR%20intitle%3ANifty%29%20when%3A2d&hl=en-IN&gl=IN&ceid=IN%3Aen"}
+    {"key": "wires",        "src": "",                "side": "M", "relay": false, "url": "https://news.google.com/rss/search?q=%28site%3Areuters.com%20OR%20site%3Abloomberg.com%29%20%28intitle%3AIndia%20OR%20intitle%3AIndian%20OR%20intitle%3Arupee%20OR%20intitle%3ARBI%20OR%20intitle%3ASensex%20OR%20intitle%3ANifty%29%20when%3A2d&hl=en-IN&gl=IN&ceid=IN%3Aen"}
   ]
 }
