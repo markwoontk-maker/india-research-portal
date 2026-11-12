@@ -58,11 +58,21 @@ const mk = (i, t, b, s, f, side, minsAgo) => ({ i, t, b, s, f, side, l: 'https:/
     { i: 'u6', f: 'et-markets', side: 'L', s: 'Economic Times', l: 'https://economictimes.indiatimes.com/markets/us-stocks/news/nvidia-shares-slide-as-investors-consider-future-without-huang/articleshow/135753594.cms',
       t: 'Nvidia shares plummet 10% in after-hours trade as investors consider a future without Huang',
       b: "Nvidia Corp's stock faced a sharp decline following troubling reports about CEO Jensen Huang's personal affairs." },
+    // Leaks found on the live site after the first scope fix:
+    { i: 'u7', f: 'cnbc-market', side: 'L', s: 'CNBC-TV18', l: 'https://www.cnbctv18.com/market/market-pulse-key-triggers.htm',
+      t: 'Market Pulse: Key triggers to watch before the November 12 trading session',
+      b: 'Indian markets and investors will track domestic inflation and industrial production data, along with Q2 earnings from HAL, Grasim Industries, Eicher Motors' },
+    { i: 'u8', f: 'cnbc-market', side: 'L', s: 'CNBC-TV18', l: 'https://www.cnbctv18.com/market/market-spooked-fed.htm',
+      t: 'Market spooked because now the Fed may need a supersized hike in December',
+      b: 'Wall Street was recently able to put inflation worries on the back burner, as traders focused on the midterm elections and swings in tech stocks.' },
+    { i: 'u9', f: 'mint-companies', side: 'R', s: 'Mint', l: 'https://www.livemint.com/companies/nvidia-india-staff.html',
+      t: 'Jensen Huang scandal: Nvidia India staff lose $600 million on paper',
+      b: "Nvidia share price has tumbled since Founder CEO Jensen Huang's extramarital affairs have surfaced, eroding the value of employees' stock awards." },
   ].map((x) => Object.assign(x, { p: now - 60e3 }));
   e.add(unwanted);
   const kept = [...e.list('L'), ...e.list('R')].map((c) => c.rep.t);
   assert.deepStrictEqual(kept, [], 'unwanted stories leaked through: ' + kept.join(' | '));
-  console.log('unwanted stories: all 6 dropped');
+  console.log(`unwanted stories: all ${unwanted.length} dropped`);
 }
 
 // ---- real fixture ----
