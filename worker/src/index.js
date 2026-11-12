@@ -133,6 +133,11 @@ export default {
       for (const f of FEEDS) { const s = STATE.get(f.key); feeds[f.key] = s ? { ok: s.ok, status: s.status, ageS: Math.round((now - s.fetchedAt) / 1000), n: s.items.size } : null; }
       return new Response(JSON.stringify({ now, feeds }), { headers: cors(req) });
     }
+    if (url.pathname === "/") {
+      // Opening the bare address in a browser should say what this is, not "Not found".
+      return new Response("India Research Portal news relay is running.\n\nThe portal's News tab reads /news every 10 seconds.\nFeed status: /health\n",
+        { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
+    }
     if (url.pathname !== "/news") return new Response("Not found", { status: 404 });
 
     // Re-check the stalest few feeds (all of them on a cold start, in batches across calls).
