@@ -36,6 +36,35 @@ const mk = (i, t, b, s, f, side, minsAgo) => ({ i, t, b, s, f, side, l: 'https:/
   console.log('fixed cases: ok');
 }
 
+// ---- stories the user said they don't want (2026-11-12), verbatim from the feeds ----
+{
+  const e = NE.create({ names: NAMES });
+  const unwanted = [
+    { i: 'u1', f: 'cnbc-market', side: 'L', s: 'CNBC-TV18', l: 'https://www.cnbctv18.com/market/cryptocurrency/binance-blockchain-week-bangkok-2026-unveils-first-speakers-spotlighting-traditional-finance-digital-assets-20031872.htm',
+      t: 'Binance Blockchain Week Bangkok 2026 unveils first speakers, spotlighting traditional finance & digital assets',
+      b: 'The flagship event, under this year’s theme of ‘Evolve’, will convene leading policymakers, central bankers, institutional asset managers and technology leaders' },
+    { i: 'u2', f: 'cnbc-market', side: 'L', s: 'CNBC-TV18', l: 'https://www.cnbctv18.com/market/wall-street-rises-as-tech-shares-lead-rebound-nasdaq-gains-as-nvidia-shares-jump-20031856.htm',
+      t: 'Wall Street rises as tech shares lead rebound, Nasdaq gains as Nvidia jumps 5%',
+      b: 'Wall Street rebounded on Wednesday as technology stocks led gains, with Nvidia jumping 5% and CoreWeave rallying 13% after strong quarterly results and an upbeat outlook' },
+    { i: 'u3', f: 'bl-companies', side: 'R', s: 'BusinessLine', l: 'https://www.thehindubusinessline.com/companies/spotify-launches-audiobooks-in-india-with-over-35-lakh-titles/article71692688.ece',
+      t: 'Spotify launches audiobooks in India with over 3.5 lakh titles',
+      b: 'The audiobook is a subscription service called Audiobooks+, priced at ₹199 per month, which gives listeners 15 hours of listening time' },
+    { i: 'u4', f: 'bl-economy', side: 'L', s: 'BusinessLine', l: 'https://www.thehindubusinessline.com/economy/agri-business/combining-ai-with-gis-to-solve-real-time-farm-problems-the-farmwise-ai-way/article71686477.ece',
+      t: 'Combining AI with GIS to solve real-time farm problems - the Farmwise AI way',
+      b: 'The Chennai-based startup has attracted attention after its founder Anand Vetrivel interacted with Prime Minister Narendra Modi during the inaugural run of the' },
+    { i: 'u5', f: 'mint-markets', side: 'L', s: 'Mint', l: 'https://www.livemint.com/market/rare-ipo-bets-on-end-of-war-and-economic-crisis-in-myanmar-11794443215168.html',
+      t: 'Rare IPO Bets on End of War and Economic Crisis in Myanmar',
+      b: 'A Myanmar company is going public in the middle of a civil war and economic downturn, betting on an eventual recovery.' },
+    { i: 'u6', f: 'et-markets', side: 'L', s: 'Economic Times', l: 'https://economictimes.indiatimes.com/markets/us-stocks/news/nvidia-shares-slide-as-investors-consider-future-without-huang/articleshow/135753594.cms',
+      t: 'Nvidia shares plummet 10% in after-hours trade as investors consider a future without Huang',
+      b: "Nvidia Corp's stock faced a sharp decline following troubling reports about CEO Jensen Huang's personal affairs." },
+  ].map((x) => Object.assign(x, { p: now - 60e3 }));
+  e.add(unwanted);
+  const kept = [...e.list('L'), ...e.list('R')].map((c) => c.rep.t);
+  assert.deepStrictEqual(kept, [], 'unwanted stories leaked through: ' + kept.join(' | '));
+  console.log('unwanted stories: all 6 dropped');
+}
+
 // ---- real fixture ----
 const fx = process.argv[2];
 if (fx) {

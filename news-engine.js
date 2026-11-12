@@ -11,7 +11,7 @@
 
   // ---- noise filters (carried over from the old fact-only News card) ----
   const SOC_RE = /(cricket|\bipl\b|sport|football|hockey|kabaddi|bollywood|\bfilm\b|movie|actor|actress|celebrit|singer|\bott\b|web series|murder|rape|assault|\bcrime\b|accident|road mishap|weather|rainfall|\bflood\b|cyclone|heatwave|festival|temple|mosque|church|religio|wedding|marriage|divorce|viral video|gossip|astrolog|horoscope|entertainment|fashion|recipe|lifestyle|obituary|tribute|birthday|box office|\bnba\b|\bnfl\b|net worth|\baffairs? with|\baffair\b)/i;
-  const NEWS_EXCL = /\b(?:live updates?|live blog|results live|what to (?:expect|know)|stocks? to watch|buzzing stocks|stocks in news|in focus|ahead of (?:q[1-4]|results|earnings|the budget|monetary policy|rbi)|\d+ (?:things|reasons|stocks?|key|smart|top|best) (?:to|you|that|things)|key (?:takeaways|highlights|things to know)|all you need to know|here'?s (?:why|how|what|where)\b|will (?:rbi|the|govt|fed|markets?|inflation)\b|stocks to buy|set to (?:rise|fall|hike|cut)|why (?:is|are|did)\b|(?:might|may|could) (?:rise|fall|cut|hike|gain|drop)|\bpreview\b|\bexplained\b|\bexplainer\b|\bbreakdown\b|what changed|why it matters|\bdeep dive\b|\bby 20\d\d\b|needs? to\s|likely to\s|expected to\s|forecast(?:s|ing|ed)?\b|\bprojected\b|\bprojection\b|aims? to\s|targets? to\s|\bestimates? to\b|should (?:hit|reach|raise|boost|grow|cross|achieve)\s|\b(?:report|study|survey|paper)\s*:|\boutlook\b|seen at\b|price prediction|should you (?:buy|sell)|target price|unpacking|decoded|what (?:it|this) means|means for (?:you|your)|top (?:gainers|losers)|trade setup|market wrap|opening bell|closing bell|mid[- ]day (?:bell|update)|\bhow to\b|allotment status|check (?:allocation|status)|gmp\b|grey market premium|\bquiz\b|\bpodcast\b|\bwebinar\b|\bopinion\b|\bcolumn\b|\bview:|share price highlights|stock price history|results (?:today )?highlights|results today live|\blive:|\binterview\b|recommends|stock picks|stock recommendations|top \d+\s?@\s?\d+)|^watch\b|^\d{1,2}:\d{2}\s*\|/i;   // last two: Bloomberg videos, "11:11 | ..." digest roundups
+  const NEWS_EXCL = /\b(?:live updates?|live blog|results live|what to (?:expect|know)|stocks? to watch|buzzing stocks|stocks in news|in focus|ahead of (?:q[1-4]|results|earnings|the budget|monetary policy|rbi)|\d+ (?:things|reasons|stocks?|key|smart|top|best) (?:to|you|that|things)|key (?:takeaways|highlights|things to know)|all you need to know|here'?s (?:why|how|what|where)\b|will (?:rbi|the|govt|fed|markets?|inflation)\b|stocks to buy|set to (?:rise|fall|hike|cut)|why (?:is|are|did)\b|(?:might|may|could) (?:rise|fall|cut|hike|gain|drop)|\bpreview\b|\bexplained\b|\bexplainer\b|\bbreakdown\b|what changed|why it matters|\bdeep dive\b|\bby 20\d\d\b|needs? to\s|likely to\s|expected to\s|forecast(?:s|ing|ed)?\b|\bprojected\b|\bprojection\b|aims? to\s|targets? to\s|\bestimates? to\b|should (?:hit|reach|raise|boost|grow|cross|achieve)\s|\b(?:report|study|survey|paper)\s*:|\boutlook\b|seen at\b|price prediction|should you (?:buy|sell)|target price|unpacking|decoded|what (?:it|this) means|means for (?:you|your)|top (?:gainers|losers)|trade setup|market wrap|opening bell|closing bell|mid[- ]day (?:bell|update)|\bhow to\b|allotment status|check (?:allocation|status)|gmp\b|grey market premium|\bquiz\b|\bpodcast\b|\bwebinar\b|\bopinion\b|\bcolumn\b|\bview:|share price highlights|stock price history|results (?:today )?highlights|results today live|\blive:|\binterview\b|recommends|stock picks|stock recommendations|top \d+\s?@\s?\d+|stocks showing|marubozu|candlestick|\brsi\b|top picks?\b|what (?:historical )?data shows|share price live)|^watch\b|^\d{1,2}:\d{2}\s*\|/i;   // last two: Bloomberg videos, "11:11 | ..." digest roundups
   const OPINION_VERB = '(?:says?|said|flags?|flagged|warns?|warned|argues?|argued|notes?|noted|believes?|opines?|cautions?|cautioned|told|tells|sees?|saw|reckons?|reckoned|comments?|commented|highlights?|highlighted|fears?|feared|expects?|predicts?|predicted)';
   const OPINION_NAMED_RE = new RegExp('\\b[A-Z][a-z]+\\s+[A-Z][a-z]+(?:\\s+[A-Z][a-z]+)?\\s+' + OPINION_VERB + '\\b');
   const QUESTION_RE = /^\s*(?:will|why|how|what|does|should|can|could|would|are|is|do|did)\s+/i;
@@ -28,8 +28,16 @@
   // Corporate stories are kept unless they look foreign. (Requiring an Indian
   // marker instead would drop small Indian companies the NAMES list doesn't know.)
   const US_RE = /\bU\.?S\.?\b/;   // case-sensitive: not the pronoun "us"
-  const FOREIGN_RE = /\b(american|china|chinese|japan|japanese|korea|korean|taiwan|europe|european|britain|british|german|france|french|nvidia|apple|microsoft|google|alphabet|amazon|meta|tesla|openai|samsung|tsmc|intel|boeing|walmart|jensen|musk|wall street|nasdaq)\b/i;
-  const INDIA_RE =/(₹|\brs\.?\s?[\d,]|\bcrore\b|\blakh\b|\bindia|\bnse\b|\bbse\b|\bsebi\b|\brbi\b|sensex|nifty|mumbai|delhi|bengaluru|bangalore|chennai|hyderabad|kolkata|pune|gujarat|maharashtra|karnataka|tamil nadu|uttar pradesh|andhra|telangana|kerala|\bltd\b)/i;
+  // Sections and topics the user doesn't want (2026-11-12: Wall Street/Nvidia,
+  // crypto events, a Myanmar IPO, Spotify, a startup feature).
+  const EXCL_URL_RE = /\/(?:us-stocks|cryptocurrency|crypto|world-news|world|international|global-markets)\//i;
+  const CRYPTO_RE = /\b(crypto\w*|bitcoin|ethereum|blockchain|binance|web3|nft|stablecoin)\b/i;
+  // Signs a corporate story is about a listed company (when the name isn't in NAMES).
+  const LISTED_RE = /\b(shares?|stocks?|scrip|nse|bse|listed|q[1-4]|quarter(?:ly)?|results|net profit|ebitda|m-?cap|market cap|ipo|qip|order book|orders?|contract|board|dividend|bonus|buyback|stake|promoter|sebi)\b|\bPAT\b/i;
+  const FOREIGN_RE = /\b(myanmar|bangladesh|pakistan|sri lanka|nepal|vietnam|indonesia|thailand|malaysia|philippines|australia|canada|brazil|mexico|russia|ukraine|iran|israel|saudi|uae|dubai|qatar|africa|nigeria|argentina|turkey|egypt|hong kong|asian?|global markets?|spacex|anthropic|xai|silicon valley|american|china|chinese|japan|japanese|korea|korean|taiwan|europe|european|britain|british|german|france|french|nvidia|apple|microsoft|google|alphabet|amazon|meta|tesla|openai|samsung|tsmc|intel|boeing|walmart|jensen|musk|wall street|nasdaq)\b/i;
+  // Market-topic words beyond the index names: sector/stock moves, index rejigs, broker calls on India.
+  const MKT2_RE = /\b(index|indices|msci|ftse|rejig|rall(?:y|ies)|surges?|slumps?|tumbles?|jumps?|gains?|falls?|52-week|record high|valuations?|brokerages?|clsa|jefferies|goldman|morgan stanley|nomura|ubs|citi|macquarie|bernstein|hsbc|bofa|overweight|underweight|ipo|listing|f&o|derivatives?)\b/i;
+  const INDIA_RE =/(₹|\brs\.?\s?[\d,]|\bcrore\b|\blakh\b|\brupee|\bpaise\b|gift city|\bindia|\bnse\b|\bbse\b|\bsebi\b|\brbi\b|sensex|nifty|mumbai|delhi|bengaluru|bangalore|chennai|hyderabad|kolkata|pune|gujarat|maharashtra|karnataka|tamil nadu|uttar pradesh|andhra|telangana|kerala|\bltd\b)/i;
 
   const STOP = new Set(('a an the of in on at to for by with from as is are was were be been its it this that these those after over amid into than and or but not no new up down says said say will may has have had how what why who whom via per vs amp ' +
     'ltd limited co inc share shares stock stocks today report reports rs cr crore lakh india indian its their his her company firm group year years day days week month amid also more most first second third one two three ' +
@@ -79,9 +87,14 @@
     function classify(it) {
       const t = norm(it.t), tb = t + ' ' + norm(it.b);
       if (t.includes('?') || SOC_RE.test(t) || NEWS_EXCL.test(t) || QUESTION_RE.test(t) || OPINION_NAMED_RE.test(t)) return null;
+      if (EXCL_URL_RE.test(it.l || '') || CRYPTO_RE.test(t)) return null;
       const co = company(tb);
       const corpEvent = EARN_RE.test(t) || PAT_RE.test(t) || CORP_RE.test(t);
-      const india = !!co || INDIA_RE.test(tb);
+      // Every feed except the Google News wires is an Indian publisher, so a story
+      // counts as Indian unless its headline points abroad (catches listed names the
+      // NAMES map doesn't know, e.g. Meesho, NPST).
+      const foreignTitle = FOREIGN_RE.test(t) || US_RE.test(t) || /wall street|nasdaq|dow jones|s&p 500/i.test(t);
+      const india = !!co || INDIA_RE.test(tb) || (it.f !== 'wires' && !foreignTitle);
       const indexLevel = INDEX_RE.test(t) && !co;
       let side;
       if (it.side === 'R') side = (!co && !corpEvent && (POLICY_RE.test(t) || ECON_RE.test(t))) ? 'L' : 'R';
@@ -89,25 +102,35 @@
         // A company's results are always corporate news; other corporate verbs
         // ("stake", "order") also appear in market stories, so they need a company name.
         const results = (EARN_RE.test(t) || PAT_RE.test(t)) && !indexLevel;
-        side = ((results || (corpEvent && (co || /\b(?:ltd|limited)\b/i.test(tb)))) && !indexLevel && !GOVT_APPT_RE.test(t)) ? 'R' : 'L';
+        // One company's own stock move ("Motilal Oswal shares hit record high") is
+        // corporate news; sector/index moves naming several companies stay left.
+        const coInTitle = company(t), sectorMove = /\b(index|indices|sector|stocks)\b/i.test(t);
+        // "<Company> shares surge/jump/hit …" for names the NAMES map doesn't know (e.g. Meesho).
+        const ownMove = /\b(?:shares?|stock)\s+(?:surg|jump|ris|gain|fall|fell|drop|slump|zoom|rall|hit|climb|tank|plung|soar|sink|slid|extend)/i.test(t);
+        side = ((results || (corpEvent && (co || /\b(?:ltd|limited)\b/i.test(tb))) || ((coInTitle || ownMove) && !sectorMove)) && !indexLevel && !GOVT_APPT_RE.test(t)) ? 'R' : 'L';
       }
       else side = (corpEvent && !indexLevel && !GOVT_APPT_RE.test(t)) ? 'R' : 'L';
       if (side === 'R') {
         if (!india && (FOREIGN_RE.test(tb) || US_RE.test(tb))) return null;   // foreign corporate news (e.g. a US CEO change)
         if (GOVT_APPT_RE.test(t)) return null;
+        // Indian listed companies only: a known name, or stock-market signals. Drops
+        // foreign brands' India launches (Spotify) and startup features.
+        if (!co && !LISTED_RE.test(tb)) return null;
         let tag = 'Company';
         if (/\bq[1-4]\b|q[1-4]\s?fy|quarter|results|net profit|profit|net loss|ebitda/i.test(t) || PAT_RE.test(t)) tag = 'Results';
         else if (/merger|acqui|to buy|stake|divest|demerger|amalgamat|open offer|joint venture|\bjv\b|partnership|tie[- ]?up/i.test(t)) tag = 'Deal';
         else if (/order|contract/i.test(t)) tag = 'Order';
-        else if (/fund[- ]?rais|\bqip\b|preferential|rights issue|\bipo\b|listing|bond|ncd|debt/i.test(t)) tag = 'Fundraise';
+        else if (/fund[- ]?rais|\bqip\b|preferential|rights issue|\bipo\b|listing (?:day|date)|\bto list\b|\bbonds?\b|\bncds?\b|debt|share sale/i.test(t)) tag = 'Fundraise';
         else if (/ceo|\bmd\b|cfo|chair|resign|steps? down|appoint|board/i.test(t)) tag = 'Management';
         else if (/dividend|buyback|bonus|split/i.test(t)) tag = 'Payout';
         return { side, tag, co: co ? co.tk : '' };
       }
-      // Left panel: keep global market/macro context, but politics must be about India.
-      const pol = POLICY_RE.test(t), econ = ECON_RE.test(t), mkt = INDEX_RE.test(t) || FLOW_RE.test(t) || /market|stocks?|shares|equit|rupee|bond|ipo/i.test(t);
-      if (/politics/.test(it.f) && !india) return null;
-      if (!pol && !econ && !mkt && !india) return null;
+      // Left panel: Indian markets, economy and policy only. Overseas market moves
+      // (Wall Street, Nvidia, a Myanmar IPO) are out, and so are features with no
+      // market/economy/policy angle.
+      const pol = POLICY_RE.test(t), econ = ECON_RE.test(t), mkt = INDEX_RE.test(t) || FLOW_RE.test(t) || MKT2_RE.test(t) || /market|stocks?|shares|equit|rupee|bond|ipo/i.test(t);
+      if (!india || !(pol || econ || mkt)) return null;
+      if (foreignTitle && !INDIA_RE.test(t) && !co) return null;
       const tag = FLOW_RE.test(t) ? 'Flows' : econ ? 'Economy' : pol ? 'Policy' : 'Markets';
       return { side, tag, co: '' };
     }
