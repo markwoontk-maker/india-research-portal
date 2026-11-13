@@ -240,6 +240,13 @@ Step "build-estimates" {
   $global:LASTEXITCODE = 0
 }
 
+# 8e3b. Company tab chart overlay: today's average estimates into data/estimates_hist.json (change
+#       points only). User rule: updated daily with this task; history starts 2026-11-13.
+Step "snapshot-estimates" {
+  & $node "scripts\estimates\build-estimates.js" --snapshot 2>&1 | ForEach-Object { "$_" }
+  $global:LASTEXITCODE = 0
+}
+
 # 8e4. Company tab P/E: fix the day's share prices (data/estimate_prices.json). User rule: P/E is
 #      recalculated once a day, in this task, after the earnings miner is done. It stays here,
 #      after 8e2 (whose last act refreshes the Yahoo prices for names outside the Nifty 500) and
@@ -263,7 +270,7 @@ Step "refresh-px" {
 #    Only the pipeline's own outputs are committed (pathspec), so anything else
 #    someone has staged in this working copy is left alone, not swept in.
 $stageList = @('data/pdfdata.json','data/pdfmap.json','data/research.json','data/sector-tps.json',
-  'data/estimates.json','data/estimate_prices.json','data/px_recent.json','data/px',
+  'data/estimates.json','data/estimate_prices.json','data/estimates_hist.json','data/px_recent.json','data/px',
   'data/model_portfolios_house.json','data/mf_sectors.json','data/fii_dii.json','data/highs.json',
   'data/movers.json','data/sectors.json','data/wl_returns.json','data/wl_quotes.json',
   'data/earnings_calendar.json',

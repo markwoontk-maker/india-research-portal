@@ -208,7 +208,29 @@ function tpOf(r, note) {
   const rating = r.rating ? String(r.rating).trim().slice(0, 24) : null;
   if (tp == null && !rating) return null;
   const cur = /us\$|usd|\$/i.test(String(r.tpCurrency || '')) ? 'US$' : 'INR';
-  return { tp, cur, rating, date: note.date, key: note.key };
+  const prev = r.previousRating ? String(r.previousRating).trim().slice(0, 24) : null;
+  const out = { tp, cur, rating, date: note.date, key: note.key };
+  if (prev) out.prev = prev;
+  return out;
+}
+// Rating scales differ by house; rank them so a move between any two is an upgrade or a downgrade.
+// 4 = Buy / Overweight / Outperform, 3 = Add / Accumulate, 2 = Hold / Neutral / Equal-weight,
+// 1 = Reduce, 0 = Sell / Underweight / Underperform. Unknown words return null.
+function ratingRank(r) {
+  const s = String(r || '').toLowerCase().replace(/[^a-z]/g, '');
+  if (!s) return null;
+  if (/^(strongbuy|buy|overweight|outperform|ow|op|opf)$/.test(s)) return 4;
+  if (/^(add|accumulate)$/.test(s)) return 3;
+  if (/^(hold|neutral|equalweight|ew|marketperform|mp|inline|peerperform)$/.test(s)) return 2;
+  if (/^reduce$/.test(s)) return 1;
+  if (/^(sell|underweight|underperform|uw|up|upf)$/.test(s)) return 0;
+  return null;
+}
+// A rating-change event, or null when the two ratings are the same rank or either is unknown.
+function ratingEvent(from, to, note, broker) {
+  const a = ratingRank(from), b = ratingRank(to);
+  if (a == null || b == null || a === b) return null;
+  return { d: note.date, b: broker, from, to, dir: b > a ? 'up' : 'down', key: note.key };
 }
 // Average TP in the currency most brokers use; a TP in the other currency isn't averaged in.
 function aggregateTp(tps) {
@@ -236,4 +258,4 @@ function nextNote(notes, state, have, maxTries = 3) {
   return untried[0];
 }
 
-module.exports = { tpOf, aggregateTp, FYS, SHOW_FYS, canonBroker, parseUnit, scaleSeries, yearsInLine, scorePage, pickPages, annualRef, checkResult, hasNumbers, epsSeries, toRecord, aggregate, nextNote, median };
+module.exports = { ratingRank, ratingEvent, tpOf, aggregateTp, FYS, SHOW_FYS, canonBroker, parseUnit, scaleSeries, yearsInLine, scorePage, pickPages, annualRef, checkResult, hasNumbers, epsSeries, toRecord, aggregate, nextNote, median };

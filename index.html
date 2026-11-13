@@ -913,7 +913,13 @@
   .co-chart{display:flex;flex-direction:column;gap:6px}
   .co-chart-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .co-chart .seg button{padding:2px 9px;font-size:10.5px}
-  .co-chart-ret{font-family:'Roboto Mono';font-size:11px}
+  .co-chart-ret{font-family:'Roboto Mono';font-size:11px;margin-left:auto}
+  .co-chart-h{flex-wrap:wrap;row-gap:4px}
+  .co-chart-lg{font-size:10px;color:var(--text-mute);min-height:13px;line-height:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .co-lg-sw{display:inline-block;width:14px;vertical-align:middle;margin:0 3px 0 6px}
+  .co-lg-sw:first-child{margin-left:0}
+  .co-lg-n{margin-left:6px}
+  .co-lg-up{color:var(--up);margin-left:6px} .co-lg-dn{color:var(--down)}
   .co-chart-box{position:relative;flex:1;min-height:0}
   .co-chart-msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-mute)}
   .co-chart-msg[hidden]{display:none}
@@ -1969,7 +1975,7 @@
           </div>
         </div>
         <div id="coGrid" class="co-grid"></div>
-        <p class="er-legend"><b>Click a company</b> to open its share price chart, broker target prices and each broker's FY27, FY28 and FY29 estimates, lined up under the columns above. In the broker rows, <span style="color:#86e6b7">green</span> is above the average and <span style="color:#ffa3a3">red</span> below it, except P/E, where a higher P/E is red. <b>Upside/Downside</b> = average broker target price against the latest share price, which updates during market hours. <b>Revenue</b>, <b>EBITDA</b> and <b>EPS</b> FY columns are the simple average of brokers' estimates; grey means only one broker so far. <b>P/E</b> = share price ÷ average EPS (US-listed names use their US price), recalculated once a day by the 09:30 refresh after the earnings miner, so it doesn't move intraday; NM = average EPS is zero or a loss. <b>FY growth</b> counts only brokers that print both years, so a broker dropping out in a later year can't create a false jump. NM = the base year is zero or a loss.
+        <p class="er-legend"><b>Click a company</b> to open its share price chart, broker target prices and each broker's FY27, FY28 and FY29 estimates, lined up under the columns above. In the broker rows, <span style="color:#86e6b7">green</span> is above the average and <span style="color:#ffa3a3">red</span> below it, except P/E, where a higher P/E is red. <b>Upside/Downside</b> = average broker target price against the latest share price, which updates during market hours. On the chart, <b>Revenue / EBITDA / EPS</b> overlays the average broker estimate for the current and next fiscal year, with the price, as % change from the first day both exist (estimate history starts 13 Nov 2026 and is added each morning). <span style="color:var(--up)">▲</span> / <span style="color:var(--down)">▼</span> mark broker rating upgrades and downgrades, with the broker's short name; hover a day for the details. <b>Revenue</b>, <b>EBITDA</b> and <b>EPS</b> FY columns are the simple average of brokers' estimates; grey means only one broker so far. <b>P/E</b> = share price ÷ average EPS (US-listed names use their US price), recalculated once a day by the 09:30 refresh after the earnings miner, so it doesn't move intraday; NM = average EPS is zero or a loss. <b>FY growth</b> counts only brokers that print both years, so a broker dropping out in a later year can't create a false jump. NM = the base year is zero or a loss.
         Quarterly cells work as on the Earnings tab: <span class="sw" style="background:rgba(63,199,138,.45)"></span>beat consensus · <span class="sw" style="background:rgba(240,106,106,.45)"></span>missed consensus · uncoloured = in line (or no consensus in the notes) · <span style="color:var(--saffron)">◥</span> corner = explanation, hover or tap any cell to read it. Lenders show Total operating income / PPOP, life insurers APE / VNB, general insurers GWP (or NEP) / PBT. FY figures are in ₹ mn (or US$ mn where shown with $); EPS is in ₹ per share.
         Estimates come only from broker notes in the PDF library, using each broker's latest note with a forecast table from the last six months. Every broker counts in the average, however far from the others. A dotted underline or ⚠ marks a figure that failed an automatic size check and is still shown. Click a sector to move a company (saved in this browser, shared with the Earnings tab); click a column header to sort. The <b>− / +</b> bar above the headers folds and opens column groups, as in Excel: the quarterly columns of Overall Earnings, Revenue YoY and EBITDA YoY, and the Revenue, EBITDA and EPS columns; <b>1</b> folds them all and <b>2</b> opens them all (remembered in this browser).</p>
       </div>
@@ -6554,9 +6560,9 @@ const CO_GROUPS=[
 ];
 const CO_PIN_W=187, CO_UP_W=70, CO_INFO_W=74+70+CO_UP_W+88;   // sector, market cap, upside/downside, outlook
 let EST=null, EST_AT=0, EST_PX=null, coReady=false, coTips=[], coScrollTo=false;
-let coState={sort:null, dir:-1, q:'', sec:'', open:null, range:'1Y', hide:{}};
-try{ const v=JSON.parse(localStorage.getItem(CO_LS)||'null'); if(v&&typeof v==='object') Object.assign(coState,{sort:v.sort||null,dir:v.dir||-1,range:v.range||'1Y',hide:v.hide&&typeof v.hide==='object'?v.hide:{}}); }catch(e){}
-function coSave(){ try{ localStorage.setItem(CO_LS,JSON.stringify({sort:coState.sort,dir:coState.dir,range:coState.range,hide:coState.hide})); }catch(e){} }
+let coState={sort:null, dir:-1, q:'', sec:'', open:null, range:'1Y', hide:{}, ovl:'off'};
+try{ const v=JSON.parse(localStorage.getItem(CO_LS)||'null'); if(v&&typeof v==='object') Object.assign(coState,{sort:v.sort||null,dir:v.dir||-1,range:v.range||'1Y',hide:v.hide&&typeof v.hide==='object'?v.hide:{},ovl:v.ovl||'off'}); }catch(e){}
+function coSave(){ try{ localStorage.setItem(CO_LS,JSON.stringify({sort:coState.sort,dir:coState.dir,range:coState.range,hide:coState.hide,ovl:coState.ovl})); }catch(e){} }
 async function coLoadEst(){
   try{ const r=await fetch('data/estimates.json',{cache:'no-store'}); if(r.ok){ EST=await r.json(); EST_AT=Date.now(); } }catch(e){}
   // Prices are fixed once a day by the 09:30 refresh, so P/Es don't move intraday.
@@ -6787,7 +6793,7 @@ function coDetail(c){
   if(px) notes.push(`P/E uses a price of ${coCcy(eu)}${coFmt(px,2)} (${EST_PX&&EST_PX.asOf||'last daily refresh'}).`);
   if(names.some(b=>coOut(e,'rev',b)||coOut(e,'ebitda',b)||coOut(e,'eps',b))) notes.push('Struck-through figures are in another currency, so left out of the average.');
   return `<div class="co-detail"><div class="co-d-left" style="--w:${chartW}px">
-      <div class="co-chart" style="height:${CO_CHART_ROWS*CO_ROW_H}px"><div class="co-chart-h"><div class="seg">${CO_RANGES.map(r=>`<button type="button" data-px-range="${r}" class="${r===coState.range?'on':''}">${r}</button>`).join('')}</div><span id="coChartRet" class="co-chart-ret"></span></div>
+      <div class="co-chart" style="height:${CO_CHART_ROWS*CO_ROW_H}px"><div class="co-chart-h"><div class="seg">${CO_RANGES.map(r=>`<button type="button" data-px-range="${r}" class="${r===coState.range?'on':''}">${r}</button>`).join('')}</div><div class="seg co-ovl" title="Overlay the average broker estimate">${CO_OVL.map(([k,l])=>`<button type="button" data-px-ovl="${k}" class="${k===(coState.ovl||'off')?'on':''}">${l}</button>`).join('')}</div><span id="coChartRet" class="co-chart-ret"></span></div><div id="coChartLg" class="co-chart-lg"></div>
         <div class="co-chart-box"><canvas id="coChart" role="img" aria-label="${erEsc(c.name)} share price"></canvas><p id="coChartMsg" class="co-chart-msg" hidden></p></div></div>
       ${notes.length?`<p class="co-d-note">${notes.join(' ')}</p>`:''}</div>
     <div class="co-d-right">${head}${body}${foot}</div></div>`;
@@ -6812,34 +6818,101 @@ function coChartClear(){ if(coChartInst){ coChartInst.destroy(); coChartInst=nul
 const coCrosshair={id:'coCrosshair',afterDatasetsDraw(ch){
   const a=ch.tooltip&&ch.tooltip.getActiveElements&&ch.tooltip.getActiveElements(); if(!a||!a.length) return;
   const x=a[0].element.x, s=ch.scales.y, g=ch.ctx; g.save(); g.strokeStyle='rgba(255,255,255,.28)'; g.lineWidth=1; g.beginPath(); g.moveTo(x,s.top); g.lineTo(x,s.bottom); g.stroke(); g.restore(); }};
+// Overlay (user, 2026-11-13): the average broker estimate for the current and next fiscal year,
+// drawn with the price as % change from a common start day. One axis, no second scale: estimate
+// revisions and the price move read on the same ruler. Estimate history starts 2026-11-13
+// (data/estimates_hist.json, change points written by the 09:30 task).
+const CO_OVL=[['off','Price'],['rev','Revenue'],['ebitda','EBITDA'],['eps','EPS']];
+const CO_EST_COL=['#5b8def','#9a7be0'];   // fixed per fiscal year: current, next (validated slots on the dark surface)
+const CO_NICK={Bernstein:'Bern',CLSA:'CLSA',Jefferies:'Jeff',JPMorgan:'JP',Kotak:'Kotak',Nomura:'Nomura',MorganStanley:'MS',GoldmanSachs:'GS','Goldman Sachs':'GS',MotilalOswal:'MOSL',JMFinancial:'JM',ICICIDirect:'ICICI',DevenChoksey:'DC'};
+let EST_HIST=null, EST_HIST_P=null;
+function coLoadHist(){ return EST_HIST_P||(EST_HIST_P=fetch('data/estimates_hist.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null).then(j=>(EST_HIST=j))); }
+// Fiscal years ending in March: the one a day falls in, and the next.
+function coFyPair(day){ const dt=coDayDate(day), y=dt.getUTCFullYear()%100, fy=dt.getUTCMonth()>=3?y+1:y; return ['FY'+fy,'FY'+(fy+1)]; }
+const coStepAt=(pts,d)=>{ let v=null; for(const p of pts){ if(p[0]<=d) v=p[1]; else break; } return v; };
+const coYmdDay=s=>Date.UTC(2000+(+s.slice(0,2)),+s.slice(2,4)-1,+s.slice(4,6))/864e5;
+function coPriceAt(pts,day){ let v=null; for(const p of pts){ if(p.x<=day) v=p.raw; else break; } return v==null&&pts.length?pts[0].raw:v; }
+const coDayTxt=d=>coDayDate(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+// Rating changes as triangles on the price line: green up below it, red down above it, broker's
+// short name beside each; several on one day stack.
+const coEventsPlugin={id:'coEvents',afterDatasetsDraw(ch){
+  const evs=ch.$coEvents; if(!evs||!evs.length) return;
+  const g=ch.ctx, xs=ch.scales.x, ys=ch.scales.y, a=ch.chartArea, css=getComputedStyle(document.documentElement);
+  const up=css.getPropertyValue('--up').trim()||'#3fc78a', dn=css.getPropertyValue('--down').trim()||'#f06a6a';
+  const stack={};
+  g.save(); g.font="700 9px Manrope, sans-serif"; g.textAlign='center';
+  for(const e of evs){
+    const x=xs.getPixelForValue(e.x), y=ys.getPixelForValue(e.y); if(x<a.left-1||x>a.right+1) continue;
+    const k=e.dir+'|'+Math.round(x/6), n=stack[k]=(stack[k]||0)+1, s=5, off=8+(n-1)*20;
+    g.fillStyle=e.dir==='up'?up:dn; g.beginPath();
+    if(e.dir==='up'){ const ty=Math.min(y+off,a.bottom-14); g.moveTo(x,ty); g.lineTo(x-s,ty+s*1.6); g.lineTo(x+s,ty+s*1.6); g.closePath(); g.fill(); g.fillText(e.label,x,ty+s*1.6+9); }
+    else { const ty=Math.max(y-off,a.top+14); g.moveTo(x,ty); g.lineTo(x-s,ty-s*1.6); g.lineTo(x+s,ty-s*1.6); g.closePath(); g.fill(); g.fillText(e.label,x,ty-s*1.6-3); }
+  }
+  g.restore(); }};
 async function coDrawChart(){
   const name=coState.open, c=ER&&ER.companies.find(x=>x.name===name); if(!c) return;
-  const d=await coLoadPx(c);
-  const cv=document.getElementById('coChart'), msg=document.getElementById('coChartMsg'), ret=document.getElementById('coChartRet');
+  const ovl=coState.ovl||'off';
+  const [d]=await Promise.all([coLoadPx(c), ovl!=='off'?coLoadHist():null]);
+  const cv=document.getElementById('coChart'), msg=document.getElementById('coChartMsg'), ret=document.getElementById('coChartRet'), lg=document.getElementById('coChartLg');
   if(coState.open!==name||!cv) return;
   coChartClear();
-  const say=t=>{ if(msg){ msg.textContent=t; msg.hidden=false; } if(ret) ret.textContent=''; cv.style.display='none'; };
+  const say=t=>{ if(msg){ msg.textContent=t; msg.hidden=false; } if(ret) ret.textContent=''; if(lg) lg.innerHTML=''; cv.style.display='none'; };
   if(!d) return say('No share price history for this company.');
   if(typeof Chart==='undefined') return say('Chart library did not load.');
   const last=d.t[d.t.length-1], lastDate=coDayDate(last), r=coState.range;
   const from=r==='YTD'?Date.UTC(lastDate.getUTCFullYear(),0,1)/864e5:last-CO_RANGE_DAYS[r];
-  const pts=[]; d.t.forEach((x,i)=>{ if(x>=from) pts.push({x,y:d.v[i]}); });
+  const pts=[]; d.t.forEach((x,i)=>{ if(x>=from) pts.push({x,y:d.v[i],raw:d.v[i]}); });
   if(pts.length<2) return say('Not enough share price history for this period.');
   if(msg) msg.hidden=true; cv.style.display='';
   const chg=pts[pts.length-1].y/pts[0].y-1, ccy=coCcy(d.cur), since=pts[0].x>from+45;
   if(ret){ ret.textContent=`${erPct(chg)} ${since?'since '+coDayDate(pts[0].x).toLocaleDateString('en-GB',{month:'short',year:'numeric',timeZone:'UTC'}):r}`; ret.className='co-chart-ret '+(chg>=0?'ol-positive':'ol-negative'); }
   const css=getComputedStyle(document.documentElement), col=css.getPropertyValue('--saffron').trim()||'#f0a53a', mute=css.getPropertyValue('--text-mute').trim()||'#7f8894', surf=css.getPropertyValue('--ink-2').trim()||'#11151c';
-  const long=pts[pts.length-1].x-pts[0].x>800;
-  coChartInst=new Chart(cv,{type:'line',plugins:[coCrosshair],
-    data:{datasets:[{data:pts,borderColor:col,borderWidth:2,pointRadius:0,pointHitRadius:12,pointHoverRadius:4,pointHoverBackgroundColor:col,pointHoverBorderColor:surf,pointHoverBorderWidth:2,tension:0,fill:false}]},
+  // Estimate lines, rebased with the price to the first day both exist.
+  const e=coEst(c), lab=ovl==='eps'?'EPS':coLab(c,ovl), hs=ovl!=='off'&&EST_HIST&&EST_HIST.c&&EST_HIST.c[name]&&EST_HIST.c[name][ovl];
+  const est=[]; let base=null, lgNote='';
+  if(ovl!=='off'){
+    const fys=hs?coFyPair(last).filter(fy=>hs[fy]&&hs[fy].length):[];
+    if(!fys.length) lgNote=`No ${lab} estimate history for this company yet.`;
+    else {
+      // Never later than the last price, which can trail the morning's estimate snapshot by a day.
+      base=Math.min(last,Math.max(pts[0].x,Math.min(...fys.map(fy=>hs[fy][0][0]))));
+      fys.forEach((fy,i)=>{ const s=hs[fy], v0=coStepAt(s,base)!=null?coStepAt(s,base):s[0][1], x0=coStepAt(s,base)!=null?base:s[0][0];
+        const p=[{x:x0,y:0,raw:v0}]; let now=v0;
+        for(const [x,v] of s){ if(x>x0&&x<=last){ p.push({x,y:v/v0-1,raw:v}); now=v; } }
+        p.push({x:last,y:now/v0-1,raw:now});
+        est.push({fy,pts:p,col:CO_EST_COL[i],dash:i?[5,4]:[]}); });
+    }
+  }
+  const pb=base!=null?coPriceAt(pts,base):null;
+  if(pb) pts.forEach(p=>{ p.y=p.raw/pb-1; });
+  const unitOf=s=>s==='INR'?'₹':s==='US$'?'$':'';
+  const estFmt=v=>ovl==='eps'?coCcy((e&&e.unit&&e.unit.eps)||'INR')+(+v).toFixed(2):coNum(v,e&&e.unit&&e.unit[ovl]);
+  // Rating changes inside the window.
+  const evs=((e&&e.ev)||[]).map(x=>({...x,day:coYmdDay(x.d)})).filter(x=>x.day>=pts[0].x&&x.day<=last)
+    .map(x=>({x:x.day,y:pb?coPriceAt(pts,x.day)/pb-1:coPriceAt(pts,x.day),dir:x.dir,label:CO_NICK[x.b]||erHouse(x.b),ev:x}));
+  if(lg){
+    const sw=(c,dash)=>`<span class="co-lg-sw" style="border-top:2px ${dash?'dashed':'solid'} ${c}"></span>`;
+    lg.innerHTML=(est.length?`${sw(col)}Price ${est.map(s=>`${sw(s.col,s.dash.length)}${s.fy}E ${erEsc(lab)} avg`).join(' ')} <span class="co-lg-n">% change since ${coDayTxt(base)}</span>`:erEsc(lgNote))
+      +(evs.length?` <span class="co-lg-up">▲ upgrade</span> <span class="co-lg-dn">▼ downgrade</span>`:'');
+  }
+  const long=pts[pts.length-1].x-pts[0].x>800, idx=pb!=null;
+  const datasets=[{label:'Price',data:pts,borderColor:col,borderWidth:2,pointRadius:0,pointHitRadius:12,pointHoverRadius:4,pointHoverBackgroundColor:col,pointHoverBorderColor:surf,pointHoverBorderWidth:2,tension:0,fill:false}]
+    .concat(est.map(s=>({label:`${s.fy}E ${lab} avg`,data:s.pts,borderColor:s.col,borderWidth:2,borderDash:s.dash,pointRadius:0,pointHitRadius:0,stepped:'before',tension:0,fill:false})));
+  coChartInst=new Chart(cv,{type:'line',plugins:[coCrosshair,coEventsPlugin],
+    data:{datasets},
     options:{responsive:true,maintainAspectRatio:false,animation:false,parsing:false,normalized:true,interaction:{mode:'nearest',axis:'x',intersect:false},
       layout:{padding:{right:2}},
-      plugins:{legend:{display:false},tooltip:{displayColors:false,callbacks:{
-        title:i=>coDayDate(i[0].parsed.x).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}),
-        label:i=>ccy+coFmt(i.parsed.y,2)}}},
+      plugins:{legend:{display:false},tooltip:{displayColors:false,filter:i=>i.datasetIndex===0,callbacks:{
+        title:i=>coDayTxt(i[0].parsed.x),
+        label:i=>`Price ${ccy}${coFmt(i.raw.raw,2)}${idx?` (${erPct(i.raw.y)})`:''}`,
+        afterBody:i=>{ const day=i[0].parsed.x, out=[];
+          est.forEach(s=>{ const v=coStepAt(s.pts.map(p=>[p.x,p.raw]),day); if(v!=null&&day>=s.pts[0].x) out.push(`${s.fy}E ${lab} avg ${estFmt(v)} (${erPct(v/s.pts[0].raw-1)})`); });
+          evs.filter(x=>x.x===day).forEach(x=>out.push(`${x.dir==='up'?'▲':'▼'} ${erHouse(x.ev.b)} ${x.dir==='up'?'upgrade':'downgrade'}: ${x.ev.from||'?'} → ${x.ev.to}`));
+          return out; }}}},
       scales:{x:{type:'linear',min:pts[0].x,max:pts[pts.length-1].x,grid:{display:false},border:{color:'rgba(255,255,255,.14)'},
           ticks:{color:mute,font:{family:'Roboto Mono',size:10},maxRotation:0,maxTicksLimit:long?7:6,callback:v=>coDayDate(v).toLocaleDateString('en-GB',long?{year:'numeric',timeZone:'UTC'}:{month:'short',year:'2-digit',timeZone:'UTC'})}},
-        y:{position:'right',grid:{color:'rgba(255,255,255,.06)'},border:{display:false},ticks:{color:mute,font:{family:'Roboto Mono',size:10},maxTicksLimit:5,callback:v=>coFmt(v,0)}}}}});
+        y:{position:'right',grace:evs.length?'12%':0,grid:{color:'rgba(255,255,255,.06)'},border:{display:false},ticks:{color:mute,font:{family:'Roboto Mono',size:10},maxTicksLimit:5,callback:v=>idx?(v>0?'+':'')+Math.round(v*100)+'%':coFmt(v,0)}}}}});
+  coChartInst.$coEvents=evs; coChartInst.draw();
 }
 const coArrow=k=>coState.sort===k?(coState.dir<0?'▼':'▲'):'';
 function coRender(){
@@ -6904,6 +6977,8 @@ function erOpenCompany(name){
     if(e.target.closest('select')||e.target.closest('a')) return;
     const pr=e.target.closest('[data-px-range]');
     if(pr){ coState.range=pr.dataset.pxRange; coSave(); grid.querySelectorAll('[data-px-range]').forEach(b=>b.classList.toggle('on',b===pr)); coDrawChart(); return; }
+    const ov=e.target.closest('[data-px-ovl]');
+    if(ov){ coState.ovl=ov.dataset.pxOvl; coSave(); grid.querySelectorAll('[data-px-ovl]').forEach(b=>b.classList.toggle('on',b===ov)); coDrawChart(); return; }
     const ol=e.target.closest('[data-ol-seg],[data-ol]');
     if(ol){ if(ol.dataset.olSeg){ const s=ol.dataset.olSeg; if(coState.hide[s]) delete coState.hide[s]; else coState.hide[s]=true; }
       else coState.hide=ol.dataset.ol==='1'?Object.fromEntries(Object.values(CO_SEG).map(s=>[s,true])):{};

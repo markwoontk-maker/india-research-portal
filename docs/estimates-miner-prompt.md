@@ -76,6 +76,9 @@ in the work item (`metrics.rev` and `metrics.ebitda`), and **EPS**.
     - `rating`: the current rating, written out: `Buy`, `Add`, `Hold`, `Reduce`, `Sell`, `Overweight`,
       `Equal-weight`, `Underweight`, `Outperform`, `Market-perform`, `Neutral`, `Underperform`. CLSA's
       `O-PF` is `Outperform` and `U-PF` is `Underperform`. Not the previous rating or an industry view.
+    - `previousRating`: the rating before this note, only if the page prints it ("Upgrade to Buy
+      from Hold", "(from Neutral)", a "Previous rating" field or a "Rating change" box). Otherwise
+      `null`. An earnings, estimate or target price upgrade is not a rating change.
     - If a figure is not printed, or is masked or restricted, return `null` for it.
 
 ## If there is no usable forecast table
@@ -110,7 +113,8 @@ Return one JSON object and nothing else, with no markdown fences:
   "calcNote": null,
   "targetPrice": 13046,
   "tpCurrency": "INR",
-  "rating": "Neutral"
+  "rating": "Neutral",
+  "previousRating": null
 }
 
 `page` is the PDF page number of the table you used, as listed in `=== PAGES ===`. Negative

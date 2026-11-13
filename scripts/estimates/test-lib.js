@@ -155,4 +155,18 @@ t('target price: read from a result, sanity-checked, averaged per currency', () 
   assert.deepStrictEqual(L.aggregateTp({}), { avg: null, n: 0, cur: null });
 });
 
+t('rating changes: ranked across house scales, same rank is no event', () => {
+  const note = { date: '261027', key: 'k' };
+  assert.strictEqual(L.ratingRank('Overweight'), 4);
+  assert.strictEqual(L.ratingRank('Equal-weight'), 2);
+  assert.strictEqual(L.ratingRank('O-PF'), 4);
+  assert.strictEqual(L.ratingRank('ADD'), 3);
+  assert.strictEqual(L.ratingRank('Rating suspended'), null);
+  assert.deepStrictEqual(L.ratingEvent('Add', 'Buy', note, 'Kotak'), { d: '261027', b: 'Kotak', from: 'Add', to: 'Buy', dir: 'up', key: 'k' });
+  assert.strictEqual(L.ratingEvent('Neutral', 'Underweight', note, 'JPMorgan').dir, 'down');
+  assert.strictEqual(L.ratingEvent('Buy', 'Outperform', note, 'X'), null, 'same rank');
+  assert.strictEqual(L.ratingEvent(null, 'Buy', note, 'X'), null);
+  assert.strictEqual(L.tpOf({ targetPrice: 100, rating: 'Buy', previousRating: 'Hold' }, note).prev, 'Hold');
+});
+
 console.log(`\n${n} tests passed`);

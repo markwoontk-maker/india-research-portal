@@ -5,6 +5,8 @@
 //   node scripts/estimates/build-estimates.js --count      prints what is left to read, mines nothing
 //   node scripts/estimates/build-estimates.js --aggregate  recomputes averages and growth from stored records
 //   node scripts/estimates/build-estimates.js --prices     writes the day's prices for the P/E columns (data/estimate_prices.json)
+//   node scripts/estimates/build-estimates.js --snapshot   adds today's average estimates to data/estimates_hist.json
+//   node scripts/estimates/build-estimates.js --seed-events  one-off: rating changes from past notes (titles + pdfdata hints)
 //   EST_ONLY="Maruti Suzuki;HDFC Bank"                     limits a run to those companies
 //
 // One company-broker pair = the newest note from that broker on that company within the last
@@ -23,6 +25,8 @@ const { FOLDER_ALIAS, NON_COMPANY_RE, norm } = require('../earnings/build-earnin
 const ROOT = path.join(__dirname, '..', '..');
 const OUT = path.join(ROOT, 'data', 'estimates.json');
 const PRICES = path.join(ROOT, 'data', 'estimate_prices.json');
+const HIST = path.join(ROOT, 'data', 'estimates_hist.json');
+const RC_PROMPT = path.join(ROOT, 'docs', 'rating-change-prompt.md');
 const WORK = path.join(ROOT, 'scripts', '.estimates-work');
 const STATE = path.join(WORK, 'state.json');
 // The run writes to this git-ignored copy after every note and publishes to data/estimates.json
@@ -66,16 +70,19 @@ function loadRows() {
   for (const c of E.companies) rows[c.name] = Object.assign(c, { _mc: (c.sym && q[c.sym] && q[c.sym].mc) || c.mcap || 0, _px: (c.sym && q[c.sym] && q[c.sym].p) || c.price || 0, _pxCur: (c.sym && q[c.sym] && q[c.sym].p) ? 'INR' : (c.priceCur || 'INR') });
   return rows;
 }
-function notesByPair(rows) {
-  const PDFMAP = readJSON(path.join(ROOT, 'data', 'pdfmap.json'), {});
+function makeFolderToRow(rows) {
   const byNorm = {};
   for (const c of Object.values(rows)) for (const n of [c.name, c.sheetName, c.formerName]) if (n) byNorm[norm(n)] = c.name;
-  const folderToRow = f => {
+  return f => {
     if (FOLDER_ALIAS[f] && rows[FOLDER_ALIAS[f]]) return FOLDER_ALIAS[f];
     if (rows[f]) return f;
     if (NON_COMPANY_RE.test(f)) return null;
     return byNorm[norm(f)] || null;
   };
+}
+function notesByPair(rows) {
+  const PDFMAP = readJSON(path.join(ROOT, 'data', 'pdfmap.json'), {});
+  const folderToRow = makeFolderToRow(rows);
   const floor = floorDate(), pairs = {};
   for (const [key, p] of Object.entries(PDFMAP)) {
     const [broker, date, folder, title] = key.split('|');
@@ -109,7 +116,8 @@ function refreshCompany(out, name, row, notes, state) {
   const tps = prev.tps || {};
   for (const [b, t] of Object.entries(tps)) if (t.date < floor) delete tps[b];
   const ta = L.aggregateTp(tps);
-  out.companies[name] = { tps, tpAvg: ta.avg, tpN: ta.n, tpCur: ta.cur, unit: agg.unit, avg: agg.avg, n: agg.n, growth: agg.growth, nm: agg.nm, used: agg.used, excluded: agg.excluded, brokers, pending: pending.sort(), noTable: noTable.sort() };
+  const ev = (prev.ev || []).slice().sort((a, b) => a.d.localeCompare(b.d) || a.b.localeCompare(b.b));
+  out.companies[name] = { ev, tps, tpAvg: ta.avg, tpN: ta.n, tpCur: ta.cur, unit: agg.unit, avg: agg.avg, n: agg.n, growth: agg.growth, nm: agg.nm, used: agg.used, excluded: agg.excluded, brokers, pending: pending.sort(), noTable: noTable.sort() };
 }
 function writeOut(out, rows, pairs, state) {
   const names = Object.keys(rows).sort();
@@ -228,6 +236,92 @@ async function mineNote(name, row, broker, note, slot, needTp) {
 }
 const lineCount = rec => (rec.rev ? 1 : 0) + (rec.ebitda ? 1 : 0) + (rec.eps ? 1 : 0);
 
+// ---------- estimate history (Company tab chart overlay) ----------
+// One snapshot a day of each company's average FY27-FY29 revenue, EBITDA and EPS, kept as change
+// points only ([day, value] when the average moves), so the file grows with revisions, not days.
+// Day = days since 1970-01-01, as in data/px. Starts 2026-11-13: there is no earlier history.
+function writeSnapshot() {
+  const E = readJSON(OUT, null);
+  if (!E || !E.companies) { log('no estimates to snapshot.'); return; }
+  const H = readJSON(HIST, null) || { start: new Date().toISOString().slice(0, 10), c: {} };
+  const day = Math.floor(Date.now() / 864e5);
+  let moved = 0;
+  for (const [name, e] of Object.entries(E.companies)) {
+    for (const m of ['rev', 'ebitda', 'eps']) {
+      const avg = e.avg && e.avg[m]; if (!avg) continue;
+      for (const fy of L.SHOW_FYS) {
+        const v = avg[fy]; if (v == null) continue;
+        const c = H.c[name] = H.c[name] || {}, s = c[m] = c[m] || {};
+        if (s.u && s.u !== e.unit[m]) { for (const k of Object.keys(s)) delete s[k]; }   // unit switched: restart the line
+        s.u = e.unit[m];
+        const pts = s[fy] = s[fy] || [], last = pts[pts.length - 1];
+        if (last && last[0] === day) { if (last[1] !== v) { last[1] = v; moved++; } }
+        else if (!last || last[1] !== v) { pts.push([day, v]); moved++; }
+      }
+    }
+  }
+  H.updated = new Date().toISOString();
+  const names = Object.keys(H.c).sort();
+  const tmp = HIST + '.tmp';
+  fs.writeFileSync(tmp, `{"start":${JSON.stringify(H.start)},"updated":${JSON.stringify(H.updated)},"c":{\n${names.map(n => JSON.stringify(n) + ':' + JSON.stringify(H.c[n])).join(',\n')}\n}}\n`);
+  fs.renameSync(tmp, HIST);
+  log(`estimate snapshot: ${moved} value(s) new or changed, ${names.length} companies.`);
+}
+
+// ---------- one-off: rating changes in past notes ----------
+// Candidates: notes whose title flags a rating move, or whose regex-read ratings (pdfdata.json)
+// change. Each is checked on its first page by claude, since titles also say "earnings upgrade".
+const RC_TITLE = /upgrad|downgrad|ratingchange|moveto|to(buy|overweight|outperform|neutral|hold|sell|underweight|reduce|add|ow|uw|ew)(from|$)/;
+async function seedEvents(rows, out, pairs, state) {
+  const PDFMAP = readJSON(path.join(ROOT, 'data', 'pdfmap.json'), {}), PD = readJSON(path.join(ROOT, 'data', 'pdfdata.json'), {});
+  const folderToRow = makeFolderToRow(rows), cand = new Map(), seq = {};
+  for (const [key, p] of Object.entries(PDFMAP)) {
+    const [broker, date, folder, title] = key.split('|');
+    if (!broker || broker === 'Unknown' || !date || date < '260101') continue;
+    const name = folderToRow(folder); if (!name) continue;
+    const item = { key, path: p, date, title: title || '', name, broker: L.canonBroker(broker) };
+    const x = PD[key];
+    if (RC_TITLE.test(item.title)) cand.set(key, item);
+    if (x && L.ratingRank(x.currCall) != null && L.ratingRank(x.prevCall) != null && L.ratingRank(x.currCall) !== L.ratingRank(x.prevCall)) cand.set(key, item);
+    if (x && L.ratingRank(x.currCall) != null) (seq[name + '|' + item.broker] = seq[name + '|' + item.broker] || []).push([date, L.ratingRank(x.currCall), item]);
+  }
+  for (const s of Object.values(seq)) { s.sort((a, b) => a[0].localeCompare(b[0])); for (let i = 1; i < s.length; i++) if (s[i][1] !== s[i - 1][1]) cand.set(s[i][2].key, s[i][2]); }
+  state.evSeen = state.evSeen || {};
+  const todo = [...cand.values()].filter(c => !state.evSeen[c.key]).sort((a, b) => a.date.localeCompare(b.date));
+  log(`${cand.size} candidate note(s), ${todo.length} still to check.`);
+  const LOCK = path.join(WORK, 'run.lock');
+  fs.writeFileSync(LOCK, JSON.stringify({ pid: process.pid, t: new Date().toISOString(), mode: '--seed-events' }));
+  let cursor = 0, found = 0, stop = false;
+  const prompt = fs.readFileSync(RC_PROMPT, 'utf8');
+  async function one(c, slot) {
+    const dir = path.join(WORK, 'r' + slot);
+    try { fs.rmSync(dir, { recursive: true, force: true }); } catch (e) {}
+    let imgs = [];
+    try { imgs = renderPages(c, dir, [1]); } catch (e) { return; }
+    if (!imgs.length) { state.evSeen[c.key] = 1; return; }
+    const msg = JSON.stringify({ type: 'user', message: { role: 'user', content: [
+      { type: 'text', text: prompt + '\n=== NOTE ===\n' + JSON.stringify({ company: c.name, broker: c.broker, date: c.date, title: c.title }) },
+      { type: 'image', source: { type: 'base64', media_type: 'image/png', data: fs.readFileSync(imgs[0]).toString('base64') } } ] } }) + '\n';
+    const r = await runClaude(msg, MODEL);
+    const j = parseResult(r.out);
+    if (!j) { if (FATAL_RE.test(r.err)) { log('claude unavailable: ' + r.err.slice(0, 120)); stop = true; } return; }
+    state.evSeen[c.key] = 1;
+    if (j.changed !== true) return;
+    let evt = L.ratingEvent(j.previousRating, j.rating, c, c.broker);
+    if (!evt && !j.previousRating && L.ratingRank(j.rating) != null && /upgrad|downgrad/.test(c.title))   // title gives the direction
+      evt = { d: c.date, b: c.broker, from: null, to: j.rating, dir: /upgrad/.test(c.title) ? 'up' : 'down', key: c.key };
+    if (!evt) return;
+    const co = out.companies[c.name] = out.companies[c.name] || { brokers: {} };
+    co.ev = co.ev || [];
+    if (!co.ev.some(x => x.key === evt.key && x.b === evt.b)) { co.ev.push(evt); found++; log(`${c.name} / ${c.broker} ${c.date}: ${evt.dir}grade ${evt.from || '?'} -> ${evt.to}`); }
+  }
+  await Promise.all([0, 1].map(async slot => { while (!stop && cursor < todo.length) { const c = todo[cursor++]; try { await one(c, slot); } catch (e) { log(c.key + ': ' + e.message); } } }));
+  writeOut(out, rows, pairs, state); publish();
+  try { fs.unlinkSync(LOCK); } catch (e) {}
+  log(`seed: ${found} rating change(s) added; ${todo.length - cursor} candidate(s) left for a later run.`);
+  if (stop) process.exitCode = 3;
+}
+
 // The P/E columns divide these prices by the average EPS. Written once a day (daily-refresh.ps1,
 // after the earnings miner) so P/Es hold still between runs, whatever the intraday price feeds do.
 // Needs no lock: it only reads the estimates file and replaces its own file in one step.
@@ -248,6 +342,7 @@ function writePrices(rows) {
   const rows = loadRows();
   if (!rows) { log('data/earnings.json missing or invalid - skipping.'); return; }
   if (mode === '--prices') { writePrices(rows); return; }
+  if (mode === '--snapshot') { writeSnapshot(); return; }
   fs.mkdirSync(WORK, { recursive: true });
   const state = Object.assign({ tried: {} }, readJSON(STATE, {}));
   const out = loadOut();
@@ -273,6 +368,7 @@ function writePrices(rows) {
   fs.writeFileSync(LOCK, JSON.stringify({ pid: process.pid, t: new Date().toISOString(), mode }));
   process.on('exit', () => { try { if ((readJSON(LOCK, {}) || {}).pid === process.pid) fs.unlinkSync(LOCK); } catch (e) {} });
 
+  if (mode === '--seed-events') { await seedEvents(rows, out, pairs, state); return; }
   if (mode === '--aggregate') { writeOut(out, rows, pairs, state); publish(); log('recomputed.', JSON.stringify(out.progress)); return; }
   if (!fs.existsSync(CLAUDE)) { log('claude CLI not found - skipping.'); return; }
 
@@ -306,6 +402,13 @@ function writePrices(rows) {
       }
       failsInRow = 0;
       tried.push(note.key);
+      // A rating change: the note's own "from" rating, else the rating this broker had on our last read.
+      if (m.tp && m.tp.rating && needTp) {
+        const before = co.tps[broker], from = m.tp.prev || (before && before.date < note.date ? before.rating : null);
+        const evt = L.ratingEvent(from, m.tp.rating, note, broker);
+        co.ev = co.ev || [];
+        if (evt && !co.ev.some(x => x.key === evt.key && x.b === broker)) { co.ev.push(evt); log(`${name} / ${broker} ${note.date}: rating ${evt.dir}grade ${from} -> ${m.tp.rating}`); }
+      }
       if (m.tp && needTp) co.tps[broker] = m.tp;
       const tpLog = m.tp ? ` [TP ${m.tp.tp} ${m.tp.rating || ''}${m.tp.check ? ' CHECK ' + m.tp.check : ''}]` : '';
       if (m.res === 'none') {
