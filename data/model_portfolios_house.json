@@ -1,6 +1,6 @@
 {
   "_note": "Model portfolios mined from the local India Strategy PDFs (the covered houses). Kept separate from model_portfolios.json (which the remote India Positioning Data Refresher regenerates from public sources) so the two never clobber each other. 'wt' = absolute portfolio weight % where the house publishes per-stock weights; '' renders '—'. 'report' = path under the India Related Reports root, served by scripts/pdf-server.js at http://127.0.0.1:8788/ (file:// fallback when opened from disk); the house name links to it.",
-  "asOf": "2026-10",
+  "asOf": "2026-11",
   "houses": [
     {
       "broker": "JPMorgan",
@@ -617,7 +617,7 @@
         {
           "stock": "Kotak Mahindra Bank",
           "ticker": "KOTAKBANK.NS",
-          "wt": 2.0,
+          "wt": 2,
           "change": "",
           "note": "Financials OWT — added 5 Oct"
         },
@@ -652,7 +652,7 @@
         {
           "stock": "Groww",
           "ticker": "GROWW.NS",
-          "wt": 2.0,
+          "wt": 2,
           "change": "",
           "note": "Financials OWT"
         },
@@ -708,7 +708,7 @@
         {
           "stock": "Vishal Mega Mart",
           "ticker": "VMM.NS",
-          "wt": 2.0,
+          "wt": 2,
           "change": "",
           "note": "Consumer Discretionary UWT"
         },
@@ -729,7 +729,7 @@
         {
           "stock": "Hindustan Zinc",
           "ticker": "HINDZINC.NS",
-          "wt": 2.0,
+          "wt": 2,
           "change": "",
           "note": "Metals OWT"
         },
@@ -785,7 +785,7 @@
         {
           "stock": "Bharat Forge",
           "ticker": "BHARATFORG.NS",
-          "wt": 3.0,
+          "wt": 3,
           "change": "",
           "note": "Industrials Neutral"
         },
@@ -806,7 +806,7 @@
         {
           "stock": "Adani Energy Solutions",
           "ticker": "ADANIENSOL.NS",
-          "wt": 2.0,
+          "wt": 2,
           "change": "",
           "note": "Power/Utilities OWT"
         },
@@ -834,7 +834,7 @@
         {
           "stock": "Godrej Properties",
           "ticker": "GODREJPROP.NS",
-          "wt": 1.0,
+          "wt": 1,
           "change": "",
           "note": "Real Estate OWT — trimmed"
         }
@@ -843,115 +843,115 @@
     },
     {
       "broker": "Kotak — Alphabet All-Season (broad)",
-      "asOf": "2026-10",
+      "asOf": "2026-11",
       "benchmark": "Nifty 50",
-      "report": "India Strategy/[261005] [Kotak] India Strategy - Alphabet, Staying with strength.pdf",
-      "note": "All-Season multifactor BROAD portfolio for October 2026 (top-15 by factor score; quant model, not fundamental KIE views). wt = published broad-portfolio weight; chip = KIE analyst rating.",
+      "report": "India Strategy/[261102] [Kotak] India Strategy - Alphabet, Fundamentals regain ground as Momentum stumbles.pdf",
+      "note": "All-Season multifactor BROAD portfolio for November 2026 (top-15 by factor score; quant model, not fundamental KIE views). wt = published broad-portfolio weight; chip = KIE analyst rating.",
       "overweight": [
+        {
+          "stock": "Sun Pharma",
+          "ticker": "SUNPHARMA.NS",
+          "wt": 12.38,
+          "change": "raised",
+          "note": "KIE ADD"
+        },
+        {
+          "stock": "Cipla",
+          "ticker": "CIPLA.NS",
+          "wt": 8.73,
+          "change": "raised",
+          "note": "KIE BUY"
+        },
+        {
+          "stock": "Nestle India",
+          "ticker": "NESTLEIND.NS",
+          "wt": 7.86,
+          "change": "new",
+          "note": "KIE ADD"
+        },
+        {
+          "stock": "Tata Consumer",
+          "ticker": "TATACONSUM.NS",
+          "wt": 7.41,
+          "change": "new",
+          "note": "KIE ADD"
+        },
+        {
+          "stock": "Grasim",
+          "ticker": "GRASIM.NS",
+          "wt": 7.15,
+          "change": "held",
+          "note": "KIE ADD"
+        },
+        {
+          "stock": "Power Grid",
+          "ticker": "POWERGRID.NS",
+          "wt": 7.14,
+          "change": "new",
+          "note": "KIE REDUCE"
+        },
+        {
+          "stock": "JSW Steel",
+          "ticker": "JSWSTEEL.NS",
+          "wt": 7.01,
+          "change": "raised",
+          "note": "KIE BUY"
+        },
+        {
+          "stock": "Dr Reddy's",
+          "ticker": "DRREDDY.NS",
+          "wt": 6.97,
+          "change": "new",
+          "note": "KIE REDUCE"
+        },
+        {
+          "stock": "Titan Company",
+          "ticker": "TITAN.NS",
+          "wt": 6.07,
+          "change": "held",
+          "note": "KIE ADD"
+        },
+        {
+          "stock": "Asian Paints",
+          "ticker": "ASIANPAINT.NS",
+          "wt": 6.01,
+          "change": "new",
+          "note": "KIE REDUCE"
+        },
         {
           "stock": "Coal India",
           "ticker": "COALINDIA.NS",
+          "wt": 5.38,
+          "change": "held",
+          "note": "KIE SELL"
+        },
+        {
+          "stock": "Adani Ports",
+          "ticker": "ADANIPORTS.NS",
+          "wt": 5.1,
+          "change": "new",
+          "note": "KIE BUY"
+        },
+        {
+          "stock": "Tata Steel",
+          "ticker": "TATASTEEL.NS",
           "wt": 4.89,
           "change": "new",
           "note": "KIE SELL"
         },
         {
-          "stock": "Titan Company",
-          "ticker": "TITAN.NS",
-          "wt": 5.78,
-          "change": "new",
-          "note": "KIE ADD"
-        },
-        {
-          "stock": "Bajaj Finance",
-          "ticker": "BAJFINANCE.NS",
-          "wt": 6.27,
-          "change": "held",
-          "note": "KIE BUY"
-        },
-        {
-          "stock": "Nestlé India",
-          "ticker": "NESTLEIND.NS",
-          "wt": 8.38,
-          "change": "held",
-          "note": "KIE REDUCE"
-        },
-        {
-          "stock": "ICICI Bank",
-          "ticker": "ICICIBANK.NS",
-          "wt": 11.45,
-          "change": "new",
-          "note": "KIE BUY"
-        },
-        {
-          "stock": "Cipla",
-          "ticker": "CIPLA.NS",
-          "wt": 8.02,
-          "change": "new",
-          "note": "KIE BUY"
-        },
-        {
-          "stock": "State Bank of India",
-          "ticker": "SBIN.NS",
-          "wt": 7.14,
-          "change": "held",
-          "note": "KIE BUY"
-        },
-        {
-          "stock": "JSW Steel",
-          "ticker": "JSWSTEEL.NS",
-          "wt": 6.42,
-          "change": "new",
-          "note": "KIE BUY"
-        },
-        {
-          "stock": "Grasim Industries",
-          "ticker": "GRASIM.NS",
-          "wt": 6.68,
-          "change": "new",
-          "note": "KIE ADD"
-        },
-        {
-          "stock": "Hindalco Industries",
-          "ticker": "HINDALCO.NS",
-          "wt": 3.85,
-          "change": "held",
-          "note": "KIE BUY"
-        },
-        {
-          "stock": "Eicher Motors",
-          "ticker": "EICHERMOT.NS",
-          "wt": 4.81,
-          "change": "held",
-          "note": "KIE ADD"
-        },
-        {
-          "stock": "Apollo Hospitals",
-          "ticker": "APOLLOHOSP.NS",
-          "wt": 6.61,
-          "change": "held",
-          "note": "KIE BUY"
+          "stock": "Bajaj Auto",
+          "ticker": "BAJAJ-AUTO.NS",
+          "wt": 4.48,
+          "change": "trimmed",
+          "note": "KIE SELL"
         },
         {
           "stock": "Shriram Finance",
           "ticker": "SHRIRAMFIN.NS",
-          "wt": 3.26,
-          "change": "new",
-          "note": "KIE ADD"
-        },
-        {
-          "stock": "Sun Pharmaceutical Industries",
-          "ticker": "SUNPHARMA.NS",
-          "wt": 11.04,
+          "wt": 3.42,
           "change": "held",
-          "note": "KIE ADD"
-        },
-        {
-          "stock": "NTPC",
-          "ticker": "NTPC.NS",
-          "wt": 5.39,
-          "change": "held",
-          "note": "KIE ADD"
+          "note": "KIE BUY"
         }
       ],
       "underweight": []
