@@ -84,11 +84,15 @@ function notesByPair(rows) {
   const PDFMAP = readJSON(path.join(ROOT, 'data', 'pdfmap.json'), {});
   const folderToRow = makeFolderToRow(rows);
   const floor = floorDate(), pairs = {};
+  // Companies whose older notes are on a different basis: only notes from this date count for
+  // estimates and TPs. Gujarat Energy = Gujarat Gas after its 2026 merger: June notes are per old
+  // Gujarat Gas share and cover the pre-merger business.
+  const NOTES_FROM = { 'Gujarat Energy': '260603' };
   for (const [key, p] of Object.entries(PDFMAP)) {
     const [broker, date, folder, title] = key.split('|');
     if (!broker || !date || !folder || broker === 'Unknown' || date < floor) continue;
     const name = folderToRow(folder);
-    if (!name) continue;
+    if (!name || (NOTES_FROM[name] && date < NOTES_FROM[name])) continue;
     const b = L.canonBroker(broker);
     ((pairs[name] = pairs[name] || {})[b] = pairs[name][b] || []).push({ key, path: p, date, title: title || '' });
   }

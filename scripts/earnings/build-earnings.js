@@ -107,6 +107,7 @@ const FOLDER_ALIAS = {
   'Sterlite Tech [SOTL IN]': 'Sterlite Tech', 'Tata Comm': 'Tata Communications', 'GRAVITA': 'Gravita India', 'TCS': 'Tata Consultancy Services',
   'Tata Consultancy': 'Tata Consultancy Services', 'PNB': 'Punjab National Bank', 'Sun Pharmaceuticals': 'Sun Pharmaceutical Industries',
   'Crompton Greaves Consumer Electrical': 'Crompton Greaves Consumer Electricals', 'Urban Co': 'Urban Company',
+  'Gujarat Gas': 'Gujarat Energy',   // renamed after the 2026 merger; the library keeps both folders
 };
 
 // Library folders that are sector / theme / macro collections, not companies. Every other
