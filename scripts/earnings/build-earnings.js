@@ -68,11 +68,12 @@ const NOT_RESULTS_RE = /preview|businessupdate|operationalupdate|tradingupdate|p
 // doesn't match is checked on its text: pages 1-2 must name the season's quarter AND talk
 // about results. Verdicts are cached by pdfmap key (scripts/.earnings-work/classify.json).
 const CLASSIFY = path.join(WORK, 'classify.json');
+// "Q?" after the year: Jefferies writes the quarter as "Sep-26Q" (Titagarh 2Q27 was missed, 2026-11-16).
 const Q_TEXT = {
-  1: n => new RegExp(`\\b(1Q ?F?Y?${n}|Q1 ?F?Y?${n}|1QF${n}|Jun[-' ]?(${n - 1}|20${n - 1})\\b|June[- ]quarter|Jun[- ]?(Q|qtr|quarter)\\b)`, 'i'),
-  2: n => new RegExp(`\\b(2Q ?F?Y?${n}|Q2 ?F?Y?${n}|2QF${n}|Sep[-' ]?(${n - 1}|20${n - 1})\\b|Sept?(ember)?[- ]quarter|Sep[- ]?(Q|qtr|quarter)\\b)`, 'i'),
-  3: n => new RegExp(`\\b(3Q ?F?Y?${n}|Q3 ?F?Y?${n}|3QF${n}|Dec[-' ]?(${n - 1}|20${n - 1})\\b|Dec(ember)?[- ]quarter|Dec[- ]?(Q|qtr|quarter)\\b)`, 'i'),
-  4: n => new RegExp(`\\b(4Q ?F?Y?${n}|Q4 ?F?Y?${n}|4QF${n}|Mar[-' ]?(${n}|20${n})\\b|March[- ]quarter|Mar[- ]?(Q|qtr|quarter)\\b)`, 'i'),
+  1: n => new RegExp(`\\b(1Q ?F?Y?${n}|Q1 ?F?Y?${n}|1QF${n}|Jun[-' ]?(${n - 1}|20${n - 1})Q?\\b|June[- ]quarter|Jun[- ]?(Q|qtr|quarter)\\b)`, 'i'),
+  2: n => new RegExp(`\\b(2Q ?F?Y?${n}|Q2 ?F?Y?${n}|2QF${n}|Sep[-' ]?(${n - 1}|20${n - 1})Q?\\b|Sept?(ember)?[- ]quarter|Sep[- ]?(Q|qtr|quarter)\\b)`, 'i'),
+  3: n => new RegExp(`\\b(3Q ?F?Y?${n}|Q3 ?F?Y?${n}|3QF${n}|Dec[-' ]?(${n - 1}|20${n - 1})Q?\\b|Dec(ember)?[- ]quarter|Dec[- ]?(Q|qtr|quarter)\\b)`, 'i'),
+  4: n => new RegExp(`\\b(4Q ?F?Y?${n}|Q4 ?F?Y?${n}|4QF${n}|Mar[-' ]?(${n}|20${n})Q?\\b|March[- ]quarter|Mar[- ]?(Q|qtr|quarter)\\b)`, 'i'),
 };
 const RESULT_WORDS = /\b(results?|reported|revenues?|EBITDA|PPOP|NII|PAT|net profit|beat|miss(ed)?|in[- ]line|above (our|consensus)|below (our|consensus))\b/i;
 let classifyCache = null;
