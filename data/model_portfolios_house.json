@@ -4,10 +4,10 @@
   "houses": [
     {
       "broker": "JPMorgan",
-      "asOf": "2026-10",
+      "asOf": "2026-11",
       "benchmark": "MSCI India",
-      "report": "India Strategy/[261008] [JPMorgan] India Strategy - 2QFY27 earnings preview, Double-digit growth continues.pdf",
-      "note": "Stocks named in JPMorgan's sector allocation (8 Oct, 2QFY27 earnings preview) — OW Financials, Industrials, Health Care, Materials, Consumer Discretionary; UW IT. No per-stock weights published. Dropped vs 16 Aug: Cholamandalam, M&M, TVS Motor, LG Electronics.",
+      "report": "India Strategy/[261116] [JPMorgan] India Strategy - Resilient domestic demand continues to outweigh external headwinds.pdf",
+      "note": "Stocks named in JPMorgan's sector allocation (16 Nov, 2QFY27 earnings review) — OW Financials, Industrials, Health Care, Materials, Consumer Discretionary; UW IT. No per-stock weights published. Vs 8 Oct: added Angel One, Nippon Life India AMC, NSE, TVS Motor; dropped Hindalco and Hero MotoCorp.",
       "overweight": [
         {
           "stock": "ICICI Bank",
@@ -71,6 +71,27 @@
           "wt": "",
           "change": "new",
           "note": "Financials OW"
+        },
+        {
+          "stock": "Angel One",
+          "ticker": "ANGELONE.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Financials OW"
+        },
+        {
+          "stock": "Nippon Life India AMC",
+          "ticker": "NAM-INDIA.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Financials OW"
+        },
+        {
+          "stock": "NSE",
+          "ticker": "",
+          "wt": "",
+          "change": "new",
+          "note": "Financials OW (unlisted)"
         },
         {
           "stock": "HDFC Life Insurance",
@@ -192,25 +213,11 @@
           "note": "Materials OW"
         },
         {
-          "stock": "Hindalco Industries",
-          "ticker": "HINDALCO.NS",
-          "wt": "",
-          "change": "held",
-          "note": "Materials OW"
-        },
-        {
           "stock": "Pidilite Industries",
           "ticker": "PIDILITIND.NS",
           "wt": "",
           "change": "new",
           "note": "Materials OW"
-        },
-        {
-          "stock": "Hero MotoCorp",
-          "ticker": "HEROMOTOCO.NS",
-          "wt": "",
-          "change": "new",
-          "note": "Consumer Discretionary OW"
         },
         {
           "stock": "Tata Motors (CV)",
@@ -250,6 +257,13 @@
         {
           "stock": "Lenskart",
           "ticker": "LENSKART.NS",
+          "wt": "",
+          "change": "new",
+          "note": "Consumer Discretionary OW"
+        },
+        {
+          "stock": "TVS Motor",
+          "ticker": "TVSMOTOR.NS",
           "wt": "",
           "change": "new",
           "note": "Consumer Discretionary OW"
